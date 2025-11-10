@@ -7,10 +7,10 @@ This project uses a Feature-Sliced Design (FSD) architecture with a custom twist
 ```
 src/
 ├── app/                    # Next.js app directory (routes, layouts, pages)
-│   ├── widgets/           # Composite UI components (combine features + entities)
 │   ├── (auth)/            # Auth routes
 │   ├── (main)/            # Main app routes
 │   └── api/               # API routes
+├── widgets/               # Composite UI components (combine features + entities)
 ├── features/              # Feature modules (self-contained functionality)
 ├── entities/              # Business entities (core domain models)
 └── shared/                # Shared code (used across features/entities)
@@ -67,7 +67,7 @@ features/
 - Should not depend on other features
 - Self-contained functionality
 
-### 4. Widgets (`src/app/widgets/`)
+### 4. Widgets (`src/widgets/`)
 **Purpose**: Composite UI components that combine features and entities.
 
 **Structure**:
@@ -96,7 +96,7 @@ widgets/
 - `@/shared/*` - Shared code
 - `@/entities/*` - Entities
 - `@/features/*` - Features
-- `@/app/widgets/*` - Widgets
+- `@/widgets/*` - Widgets
 
 ## Migration Notes
 
@@ -120,7 +120,7 @@ export function BookingForm() {
 
 ### Creating a Widget
 ```typescript
-// src/app/widgets/dashboard/ui/Dashboard.tsx
+// src/widgets/dashboard/ui/Dashboard.tsx
 import { BookingForm } from "@/features/booking/ui/BookingForm";
 import { UserCard } from "@/entities/user/ui/UserCard";
 
@@ -137,7 +137,7 @@ export function Dashboard() {
 ### Using Widgets in Pages
 ```typescript
 // src/app/(main)/dashboard/page.tsx
-import { Dashboard } from "@/app/widgets/dashboard";
+import { Dashboard } from "@/widgets/dashboard";
 
 export default function DashboardPage() {
   return <Dashboard />;

@@ -1,4 +1,4 @@
-import { BookingPage } from "@/app/widgets/booking-page";
+import { BookingPage } from "@/widgets/booking-page";
 
 export default function BookingRequestForm() {
 	// TODO: Get user type and status from session/auth
