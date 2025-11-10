@@ -19,7 +19,10 @@ export default async function mainLayout({
 		<SidebarProvider>
 			<CollapsibleSidebar session={session} />
 			<SidebarInset className="flex flex-col">
-				<main className="flex-1 overflow-auto">{children}</main>
+				<main className="flex-1 overflow-auto">
+					{/* Pass session to children via context or props */}
+					{children}
+				</main>
 				<Footer />
 			</SidebarInset>
 		</SidebarProvider>

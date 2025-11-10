@@ -1,6 +1,15 @@
 "use client";
 
-import { Calendar, Eye, FlaskConical, Microscope, Plus, Zap } from "lucide-react";
+import {
+	Calendar,
+	Eye,
+	FlaskConical,
+	Microscope,
+	Plus,
+	Zap,
+} from "lucide-react";
+import type { UserType } from "@/entities/service";
+import { formatServiceCategory, getServicePrice } from "@/entities/service";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -10,8 +19,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
-import type { Service, UserType } from "@/entities/service";
-import { formatServiceCategory, getServicePrice } from "@/entities/service";
 import type { ServiceCardProps } from "../model/types";
 
 const iconMap: Record<string, typeof FlaskConical> = {
@@ -62,11 +69,7 @@ export function ServiceCard({
 						</div>
 					</div>
 					<Badge
-						className={
-							service.isActive
-								? "bg-green-500"
-								: "bg-yellow-500"
-						}
+						className={service.isActive ? "bg-green-500" : "bg-yellow-500"}
 						variant={service.isActive ? "default" : "secondary"}
 					>
 						{service.isActive ? "Available" : "Unavailable"}
@@ -108,8 +111,8 @@ export function ServiceCard({
 				<div className="mt-4 flex items-center space-x-2">
 					<Button
 						className="flex-1"
-						variant="outline"
 						onClick={() => onViewDetails(service.id)}
+						variant="outline"
 					>
 						<Eye className="mr-2 h-4 w-4" />
 						View Details
@@ -126,4 +129,3 @@ export function ServiceCard({
 		</Card>
 	);
 }
-

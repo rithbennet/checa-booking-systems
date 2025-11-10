@@ -62,6 +62,8 @@ export async function getServices(
       pricing: {
         where: {
           effectiveTo: null,
+          // Filter pricing by userType if provided - only return user's pricing tier
+          ...(filters?.userType ? { userType: filters.userType } : {}),
         },
       },
     },

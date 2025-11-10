@@ -1,7 +1,13 @@
 "use client";
 
-import { Filter, Search } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/shadcn/card";
+import { Search } from "lucide-react";
+import type { ServiceCategory, ServiceFilters } from "@/entities/service";
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "@/shared/ui/shadcn/card";
 import { Input } from "@/shared/ui/shadcn/input";
 import {
 	Select,
@@ -11,14 +17,13 @@ import {
 	SelectValue,
 } from "@/shared/ui/shadcn/select";
 import { Slider } from "@/shared/ui/shadcn/slider";
-import type { ServiceFilters, ServiceCategory } from "@/entities/service";
 
 interface ServiceFiltersProps {
 	filters: ServiceFilters;
 	onFiltersChange: (filters: ServiceFilters) => void;
 }
 
-export function ServiceFilters({
+export function ServiceFiltersComponent({
 	filters,
 	onFiltersChange,
 }: ServiceFiltersProps) {
@@ -65,10 +70,10 @@ export function ServiceFilters({
 						}
 						value={filters.category || "all"}
 					>
-						<SelectTrigger id="service-category-filter">
-							<SelectValue />
+						<SelectTrigger className="w-full" id="service-category-filter">
+							<SelectValue className="truncate" />
 						</SelectTrigger>
-						<SelectContent>
+						<SelectContent className="min-w-(--radix-select-trigger-width)">
 							<SelectItem value="all">All Categories</SelectItem>
 							<SelectItem value="ftir_atr">FTIR Spectroscopy - ATR</SelectItem>
 							<SelectItem value="ftir_kbr">FTIR Spectroscopy - KBr</SelectItem>
@@ -124,8 +129,11 @@ export function ServiceFilters({
 						}
 						value={filters.availability || "all"}
 					>
-						<SelectTrigger id="availability-filter">
-							<SelectValue placeholder="All Availability" />
+						<SelectTrigger className="w-full" id="availability-filter">
+							<SelectValue
+								className="truncate"
+								placeholder="All Availability"
+							/>
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value="all">All Availability</SelectItem>
