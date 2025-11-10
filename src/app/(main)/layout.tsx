@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/shared/server/auth";
+import {
+	SidebarInset,
+	SidebarProvider,
+} from "@/shared/ui/shadcn/sidebar";
+import CollapsibleSidebar from "@/widgets/layout/CollapsibleSidebar";
 import Footer from "@/widgets/layout/Footer";
-import MainNav from "@/widgets/layout/MainNav";
-import SidebarNav from "@/widgets/layout/SidebarNav";
 
 export default async function mainLayout({
 	children,
@@ -12,16 +15,13 @@ export default async function mainLayout({
 		redirect("/signIn");
 	}
 
-	const user = session.user;
-
 	return (
-		<div>
-			<MainNav session={session} />
-			{user.role === "lab_administrator" ? (
-				<SidebarNav session={session} />
-			) : null}
-			{children}
-			<Footer />
-		</div>
+		<SidebarProvider>
+			<CollapsibleSidebar session={session} />
+			<SidebarInset className="flex flex-col">
+				<main className="flex-1 overflow-auto">{children}</main>
+				<Footer />
+			</SidebarInset>
+		</SidebarProvider>
 	);
 }

@@ -1,9 +1,7 @@
-"use client";
-
 import { FlaskConical } from "lucide-react";
 import Link from "next/link";
 
-export default function AuthHeader() {
+export function AuthHeader() {
 	return (
 		<header className="border-b bg-white">
 			<div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -33,3 +31,4 @@ export default function AuthHeader() {
 		</header>
 	);
 }
+

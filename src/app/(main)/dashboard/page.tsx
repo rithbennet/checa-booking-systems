@@ -195,7 +195,7 @@ export default function UserDashboard() {
           {/* Main Content */}
           <div className="space-y-6 lg:col-span-3">
             {/* Welcome Section */}
-            <div className="rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
+            <div className="rounded-lg bg-linear-to-r from-blue-600 to-indigo-600 p-6 text-white">
               <h2 className="mb-2 font-bold text-2xl">Welcome back, Harith!</h2>
               <p className="text-blue-100">
                 You have 4 active bookings and 1 result ready for download.

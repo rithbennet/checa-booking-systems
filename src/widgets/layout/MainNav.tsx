@@ -83,7 +83,7 @@ export default function MainNav({ session }: { session: Session | null }) {
 					<User className="h-4 w-4" />
 				</div>
 				<div className="leading-tight">
-					<div className="max-w-[10rem] truncate font-medium text-gray-900 text-sm">
+					<div className="max-w-40 truncate font-medium text-gray-900 text-sm">
 						{session.user?.name ?? session.user?.email}
 					</div>
 					<div className="inline-block rounded bg-blue-50 px-1.5 py-0.5 text-[10px] text-blue-700">
