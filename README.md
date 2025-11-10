@@ -184,4 +184,4 @@ See `prisma/schema.prisma` for the complete schema.
 
 ## License
 
-[Add your license here]
+[MIT]
