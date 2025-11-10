@@ -180,6 +180,162 @@ async function main() {
 		});
 	}
 
+	// Seed Services
+	console.log("\n🌱 Seeding services...");
+
+	// Clean up existing services
+	await db.servicePricing.deleteMany({});
+	await db.service.deleteMany({});
+
+	const services = [
+		{
+			code: "FTIR-ATR-001",
+			name: "FTIR Spectroscopy - ATR",
+			category: "ftir_atr" as const,
+			description:
+				"Fourier Transform Infrared Spectroscopy with Attenuated Total Reflectance for surface analysis",
+			requiresSample: true,
+			pricing: [
+				{ userType: "mjiit_member" as const, price: 50, unit: "per sample" },
+				{ userType: "utm_member" as const, price: 60, unit: "per sample" },
+				{
+					userType: "external_member" as const,
+					price: 80,
+					unit: "per sample",
+				},
+			],
+		},
+		{
+			code: "FTIR-KBr-001",
+			name: "FTIR Spectroscopy - KBr",
+			category: "ftir_kbr" as const,
+			description:
+				"Fourier Transform Infrared Spectroscopy with KBr pellet method for bulk analysis",
+			requiresSample: true,
+			pricing: [
+				{ userType: "mjiit_member" as const, price: 55, unit: "per sample" },
+				{ userType: "utm_member" as const, price: 65, unit: "per sample" },
+				{
+					userType: "external_member" as const,
+					price: 90,
+					unit: "per sample",
+				},
+			],
+		},
+		{
+			code: "UV-VIS-ABS-001",
+			name: "UV-Vis Spectroscopy - Absorbance/Transmittance",
+			category: "uv_vis_absorbance" as const,
+			description:
+				"UV-Visible spectroscopy for absorbance and transmittance measurements",
+			requiresSample: true,
+			pricing: [
+				{ userType: "mjiit_member" as const, price: 20, unit: "per sample" },
+				{ userType: "utm_member" as const, price: 30, unit: "per sample" },
+				{
+					userType: "external_member" as const,
+					price: 50,
+					unit: "per sample",
+				},
+			],
+		},
+		{
+			code: "UV-VIS-REF-001",
+			name: "UV-Vis Spectroscopy - Reflectance",
+			category: "uv_vis_reflectance" as const,
+			description: "UV-Visible spectroscopy for reflectance measurements",
+			requiresSample: true,
+			pricing: [
+				{ userType: "mjiit_member" as const, price: 25, unit: "per sample" },
+				{ userType: "utm_member" as const, price: 35, unit: "per sample" },
+				{
+					userType: "external_member" as const,
+					price: 55,
+					unit: "per sample",
+				},
+			],
+		},
+		{
+			code: "BET-001",
+			name: "Surface Area and Pore Analyzer (BET)",
+			category: "bet_analysis" as const,
+			description:
+				"BET surface area and pore size analysis for material characterization",
+			requiresSample: true,
+			pricing: [
+				{ userType: "mjiit_member" as const, price: 190, unit: "per sample" },
+				{ userType: "utm_member" as const, price: 210, unit: "per sample" },
+				{
+					userType: "external_member" as const,
+					price: 250,
+					unit: "per sample",
+				},
+			],
+		},
+		{
+			code: "HPLC-PAD-001",
+			name: "HPLC-Photodiode Array Detection",
+			category: "hplc_pda" as const,
+			description:
+				"High-performance liquid chromatography with photodiode array detection for compound identification and quantification",
+			requiresSample: true,
+			pricing: [
+				{ userType: "mjiit_member" as const, price: 65, unit: "per sample" },
+				{ userType: "utm_member" as const, price: 95, unit: "per sample" },
+				{
+					userType: "external_member" as const,
+					price: 170,
+					unit: "per sample",
+				},
+			],
+		},
+		{
+			code: "WORK-001",
+			name: "Working Area (Bench fees)",
+			category: "working_space" as const,
+			description:
+				"Lab bench rental with basic equipment access for research work",
+			requiresSample: false,
+			operatingHours: "Monday - Friday, 8:00 AM - 5:00 PM",
+			pricing: [
+				{
+					userType: "mjiit_member" as const,
+					price: 150,
+					unit: "per person per month",
+				},
+				{
+					userType: "utm_member" as const,
+					price: 200,
+					unit: "per person per month",
+				},
+				{
+					userType: "external_member" as const,
+					price: 300,
+					unit: "per person per month",
+				},
+			],
+		},
+	];
+
+	for (const serviceData of services) {
+		const { pricing, ...serviceFields } = serviceData;
+		const service = await db.service.create({
+			data: serviceFields,
+		});
+
+		for (const priceData of pricing) {
+			await db.servicePricing.create({
+				data: {
+					serviceId: service.id,
+					...priceData,
+					effectiveFrom: new Date(),
+				},
+			});
+		}
+
+		console.log(`✅ Created service: ${service.name} (${service.code})`);
+	}
+
 	console.log("✅ Seed completed successfully!");
 	console.log("\n📋 Account Credentials:");
 	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");

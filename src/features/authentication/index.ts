@@ -1,25 +1,25 @@
 /**
  * Authentication Feature
- * 
+ *
  * Exports all public API for the authentication feature
  */
 
-// UI Components
-export { SignInForm } from "./ui/SignInForm";
-export { RegisterForm } from "./ui/RegisterForm";
-export { SignOutPage } from "./ui/SignOutPage";
-export { SignOutModal } from "./ui/SignOutModal";
-export { AuthHeader } from "./ui/AuthHeader";
-export { AuthFooter } from "./ui/AuthFooter";
-export { AuthLayout } from "./ui/AuthLayout";
-
 // Server Actions
 export { login, loginWithGoogle } from "./lib/server-actions";
-
 // Utilities
-export { detectUserType, resolveApiUserType, validateRegistrationForm, mapAuthError } from "./lib/utils";
-
+export {
+  detectUserType,
+  mapAuthError,
+  resolveApiUserType,
+  validateRegistrationForm,
+} from "./lib/utils";
+export type { RegistrationFormData, SignInFormData } from "./model/schemas";
 // Types
-export type { UserType, ApiUserType, AuthError } from "./model/types";
-export type { SignInFormData, RegistrationFormData } from "./model/schemas";
-
+export type { ApiUserType, AuthError, UserType } from "./model/types";
+export { AuthFooter } from "./ui/AuthFooter";
+export { AuthHeader } from "./ui/AuthHeader";
+export { AuthLayout } from "./ui/AuthLayout";
+export { RegisterForm } from "./ui/RegisterForm";
+// UI Components
+export { SignInForm } from "./ui/SignInForm";
+export { SignOutModal } from "./ui/SignOutModal";

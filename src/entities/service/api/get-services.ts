@@ -1,0 +1,116 @@
+/**
+ * Service entity API - Get services
+ */
+
+import { db } from "@/shared/server/db";
+import type {
+  Service,
+  ServiceFilters,
+  ServicePricing,
+  ServiceSortOption,
+} from "../model/types";
+
+export interface GetServicesParams {
+  filters?: ServiceFilters;
+  sort?: ServiceSortOption;
+  limit?: number;
+  offset?: number;
+}
+
+export async function getServices(
+  params: GetServicesParams = {}
+): Promise<Service[]> {
+  const { filters, sort, limit = 25, offset = 0 } = params;
+
+  const where: {
+    isActive: boolean;
+    category?: Service["category"];
+    OR?: Array<{
+      name?: { contains: string; mode: "insensitive" };
+      description?: { contains: string; mode: "insensitive" };
+      code?: { contains: string; mode: "insensitive" };
+    }>;
+  } = {
+    isActive: true,
+  };
+
+  if (filters?.category && filters.category !== "all") {
+    where.category = filters.category;
+  }
+
+  if (filters?.search) {
+    where.OR = [
+      { name: { contains: filters.search, mode: "insensitive" } },
+      { description: { contains: filters.search, mode: "insensitive" } },
+      { code: { contains: filters.search, mode: "insensitive" } },
+    ];
+  }
+
+  const orderBy: Record<string, "asc" | "desc"> = {};
+  if (sort) {
+    orderBy[sort.field] = sort.direction;
+  } else {
+    orderBy.name = "asc";
+  }
+
+  const services = await db.service.findMany({
+    where,
+    orderBy,
+    take: limit,
+    skip: offset,
+    include: {
+      pricing: {
+        where: {
+          effectiveTo: null,
+        },
+      },
+    },
+  });
+
+  return services.map((service) => ({
+    ...service,
+    description: service.description ?? undefined,
+    operatingHours: service.operatingHours ?? undefined,
+    minSampleMass: service.minSampleMass
+      ? Number(service.minSampleMass)
+      : undefined,
+    pricing: service.pricing.map((p) => ({
+      ...p,
+      price: Number(p.price),
+      effectiveTo: p.effectiveTo ?? undefined,
+      userType: p.userType as ServicePricing["userType"],
+    })),
+  }));
+}
+
+export async function getServiceById(id: string): Promise<Service | null> {
+  const service = await db.service.findUnique({
+    where: { id },
+    include: {
+      pricing: {
+        where: {
+          effectiveTo: null,
+        },
+      },
+    },
+  });
+
+  if (!service) {
+    return null;
+  }
+
+  return {
+    ...service,
+    description: service.description ?? undefined,
+    operatingHours: service.operatingHours ?? undefined,
+    minSampleMass: service.minSampleMass
+      ? Number(service.minSampleMass)
+      : undefined,
+    pricing: service.pricing.map((p) => ({
+      ...p,
+      price: Number(p.price),
+      effectiveTo: p.effectiveTo ?? undefined,
+      userType: p.userType as ServicePricing["userType"],
+    })),
+  };
+}
