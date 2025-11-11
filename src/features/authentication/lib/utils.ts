@@ -2,11 +2,10 @@
  * Authentication utility functions
  */
 
-export function detectUserType(email: string): "institutional" | "external" | null {
-	if (
-		email.includes("@utm.my") ||
-		email.includes("@graduate.utm.my")
-	) {
+export function detectUserType(
+	email: string,
+): "institutional" | "external" | null {
+	if (email.includes("@utm.my") || email.includes("@graduate.utm.my")) {
 		return "institutional";
 	}
 	if (
@@ -41,13 +40,11 @@ export function validateRegistrationForm(data: {
 		return "Enter a valid email";
 	if (!data.firstName.trim()) return "First name is required";
 	if (!data.lastName.trim()) return "Last name is required";
-	if (data.password.length < 8)
-		return "Password must be at least 8 characters";
+	if (data.password.length < 8) return "Password must be at least 8 characters";
 	if (data.password !== data.confirmPassword) return "Passwords do not match";
 	if (!data.acceptedTerms) return "You must accept the Terms & Privacy";
 	const apiType = resolveApiUserType(data.userType);
-	if (!apiType)
-		return "Please enter a valid institutional or external email";
+	if (!apiType) return "Please enter a valid institutional or external email";
 	return null;
 }
 
@@ -65,4 +62,3 @@ export function mapAuthError(error?: string): string {
 			return "Unable to sign in. Please try again.";
 	}
 }
-

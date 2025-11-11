@@ -8,10 +8,10 @@
 export { login, loginWithGoogle } from "./lib/server-actions";
 // Utilities
 export {
-  detectUserType,
-  mapAuthError,
-  resolveApiUserType,
-  validateRegistrationForm,
+	detectUserType,
+	mapAuthError,
+	resolveApiUserType,
+	validateRegistrationForm,
 } from "./lib/utils";
 export type { RegistrationFormData, SignInFormData } from "./model/schemas";
 // Types

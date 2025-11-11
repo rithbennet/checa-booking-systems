@@ -8,6 +8,7 @@ import {
 	Plus,
 	Zap,
 } from "lucide-react";
+import { useState } from "react";
 import type { UserType } from "@/entities/service";
 import { formatServiceCategory, getServicePrice } from "@/entities/service";
 import { Badge } from "@/shared/ui/shadcn/badge";
@@ -20,6 +21,7 @@ import {
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
 import type { ServiceCardProps } from "../model/types";
+import { ServiceDetailsDialog } from "./ServiceDetailsDialog";
 
 const iconMap: Record<string, typeof FlaskConical> = {
 	ftir_atr: FlaskConical,
@@ -37,6 +39,7 @@ export function ServiceCard({
 	onViewDetails,
 	onAddToBooking,
 }: ServiceCardProps) {
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const IconComponent = iconMap[service.category] || FlaskConical;
 	const pricing = getServicePrice(service, userType);
 
@@ -53,79 +56,94 @@ export function ServiceCard({
 		}
 	};
 
+	const handleViewDetails = () => {
+		setIsDialogOpen(true);
+		onViewDetails(service.id);
+	};
+
 	return (
-		<Card className="transition-shadow hover:shadow-lg">
-			<CardHeader>
-				<div className="flex items-start justify-between">
-					<div className="flex items-center space-x-3">
-						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-							<IconComponent className="h-5 w-5 text-blue-600" />
-						</div>
-						<div>
-							<CardTitle className="text-lg">{service.name}</CardTitle>
-							<CardDescription className="text-gray-500 text-sm">
-								Code: {service.code}
-							</CardDescription>
-						</div>
-					</div>
-					<Badge
-						className={service.isActive ? "bg-green-500" : "bg-yellow-500"}
-						variant={service.isActive ? "default" : "secondary"}
-					>
-						{service.isActive ? "Available" : "Unavailable"}
-					</Badge>
-				</div>
-			</CardHeader>
-			<CardContent>
-				{service.description && (
-					<p className="mb-4 text-gray-600 text-sm">{service.description}</p>
-				)}
-
-				<div className="space-y-3">
-					<div className="flex items-center justify-between">
-						<span className="text-gray-600 text-sm">Category:</span>
-						<Badge variant="outline">
-							{formatServiceCategory(service.category)}
-						</Badge>
-					</div>
-
-					{pricing && (
-						<div className="rounded-lg bg-blue-50 p-3">
-							<div className="flex items-center justify-between">
-								<span className="font-medium text-blue-800 text-sm">
-									{getUserTypeLabel(userType)}:
-								</span>
-								<div className="text-right">
-									<span className="font-bold text-blue-900 text-lg">
-										RM {pricing.price}
-									</span>
-									<span className="block text-blue-700 text-sm">
-										{pricing.unit}
-									</span>
-								</div>
+		<>
+			<Card className="transition-shadow hover:shadow-lg">
+				<CardHeader>
+					<div className="flex items-start justify-between">
+						<div className="flex items-center space-x-3">
+							<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+								<IconComponent className="h-5 w-5 text-blue-600" />
+							</div>
+							<div>
+								<CardTitle className="text-lg">{service.name}</CardTitle>
+								<CardDescription className="text-gray-500 text-sm">
+									Code: {service.code}
+								</CardDescription>
 							</div>
 						</div>
+						<Badge
+							className={service.isActive ? "bg-green-500" : "bg-yellow-500"}
+							variant={service.isActive ? "default" : "secondary"}
+						>
+							{service.isActive ? "Available" : "Unavailable"}
+						</Badge>
+					</div>
+				</CardHeader>
+				<CardContent>
+					{service.description && (
+						<p className="mb-4 text-gray-600 text-sm">{service.description}</p>
 					)}
-				</div>
 
-				<div className="mt-4 flex items-center space-x-2">
-					<Button
-						className="flex-1"
-						onClick={() => onViewDetails(service.id)}
-						variant="outline"
-					>
-						<Eye className="mr-2 h-4 w-4" />
-						View Details
-					</Button>
-					<Button
-						className="flex-1 bg-blue-600 hover:bg-blue-700"
-						onClick={() => onAddToBooking(service.id)}
-					>
-						<Plus className="mr-2 h-4 w-4" />
-						Add to Booking
-					</Button>
-				</div>
-			</CardContent>
-		</Card>
+					<div className="space-y-3">
+						<div className="flex items-center justify-between">
+							<span className="text-gray-600 text-sm">Category:</span>
+							<Badge variant="outline">
+								{formatServiceCategory(service.category)}
+							</Badge>
+						</div>
+
+						{pricing && (
+							<div className="rounded-lg bg-blue-50 p-3">
+								<div className="flex items-center justify-between">
+									<span className="font-medium text-blue-800 text-sm">
+										{getUserTypeLabel(userType)}:
+									</span>
+									<div className="text-right">
+										<span className="font-bold text-blue-900 text-lg">
+											RM {pricing.price}
+										</span>
+										<span className="block text-blue-700 text-sm">
+											{pricing.unit}
+										</span>
+									</div>
+								</div>
+							</div>
+						)}
+					</div>
+
+					<div className="mt-4 flex items-center space-x-2">
+						<Button
+							className="flex-1"
+							onClick={handleViewDetails}
+							variant="outline"
+						>
+							<Eye className="mr-2 h-4 w-4" />
+							View Details
+						</Button>
+						<Button
+							className="flex-1 bg-blue-600 hover:bg-blue-700"
+							onClick={() => onAddToBooking(service.id)}
+						>
+							<Plus className="mr-2 h-4 w-4" />
+							Add to Booking
+						</Button>
+					</div>
+				</CardContent>
+			</Card>
+
+			<ServiceDetailsDialog
+				onAddToBooking={onAddToBooking}
+				onOpenChange={setIsDialogOpen}
+				open={isDialogOpen}
+				service={service}
+				userType={userType}
+			/>
+		</>
 	);
 }

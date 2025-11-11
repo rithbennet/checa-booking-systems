@@ -58,7 +58,7 @@ model BetterAuthAccount {
   accessTokenExpiresAt  DateTime? @db.Timestamp(6)
   refreshTokenExpiresAt DateTime? @db.Timestamp(6)
   scope                 String?   @db.VarChar(500)
-  password              String?   @db.Text
+  password              String?   @db.VarChar(255)
   createdAt             DateTime  @default(now()) @db.Timestamp(6)
   updatedAt             DateTime  @updatedAt @db.Timestamp(6)
 
@@ -190,8 +190,9 @@ model Service {
   createdAt      DateTime              @default(now()) @db.Timestamp(6)
   updatedAt      DateTime              @updatedAt @db.Timestamp(6)
 
-  pricing      ServicePricing[]
-  bookingItems BookingServiceItem[]
+  pricing       ServicePricing[]
+  bookingItems  BookingServiceItem[]
+  addOnMappings ServiceAddOnMapping[]
 
   @@index([category])
   @@index([isActive])
@@ -230,8 +231,8 @@ model BookingRequest {
   user               User                @relation(fields: [userId], references: [id])
   referenceNumber    String              @unique @db.VarChar(50)
   projectDescription String?             @db.Text
-  preferredStartDate DateTime?           @db.Date
-  preferredEndDate   DateTime?           @db.Date
+  preferredStartDate DateTime?           @db.Date // overall project start
+  preferredEndDate   DateTime?           @db.Date // overall project end
   totalAmount        Decimal             @default(0) @db.Decimal(10, 2)
   status             booking_status_enum @default(pending_user_verification)
   notes              String?             @db.Text
@@ -242,8 +243,10 @@ model BookingRequest {
   reviewedByUser     User?               @relation("BookingApprovals", fields: [reviewedBy], references: [id])
   reviewNotes        String?             @db.Text
 
-  serviceItems BookingServiceItem[]
-  serviceForms ServiceForm[]
+  // Relationships
+  serviceItems      BookingServiceItem[]
+  workspaceBookings WorkspaceBooking[]
+  serviceForms      ServiceForm[]
 
   @@index([userId])
   @@index([status])
@@ -253,34 +256,50 @@ model BookingRequest {
 }
 
 model BookingServiceItem {
-  id                    String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingRequestId      String         @db.Uuid
-  bookingRequest        BookingRequest @relation(fields: [bookingRequestId], references: [id], onDelete: Cascade)
-  serviceId             String         @db.Uuid
-  service               Service        @relation(fields: [serviceId], references: [id])
-  quantity              Int            @default(1)
-  durationMonths        Int            @default(0)
-  unitPrice             Decimal        @db.Decimal(10, 2)
-  totalPrice            Decimal        @db.Decimal(10, 2)
-  sampleDetails         String?        @db.Text
-  sampleType            String?        @db.VarChar(100)
-  sampleHazard          String?        @db.VarChar(100)
-  testingMethod         String?        @db.VarChar(200)
-  degasConditions       String?        @db.Text
-  solventSystem         String?        @db.Text
-  solvents              String?        @db.Text
-  solventComposition    String?        @db.Text
-  columnType            String?        @db.VarChar(100)
-  flowRate              Decimal?       @db.Decimal(6, 2)
-  wavelength            Int?
-  expectedRetentionTime Decimal?       @db.Decimal(6, 2)
-  samplePreparation     String?        @db.Text
-  notes                 String?        @db.Text
-  createdAt             DateTime       @default(now()) @db.Timestamp(6)
-  updatedAt             DateTime       @updatedAt @db.Timestamp(6)
+  id                      String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingRequestId        String                 @db.Uuid
+  bookingRequest          BookingRequest         @relation(fields: [bookingRequestId], references: [id], onDelete: Cascade)
+  serviceId               String                 @db.Uuid
+  service                 Service                @relation(fields: [serviceId], references: [id])
+  // Basic info
+  quantity                Int                    @default(1)
+  durationMonths          Int                    @default(0)
+  unitPrice               Decimal                @db.Decimal(10, 2)
+  totalPrice              Decimal                @db.Decimal(10, 2)
+  sampleName              String?                @db.VarChar(200)
+  sampleDetails           String?                @db.Text
+  sampleType              String?                @db.VarChar(100)
+  sampleHazard            String?                @db.VarChar(100)
+  testingMethod           String?                @db.VarChar(200)
+  degasConditions         String?                @db.Text
+  solventSystem           String?                @db.Text
+  solvents                String?                @db.Text
+  solventComposition      String?                @db.Text
+  columnType              String?                @db.VarChar(100)
+  flowRate                Decimal?               @db.Decimal(6, 2)
+  wavelength              Int?
+  expectedRetentionTime   Decimal?               @db.Decimal(6, 2)
+  samplePreparation       String?                @db.Text
+  notes                   String?                @db.Text
+  // Timelines
+  expectedCompletionDate  DateTime?              @db.Timestamp(6)
+  actualCompletionDate    DateTime?              @db.Timestamp(6)
+  turnaroundEstimate      String?                @db.VarChar(100)
+  // Handling
+  hplcPreparationRequired Boolean                @default(false)
+  temperatureControlled   Boolean                @default(false)
+  lightSensitive          Boolean                @default(false)
+  hazardousMaterial       Boolean                @default(false)
+  inertAtmosphere         Boolean                @default(false)
+  // Unified equipment system
+  equipmentUsages         SampleEquipmentUsage[] // linked equipment
+  otherEquipmentRequests  Json? // custom ad-hoc requests
+  createdAt               DateTime               @default(now()) @db.Timestamp(6)
+  updatedAt               DateTime               @updatedAt @db.Timestamp(6)
 
   modifications  SampleModification[]
   sampleTracking SampleTracking[]
+  serviceAddOns  ServiceAddOn[]
 
   @@index([bookingRequestId])
   @@index([serviceId])
@@ -465,6 +484,79 @@ model SampleTracking {
   @@map("sample_tracking")
 }
 
+// ============================================
+// Workspace Booking Models
+// ============================================
+
+model WorkspaceBooking {
+  id                String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingRequestId  String                    @db.Uuid
+  bookingRequest    BookingRequest            @relation(fields: [bookingRequestId], references: [id], onDelete: Cascade)
+  // Always Checa Lab
+  startDate         DateTime                  @db.Date
+  endDate           DateTime                  @db.Date
+  preferredTimeSlot String?                   @db.VarChar(50)
+  // Links to available lab equipment
+  equipmentUsages   WorkspaceEquipmentUsage[]
+  // Custom user-defined extras
+  specialEquipment  Json?
+  purpose           String?                   @db.Text
+  notes             String?                   @db.Text
+  createdAt         DateTime                  @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime                  @updatedAt @db.Timestamp(6)
+
+  serviceAddOns ServiceAddOn[]
+
+  @@index([bookingRequestId])
+  @@map("workspace_booking")
+}
+
+// ============================================
+// Unified Equipment System
+// ============================================
+
+model LabEquipment {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                   String    @unique @db.VarChar(100)
+  description            String?   @db.Text
+  isAvailable            Boolean   @default(true)
+  maintenanceNotes       String?   @db.Text
+  expectedMaintenanceEnd DateTime? @db.Timestamp(6)
+  createdAt              DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt              DateTime  @updatedAt @db.Timestamp(6)
+
+  workspaceUsages WorkspaceEquipmentUsage[]
+  sampleUsages    SampleEquipmentUsage[]
+
+  @@map("lab_equipment")
+}
+
+model WorkspaceEquipmentUsage {
+  id                 String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  workspaceBookingId String           @db.Uuid
+  workspaceBooking   WorkspaceBooking @relation(fields: [workspaceBookingId], references: [id], onDelete: Cascade)
+  equipmentId        String           @db.Uuid
+  equipment          LabEquipment     @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  createdAt          DateTime         @default(now()) @db.Timestamp(6)
+
+  @@index([workspaceBookingId])
+  @@index([equipmentId])
+  @@map("workspace_equipment_usage")
+}
+
+model SampleEquipmentUsage {
+  id                   String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingServiceItemId String             @db.Uuid
+  bookedItem           BookingServiceItem @relation(fields: [bookingServiceItemId], references: [id], onDelete: Cascade)
+  equipmentId          String             @db.Uuid
+  equipment            LabEquipment       @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  createdAt            DateTime           @default(now()) @db.Timestamp(6)
+
+  @@index([bookingServiceItemId])
+  @@index([equipmentId])
+  @@map("sample_equipment_usage")
+}
+
 model AnalysisResult {
   id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   sampleTrackingId String         @db.Uuid
@@ -539,4 +631,57 @@ model AuditLog {
   @@index([entity, entityId])
   @@index([createdAt])
   @@map("audit_log")
+}
+
+// ============================================
+// Add-On Management Models
+// ============================================
+
+model GlobalAddOnCatalog {
+  id              String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String                @unique @db.VarChar(150)
+  description     String?               @db.Text
+  defaultAmount   Decimal               @db.Decimal(10, 2)
+  applicableTo    String                @db.VarChar(50) // "sample", "workspace" or "both"
+  isActive        Boolean               @default(true)
+  createdAt       DateTime              @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime              @updatedAt @db.Timestamp(6)
+  serviceMappings ServiceAddOnMapping[]
+  serviceAddOns   ServiceAddOn[]
+
+  @@map("global_add_on_catalog")
+}
+
+model ServiceAddOnMapping {
+  id           String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  serviceId    String             @db.Uuid
+  service      Service            @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  addOnId      String             @db.Uuid
+  addOnCatalog GlobalAddOnCatalog @relation(fields: [addOnId], references: [id], onDelete: Cascade)
+  isEnabled    Boolean            @default(true)
+  customAmount Decimal?           @db.Decimal(10, 2) // price override per service
+  createdAt    DateTime           @default(now()) @db.Timestamp(6)
+
+  @@unique([serviceId, addOnId])
+  @@map("service_add_on_mapping")
+}
+
+model ServiceAddOn {
+  id                   String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingServiceItemId String?             @db.Uuid
+  bookingServiceItem   BookingServiceItem? @relation(fields: [bookingServiceItemId], references: [id], onDelete: Cascade)
+  workspaceBookingId   String?             @db.Uuid
+  workspaceBooking     WorkspaceBooking?   @relation(fields: [workspaceBookingId], references: [id], onDelete: Cascade)
+  addOnCatalogId       String              @db.Uuid
+  addOnCatalog         GlobalAddOnCatalog  @relation(fields: [addOnCatalogId], references: [id], onDelete: Cascade)
+  name                 String              @db.VarChar(150)
+  amount               Decimal             @db.Decimal(10, 2)
+  taxable              Boolean             @default(true)
+  description          String?             @db.Text
+  createdAt            DateTime            @default(now()) @db.Timestamp(6)
+
+  @@index([bookingServiceItemId])
+  @@index([workspaceBookingId])
+  @@index([addOnCatalogId])
+  @@map("service_add_on")
 }

@@ -2,7 +2,7 @@
  * Booking entity utilities
  */
 
-import type { BookingRequest, BookingStatus } from "../model/types";
+import type { BookingStatus } from "../model/types";
 
 /**
  * Format booking status for display
@@ -27,7 +27,10 @@ export function formatBookingStatus(status: BookingStatus): string {
 export function getBookingStatusColor(
 	status: BookingStatus,
 ): "default" | "secondary" | "destructive" | "outline" {
-	const colorMap: Record<BookingStatus, "default" | "secondary" | "destructive" | "outline"> = {
+	const colorMap: Record<
+		BookingStatus,
+		"default" | "secondary" | "destructive" | "outline"
+	> = {
 		pending_user_verification: "secondary",
 		pending_approval: "secondary",
 		approved: "default",
@@ -63,4 +66,3 @@ export function generateBookingReference(): string {
 	const random = Math.random().toString(36).substring(2, 6).toUpperCase();
 	return `${prefix}-${timestamp}-${random}`;
 }
-

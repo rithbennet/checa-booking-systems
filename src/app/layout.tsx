@@ -6,7 +6,8 @@ import { QueryProvider } from "@/shared/lib/query-client";
 
 export const metadata: Metadata = {
 	title: "ChECA Lab Service Portal",
-	description: "Chemical Energy Conversion & Application Lab Service Booking System",
+	description:
+		"Chemical Energy Conversion & Application Lab Service Booking System",
 	icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 

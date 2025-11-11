@@ -20,6 +20,17 @@ export type SampleType = "liquid" | "solid" | "powder" | "solution";
 
 export type PaymentMethod = "eft" | "vote_transfer" | "local_order";
 
+export interface LabEquipment {
+	id: string;
+	name: string;
+	description?: string;
+	isAvailable: boolean;
+	maintenanceNotes?: string;
+	expectedMaintenanceEnd?: Date;
+	createdAt: Date;
+	updatedAt: Date;
+}
+
 export interface BookingServiceItem {
 	id: string;
 	serviceId: string;
@@ -28,6 +39,7 @@ export interface BookingServiceItem {
 	durationMonths: number;
 	unitPrice: number;
 	totalPrice: number;
+	sampleName?: string;
 	sampleDetails?: string;
 	sampleType?: SampleType;
 	sampleHazard?: string;
@@ -42,26 +54,32 @@ export interface BookingServiceItem {
 	expectedRetentionTime?: number;
 	samplePreparation?: string;
 	notes?: string;
+	// Timelines
+	expectedCompletionDate?: Date;
+	actualCompletionDate?: Date;
+	turnaroundEstimate?: string;
 	// Special handling requirements
-	temperatureControlled?: boolean;
-	lightSensitive?: boolean;
-	hazardousMaterial?: boolean;
-	inertAtmosphere?: boolean;
-	// HPLC preparation
-	hplcPreparationRequired?: boolean;
-	// Working space specific
-	startDate?: Date;
-	endDate?: Date;
+	temperatureControlled: boolean;
+	lightSensitive: boolean;
+	hazardousMaterial: boolean;
+	inertAtmosphere: boolean;
+	// Unified equipment system
+	equipmentUsages?: Array<{ equipment: LabEquipment }>;
+	otherEquipmentRequests?: string[]; // Array of custom equipment names
+}
+
+export interface WorkspaceBooking {
+	id: string;
+	bookingRequestId: string;
+	startDate: Date;
+	endDate: Date;
 	preferredTimeSlot?: string;
-	deadlineRequirements?: string;
-	// Equipment needs
-	fumeHood?: boolean;
-	analyticalBalance?: boolean;
-	heatingEquipment?: boolean;
-	magneticStirrer?: boolean;
-	rotaryEvaporator?: boolean;
-	vacuumSystem?: boolean;
-	otherEquipmentRequirements?: string;
+	equipmentUsages?: Array<{ equipment: LabEquipment }>;
+	specialEquipment?: string[]; // Array of custom equipment names
+	purpose?: string;
+	notes?: string;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface BookingRequest {
@@ -80,6 +98,7 @@ export interface BookingRequest {
 	reviewedBy?: string;
 	reviewNotes?: string;
 	serviceItems: BookingServiceItem[];
+	workspaceBookings?: WorkspaceBooking[];
 	additionalNotes?: string;
 }
 
@@ -87,7 +106,14 @@ export interface BookingFormData {
 	projectDescription?: string;
 	preferredStartDate?: Date;
 	preferredEndDate?: Date;
-	serviceItems: Omit<BookingServiceItem, "id" | "serviceId">[];
+	serviceItems: Omit<
+		BookingServiceItem,
+		"id" | "serviceId" | "equipmentUsages"
+	>[];
+	workspaceBookings?: Omit<
+		WorkspaceBooking,
+		"id" | "bookingRequestId" | "equipmentUsages"
+	>[];
 	additionalNotes?: string;
 }
 
@@ -96,4 +122,3 @@ export interface BookingStep {
 	title: string;
 	status: "completed" | "current" | "upcoming";
 }
-

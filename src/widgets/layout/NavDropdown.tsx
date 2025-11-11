@@ -23,8 +23,9 @@ export default function NavDropdown({
 		<Popover>
 			<PopoverTrigger asChild>
 				<button
-					className={`inline-flex items-center gap-1 font-medium text-sm transition-colors ${active ? "text-blue-700" : "text-gray-700 hover:text-blue-700"
-						}`}
+					className={`inline-flex items-center gap-1 font-medium text-sm transition-colors ${
+						active ? "text-blue-700" : "text-gray-700 hover:text-blue-700"
+					}`}
 					type="button"
 				>
 					{label}

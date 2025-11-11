@@ -7,4 +7,3 @@ export interface AuthError {
 }
 
 // Form types are now exported from schemas.ts
-

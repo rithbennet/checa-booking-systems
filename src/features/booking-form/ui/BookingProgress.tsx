@@ -48,4 +48,3 @@ export function BookingProgress({ steps }: BookingProgressProps) {
 		</div>
 	);
 }
-

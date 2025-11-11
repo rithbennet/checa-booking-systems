@@ -3,7 +3,6 @@
  */
 
 import type { BookingServiceItem, BookingStep } from "@/entities/booking";
-import type { Service } from "@/entities/service";
 
 export interface BookingFormState {
 	currentStep: number;
@@ -24,7 +23,6 @@ export interface ServiceDetailsFormData {
 	sampleDetails?: string;
 	sampleHazard?: string;
 	testingMethod?: string;
-	hplcPreparationRequired?: boolean;
 	temperatureControlled?: boolean;
 	lightSensitive?: boolean;
 	hazardousMaterial?: boolean;
@@ -42,4 +40,3 @@ export interface ServiceDetailsFormData {
 	vacuumSystem?: boolean;
 	otherEquipmentRequirements?: string;
 }
-

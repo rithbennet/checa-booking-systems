@@ -9,7 +9,10 @@ import type {
 	UserType,
 } from "@/entities/service";
 import { useServices } from "@/entities/service";
-import { ServiceCard, ServiceFiltersComponent } from "@/features/browse-services";
+import {
+	ServiceCard,
+	ServiceFiltersComponent,
+} from "@/features/browse-services";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/shadcn/card";
@@ -139,7 +142,10 @@ export function ServicesPage({
 				<div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
 					{/* Filters Sidebar */}
 					<div className="lg:col-span-1">
-						<ServiceFiltersComponent filters={filters} onFiltersChange={setFilters} />
+						<ServiceFiltersComponent
+							filters={filters}
+							onFiltersChange={setFilters}
+						/>
 
 						{/* User Rate Info */}
 						<Card className="mt-6 border-blue-200 bg-blue-50">

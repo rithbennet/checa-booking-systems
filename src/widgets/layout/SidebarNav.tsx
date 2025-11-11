@@ -19,10 +19,11 @@ export default function SidebarNav({ session }: { session: Session | null }) {
 
 	const navItem = (href: string, label: string) => (
 		<Link
-			className={`block rounded px-3 py-2 text-sm ${pathname?.startsWith(href)
-				? "bg-blue-50 text-blue-700"
-				: "text-gray-700 hover:bg-gray-50"
-				}`}
+			className={`block rounded px-3 py-2 text-sm ${
+				pathname?.startsWith(href)
+					? "bg-blue-50 text-blue-700"
+					: "text-gray-700 hover:bg-gray-50"
+			}`}
 			href={href}
 		>
 			{label}

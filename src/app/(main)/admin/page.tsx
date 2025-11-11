@@ -269,12 +269,12 @@ export default function AdminDashboard() {
 							</CardHeader>
 							<CardContent>
 								<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-									{adminActions.map((action, index) => {
+									{adminActions.map((action) => {
 										const IconComponent = action.icon;
 										return (
 											<Card
 												className="cursor-pointer transition-shadow hover:shadow-md"
-												key={index}
+												key={action.title}
 											>
 												<CardContent className="p-4">
 													<div className="flex items-start space-x-4">
@@ -393,10 +393,10 @@ export default function AdminDashboard() {
 							</CardHeader>
 							<CardContent>
 								<div className="space-y-4">
-									{recentActivity.map((activity, index) => {
+									{recentActivity.map((activity) => {
 										const IconComponent = activity.icon;
 										return (
-											<div className="flex items-start space-x-3" key={index}>
+											<div className="flex items-start space-x-3" key={`${activity.action}-${activity.timestamp}`}>
 												<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100">
 													<IconComponent className="h-4 w-4 text-gray-600" />
 												</div>

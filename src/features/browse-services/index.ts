@@ -4,5 +4,5 @@
 
 export * from "./model/types";
 export * from "./ui/ServiceCard";
+export * from "./ui/ServiceDetailsDialog";
 export * from "./ui/ServiceFilters";
-

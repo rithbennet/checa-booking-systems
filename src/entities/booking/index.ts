@@ -2,6 +2,5 @@
  * Booking entity public API
  */
 
-export * from "./model/types";
 export * from "./lib/utils";
-
+export * from "./model/types";

@@ -5,16 +5,16 @@
 import type { Service, ServiceFilters, UserType } from "@/entities/service";
 
 export interface BrowseServicesState {
-  services: Service[];
-  filters: ServiceFilters;
-  loading: boolean;
-  error: string | null;
-  userType: UserType | null;
+	services: Service[];
+	filters: ServiceFilters;
+	loading: boolean;
+	error: string | null;
+	userType: UserType | null;
 }
 
 export interface ServiceCardProps {
-  service: Service;
-  userType: UserType;
-  onViewDetails: (serviceId: string) => void;
-  onAddToBooking: (serviceId: string) => void;
+	service: Service;
+	userType: UserType;
+	onViewDetails: (serviceId: string) => void;
+	onAddToBooking: (serviceId: string) => void;
 }

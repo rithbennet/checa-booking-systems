@@ -89,6 +89,26 @@ export type Payment = $Result.DefaultSelection<Prisma.$PaymentPayload>
  */
 export type SampleTracking = $Result.DefaultSelection<Prisma.$SampleTrackingPayload>
 /**
+ * Model WorkspaceBooking
+ * 
+ */
+export type WorkspaceBooking = $Result.DefaultSelection<Prisma.$WorkspaceBookingPayload>
+/**
+ * Model LabEquipment
+ * 
+ */
+export type LabEquipment = $Result.DefaultSelection<Prisma.$LabEquipmentPayload>
+/**
+ * Model WorkspaceEquipmentUsage
+ * 
+ */
+export type WorkspaceEquipmentUsage = $Result.DefaultSelection<Prisma.$WorkspaceEquipmentUsagePayload>
+/**
+ * Model SampleEquipmentUsage
+ * 
+ */
+export type SampleEquipmentUsage = $Result.DefaultSelection<Prisma.$SampleEquipmentUsagePayload>
+/**
  * Model AnalysisResult
  * 
  */
@@ -103,6 +123,21 @@ export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
  * 
  */
 export type AuditLog = $Result.DefaultSelection<Prisma.$AuditLogPayload>
+/**
+ * Model GlobalAddOnCatalog
+ * 
+ */
+export type GlobalAddOnCatalog = $Result.DefaultSelection<Prisma.$GlobalAddOnCatalogPayload>
+/**
+ * Model ServiceAddOnMapping
+ * 
+ */
+export type ServiceAddOnMapping = $Result.DefaultSelection<Prisma.$ServiceAddOnMappingPayload>
+/**
+ * Model ServiceAddOn
+ * 
+ */
+export type ServiceAddOn = $Result.DefaultSelection<Prisma.$ServiceAddOnPayload>
 
 /**
  * Enums
@@ -549,6 +584,46 @@ export class PrismaClient<
   get sampleTracking(): Prisma.SampleTrackingDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.workspaceBooking`: Exposes CRUD operations for the **WorkspaceBooking** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more WorkspaceBookings
+    * const workspaceBookings = await prisma.workspaceBooking.findMany()
+    * ```
+    */
+  get workspaceBooking(): Prisma.WorkspaceBookingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.labEquipment`: Exposes CRUD operations for the **LabEquipment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LabEquipments
+    * const labEquipments = await prisma.labEquipment.findMany()
+    * ```
+    */
+  get labEquipment(): Prisma.LabEquipmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.workspaceEquipmentUsage`: Exposes CRUD operations for the **WorkspaceEquipmentUsage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more WorkspaceEquipmentUsages
+    * const workspaceEquipmentUsages = await prisma.workspaceEquipmentUsage.findMany()
+    * ```
+    */
+  get workspaceEquipmentUsage(): Prisma.WorkspaceEquipmentUsageDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sampleEquipmentUsage`: Exposes CRUD operations for the **SampleEquipmentUsage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SampleEquipmentUsages
+    * const sampleEquipmentUsages = await prisma.sampleEquipmentUsage.findMany()
+    * ```
+    */
+  get sampleEquipmentUsage(): Prisma.SampleEquipmentUsageDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.analysisResult`: Exposes CRUD operations for the **AnalysisResult** model.
     * Example usage:
     * ```ts
@@ -577,6 +652,36 @@ export class PrismaClient<
     * ```
     */
   get auditLog(): Prisma.AuditLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.globalAddOnCatalog`: Exposes CRUD operations for the **GlobalAddOnCatalog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GlobalAddOnCatalogs
+    * const globalAddOnCatalogs = await prisma.globalAddOnCatalog.findMany()
+    * ```
+    */
+  get globalAddOnCatalog(): Prisma.GlobalAddOnCatalogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.serviceAddOnMapping`: Exposes CRUD operations for the **ServiceAddOnMapping** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ServiceAddOnMappings
+    * const serviceAddOnMappings = await prisma.serviceAddOnMapping.findMany()
+    * ```
+    */
+  get serviceAddOnMapping(): Prisma.ServiceAddOnMappingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.serviceAddOn`: Exposes CRUD operations for the **ServiceAddOn** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ServiceAddOns
+    * const serviceAddOns = await prisma.serviceAddOn.findMany()
+    * ```
+    */
+  get serviceAddOn(): Prisma.ServiceAddOnDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1033,9 +1138,16 @@ export namespace Prisma {
     Invoice: 'Invoice',
     Payment: 'Payment',
     SampleTracking: 'SampleTracking',
+    WorkspaceBooking: 'WorkspaceBooking',
+    LabEquipment: 'LabEquipment',
+    WorkspaceEquipmentUsage: 'WorkspaceEquipmentUsage',
+    SampleEquipmentUsage: 'SampleEquipmentUsage',
     AnalysisResult: 'AnalysisResult',
     Notification: 'Notification',
-    AuditLog: 'AuditLog'
+    AuditLog: 'AuditLog',
+    GlobalAddOnCatalog: 'GlobalAddOnCatalog',
+    ServiceAddOnMapping: 'ServiceAddOnMapping',
+    ServiceAddOn: 'ServiceAddOn'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1054,7 +1166,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "betterAuthUser" | "betterAuthSession" | "betterAuthAccount" | "betterAuthVerification" | "user" | "authProvider" | "service" | "servicePricing" | "bookingRequest" | "bookingServiceItem" | "sampleModification" | "serviceForm" | "invoice" | "payment" | "sampleTracking" | "analysisResult" | "notification" | "auditLog"
+      modelProps: "betterAuthUser" | "betterAuthSession" | "betterAuthAccount" | "betterAuthVerification" | "user" | "authProvider" | "service" | "servicePricing" | "bookingRequest" | "bookingServiceItem" | "sampleModification" | "serviceForm" | "invoice" | "payment" | "sampleTracking" | "workspaceBooking" | "labEquipment" | "workspaceEquipmentUsage" | "sampleEquipmentUsage" | "analysisResult" | "notification" | "auditLog" | "globalAddOnCatalog" | "serviceAddOnMapping" | "serviceAddOn"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2168,6 +2280,302 @@ export namespace Prisma {
           }
         }
       }
+      WorkspaceBooking: {
+        payload: Prisma.$WorkspaceBookingPayload<ExtArgs>
+        fields: Prisma.WorkspaceBookingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.WorkspaceBookingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceBookingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.WorkspaceBookingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceBookingPayload>
+          }
+          findFirst: {
+            args: Prisma.WorkspaceBookingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceBookingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.WorkspaceBookingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceBookingPayload>
+          }
+          findMany: {
+            args: Prisma.WorkspaceBookingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceBookingPayload>[]
+          }
+          create: {
+            args: Prisma.WorkspaceBookingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceBookingPayload>
+          }
+          createMany: {
+            args: Prisma.WorkspaceBookingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.WorkspaceBookingCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceBookingPayload>[]
+          }
+          delete: {
+            args: Prisma.WorkspaceBookingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceBookingPayload>
+          }
+          update: {
+            args: Prisma.WorkspaceBookingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceBookingPayload>
+          }
+          deleteMany: {
+            args: Prisma.WorkspaceBookingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.WorkspaceBookingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.WorkspaceBookingUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceBookingPayload>[]
+          }
+          upsert: {
+            args: Prisma.WorkspaceBookingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceBookingPayload>
+          }
+          aggregate: {
+            args: Prisma.WorkspaceBookingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateWorkspaceBooking>
+          }
+          groupBy: {
+            args: Prisma.WorkspaceBookingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<WorkspaceBookingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.WorkspaceBookingCountArgs<ExtArgs>
+            result: $Utils.Optional<WorkspaceBookingCountAggregateOutputType> | number
+          }
+        }
+      }
+      LabEquipment: {
+        payload: Prisma.$LabEquipmentPayload<ExtArgs>
+        fields: Prisma.LabEquipmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LabEquipmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LabEquipmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LabEquipmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LabEquipmentPayload>
+          }
+          findFirst: {
+            args: Prisma.LabEquipmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LabEquipmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LabEquipmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LabEquipmentPayload>
+          }
+          findMany: {
+            args: Prisma.LabEquipmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LabEquipmentPayload>[]
+          }
+          create: {
+            args: Prisma.LabEquipmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LabEquipmentPayload>
+          }
+          createMany: {
+            args: Prisma.LabEquipmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LabEquipmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LabEquipmentPayload>[]
+          }
+          delete: {
+            args: Prisma.LabEquipmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LabEquipmentPayload>
+          }
+          update: {
+            args: Prisma.LabEquipmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LabEquipmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.LabEquipmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LabEquipmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LabEquipmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LabEquipmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.LabEquipmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LabEquipmentPayload>
+          }
+          aggregate: {
+            args: Prisma.LabEquipmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLabEquipment>
+          }
+          groupBy: {
+            args: Prisma.LabEquipmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LabEquipmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LabEquipmentCountArgs<ExtArgs>
+            result: $Utils.Optional<LabEquipmentCountAggregateOutputType> | number
+          }
+        }
+      }
+      WorkspaceEquipmentUsage: {
+        payload: Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>
+        fields: Prisma.WorkspaceEquipmentUsageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.WorkspaceEquipmentUsageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceEquipmentUsagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.WorkspaceEquipmentUsageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceEquipmentUsagePayload>
+          }
+          findFirst: {
+            args: Prisma.WorkspaceEquipmentUsageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceEquipmentUsagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.WorkspaceEquipmentUsageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceEquipmentUsagePayload>
+          }
+          findMany: {
+            args: Prisma.WorkspaceEquipmentUsageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceEquipmentUsagePayload>[]
+          }
+          create: {
+            args: Prisma.WorkspaceEquipmentUsageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceEquipmentUsagePayload>
+          }
+          createMany: {
+            args: Prisma.WorkspaceEquipmentUsageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.WorkspaceEquipmentUsageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceEquipmentUsagePayload>[]
+          }
+          delete: {
+            args: Prisma.WorkspaceEquipmentUsageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceEquipmentUsagePayload>
+          }
+          update: {
+            args: Prisma.WorkspaceEquipmentUsageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceEquipmentUsagePayload>
+          }
+          deleteMany: {
+            args: Prisma.WorkspaceEquipmentUsageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.WorkspaceEquipmentUsageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.WorkspaceEquipmentUsageUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceEquipmentUsagePayload>[]
+          }
+          upsert: {
+            args: Prisma.WorkspaceEquipmentUsageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WorkspaceEquipmentUsagePayload>
+          }
+          aggregate: {
+            args: Prisma.WorkspaceEquipmentUsageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateWorkspaceEquipmentUsage>
+          }
+          groupBy: {
+            args: Prisma.WorkspaceEquipmentUsageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<WorkspaceEquipmentUsageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.WorkspaceEquipmentUsageCountArgs<ExtArgs>
+            result: $Utils.Optional<WorkspaceEquipmentUsageCountAggregateOutputType> | number
+          }
+        }
+      }
+      SampleEquipmentUsage: {
+        payload: Prisma.$SampleEquipmentUsagePayload<ExtArgs>
+        fields: Prisma.SampleEquipmentUsageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SampleEquipmentUsageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SampleEquipmentUsagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SampleEquipmentUsageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SampleEquipmentUsagePayload>
+          }
+          findFirst: {
+            args: Prisma.SampleEquipmentUsageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SampleEquipmentUsagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SampleEquipmentUsageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SampleEquipmentUsagePayload>
+          }
+          findMany: {
+            args: Prisma.SampleEquipmentUsageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SampleEquipmentUsagePayload>[]
+          }
+          create: {
+            args: Prisma.SampleEquipmentUsageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SampleEquipmentUsagePayload>
+          }
+          createMany: {
+            args: Prisma.SampleEquipmentUsageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SampleEquipmentUsageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SampleEquipmentUsagePayload>[]
+          }
+          delete: {
+            args: Prisma.SampleEquipmentUsageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SampleEquipmentUsagePayload>
+          }
+          update: {
+            args: Prisma.SampleEquipmentUsageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SampleEquipmentUsagePayload>
+          }
+          deleteMany: {
+            args: Prisma.SampleEquipmentUsageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SampleEquipmentUsageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SampleEquipmentUsageUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SampleEquipmentUsagePayload>[]
+          }
+          upsert: {
+            args: Prisma.SampleEquipmentUsageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SampleEquipmentUsagePayload>
+          }
+          aggregate: {
+            args: Prisma.SampleEquipmentUsageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSampleEquipmentUsage>
+          }
+          groupBy: {
+            args: Prisma.SampleEquipmentUsageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SampleEquipmentUsageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SampleEquipmentUsageCountArgs<ExtArgs>
+            result: $Utils.Optional<SampleEquipmentUsageCountAggregateOutputType> | number
+          }
+        }
+      }
       AnalysisResult: {
         payload: Prisma.$AnalysisResultPayload<ExtArgs>
         fields: Prisma.AnalysisResultFieldRefs
@@ -2390,6 +2798,228 @@ export namespace Prisma {
           }
         }
       }
+      GlobalAddOnCatalog: {
+        payload: Prisma.$GlobalAddOnCatalogPayload<ExtArgs>
+        fields: Prisma.GlobalAddOnCatalogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GlobalAddOnCatalogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GlobalAddOnCatalogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GlobalAddOnCatalogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GlobalAddOnCatalogPayload>
+          }
+          findFirst: {
+            args: Prisma.GlobalAddOnCatalogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GlobalAddOnCatalogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GlobalAddOnCatalogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GlobalAddOnCatalogPayload>
+          }
+          findMany: {
+            args: Prisma.GlobalAddOnCatalogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GlobalAddOnCatalogPayload>[]
+          }
+          create: {
+            args: Prisma.GlobalAddOnCatalogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GlobalAddOnCatalogPayload>
+          }
+          createMany: {
+            args: Prisma.GlobalAddOnCatalogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.GlobalAddOnCatalogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GlobalAddOnCatalogPayload>[]
+          }
+          delete: {
+            args: Prisma.GlobalAddOnCatalogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GlobalAddOnCatalogPayload>
+          }
+          update: {
+            args: Prisma.GlobalAddOnCatalogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GlobalAddOnCatalogPayload>
+          }
+          deleteMany: {
+            args: Prisma.GlobalAddOnCatalogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GlobalAddOnCatalogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.GlobalAddOnCatalogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GlobalAddOnCatalogPayload>[]
+          }
+          upsert: {
+            args: Prisma.GlobalAddOnCatalogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GlobalAddOnCatalogPayload>
+          }
+          aggregate: {
+            args: Prisma.GlobalAddOnCatalogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGlobalAddOnCatalog>
+          }
+          groupBy: {
+            args: Prisma.GlobalAddOnCatalogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GlobalAddOnCatalogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.GlobalAddOnCatalogCountArgs<ExtArgs>
+            result: $Utils.Optional<GlobalAddOnCatalogCountAggregateOutputType> | number
+          }
+        }
+      }
+      ServiceAddOnMapping: {
+        payload: Prisma.$ServiceAddOnMappingPayload<ExtArgs>
+        fields: Prisma.ServiceAddOnMappingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ServiceAddOnMappingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnMappingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ServiceAddOnMappingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnMappingPayload>
+          }
+          findFirst: {
+            args: Prisma.ServiceAddOnMappingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnMappingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ServiceAddOnMappingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnMappingPayload>
+          }
+          findMany: {
+            args: Prisma.ServiceAddOnMappingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnMappingPayload>[]
+          }
+          create: {
+            args: Prisma.ServiceAddOnMappingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnMappingPayload>
+          }
+          createMany: {
+            args: Prisma.ServiceAddOnMappingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ServiceAddOnMappingCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnMappingPayload>[]
+          }
+          delete: {
+            args: Prisma.ServiceAddOnMappingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnMappingPayload>
+          }
+          update: {
+            args: Prisma.ServiceAddOnMappingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnMappingPayload>
+          }
+          deleteMany: {
+            args: Prisma.ServiceAddOnMappingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ServiceAddOnMappingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ServiceAddOnMappingUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnMappingPayload>[]
+          }
+          upsert: {
+            args: Prisma.ServiceAddOnMappingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnMappingPayload>
+          }
+          aggregate: {
+            args: Prisma.ServiceAddOnMappingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateServiceAddOnMapping>
+          }
+          groupBy: {
+            args: Prisma.ServiceAddOnMappingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ServiceAddOnMappingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ServiceAddOnMappingCountArgs<ExtArgs>
+            result: $Utils.Optional<ServiceAddOnMappingCountAggregateOutputType> | number
+          }
+        }
+      }
+      ServiceAddOn: {
+        payload: Prisma.$ServiceAddOnPayload<ExtArgs>
+        fields: Prisma.ServiceAddOnFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ServiceAddOnFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ServiceAddOnFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnPayload>
+          }
+          findFirst: {
+            args: Prisma.ServiceAddOnFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ServiceAddOnFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnPayload>
+          }
+          findMany: {
+            args: Prisma.ServiceAddOnFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnPayload>[]
+          }
+          create: {
+            args: Prisma.ServiceAddOnCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnPayload>
+          }
+          createMany: {
+            args: Prisma.ServiceAddOnCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ServiceAddOnCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnPayload>[]
+          }
+          delete: {
+            args: Prisma.ServiceAddOnDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnPayload>
+          }
+          update: {
+            args: Prisma.ServiceAddOnUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnPayload>
+          }
+          deleteMany: {
+            args: Prisma.ServiceAddOnDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ServiceAddOnUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ServiceAddOnUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnPayload>[]
+          }
+          upsert: {
+            args: Prisma.ServiceAddOnUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceAddOnPayload>
+          }
+          aggregate: {
+            args: Prisma.ServiceAddOnAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateServiceAddOn>
+          }
+          groupBy: {
+            args: Prisma.ServiceAddOnGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ServiceAddOnGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ServiceAddOnCountArgs<ExtArgs>
+            result: $Utils.Optional<ServiceAddOnCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2501,9 +3131,16 @@ export namespace Prisma {
     invoice?: InvoiceOmit
     payment?: PaymentOmit
     sampleTracking?: SampleTrackingOmit
+    workspaceBooking?: WorkspaceBookingOmit
+    labEquipment?: LabEquipmentOmit
+    workspaceEquipmentUsage?: WorkspaceEquipmentUsageOmit
+    sampleEquipmentUsage?: SampleEquipmentUsageOmit
     analysisResult?: AnalysisResultOmit
     notification?: NotificationOmit
     auditLog?: AuditLogOmit
+    globalAddOnCatalog?: GlobalAddOnCatalogOmit
+    serviceAddOnMapping?: ServiceAddOnMappingOmit
+    serviceAddOn?: ServiceAddOnOmit
   }
 
   /* Types for Logging */
@@ -2783,11 +3420,13 @@ export namespace Prisma {
   export type ServiceCountOutputType = {
     pricing: number
     bookingItems: number
+    addOnMappings: number
   }
 
   export type ServiceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pricing?: boolean | ServiceCountOutputTypeCountPricingArgs
     bookingItems?: boolean | ServiceCountOutputTypeCountBookingItemsArgs
+    addOnMappings?: boolean | ServiceCountOutputTypeCountAddOnMappingsArgs
   }
 
   // Custom InputTypes
@@ -2815,6 +3454,13 @@ export namespace Prisma {
     where?: BookingServiceItemWhereInput
   }
 
+  /**
+   * ServiceCountOutputType without action
+   */
+  export type ServiceCountOutputTypeCountAddOnMappingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ServiceAddOnMappingWhereInput
+  }
+
 
   /**
    * Count Type BookingRequestCountOutputType
@@ -2822,11 +3468,13 @@ export namespace Prisma {
 
   export type BookingRequestCountOutputType = {
     serviceItems: number
+    workspaceBookings: number
     serviceForms: number
   }
 
   export type BookingRequestCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     serviceItems?: boolean | BookingRequestCountOutputTypeCountServiceItemsArgs
+    workspaceBookings?: boolean | BookingRequestCountOutputTypeCountWorkspaceBookingsArgs
     serviceForms?: boolean | BookingRequestCountOutputTypeCountServiceFormsArgs
   }
 
@@ -2851,6 +3499,13 @@ export namespace Prisma {
   /**
    * BookingRequestCountOutputType without action
    */
+  export type BookingRequestCountOutputTypeCountWorkspaceBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WorkspaceBookingWhereInput
+  }
+
+  /**
+   * BookingRequestCountOutputType without action
+   */
   export type BookingRequestCountOutputTypeCountServiceFormsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ServiceFormWhereInput
   }
@@ -2861,13 +3516,17 @@ export namespace Prisma {
    */
 
   export type BookingServiceItemCountOutputType = {
+    equipmentUsages: number
     modifications: number
     sampleTracking: number
+    serviceAddOns: number
   }
 
   export type BookingServiceItemCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    equipmentUsages?: boolean | BookingServiceItemCountOutputTypeCountEquipmentUsagesArgs
     modifications?: boolean | BookingServiceItemCountOutputTypeCountModificationsArgs
     sampleTracking?: boolean | BookingServiceItemCountOutputTypeCountSampleTrackingArgs
+    serviceAddOns?: boolean | BookingServiceItemCountOutputTypeCountServiceAddOnsArgs
   }
 
   // Custom InputTypes
@@ -2884,6 +3543,13 @@ export namespace Prisma {
   /**
    * BookingServiceItemCountOutputType without action
    */
+  export type BookingServiceItemCountOutputTypeCountEquipmentUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SampleEquipmentUsageWhereInput
+  }
+
+  /**
+   * BookingServiceItemCountOutputType without action
+   */
   export type BookingServiceItemCountOutputTypeCountModificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SampleModificationWhereInput
   }
@@ -2893,6 +3559,13 @@ export namespace Prisma {
    */
   export type BookingServiceItemCountOutputTypeCountSampleTrackingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SampleTrackingWhereInput
+  }
+
+  /**
+   * BookingServiceItemCountOutputType without action
+   */
+  export type BookingServiceItemCountOutputTypeCountServiceAddOnsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ServiceAddOnWhereInput
   }
 
 
@@ -2986,6 +3659,126 @@ export namespace Prisma {
    */
   export type SampleTrackingCountOutputTypeCountAnalysisResultsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AnalysisResultWhereInput
+  }
+
+
+  /**
+   * Count Type WorkspaceBookingCountOutputType
+   */
+
+  export type WorkspaceBookingCountOutputType = {
+    equipmentUsages: number
+    serviceAddOns: number
+  }
+
+  export type WorkspaceBookingCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    equipmentUsages?: boolean | WorkspaceBookingCountOutputTypeCountEquipmentUsagesArgs
+    serviceAddOns?: boolean | WorkspaceBookingCountOutputTypeCountServiceAddOnsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * WorkspaceBookingCountOutputType without action
+   */
+  export type WorkspaceBookingCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBookingCountOutputType
+     */
+    select?: WorkspaceBookingCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * WorkspaceBookingCountOutputType without action
+   */
+  export type WorkspaceBookingCountOutputTypeCountEquipmentUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WorkspaceEquipmentUsageWhereInput
+  }
+
+  /**
+   * WorkspaceBookingCountOutputType without action
+   */
+  export type WorkspaceBookingCountOutputTypeCountServiceAddOnsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ServiceAddOnWhereInput
+  }
+
+
+  /**
+   * Count Type LabEquipmentCountOutputType
+   */
+
+  export type LabEquipmentCountOutputType = {
+    workspaceUsages: number
+    sampleUsages: number
+  }
+
+  export type LabEquipmentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspaceUsages?: boolean | LabEquipmentCountOutputTypeCountWorkspaceUsagesArgs
+    sampleUsages?: boolean | LabEquipmentCountOutputTypeCountSampleUsagesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * LabEquipmentCountOutputType without action
+   */
+  export type LabEquipmentCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipmentCountOutputType
+     */
+    select?: LabEquipmentCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * LabEquipmentCountOutputType without action
+   */
+  export type LabEquipmentCountOutputTypeCountWorkspaceUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WorkspaceEquipmentUsageWhereInput
+  }
+
+  /**
+   * LabEquipmentCountOutputType without action
+   */
+  export type LabEquipmentCountOutputTypeCountSampleUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SampleEquipmentUsageWhereInput
+  }
+
+
+  /**
+   * Count Type GlobalAddOnCatalogCountOutputType
+   */
+
+  export type GlobalAddOnCatalogCountOutputType = {
+    serviceMappings: number
+    serviceAddOns: number
+  }
+
+  export type GlobalAddOnCatalogCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    serviceMappings?: boolean | GlobalAddOnCatalogCountOutputTypeCountServiceMappingsArgs
+    serviceAddOns?: boolean | GlobalAddOnCatalogCountOutputTypeCountServiceAddOnsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * GlobalAddOnCatalogCountOutputType without action
+   */
+  export type GlobalAddOnCatalogCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalogCountOutputType
+     */
+    select?: GlobalAddOnCatalogCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * GlobalAddOnCatalogCountOutputType without action
+   */
+  export type GlobalAddOnCatalogCountOutputTypeCountServiceMappingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ServiceAddOnMappingWhereInput
+  }
+
+  /**
+   * GlobalAddOnCatalogCountOutputType without action
+   */
+  export type GlobalAddOnCatalogCountOutputTypeCountServiceAddOnsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ServiceAddOnWhereInput
   }
 
 
@@ -10514,6 +11307,7 @@ export namespace Prisma {
     updatedAt?: boolean
     pricing?: boolean | Service$pricingArgs<ExtArgs>
     bookingItems?: boolean | Service$bookingItemsArgs<ExtArgs>
+    addOnMappings?: boolean | Service$addOnMappingsArgs<ExtArgs>
     _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["service"]>
 
@@ -10563,6 +11357,7 @@ export namespace Prisma {
   export type ServiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pricing?: boolean | Service$pricingArgs<ExtArgs>
     bookingItems?: boolean | Service$bookingItemsArgs<ExtArgs>
+    addOnMappings?: boolean | Service$addOnMappingsArgs<ExtArgs>
     _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ServiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -10573,6 +11368,7 @@ export namespace Prisma {
     objects: {
       pricing: Prisma.$ServicePricingPayload<ExtArgs>[]
       bookingItems: Prisma.$BookingServiceItemPayload<ExtArgs>[]
+      addOnMappings: Prisma.$ServiceAddOnMappingPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10982,6 +11778,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     pricing<T extends Service$pricingArgs<ExtArgs> = {}>(args?: Subset<T, Service$pricingArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePricingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     bookingItems<T extends Service$bookingItemsArgs<ExtArgs> = {}>(args?: Subset<T, Service$bookingItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingServiceItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    addOnMappings<T extends Service$addOnMappingsArgs<ExtArgs> = {}>(args?: Subset<T, Service$addOnMappingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11455,6 +12252,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: BookingServiceItemScalarFieldEnum | BookingServiceItemScalarFieldEnum[]
+  }
+
+  /**
+   * Service.addOnMappings
+   */
+  export type Service$addOnMappingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+    where?: ServiceAddOnMappingWhereInput
+    orderBy?: ServiceAddOnMappingOrderByWithRelationInput | ServiceAddOnMappingOrderByWithRelationInput[]
+    cursor?: ServiceAddOnMappingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ServiceAddOnMappingScalarFieldEnum | ServiceAddOnMappingScalarFieldEnum[]
   }
 
   /**
@@ -12893,6 +13714,7 @@ export namespace Prisma {
     user?: boolean | UserDefaultArgs<ExtArgs>
     reviewedByUser?: boolean | BookingRequest$reviewedByUserArgs<ExtArgs>
     serviceItems?: boolean | BookingRequest$serviceItemsArgs<ExtArgs>
+    workspaceBookings?: boolean | BookingRequest$workspaceBookingsArgs<ExtArgs>
     serviceForms?: boolean | BookingRequest$serviceFormsArgs<ExtArgs>
     _count?: boolean | BookingRequestCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["bookingRequest"]>
@@ -12957,6 +13779,7 @@ export namespace Prisma {
     user?: boolean | UserDefaultArgs<ExtArgs>
     reviewedByUser?: boolean | BookingRequest$reviewedByUserArgs<ExtArgs>
     serviceItems?: boolean | BookingRequest$serviceItemsArgs<ExtArgs>
+    workspaceBookings?: boolean | BookingRequest$workspaceBookingsArgs<ExtArgs>
     serviceForms?: boolean | BookingRequest$serviceFormsArgs<ExtArgs>
     _count?: boolean | BookingRequestCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -12975,6 +13798,7 @@ export namespace Prisma {
       user: Prisma.$UserPayload<ExtArgs>
       reviewedByUser: Prisma.$UserPayload<ExtArgs> | null
       serviceItems: Prisma.$BookingServiceItemPayload<ExtArgs>[]
+      workspaceBookings: Prisma.$WorkspaceBookingPayload<ExtArgs>[]
       serviceForms: Prisma.$ServiceFormPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -13389,6 +14213,7 @@ export namespace Prisma {
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     reviewedByUser<T extends BookingRequest$reviewedByUserArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequest$reviewedByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     serviceItems<T extends BookingRequest$serviceItemsArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequest$serviceItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingServiceItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    workspaceBookings<T extends BookingRequest$workspaceBookingsArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequest$workspaceBookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     serviceForms<T extends BookingRequest$serviceFormsArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequest$serviceFormsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceFormPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -13872,6 +14697,30 @@ export namespace Prisma {
   }
 
   /**
+   * BookingRequest.workspaceBookings
+   */
+  export type BookingRequest$workspaceBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+    where?: WorkspaceBookingWhereInput
+    orderBy?: WorkspaceBookingOrderByWithRelationInput | WorkspaceBookingOrderByWithRelationInput[]
+    cursor?: WorkspaceBookingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WorkspaceBookingScalarFieldEnum | WorkspaceBookingScalarFieldEnum[]
+  }
+
+  /**
    * BookingRequest.serviceForms
    */
   export type BookingRequest$serviceFormsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13954,6 +14803,7 @@ export namespace Prisma {
     durationMonths: number | null
     unitPrice: Decimal | null
     totalPrice: Decimal | null
+    sampleName: string | null
     sampleDetails: string | null
     sampleType: string | null
     sampleHazard: string | null
@@ -13968,6 +14818,14 @@ export namespace Prisma {
     expectedRetentionTime: Decimal | null
     samplePreparation: string | null
     notes: string | null
+    expectedCompletionDate: Date | null
+    actualCompletionDate: Date | null
+    turnaroundEstimate: string | null
+    hplcPreparationRequired: boolean | null
+    temperatureControlled: boolean | null
+    lightSensitive: boolean | null
+    hazardousMaterial: boolean | null
+    inertAtmosphere: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -13980,6 +14838,7 @@ export namespace Prisma {
     durationMonths: number | null
     unitPrice: Decimal | null
     totalPrice: Decimal | null
+    sampleName: string | null
     sampleDetails: string | null
     sampleType: string | null
     sampleHazard: string | null
@@ -13994,6 +14853,14 @@ export namespace Prisma {
     expectedRetentionTime: Decimal | null
     samplePreparation: string | null
     notes: string | null
+    expectedCompletionDate: Date | null
+    actualCompletionDate: Date | null
+    turnaroundEstimate: string | null
+    hplcPreparationRequired: boolean | null
+    temperatureControlled: boolean | null
+    lightSensitive: boolean | null
+    hazardousMaterial: boolean | null
+    inertAtmosphere: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -14006,6 +14873,7 @@ export namespace Prisma {
     durationMonths: number
     unitPrice: number
     totalPrice: number
+    sampleName: number
     sampleDetails: number
     sampleType: number
     sampleHazard: number
@@ -14020,6 +14888,15 @@ export namespace Prisma {
     expectedRetentionTime: number
     samplePreparation: number
     notes: number
+    expectedCompletionDate: number
+    actualCompletionDate: number
+    turnaroundEstimate: number
+    hplcPreparationRequired: number
+    temperatureControlled: number
+    lightSensitive: number
+    hazardousMaterial: number
+    inertAtmosphere: number
+    otherEquipmentRequests: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -14054,6 +14931,7 @@ export namespace Prisma {
     durationMonths?: true
     unitPrice?: true
     totalPrice?: true
+    sampleName?: true
     sampleDetails?: true
     sampleType?: true
     sampleHazard?: true
@@ -14068,6 +14946,14 @@ export namespace Prisma {
     expectedRetentionTime?: true
     samplePreparation?: true
     notes?: true
+    expectedCompletionDate?: true
+    actualCompletionDate?: true
+    turnaroundEstimate?: true
+    hplcPreparationRequired?: true
+    temperatureControlled?: true
+    lightSensitive?: true
+    hazardousMaterial?: true
+    inertAtmosphere?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -14080,6 +14966,7 @@ export namespace Prisma {
     durationMonths?: true
     unitPrice?: true
     totalPrice?: true
+    sampleName?: true
     sampleDetails?: true
     sampleType?: true
     sampleHazard?: true
@@ -14094,6 +14981,14 @@ export namespace Prisma {
     expectedRetentionTime?: true
     samplePreparation?: true
     notes?: true
+    expectedCompletionDate?: true
+    actualCompletionDate?: true
+    turnaroundEstimate?: true
+    hplcPreparationRequired?: true
+    temperatureControlled?: true
+    lightSensitive?: true
+    hazardousMaterial?: true
+    inertAtmosphere?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -14106,6 +15001,7 @@ export namespace Prisma {
     durationMonths?: true
     unitPrice?: true
     totalPrice?: true
+    sampleName?: true
     sampleDetails?: true
     sampleType?: true
     sampleHazard?: true
@@ -14120,6 +15016,15 @@ export namespace Prisma {
     expectedRetentionTime?: true
     samplePreparation?: true
     notes?: true
+    expectedCompletionDate?: true
+    actualCompletionDate?: true
+    turnaroundEstimate?: true
+    hplcPreparationRequired?: true
+    temperatureControlled?: true
+    lightSensitive?: true
+    hazardousMaterial?: true
+    inertAtmosphere?: true
+    otherEquipmentRequests?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -14219,6 +15124,7 @@ export namespace Prisma {
     durationMonths: number
     unitPrice: Decimal
     totalPrice: Decimal
+    sampleName: string | null
     sampleDetails: string | null
     sampleType: string | null
     sampleHazard: string | null
@@ -14233,6 +15139,15 @@ export namespace Prisma {
     expectedRetentionTime: Decimal | null
     samplePreparation: string | null
     notes: string | null
+    expectedCompletionDate: Date | null
+    actualCompletionDate: Date | null
+    turnaroundEstimate: string | null
+    hplcPreparationRequired: boolean
+    temperatureControlled: boolean
+    lightSensitive: boolean
+    hazardousMaterial: boolean
+    inertAtmosphere: boolean
+    otherEquipmentRequests: JsonValue | null
     createdAt: Date
     updatedAt: Date
     _count: BookingServiceItemCountAggregateOutputType | null
@@ -14264,6 +15179,7 @@ export namespace Prisma {
     durationMonths?: boolean
     unitPrice?: boolean
     totalPrice?: boolean
+    sampleName?: boolean
     sampleDetails?: boolean
     sampleType?: boolean
     sampleHazard?: boolean
@@ -14278,12 +15194,23 @@ export namespace Prisma {
     expectedRetentionTime?: boolean
     samplePreparation?: boolean
     notes?: boolean
+    expectedCompletionDate?: boolean
+    actualCompletionDate?: boolean
+    turnaroundEstimate?: boolean
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     bookingRequest?: boolean | BookingRequestDefaultArgs<ExtArgs>
     service?: boolean | ServiceDefaultArgs<ExtArgs>
+    equipmentUsages?: boolean | BookingServiceItem$equipmentUsagesArgs<ExtArgs>
     modifications?: boolean | BookingServiceItem$modificationsArgs<ExtArgs>
     sampleTracking?: boolean | BookingServiceItem$sampleTrackingArgs<ExtArgs>
+    serviceAddOns?: boolean | BookingServiceItem$serviceAddOnsArgs<ExtArgs>
     _count?: boolean | BookingServiceItemCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["bookingServiceItem"]>
 
@@ -14295,6 +15222,7 @@ export namespace Prisma {
     durationMonths?: boolean
     unitPrice?: boolean
     totalPrice?: boolean
+    sampleName?: boolean
     sampleDetails?: boolean
     sampleType?: boolean
     sampleHazard?: boolean
@@ -14309,6 +15237,15 @@ export namespace Prisma {
     expectedRetentionTime?: boolean
     samplePreparation?: boolean
     notes?: boolean
+    expectedCompletionDate?: boolean
+    actualCompletionDate?: boolean
+    turnaroundEstimate?: boolean
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     bookingRequest?: boolean | BookingRequestDefaultArgs<ExtArgs>
@@ -14323,6 +15260,7 @@ export namespace Prisma {
     durationMonths?: boolean
     unitPrice?: boolean
     totalPrice?: boolean
+    sampleName?: boolean
     sampleDetails?: boolean
     sampleType?: boolean
     sampleHazard?: boolean
@@ -14337,6 +15275,15 @@ export namespace Prisma {
     expectedRetentionTime?: boolean
     samplePreparation?: boolean
     notes?: boolean
+    expectedCompletionDate?: boolean
+    actualCompletionDate?: boolean
+    turnaroundEstimate?: boolean
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     bookingRequest?: boolean | BookingRequestDefaultArgs<ExtArgs>
@@ -14351,6 +15298,7 @@ export namespace Prisma {
     durationMonths?: boolean
     unitPrice?: boolean
     totalPrice?: boolean
+    sampleName?: boolean
     sampleDetails?: boolean
     sampleType?: boolean
     sampleHazard?: boolean
@@ -14365,16 +15313,27 @@ export namespace Prisma {
     expectedRetentionTime?: boolean
     samplePreparation?: boolean
     notes?: boolean
+    expectedCompletionDate?: boolean
+    actualCompletionDate?: boolean
+    turnaroundEstimate?: boolean
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type BookingServiceItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bookingRequestId" | "serviceId" | "quantity" | "durationMonths" | "unitPrice" | "totalPrice" | "sampleDetails" | "sampleType" | "sampleHazard" | "testingMethod" | "degasConditions" | "solventSystem" | "solvents" | "solventComposition" | "columnType" | "flowRate" | "wavelength" | "expectedRetentionTime" | "samplePreparation" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["bookingServiceItem"]>
+  export type BookingServiceItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bookingRequestId" | "serviceId" | "quantity" | "durationMonths" | "unitPrice" | "totalPrice" | "sampleName" | "sampleDetails" | "sampleType" | "sampleHazard" | "testingMethod" | "degasConditions" | "solventSystem" | "solvents" | "solventComposition" | "columnType" | "flowRate" | "wavelength" | "expectedRetentionTime" | "samplePreparation" | "notes" | "expectedCompletionDate" | "actualCompletionDate" | "turnaroundEstimate" | "hplcPreparationRequired" | "temperatureControlled" | "lightSensitive" | "hazardousMaterial" | "inertAtmosphere" | "otherEquipmentRequests" | "createdAt" | "updatedAt", ExtArgs["result"]["bookingServiceItem"]>
   export type BookingServiceItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bookingRequest?: boolean | BookingRequestDefaultArgs<ExtArgs>
     service?: boolean | ServiceDefaultArgs<ExtArgs>
+    equipmentUsages?: boolean | BookingServiceItem$equipmentUsagesArgs<ExtArgs>
     modifications?: boolean | BookingServiceItem$modificationsArgs<ExtArgs>
     sampleTracking?: boolean | BookingServiceItem$sampleTrackingArgs<ExtArgs>
+    serviceAddOns?: boolean | BookingServiceItem$serviceAddOnsArgs<ExtArgs>
     _count?: boolean | BookingServiceItemCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BookingServiceItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14391,8 +15350,10 @@ export namespace Prisma {
     objects: {
       bookingRequest: Prisma.$BookingRequestPayload<ExtArgs>
       service: Prisma.$ServicePayload<ExtArgs>
+      equipmentUsages: Prisma.$SampleEquipmentUsagePayload<ExtArgs>[]
       modifications: Prisma.$SampleModificationPayload<ExtArgs>[]
       sampleTracking: Prisma.$SampleTrackingPayload<ExtArgs>[]
+      serviceAddOns: Prisma.$ServiceAddOnPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -14402,6 +15363,7 @@ export namespace Prisma {
       durationMonths: number
       unitPrice: Prisma.Decimal
       totalPrice: Prisma.Decimal
+      sampleName: string | null
       sampleDetails: string | null
       sampleType: string | null
       sampleHazard: string | null
@@ -14416,6 +15378,15 @@ export namespace Prisma {
       expectedRetentionTime: Prisma.Decimal | null
       samplePreparation: string | null
       notes: string | null
+      expectedCompletionDate: Date | null
+      actualCompletionDate: Date | null
+      turnaroundEstimate: string | null
+      hplcPreparationRequired: boolean
+      temperatureControlled: boolean
+      lightSensitive: boolean
+      hazardousMaterial: boolean
+      inertAtmosphere: boolean
+      otherEquipmentRequests: Prisma.JsonValue | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["bookingServiceItem"]>
@@ -14814,8 +15785,10 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     bookingRequest<T extends BookingRequestDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequestDefaultArgs<ExtArgs>>): Prisma__BookingRequestClient<$Result.GetResult<Prisma.$BookingRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     service<T extends ServiceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ServiceDefaultArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    equipmentUsages<T extends BookingServiceItem$equipmentUsagesArgs<ExtArgs> = {}>(args?: Subset<T, BookingServiceItem$equipmentUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     modifications<T extends BookingServiceItem$modificationsArgs<ExtArgs> = {}>(args?: Subset<T, BookingServiceItem$modificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SampleModificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sampleTracking<T extends BookingServiceItem$sampleTrackingArgs<ExtArgs> = {}>(args?: Subset<T, BookingServiceItem$sampleTrackingArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SampleTrackingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    serviceAddOns<T extends BookingServiceItem$serviceAddOnsArgs<ExtArgs> = {}>(args?: Subset<T, BookingServiceItem$serviceAddOnsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14852,6 +15825,7 @@ export namespace Prisma {
     readonly durationMonths: FieldRef<"BookingServiceItem", 'Int'>
     readonly unitPrice: FieldRef<"BookingServiceItem", 'Decimal'>
     readonly totalPrice: FieldRef<"BookingServiceItem", 'Decimal'>
+    readonly sampleName: FieldRef<"BookingServiceItem", 'String'>
     readonly sampleDetails: FieldRef<"BookingServiceItem", 'String'>
     readonly sampleType: FieldRef<"BookingServiceItem", 'String'>
     readonly sampleHazard: FieldRef<"BookingServiceItem", 'String'>
@@ -14866,6 +15840,15 @@ export namespace Prisma {
     readonly expectedRetentionTime: FieldRef<"BookingServiceItem", 'Decimal'>
     readonly samplePreparation: FieldRef<"BookingServiceItem", 'String'>
     readonly notes: FieldRef<"BookingServiceItem", 'String'>
+    readonly expectedCompletionDate: FieldRef<"BookingServiceItem", 'DateTime'>
+    readonly actualCompletionDate: FieldRef<"BookingServiceItem", 'DateTime'>
+    readonly turnaroundEstimate: FieldRef<"BookingServiceItem", 'String'>
+    readonly hplcPreparationRequired: FieldRef<"BookingServiceItem", 'Boolean'>
+    readonly temperatureControlled: FieldRef<"BookingServiceItem", 'Boolean'>
+    readonly lightSensitive: FieldRef<"BookingServiceItem", 'Boolean'>
+    readonly hazardousMaterial: FieldRef<"BookingServiceItem", 'Boolean'>
+    readonly inertAtmosphere: FieldRef<"BookingServiceItem", 'Boolean'>
+    readonly otherEquipmentRequests: FieldRef<"BookingServiceItem", 'Json'>
     readonly createdAt: FieldRef<"BookingServiceItem", 'DateTime'>
     readonly updatedAt: FieldRef<"BookingServiceItem", 'DateTime'>
   }
@@ -15264,6 +16247,30 @@ export namespace Prisma {
   }
 
   /**
+   * BookingServiceItem.equipmentUsages
+   */
+  export type BookingServiceItem$equipmentUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+    where?: SampleEquipmentUsageWhereInput
+    orderBy?: SampleEquipmentUsageOrderByWithRelationInput | SampleEquipmentUsageOrderByWithRelationInput[]
+    cursor?: SampleEquipmentUsageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SampleEquipmentUsageScalarFieldEnum | SampleEquipmentUsageScalarFieldEnum[]
+  }
+
+  /**
    * BookingServiceItem.modifications
    */
   export type BookingServiceItem$modificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15309,6 +16316,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SampleTrackingScalarFieldEnum | SampleTrackingScalarFieldEnum[]
+  }
+
+  /**
+   * BookingServiceItem.serviceAddOns
+   */
+  export type BookingServiceItem$serviceAddOnsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    where?: ServiceAddOnWhereInput
+    orderBy?: ServiceAddOnOrderByWithRelationInput | ServiceAddOnOrderByWithRelationInput[]
+    cursor?: ServiceAddOnWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ServiceAddOnScalarFieldEnum | ServiceAddOnScalarFieldEnum[]
   }
 
   /**
@@ -21673,6 +22704,4426 @@ export namespace Prisma {
 
 
   /**
+   * Model WorkspaceBooking
+   */
+
+  export type AggregateWorkspaceBooking = {
+    _count: WorkspaceBookingCountAggregateOutputType | null
+    _min: WorkspaceBookingMinAggregateOutputType | null
+    _max: WorkspaceBookingMaxAggregateOutputType | null
+  }
+
+  export type WorkspaceBookingMinAggregateOutputType = {
+    id: string | null
+    bookingRequestId: string | null
+    startDate: Date | null
+    endDate: Date | null
+    preferredTimeSlot: string | null
+    purpose: string | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type WorkspaceBookingMaxAggregateOutputType = {
+    id: string | null
+    bookingRequestId: string | null
+    startDate: Date | null
+    endDate: Date | null
+    preferredTimeSlot: string | null
+    purpose: string | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type WorkspaceBookingCountAggregateOutputType = {
+    id: number
+    bookingRequestId: number
+    startDate: number
+    endDate: number
+    preferredTimeSlot: number
+    specialEquipment: number
+    purpose: number
+    notes: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type WorkspaceBookingMinAggregateInputType = {
+    id?: true
+    bookingRequestId?: true
+    startDate?: true
+    endDate?: true
+    preferredTimeSlot?: true
+    purpose?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type WorkspaceBookingMaxAggregateInputType = {
+    id?: true
+    bookingRequestId?: true
+    startDate?: true
+    endDate?: true
+    preferredTimeSlot?: true
+    purpose?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type WorkspaceBookingCountAggregateInputType = {
+    id?: true
+    bookingRequestId?: true
+    startDate?: true
+    endDate?: true
+    preferredTimeSlot?: true
+    specialEquipment?: true
+    purpose?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type WorkspaceBookingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WorkspaceBooking to aggregate.
+     */
+    where?: WorkspaceBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WorkspaceBookings to fetch.
+     */
+    orderBy?: WorkspaceBookingOrderByWithRelationInput | WorkspaceBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: WorkspaceBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WorkspaceBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WorkspaceBookings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned WorkspaceBookings
+    **/
+    _count?: true | WorkspaceBookingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: WorkspaceBookingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: WorkspaceBookingMaxAggregateInputType
+  }
+
+  export type GetWorkspaceBookingAggregateType<T extends WorkspaceBookingAggregateArgs> = {
+        [P in keyof T & keyof AggregateWorkspaceBooking]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateWorkspaceBooking[P]>
+      : GetScalarType<T[P], AggregateWorkspaceBooking[P]>
+  }
+
+
+
+
+  export type WorkspaceBookingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WorkspaceBookingWhereInput
+    orderBy?: WorkspaceBookingOrderByWithAggregationInput | WorkspaceBookingOrderByWithAggregationInput[]
+    by: WorkspaceBookingScalarFieldEnum[] | WorkspaceBookingScalarFieldEnum
+    having?: WorkspaceBookingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: WorkspaceBookingCountAggregateInputType | true
+    _min?: WorkspaceBookingMinAggregateInputType
+    _max?: WorkspaceBookingMaxAggregateInputType
+  }
+
+  export type WorkspaceBookingGroupByOutputType = {
+    id: string
+    bookingRequestId: string
+    startDate: Date
+    endDate: Date
+    preferredTimeSlot: string | null
+    specialEquipment: JsonValue | null
+    purpose: string | null
+    notes: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: WorkspaceBookingCountAggregateOutputType | null
+    _min: WorkspaceBookingMinAggregateOutputType | null
+    _max: WorkspaceBookingMaxAggregateOutputType | null
+  }
+
+  type GetWorkspaceBookingGroupByPayload<T extends WorkspaceBookingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<WorkspaceBookingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof WorkspaceBookingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], WorkspaceBookingGroupByOutputType[P]>
+            : GetScalarType<T[P], WorkspaceBookingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type WorkspaceBookingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    bookingRequestId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    preferredTimeSlot?: boolean
+    specialEquipment?: boolean
+    purpose?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    bookingRequest?: boolean | BookingRequestDefaultArgs<ExtArgs>
+    equipmentUsages?: boolean | WorkspaceBooking$equipmentUsagesArgs<ExtArgs>
+    serviceAddOns?: boolean | WorkspaceBooking$serviceAddOnsArgs<ExtArgs>
+    _count?: boolean | WorkspaceBookingCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["workspaceBooking"]>
+
+  export type WorkspaceBookingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    bookingRequestId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    preferredTimeSlot?: boolean
+    specialEquipment?: boolean
+    purpose?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    bookingRequest?: boolean | BookingRequestDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["workspaceBooking"]>
+
+  export type WorkspaceBookingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    bookingRequestId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    preferredTimeSlot?: boolean
+    specialEquipment?: boolean
+    purpose?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    bookingRequest?: boolean | BookingRequestDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["workspaceBooking"]>
+
+  export type WorkspaceBookingSelectScalar = {
+    id?: boolean
+    bookingRequestId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    preferredTimeSlot?: boolean
+    specialEquipment?: boolean
+    purpose?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type WorkspaceBookingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bookingRequestId" | "startDate" | "endDate" | "preferredTimeSlot" | "specialEquipment" | "purpose" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["workspaceBooking"]>
+  export type WorkspaceBookingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bookingRequest?: boolean | BookingRequestDefaultArgs<ExtArgs>
+    equipmentUsages?: boolean | WorkspaceBooking$equipmentUsagesArgs<ExtArgs>
+    serviceAddOns?: boolean | WorkspaceBooking$serviceAddOnsArgs<ExtArgs>
+    _count?: boolean | WorkspaceBookingCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type WorkspaceBookingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bookingRequest?: boolean | BookingRequestDefaultArgs<ExtArgs>
+  }
+  export type WorkspaceBookingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bookingRequest?: boolean | BookingRequestDefaultArgs<ExtArgs>
+  }
+
+  export type $WorkspaceBookingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "WorkspaceBooking"
+    objects: {
+      bookingRequest: Prisma.$BookingRequestPayload<ExtArgs>
+      equipmentUsages: Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>[]
+      serviceAddOns: Prisma.$ServiceAddOnPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      bookingRequestId: string
+      startDate: Date
+      endDate: Date
+      preferredTimeSlot: string | null
+      specialEquipment: Prisma.JsonValue | null
+      purpose: string | null
+      notes: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["workspaceBooking"]>
+    composites: {}
+  }
+
+  type WorkspaceBookingGetPayload<S extends boolean | null | undefined | WorkspaceBookingDefaultArgs> = $Result.GetResult<Prisma.$WorkspaceBookingPayload, S>
+
+  type WorkspaceBookingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<WorkspaceBookingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: WorkspaceBookingCountAggregateInputType | true
+    }
+
+  export interface WorkspaceBookingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WorkspaceBooking'], meta: { name: 'WorkspaceBooking' } }
+    /**
+     * Find zero or one WorkspaceBooking that matches the filter.
+     * @param {WorkspaceBookingFindUniqueArgs} args - Arguments to find a WorkspaceBooking
+     * @example
+     * // Get one WorkspaceBooking
+     * const workspaceBooking = await prisma.workspaceBooking.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends WorkspaceBookingFindUniqueArgs>(args: SelectSubset<T, WorkspaceBookingFindUniqueArgs<ExtArgs>>): Prisma__WorkspaceBookingClient<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one WorkspaceBooking that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {WorkspaceBookingFindUniqueOrThrowArgs} args - Arguments to find a WorkspaceBooking
+     * @example
+     * // Get one WorkspaceBooking
+     * const workspaceBooking = await prisma.workspaceBooking.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends WorkspaceBookingFindUniqueOrThrowArgs>(args: SelectSubset<T, WorkspaceBookingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WorkspaceBookingClient<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WorkspaceBooking that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceBookingFindFirstArgs} args - Arguments to find a WorkspaceBooking
+     * @example
+     * // Get one WorkspaceBooking
+     * const workspaceBooking = await prisma.workspaceBooking.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends WorkspaceBookingFindFirstArgs>(args?: SelectSubset<T, WorkspaceBookingFindFirstArgs<ExtArgs>>): Prisma__WorkspaceBookingClient<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WorkspaceBooking that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceBookingFindFirstOrThrowArgs} args - Arguments to find a WorkspaceBooking
+     * @example
+     * // Get one WorkspaceBooking
+     * const workspaceBooking = await prisma.workspaceBooking.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends WorkspaceBookingFindFirstOrThrowArgs>(args?: SelectSubset<T, WorkspaceBookingFindFirstOrThrowArgs<ExtArgs>>): Prisma__WorkspaceBookingClient<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more WorkspaceBookings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceBookingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all WorkspaceBookings
+     * const workspaceBookings = await prisma.workspaceBooking.findMany()
+     * 
+     * // Get first 10 WorkspaceBookings
+     * const workspaceBookings = await prisma.workspaceBooking.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const workspaceBookingWithIdOnly = await prisma.workspaceBooking.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends WorkspaceBookingFindManyArgs>(args?: SelectSubset<T, WorkspaceBookingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a WorkspaceBooking.
+     * @param {WorkspaceBookingCreateArgs} args - Arguments to create a WorkspaceBooking.
+     * @example
+     * // Create one WorkspaceBooking
+     * const WorkspaceBooking = await prisma.workspaceBooking.create({
+     *   data: {
+     *     // ... data to create a WorkspaceBooking
+     *   }
+     * })
+     * 
+     */
+    create<T extends WorkspaceBookingCreateArgs>(args: SelectSubset<T, WorkspaceBookingCreateArgs<ExtArgs>>): Prisma__WorkspaceBookingClient<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many WorkspaceBookings.
+     * @param {WorkspaceBookingCreateManyArgs} args - Arguments to create many WorkspaceBookings.
+     * @example
+     * // Create many WorkspaceBookings
+     * const workspaceBooking = await prisma.workspaceBooking.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends WorkspaceBookingCreateManyArgs>(args?: SelectSubset<T, WorkspaceBookingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many WorkspaceBookings and returns the data saved in the database.
+     * @param {WorkspaceBookingCreateManyAndReturnArgs} args - Arguments to create many WorkspaceBookings.
+     * @example
+     * // Create many WorkspaceBookings
+     * const workspaceBooking = await prisma.workspaceBooking.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many WorkspaceBookings and only return the `id`
+     * const workspaceBookingWithIdOnly = await prisma.workspaceBooking.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WorkspaceBookingCreateManyAndReturnArgs>(args?: SelectSubset<T, WorkspaceBookingCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a WorkspaceBooking.
+     * @param {WorkspaceBookingDeleteArgs} args - Arguments to delete one WorkspaceBooking.
+     * @example
+     * // Delete one WorkspaceBooking
+     * const WorkspaceBooking = await prisma.workspaceBooking.delete({
+     *   where: {
+     *     // ... filter to delete one WorkspaceBooking
+     *   }
+     * })
+     * 
+     */
+    delete<T extends WorkspaceBookingDeleteArgs>(args: SelectSubset<T, WorkspaceBookingDeleteArgs<ExtArgs>>): Prisma__WorkspaceBookingClient<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one WorkspaceBooking.
+     * @param {WorkspaceBookingUpdateArgs} args - Arguments to update one WorkspaceBooking.
+     * @example
+     * // Update one WorkspaceBooking
+     * const workspaceBooking = await prisma.workspaceBooking.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends WorkspaceBookingUpdateArgs>(args: SelectSubset<T, WorkspaceBookingUpdateArgs<ExtArgs>>): Prisma__WorkspaceBookingClient<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more WorkspaceBookings.
+     * @param {WorkspaceBookingDeleteManyArgs} args - Arguments to filter WorkspaceBookings to delete.
+     * @example
+     * // Delete a few WorkspaceBookings
+     * const { count } = await prisma.workspaceBooking.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends WorkspaceBookingDeleteManyArgs>(args?: SelectSubset<T, WorkspaceBookingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WorkspaceBookings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceBookingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many WorkspaceBookings
+     * const workspaceBooking = await prisma.workspaceBooking.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends WorkspaceBookingUpdateManyArgs>(args: SelectSubset<T, WorkspaceBookingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WorkspaceBookings and returns the data updated in the database.
+     * @param {WorkspaceBookingUpdateManyAndReturnArgs} args - Arguments to update many WorkspaceBookings.
+     * @example
+     * // Update many WorkspaceBookings
+     * const workspaceBooking = await prisma.workspaceBooking.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more WorkspaceBookings and only return the `id`
+     * const workspaceBookingWithIdOnly = await prisma.workspaceBooking.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends WorkspaceBookingUpdateManyAndReturnArgs>(args: SelectSubset<T, WorkspaceBookingUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one WorkspaceBooking.
+     * @param {WorkspaceBookingUpsertArgs} args - Arguments to update or create a WorkspaceBooking.
+     * @example
+     * // Update or create a WorkspaceBooking
+     * const workspaceBooking = await prisma.workspaceBooking.upsert({
+     *   create: {
+     *     // ... data to create a WorkspaceBooking
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the WorkspaceBooking we want to update
+     *   }
+     * })
+     */
+    upsert<T extends WorkspaceBookingUpsertArgs>(args: SelectSubset<T, WorkspaceBookingUpsertArgs<ExtArgs>>): Prisma__WorkspaceBookingClient<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of WorkspaceBookings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceBookingCountArgs} args - Arguments to filter WorkspaceBookings to count.
+     * @example
+     * // Count the number of WorkspaceBookings
+     * const count = await prisma.workspaceBooking.count({
+     *   where: {
+     *     // ... the filter for the WorkspaceBookings we want to count
+     *   }
+     * })
+    **/
+    count<T extends WorkspaceBookingCountArgs>(
+      args?: Subset<T, WorkspaceBookingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], WorkspaceBookingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a WorkspaceBooking.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceBookingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends WorkspaceBookingAggregateArgs>(args: Subset<T, WorkspaceBookingAggregateArgs>): Prisma.PrismaPromise<GetWorkspaceBookingAggregateType<T>>
+
+    /**
+     * Group by WorkspaceBooking.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceBookingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends WorkspaceBookingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: WorkspaceBookingGroupByArgs['orderBy'] }
+        : { orderBy?: WorkspaceBookingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, WorkspaceBookingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWorkspaceBookingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the WorkspaceBooking model
+   */
+  readonly fields: WorkspaceBookingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for WorkspaceBooking.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__WorkspaceBookingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    bookingRequest<T extends BookingRequestDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequestDefaultArgs<ExtArgs>>): Prisma__BookingRequestClient<$Result.GetResult<Prisma.$BookingRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    equipmentUsages<T extends WorkspaceBooking$equipmentUsagesArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceBooking$equipmentUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    serviceAddOns<T extends WorkspaceBooking$serviceAddOnsArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceBooking$serviceAddOnsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the WorkspaceBooking model
+   */
+  interface WorkspaceBookingFieldRefs {
+    readonly id: FieldRef<"WorkspaceBooking", 'String'>
+    readonly bookingRequestId: FieldRef<"WorkspaceBooking", 'String'>
+    readonly startDate: FieldRef<"WorkspaceBooking", 'DateTime'>
+    readonly endDate: FieldRef<"WorkspaceBooking", 'DateTime'>
+    readonly preferredTimeSlot: FieldRef<"WorkspaceBooking", 'String'>
+    readonly specialEquipment: FieldRef<"WorkspaceBooking", 'Json'>
+    readonly purpose: FieldRef<"WorkspaceBooking", 'String'>
+    readonly notes: FieldRef<"WorkspaceBooking", 'String'>
+    readonly createdAt: FieldRef<"WorkspaceBooking", 'DateTime'>
+    readonly updatedAt: FieldRef<"WorkspaceBooking", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * WorkspaceBooking findUnique
+   */
+  export type WorkspaceBookingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+    /**
+     * Filter, which WorkspaceBooking to fetch.
+     */
+    where: WorkspaceBookingWhereUniqueInput
+  }
+
+  /**
+   * WorkspaceBooking findUniqueOrThrow
+   */
+  export type WorkspaceBookingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+    /**
+     * Filter, which WorkspaceBooking to fetch.
+     */
+    where: WorkspaceBookingWhereUniqueInput
+  }
+
+  /**
+   * WorkspaceBooking findFirst
+   */
+  export type WorkspaceBookingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+    /**
+     * Filter, which WorkspaceBooking to fetch.
+     */
+    where?: WorkspaceBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WorkspaceBookings to fetch.
+     */
+    orderBy?: WorkspaceBookingOrderByWithRelationInput | WorkspaceBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WorkspaceBookings.
+     */
+    cursor?: WorkspaceBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WorkspaceBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WorkspaceBookings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WorkspaceBookings.
+     */
+    distinct?: WorkspaceBookingScalarFieldEnum | WorkspaceBookingScalarFieldEnum[]
+  }
+
+  /**
+   * WorkspaceBooking findFirstOrThrow
+   */
+  export type WorkspaceBookingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+    /**
+     * Filter, which WorkspaceBooking to fetch.
+     */
+    where?: WorkspaceBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WorkspaceBookings to fetch.
+     */
+    orderBy?: WorkspaceBookingOrderByWithRelationInput | WorkspaceBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WorkspaceBookings.
+     */
+    cursor?: WorkspaceBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WorkspaceBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WorkspaceBookings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WorkspaceBookings.
+     */
+    distinct?: WorkspaceBookingScalarFieldEnum | WorkspaceBookingScalarFieldEnum[]
+  }
+
+  /**
+   * WorkspaceBooking findMany
+   */
+  export type WorkspaceBookingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+    /**
+     * Filter, which WorkspaceBookings to fetch.
+     */
+    where?: WorkspaceBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WorkspaceBookings to fetch.
+     */
+    orderBy?: WorkspaceBookingOrderByWithRelationInput | WorkspaceBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing WorkspaceBookings.
+     */
+    cursor?: WorkspaceBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WorkspaceBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WorkspaceBookings.
+     */
+    skip?: number
+    distinct?: WorkspaceBookingScalarFieldEnum | WorkspaceBookingScalarFieldEnum[]
+  }
+
+  /**
+   * WorkspaceBooking create
+   */
+  export type WorkspaceBookingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+    /**
+     * The data needed to create a WorkspaceBooking.
+     */
+    data: XOR<WorkspaceBookingCreateInput, WorkspaceBookingUncheckedCreateInput>
+  }
+
+  /**
+   * WorkspaceBooking createMany
+   */
+  export type WorkspaceBookingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many WorkspaceBookings.
+     */
+    data: WorkspaceBookingCreateManyInput | WorkspaceBookingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WorkspaceBooking createManyAndReturn
+   */
+  export type WorkspaceBookingCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * The data used to create many WorkspaceBookings.
+     */
+    data: WorkspaceBookingCreateManyInput | WorkspaceBookingCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WorkspaceBooking update
+   */
+  export type WorkspaceBookingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+    /**
+     * The data needed to update a WorkspaceBooking.
+     */
+    data: XOR<WorkspaceBookingUpdateInput, WorkspaceBookingUncheckedUpdateInput>
+    /**
+     * Choose, which WorkspaceBooking to update.
+     */
+    where: WorkspaceBookingWhereUniqueInput
+  }
+
+  /**
+   * WorkspaceBooking updateMany
+   */
+  export type WorkspaceBookingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update WorkspaceBookings.
+     */
+    data: XOR<WorkspaceBookingUpdateManyMutationInput, WorkspaceBookingUncheckedUpdateManyInput>
+    /**
+     * Filter which WorkspaceBookings to update
+     */
+    where?: WorkspaceBookingWhereInput
+    /**
+     * Limit how many WorkspaceBookings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * WorkspaceBooking updateManyAndReturn
+   */
+  export type WorkspaceBookingUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * The data used to update WorkspaceBookings.
+     */
+    data: XOR<WorkspaceBookingUpdateManyMutationInput, WorkspaceBookingUncheckedUpdateManyInput>
+    /**
+     * Filter which WorkspaceBookings to update
+     */
+    where?: WorkspaceBookingWhereInput
+    /**
+     * Limit how many WorkspaceBookings to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WorkspaceBooking upsert
+   */
+  export type WorkspaceBookingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+    /**
+     * The filter to search for the WorkspaceBooking to update in case it exists.
+     */
+    where: WorkspaceBookingWhereUniqueInput
+    /**
+     * In case the WorkspaceBooking found by the `where` argument doesn't exist, create a new WorkspaceBooking with this data.
+     */
+    create: XOR<WorkspaceBookingCreateInput, WorkspaceBookingUncheckedCreateInput>
+    /**
+     * In case the WorkspaceBooking was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<WorkspaceBookingUpdateInput, WorkspaceBookingUncheckedUpdateInput>
+  }
+
+  /**
+   * WorkspaceBooking delete
+   */
+  export type WorkspaceBookingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+    /**
+     * Filter which WorkspaceBooking to delete.
+     */
+    where: WorkspaceBookingWhereUniqueInput
+  }
+
+  /**
+   * WorkspaceBooking deleteMany
+   */
+  export type WorkspaceBookingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WorkspaceBookings to delete
+     */
+    where?: WorkspaceBookingWhereInput
+    /**
+     * Limit how many WorkspaceBookings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * WorkspaceBooking.equipmentUsages
+   */
+  export type WorkspaceBooking$equipmentUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+    where?: WorkspaceEquipmentUsageWhereInput
+    orderBy?: WorkspaceEquipmentUsageOrderByWithRelationInput | WorkspaceEquipmentUsageOrderByWithRelationInput[]
+    cursor?: WorkspaceEquipmentUsageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WorkspaceEquipmentUsageScalarFieldEnum | WorkspaceEquipmentUsageScalarFieldEnum[]
+  }
+
+  /**
+   * WorkspaceBooking.serviceAddOns
+   */
+  export type WorkspaceBooking$serviceAddOnsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    where?: ServiceAddOnWhereInput
+    orderBy?: ServiceAddOnOrderByWithRelationInput | ServiceAddOnOrderByWithRelationInput[]
+    cursor?: ServiceAddOnWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ServiceAddOnScalarFieldEnum | ServiceAddOnScalarFieldEnum[]
+  }
+
+  /**
+   * WorkspaceBooking without action
+   */
+  export type WorkspaceBookingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model LabEquipment
+   */
+
+  export type AggregateLabEquipment = {
+    _count: LabEquipmentCountAggregateOutputType | null
+    _min: LabEquipmentMinAggregateOutputType | null
+    _max: LabEquipmentMaxAggregateOutputType | null
+  }
+
+  export type LabEquipmentMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    isAvailable: boolean | null
+    maintenanceNotes: string | null
+    expectedMaintenanceEnd: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type LabEquipmentMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    isAvailable: boolean | null
+    maintenanceNotes: string | null
+    expectedMaintenanceEnd: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type LabEquipmentCountAggregateOutputType = {
+    id: number
+    name: number
+    description: number
+    isAvailable: number
+    maintenanceNotes: number
+    expectedMaintenanceEnd: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type LabEquipmentMinAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    isAvailable?: true
+    maintenanceNotes?: true
+    expectedMaintenanceEnd?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type LabEquipmentMaxAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    isAvailable?: true
+    maintenanceNotes?: true
+    expectedMaintenanceEnd?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type LabEquipmentCountAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    isAvailable?: true
+    maintenanceNotes?: true
+    expectedMaintenanceEnd?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type LabEquipmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LabEquipment to aggregate.
+     */
+    where?: LabEquipmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LabEquipments to fetch.
+     */
+    orderBy?: LabEquipmentOrderByWithRelationInput | LabEquipmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LabEquipmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LabEquipments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LabEquipments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LabEquipments
+    **/
+    _count?: true | LabEquipmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LabEquipmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LabEquipmentMaxAggregateInputType
+  }
+
+  export type GetLabEquipmentAggregateType<T extends LabEquipmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateLabEquipment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLabEquipment[P]>
+      : GetScalarType<T[P], AggregateLabEquipment[P]>
+  }
+
+
+
+
+  export type LabEquipmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LabEquipmentWhereInput
+    orderBy?: LabEquipmentOrderByWithAggregationInput | LabEquipmentOrderByWithAggregationInput[]
+    by: LabEquipmentScalarFieldEnum[] | LabEquipmentScalarFieldEnum
+    having?: LabEquipmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LabEquipmentCountAggregateInputType | true
+    _min?: LabEquipmentMinAggregateInputType
+    _max?: LabEquipmentMaxAggregateInputType
+  }
+
+  export type LabEquipmentGroupByOutputType = {
+    id: string
+    name: string
+    description: string | null
+    isAvailable: boolean
+    maintenanceNotes: string | null
+    expectedMaintenanceEnd: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: LabEquipmentCountAggregateOutputType | null
+    _min: LabEquipmentMinAggregateOutputType | null
+    _max: LabEquipmentMaxAggregateOutputType | null
+  }
+
+  type GetLabEquipmentGroupByPayload<T extends LabEquipmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LabEquipmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LabEquipmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LabEquipmentGroupByOutputType[P]>
+            : GetScalarType<T[P], LabEquipmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LabEquipmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    isAvailable?: boolean
+    maintenanceNotes?: boolean
+    expectedMaintenanceEnd?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    workspaceUsages?: boolean | LabEquipment$workspaceUsagesArgs<ExtArgs>
+    sampleUsages?: boolean | LabEquipment$sampleUsagesArgs<ExtArgs>
+    _count?: boolean | LabEquipmentCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["labEquipment"]>
+
+  export type LabEquipmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    isAvailable?: boolean
+    maintenanceNotes?: boolean
+    expectedMaintenanceEnd?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["labEquipment"]>
+
+  export type LabEquipmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    isAvailable?: boolean
+    maintenanceNotes?: boolean
+    expectedMaintenanceEnd?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["labEquipment"]>
+
+  export type LabEquipmentSelectScalar = {
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    isAvailable?: boolean
+    maintenanceNotes?: boolean
+    expectedMaintenanceEnd?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type LabEquipmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "isAvailable" | "maintenanceNotes" | "expectedMaintenanceEnd" | "createdAt" | "updatedAt", ExtArgs["result"]["labEquipment"]>
+  export type LabEquipmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspaceUsages?: boolean | LabEquipment$workspaceUsagesArgs<ExtArgs>
+    sampleUsages?: boolean | LabEquipment$sampleUsagesArgs<ExtArgs>
+    _count?: boolean | LabEquipmentCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type LabEquipmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type LabEquipmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $LabEquipmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LabEquipment"
+    objects: {
+      workspaceUsages: Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>[]
+      sampleUsages: Prisma.$SampleEquipmentUsagePayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      description: string | null
+      isAvailable: boolean
+      maintenanceNotes: string | null
+      expectedMaintenanceEnd: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["labEquipment"]>
+    composites: {}
+  }
+
+  type LabEquipmentGetPayload<S extends boolean | null | undefined | LabEquipmentDefaultArgs> = $Result.GetResult<Prisma.$LabEquipmentPayload, S>
+
+  type LabEquipmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LabEquipmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LabEquipmentCountAggregateInputType | true
+    }
+
+  export interface LabEquipmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LabEquipment'], meta: { name: 'LabEquipment' } }
+    /**
+     * Find zero or one LabEquipment that matches the filter.
+     * @param {LabEquipmentFindUniqueArgs} args - Arguments to find a LabEquipment
+     * @example
+     * // Get one LabEquipment
+     * const labEquipment = await prisma.labEquipment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LabEquipmentFindUniqueArgs>(args: SelectSubset<T, LabEquipmentFindUniqueArgs<ExtArgs>>): Prisma__LabEquipmentClient<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one LabEquipment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LabEquipmentFindUniqueOrThrowArgs} args - Arguments to find a LabEquipment
+     * @example
+     * // Get one LabEquipment
+     * const labEquipment = await prisma.labEquipment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LabEquipmentFindUniqueOrThrowArgs>(args: SelectSubset<T, LabEquipmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LabEquipmentClient<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LabEquipment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LabEquipmentFindFirstArgs} args - Arguments to find a LabEquipment
+     * @example
+     * // Get one LabEquipment
+     * const labEquipment = await prisma.labEquipment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LabEquipmentFindFirstArgs>(args?: SelectSubset<T, LabEquipmentFindFirstArgs<ExtArgs>>): Prisma__LabEquipmentClient<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LabEquipment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LabEquipmentFindFirstOrThrowArgs} args - Arguments to find a LabEquipment
+     * @example
+     * // Get one LabEquipment
+     * const labEquipment = await prisma.labEquipment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LabEquipmentFindFirstOrThrowArgs>(args?: SelectSubset<T, LabEquipmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__LabEquipmentClient<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more LabEquipments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LabEquipmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LabEquipments
+     * const labEquipments = await prisma.labEquipment.findMany()
+     * 
+     * // Get first 10 LabEquipments
+     * const labEquipments = await prisma.labEquipment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const labEquipmentWithIdOnly = await prisma.labEquipment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LabEquipmentFindManyArgs>(args?: SelectSubset<T, LabEquipmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a LabEquipment.
+     * @param {LabEquipmentCreateArgs} args - Arguments to create a LabEquipment.
+     * @example
+     * // Create one LabEquipment
+     * const LabEquipment = await prisma.labEquipment.create({
+     *   data: {
+     *     // ... data to create a LabEquipment
+     *   }
+     * })
+     * 
+     */
+    create<T extends LabEquipmentCreateArgs>(args: SelectSubset<T, LabEquipmentCreateArgs<ExtArgs>>): Prisma__LabEquipmentClient<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many LabEquipments.
+     * @param {LabEquipmentCreateManyArgs} args - Arguments to create many LabEquipments.
+     * @example
+     * // Create many LabEquipments
+     * const labEquipment = await prisma.labEquipment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LabEquipmentCreateManyArgs>(args?: SelectSubset<T, LabEquipmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many LabEquipments and returns the data saved in the database.
+     * @param {LabEquipmentCreateManyAndReturnArgs} args - Arguments to create many LabEquipments.
+     * @example
+     * // Create many LabEquipments
+     * const labEquipment = await prisma.labEquipment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many LabEquipments and only return the `id`
+     * const labEquipmentWithIdOnly = await prisma.labEquipment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LabEquipmentCreateManyAndReturnArgs>(args?: SelectSubset<T, LabEquipmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a LabEquipment.
+     * @param {LabEquipmentDeleteArgs} args - Arguments to delete one LabEquipment.
+     * @example
+     * // Delete one LabEquipment
+     * const LabEquipment = await prisma.labEquipment.delete({
+     *   where: {
+     *     // ... filter to delete one LabEquipment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LabEquipmentDeleteArgs>(args: SelectSubset<T, LabEquipmentDeleteArgs<ExtArgs>>): Prisma__LabEquipmentClient<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one LabEquipment.
+     * @param {LabEquipmentUpdateArgs} args - Arguments to update one LabEquipment.
+     * @example
+     * // Update one LabEquipment
+     * const labEquipment = await prisma.labEquipment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LabEquipmentUpdateArgs>(args: SelectSubset<T, LabEquipmentUpdateArgs<ExtArgs>>): Prisma__LabEquipmentClient<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more LabEquipments.
+     * @param {LabEquipmentDeleteManyArgs} args - Arguments to filter LabEquipments to delete.
+     * @example
+     * // Delete a few LabEquipments
+     * const { count } = await prisma.labEquipment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LabEquipmentDeleteManyArgs>(args?: SelectSubset<T, LabEquipmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LabEquipments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LabEquipmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LabEquipments
+     * const labEquipment = await prisma.labEquipment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LabEquipmentUpdateManyArgs>(args: SelectSubset<T, LabEquipmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LabEquipments and returns the data updated in the database.
+     * @param {LabEquipmentUpdateManyAndReturnArgs} args - Arguments to update many LabEquipments.
+     * @example
+     * // Update many LabEquipments
+     * const labEquipment = await prisma.labEquipment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more LabEquipments and only return the `id`
+     * const labEquipmentWithIdOnly = await prisma.labEquipment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LabEquipmentUpdateManyAndReturnArgs>(args: SelectSubset<T, LabEquipmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one LabEquipment.
+     * @param {LabEquipmentUpsertArgs} args - Arguments to update or create a LabEquipment.
+     * @example
+     * // Update or create a LabEquipment
+     * const labEquipment = await prisma.labEquipment.upsert({
+     *   create: {
+     *     // ... data to create a LabEquipment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LabEquipment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LabEquipmentUpsertArgs>(args: SelectSubset<T, LabEquipmentUpsertArgs<ExtArgs>>): Prisma__LabEquipmentClient<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of LabEquipments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LabEquipmentCountArgs} args - Arguments to filter LabEquipments to count.
+     * @example
+     * // Count the number of LabEquipments
+     * const count = await prisma.labEquipment.count({
+     *   where: {
+     *     // ... the filter for the LabEquipments we want to count
+     *   }
+     * })
+    **/
+    count<T extends LabEquipmentCountArgs>(
+      args?: Subset<T, LabEquipmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LabEquipmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LabEquipment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LabEquipmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LabEquipmentAggregateArgs>(args: Subset<T, LabEquipmentAggregateArgs>): Prisma.PrismaPromise<GetLabEquipmentAggregateType<T>>
+
+    /**
+     * Group by LabEquipment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LabEquipmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LabEquipmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LabEquipmentGroupByArgs['orderBy'] }
+        : { orderBy?: LabEquipmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LabEquipmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLabEquipmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LabEquipment model
+   */
+  readonly fields: LabEquipmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LabEquipment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LabEquipmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspaceUsages<T extends LabEquipment$workspaceUsagesArgs<ExtArgs> = {}>(args?: Subset<T, LabEquipment$workspaceUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sampleUsages<T extends LabEquipment$sampleUsagesArgs<ExtArgs> = {}>(args?: Subset<T, LabEquipment$sampleUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LabEquipment model
+   */
+  interface LabEquipmentFieldRefs {
+    readonly id: FieldRef<"LabEquipment", 'String'>
+    readonly name: FieldRef<"LabEquipment", 'String'>
+    readonly description: FieldRef<"LabEquipment", 'String'>
+    readonly isAvailable: FieldRef<"LabEquipment", 'Boolean'>
+    readonly maintenanceNotes: FieldRef<"LabEquipment", 'String'>
+    readonly expectedMaintenanceEnd: FieldRef<"LabEquipment", 'DateTime'>
+    readonly createdAt: FieldRef<"LabEquipment", 'DateTime'>
+    readonly updatedAt: FieldRef<"LabEquipment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LabEquipment findUnique
+   */
+  export type LabEquipmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LabEquipmentInclude<ExtArgs> | null
+    /**
+     * Filter, which LabEquipment to fetch.
+     */
+    where: LabEquipmentWhereUniqueInput
+  }
+
+  /**
+   * LabEquipment findUniqueOrThrow
+   */
+  export type LabEquipmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LabEquipmentInclude<ExtArgs> | null
+    /**
+     * Filter, which LabEquipment to fetch.
+     */
+    where: LabEquipmentWhereUniqueInput
+  }
+
+  /**
+   * LabEquipment findFirst
+   */
+  export type LabEquipmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LabEquipmentInclude<ExtArgs> | null
+    /**
+     * Filter, which LabEquipment to fetch.
+     */
+    where?: LabEquipmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LabEquipments to fetch.
+     */
+    orderBy?: LabEquipmentOrderByWithRelationInput | LabEquipmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LabEquipments.
+     */
+    cursor?: LabEquipmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LabEquipments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LabEquipments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LabEquipments.
+     */
+    distinct?: LabEquipmentScalarFieldEnum | LabEquipmentScalarFieldEnum[]
+  }
+
+  /**
+   * LabEquipment findFirstOrThrow
+   */
+  export type LabEquipmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LabEquipmentInclude<ExtArgs> | null
+    /**
+     * Filter, which LabEquipment to fetch.
+     */
+    where?: LabEquipmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LabEquipments to fetch.
+     */
+    orderBy?: LabEquipmentOrderByWithRelationInput | LabEquipmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LabEquipments.
+     */
+    cursor?: LabEquipmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LabEquipments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LabEquipments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LabEquipments.
+     */
+    distinct?: LabEquipmentScalarFieldEnum | LabEquipmentScalarFieldEnum[]
+  }
+
+  /**
+   * LabEquipment findMany
+   */
+  export type LabEquipmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LabEquipmentInclude<ExtArgs> | null
+    /**
+     * Filter, which LabEquipments to fetch.
+     */
+    where?: LabEquipmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LabEquipments to fetch.
+     */
+    orderBy?: LabEquipmentOrderByWithRelationInput | LabEquipmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LabEquipments.
+     */
+    cursor?: LabEquipmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LabEquipments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LabEquipments.
+     */
+    skip?: number
+    distinct?: LabEquipmentScalarFieldEnum | LabEquipmentScalarFieldEnum[]
+  }
+
+  /**
+   * LabEquipment create
+   */
+  export type LabEquipmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LabEquipmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a LabEquipment.
+     */
+    data: XOR<LabEquipmentCreateInput, LabEquipmentUncheckedCreateInput>
+  }
+
+  /**
+   * LabEquipment createMany
+   */
+  export type LabEquipmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LabEquipments.
+     */
+    data: LabEquipmentCreateManyInput | LabEquipmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LabEquipment createManyAndReturn
+   */
+  export type LabEquipmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many LabEquipments.
+     */
+    data: LabEquipmentCreateManyInput | LabEquipmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LabEquipment update
+   */
+  export type LabEquipmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LabEquipmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a LabEquipment.
+     */
+    data: XOR<LabEquipmentUpdateInput, LabEquipmentUncheckedUpdateInput>
+    /**
+     * Choose, which LabEquipment to update.
+     */
+    where: LabEquipmentWhereUniqueInput
+  }
+
+  /**
+   * LabEquipment updateMany
+   */
+  export type LabEquipmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LabEquipments.
+     */
+    data: XOR<LabEquipmentUpdateManyMutationInput, LabEquipmentUncheckedUpdateManyInput>
+    /**
+     * Filter which LabEquipments to update
+     */
+    where?: LabEquipmentWhereInput
+    /**
+     * Limit how many LabEquipments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LabEquipment updateManyAndReturn
+   */
+  export type LabEquipmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * The data used to update LabEquipments.
+     */
+    data: XOR<LabEquipmentUpdateManyMutationInput, LabEquipmentUncheckedUpdateManyInput>
+    /**
+     * Filter which LabEquipments to update
+     */
+    where?: LabEquipmentWhereInput
+    /**
+     * Limit how many LabEquipments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LabEquipment upsert
+   */
+  export type LabEquipmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LabEquipmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the LabEquipment to update in case it exists.
+     */
+    where: LabEquipmentWhereUniqueInput
+    /**
+     * In case the LabEquipment found by the `where` argument doesn't exist, create a new LabEquipment with this data.
+     */
+    create: XOR<LabEquipmentCreateInput, LabEquipmentUncheckedCreateInput>
+    /**
+     * In case the LabEquipment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LabEquipmentUpdateInput, LabEquipmentUncheckedUpdateInput>
+  }
+
+  /**
+   * LabEquipment delete
+   */
+  export type LabEquipmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LabEquipmentInclude<ExtArgs> | null
+    /**
+     * Filter which LabEquipment to delete.
+     */
+    where: LabEquipmentWhereUniqueInput
+  }
+
+  /**
+   * LabEquipment deleteMany
+   */
+  export type LabEquipmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LabEquipments to delete
+     */
+    where?: LabEquipmentWhereInput
+    /**
+     * Limit how many LabEquipments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * LabEquipment.workspaceUsages
+   */
+  export type LabEquipment$workspaceUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+    where?: WorkspaceEquipmentUsageWhereInput
+    orderBy?: WorkspaceEquipmentUsageOrderByWithRelationInput | WorkspaceEquipmentUsageOrderByWithRelationInput[]
+    cursor?: WorkspaceEquipmentUsageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WorkspaceEquipmentUsageScalarFieldEnum | WorkspaceEquipmentUsageScalarFieldEnum[]
+  }
+
+  /**
+   * LabEquipment.sampleUsages
+   */
+  export type LabEquipment$sampleUsagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+    where?: SampleEquipmentUsageWhereInput
+    orderBy?: SampleEquipmentUsageOrderByWithRelationInput | SampleEquipmentUsageOrderByWithRelationInput[]
+    cursor?: SampleEquipmentUsageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SampleEquipmentUsageScalarFieldEnum | SampleEquipmentUsageScalarFieldEnum[]
+  }
+
+  /**
+   * LabEquipment without action
+   */
+  export type LabEquipmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LabEquipment
+     */
+    select?: LabEquipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LabEquipment
+     */
+    omit?: LabEquipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LabEquipmentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model WorkspaceEquipmentUsage
+   */
+
+  export type AggregateWorkspaceEquipmentUsage = {
+    _count: WorkspaceEquipmentUsageCountAggregateOutputType | null
+    _min: WorkspaceEquipmentUsageMinAggregateOutputType | null
+    _max: WorkspaceEquipmentUsageMaxAggregateOutputType | null
+  }
+
+  export type WorkspaceEquipmentUsageMinAggregateOutputType = {
+    id: string | null
+    workspaceBookingId: string | null
+    equipmentId: string | null
+    createdAt: Date | null
+  }
+
+  export type WorkspaceEquipmentUsageMaxAggregateOutputType = {
+    id: string | null
+    workspaceBookingId: string | null
+    equipmentId: string | null
+    createdAt: Date | null
+  }
+
+  export type WorkspaceEquipmentUsageCountAggregateOutputType = {
+    id: number
+    workspaceBookingId: number
+    equipmentId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type WorkspaceEquipmentUsageMinAggregateInputType = {
+    id?: true
+    workspaceBookingId?: true
+    equipmentId?: true
+    createdAt?: true
+  }
+
+  export type WorkspaceEquipmentUsageMaxAggregateInputType = {
+    id?: true
+    workspaceBookingId?: true
+    equipmentId?: true
+    createdAt?: true
+  }
+
+  export type WorkspaceEquipmentUsageCountAggregateInputType = {
+    id?: true
+    workspaceBookingId?: true
+    equipmentId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type WorkspaceEquipmentUsageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WorkspaceEquipmentUsage to aggregate.
+     */
+    where?: WorkspaceEquipmentUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WorkspaceEquipmentUsages to fetch.
+     */
+    orderBy?: WorkspaceEquipmentUsageOrderByWithRelationInput | WorkspaceEquipmentUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: WorkspaceEquipmentUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WorkspaceEquipmentUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WorkspaceEquipmentUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned WorkspaceEquipmentUsages
+    **/
+    _count?: true | WorkspaceEquipmentUsageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: WorkspaceEquipmentUsageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: WorkspaceEquipmentUsageMaxAggregateInputType
+  }
+
+  export type GetWorkspaceEquipmentUsageAggregateType<T extends WorkspaceEquipmentUsageAggregateArgs> = {
+        [P in keyof T & keyof AggregateWorkspaceEquipmentUsage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateWorkspaceEquipmentUsage[P]>
+      : GetScalarType<T[P], AggregateWorkspaceEquipmentUsage[P]>
+  }
+
+
+
+
+  export type WorkspaceEquipmentUsageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WorkspaceEquipmentUsageWhereInput
+    orderBy?: WorkspaceEquipmentUsageOrderByWithAggregationInput | WorkspaceEquipmentUsageOrderByWithAggregationInput[]
+    by: WorkspaceEquipmentUsageScalarFieldEnum[] | WorkspaceEquipmentUsageScalarFieldEnum
+    having?: WorkspaceEquipmentUsageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: WorkspaceEquipmentUsageCountAggregateInputType | true
+    _min?: WorkspaceEquipmentUsageMinAggregateInputType
+    _max?: WorkspaceEquipmentUsageMaxAggregateInputType
+  }
+
+  export type WorkspaceEquipmentUsageGroupByOutputType = {
+    id: string
+    workspaceBookingId: string
+    equipmentId: string
+    createdAt: Date
+    _count: WorkspaceEquipmentUsageCountAggregateOutputType | null
+    _min: WorkspaceEquipmentUsageMinAggregateOutputType | null
+    _max: WorkspaceEquipmentUsageMaxAggregateOutputType | null
+  }
+
+  type GetWorkspaceEquipmentUsageGroupByPayload<T extends WorkspaceEquipmentUsageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<WorkspaceEquipmentUsageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof WorkspaceEquipmentUsageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], WorkspaceEquipmentUsageGroupByOutputType[P]>
+            : GetScalarType<T[P], WorkspaceEquipmentUsageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type WorkspaceEquipmentUsageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceBookingId?: boolean
+    equipmentId?: boolean
+    createdAt?: boolean
+    workspaceBooking?: boolean | WorkspaceBookingDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["workspaceEquipmentUsage"]>
+
+  export type WorkspaceEquipmentUsageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceBookingId?: boolean
+    equipmentId?: boolean
+    createdAt?: boolean
+    workspaceBooking?: boolean | WorkspaceBookingDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["workspaceEquipmentUsage"]>
+
+  export type WorkspaceEquipmentUsageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workspaceBookingId?: boolean
+    equipmentId?: boolean
+    createdAt?: boolean
+    workspaceBooking?: boolean | WorkspaceBookingDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["workspaceEquipmentUsage"]>
+
+  export type WorkspaceEquipmentUsageSelectScalar = {
+    id?: boolean
+    workspaceBookingId?: boolean
+    equipmentId?: boolean
+    createdAt?: boolean
+  }
+
+  export type WorkspaceEquipmentUsageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workspaceBookingId" | "equipmentId" | "createdAt", ExtArgs["result"]["workspaceEquipmentUsage"]>
+  export type WorkspaceEquipmentUsageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspaceBooking?: boolean | WorkspaceBookingDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }
+  export type WorkspaceEquipmentUsageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspaceBooking?: boolean | WorkspaceBookingDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }
+  export type WorkspaceEquipmentUsageIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workspaceBooking?: boolean | WorkspaceBookingDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }
+
+  export type $WorkspaceEquipmentUsagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "WorkspaceEquipmentUsage"
+    objects: {
+      workspaceBooking: Prisma.$WorkspaceBookingPayload<ExtArgs>
+      equipment: Prisma.$LabEquipmentPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workspaceBookingId: string
+      equipmentId: string
+      createdAt: Date
+    }, ExtArgs["result"]["workspaceEquipmentUsage"]>
+    composites: {}
+  }
+
+  type WorkspaceEquipmentUsageGetPayload<S extends boolean | null | undefined | WorkspaceEquipmentUsageDefaultArgs> = $Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload, S>
+
+  type WorkspaceEquipmentUsageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<WorkspaceEquipmentUsageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: WorkspaceEquipmentUsageCountAggregateInputType | true
+    }
+
+  export interface WorkspaceEquipmentUsageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WorkspaceEquipmentUsage'], meta: { name: 'WorkspaceEquipmentUsage' } }
+    /**
+     * Find zero or one WorkspaceEquipmentUsage that matches the filter.
+     * @param {WorkspaceEquipmentUsageFindUniqueArgs} args - Arguments to find a WorkspaceEquipmentUsage
+     * @example
+     * // Get one WorkspaceEquipmentUsage
+     * const workspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends WorkspaceEquipmentUsageFindUniqueArgs>(args: SelectSubset<T, WorkspaceEquipmentUsageFindUniqueArgs<ExtArgs>>): Prisma__WorkspaceEquipmentUsageClient<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one WorkspaceEquipmentUsage that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {WorkspaceEquipmentUsageFindUniqueOrThrowArgs} args - Arguments to find a WorkspaceEquipmentUsage
+     * @example
+     * // Get one WorkspaceEquipmentUsage
+     * const workspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends WorkspaceEquipmentUsageFindUniqueOrThrowArgs>(args: SelectSubset<T, WorkspaceEquipmentUsageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WorkspaceEquipmentUsageClient<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WorkspaceEquipmentUsage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceEquipmentUsageFindFirstArgs} args - Arguments to find a WorkspaceEquipmentUsage
+     * @example
+     * // Get one WorkspaceEquipmentUsage
+     * const workspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends WorkspaceEquipmentUsageFindFirstArgs>(args?: SelectSubset<T, WorkspaceEquipmentUsageFindFirstArgs<ExtArgs>>): Prisma__WorkspaceEquipmentUsageClient<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WorkspaceEquipmentUsage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceEquipmentUsageFindFirstOrThrowArgs} args - Arguments to find a WorkspaceEquipmentUsage
+     * @example
+     * // Get one WorkspaceEquipmentUsage
+     * const workspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends WorkspaceEquipmentUsageFindFirstOrThrowArgs>(args?: SelectSubset<T, WorkspaceEquipmentUsageFindFirstOrThrowArgs<ExtArgs>>): Prisma__WorkspaceEquipmentUsageClient<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more WorkspaceEquipmentUsages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceEquipmentUsageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all WorkspaceEquipmentUsages
+     * const workspaceEquipmentUsages = await prisma.workspaceEquipmentUsage.findMany()
+     * 
+     * // Get first 10 WorkspaceEquipmentUsages
+     * const workspaceEquipmentUsages = await prisma.workspaceEquipmentUsage.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const workspaceEquipmentUsageWithIdOnly = await prisma.workspaceEquipmentUsage.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends WorkspaceEquipmentUsageFindManyArgs>(args?: SelectSubset<T, WorkspaceEquipmentUsageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a WorkspaceEquipmentUsage.
+     * @param {WorkspaceEquipmentUsageCreateArgs} args - Arguments to create a WorkspaceEquipmentUsage.
+     * @example
+     * // Create one WorkspaceEquipmentUsage
+     * const WorkspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.create({
+     *   data: {
+     *     // ... data to create a WorkspaceEquipmentUsage
+     *   }
+     * })
+     * 
+     */
+    create<T extends WorkspaceEquipmentUsageCreateArgs>(args: SelectSubset<T, WorkspaceEquipmentUsageCreateArgs<ExtArgs>>): Prisma__WorkspaceEquipmentUsageClient<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many WorkspaceEquipmentUsages.
+     * @param {WorkspaceEquipmentUsageCreateManyArgs} args - Arguments to create many WorkspaceEquipmentUsages.
+     * @example
+     * // Create many WorkspaceEquipmentUsages
+     * const workspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends WorkspaceEquipmentUsageCreateManyArgs>(args?: SelectSubset<T, WorkspaceEquipmentUsageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many WorkspaceEquipmentUsages and returns the data saved in the database.
+     * @param {WorkspaceEquipmentUsageCreateManyAndReturnArgs} args - Arguments to create many WorkspaceEquipmentUsages.
+     * @example
+     * // Create many WorkspaceEquipmentUsages
+     * const workspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many WorkspaceEquipmentUsages and only return the `id`
+     * const workspaceEquipmentUsageWithIdOnly = await prisma.workspaceEquipmentUsage.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WorkspaceEquipmentUsageCreateManyAndReturnArgs>(args?: SelectSubset<T, WorkspaceEquipmentUsageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a WorkspaceEquipmentUsage.
+     * @param {WorkspaceEquipmentUsageDeleteArgs} args - Arguments to delete one WorkspaceEquipmentUsage.
+     * @example
+     * // Delete one WorkspaceEquipmentUsage
+     * const WorkspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.delete({
+     *   where: {
+     *     // ... filter to delete one WorkspaceEquipmentUsage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends WorkspaceEquipmentUsageDeleteArgs>(args: SelectSubset<T, WorkspaceEquipmentUsageDeleteArgs<ExtArgs>>): Prisma__WorkspaceEquipmentUsageClient<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one WorkspaceEquipmentUsage.
+     * @param {WorkspaceEquipmentUsageUpdateArgs} args - Arguments to update one WorkspaceEquipmentUsage.
+     * @example
+     * // Update one WorkspaceEquipmentUsage
+     * const workspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends WorkspaceEquipmentUsageUpdateArgs>(args: SelectSubset<T, WorkspaceEquipmentUsageUpdateArgs<ExtArgs>>): Prisma__WorkspaceEquipmentUsageClient<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more WorkspaceEquipmentUsages.
+     * @param {WorkspaceEquipmentUsageDeleteManyArgs} args - Arguments to filter WorkspaceEquipmentUsages to delete.
+     * @example
+     * // Delete a few WorkspaceEquipmentUsages
+     * const { count } = await prisma.workspaceEquipmentUsage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends WorkspaceEquipmentUsageDeleteManyArgs>(args?: SelectSubset<T, WorkspaceEquipmentUsageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WorkspaceEquipmentUsages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceEquipmentUsageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many WorkspaceEquipmentUsages
+     * const workspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends WorkspaceEquipmentUsageUpdateManyArgs>(args: SelectSubset<T, WorkspaceEquipmentUsageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WorkspaceEquipmentUsages and returns the data updated in the database.
+     * @param {WorkspaceEquipmentUsageUpdateManyAndReturnArgs} args - Arguments to update many WorkspaceEquipmentUsages.
+     * @example
+     * // Update many WorkspaceEquipmentUsages
+     * const workspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more WorkspaceEquipmentUsages and only return the `id`
+     * const workspaceEquipmentUsageWithIdOnly = await prisma.workspaceEquipmentUsage.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends WorkspaceEquipmentUsageUpdateManyAndReturnArgs>(args: SelectSubset<T, WorkspaceEquipmentUsageUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one WorkspaceEquipmentUsage.
+     * @param {WorkspaceEquipmentUsageUpsertArgs} args - Arguments to update or create a WorkspaceEquipmentUsage.
+     * @example
+     * // Update or create a WorkspaceEquipmentUsage
+     * const workspaceEquipmentUsage = await prisma.workspaceEquipmentUsage.upsert({
+     *   create: {
+     *     // ... data to create a WorkspaceEquipmentUsage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the WorkspaceEquipmentUsage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends WorkspaceEquipmentUsageUpsertArgs>(args: SelectSubset<T, WorkspaceEquipmentUsageUpsertArgs<ExtArgs>>): Prisma__WorkspaceEquipmentUsageClient<$Result.GetResult<Prisma.$WorkspaceEquipmentUsagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of WorkspaceEquipmentUsages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceEquipmentUsageCountArgs} args - Arguments to filter WorkspaceEquipmentUsages to count.
+     * @example
+     * // Count the number of WorkspaceEquipmentUsages
+     * const count = await prisma.workspaceEquipmentUsage.count({
+     *   where: {
+     *     // ... the filter for the WorkspaceEquipmentUsages we want to count
+     *   }
+     * })
+    **/
+    count<T extends WorkspaceEquipmentUsageCountArgs>(
+      args?: Subset<T, WorkspaceEquipmentUsageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], WorkspaceEquipmentUsageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a WorkspaceEquipmentUsage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceEquipmentUsageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends WorkspaceEquipmentUsageAggregateArgs>(args: Subset<T, WorkspaceEquipmentUsageAggregateArgs>): Prisma.PrismaPromise<GetWorkspaceEquipmentUsageAggregateType<T>>
+
+    /**
+     * Group by WorkspaceEquipmentUsage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WorkspaceEquipmentUsageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends WorkspaceEquipmentUsageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: WorkspaceEquipmentUsageGroupByArgs['orderBy'] }
+        : { orderBy?: WorkspaceEquipmentUsageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, WorkspaceEquipmentUsageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWorkspaceEquipmentUsageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the WorkspaceEquipmentUsage model
+   */
+  readonly fields: WorkspaceEquipmentUsageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for WorkspaceEquipmentUsage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__WorkspaceEquipmentUsageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workspaceBooking<T extends WorkspaceBookingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkspaceBookingDefaultArgs<ExtArgs>>): Prisma__WorkspaceBookingClient<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    equipment<T extends LabEquipmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LabEquipmentDefaultArgs<ExtArgs>>): Prisma__LabEquipmentClient<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the WorkspaceEquipmentUsage model
+   */
+  interface WorkspaceEquipmentUsageFieldRefs {
+    readonly id: FieldRef<"WorkspaceEquipmentUsage", 'String'>
+    readonly workspaceBookingId: FieldRef<"WorkspaceEquipmentUsage", 'String'>
+    readonly equipmentId: FieldRef<"WorkspaceEquipmentUsage", 'String'>
+    readonly createdAt: FieldRef<"WorkspaceEquipmentUsage", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * WorkspaceEquipmentUsage findUnique
+   */
+  export type WorkspaceEquipmentUsageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which WorkspaceEquipmentUsage to fetch.
+     */
+    where: WorkspaceEquipmentUsageWhereUniqueInput
+  }
+
+  /**
+   * WorkspaceEquipmentUsage findUniqueOrThrow
+   */
+  export type WorkspaceEquipmentUsageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which WorkspaceEquipmentUsage to fetch.
+     */
+    where: WorkspaceEquipmentUsageWhereUniqueInput
+  }
+
+  /**
+   * WorkspaceEquipmentUsage findFirst
+   */
+  export type WorkspaceEquipmentUsageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which WorkspaceEquipmentUsage to fetch.
+     */
+    where?: WorkspaceEquipmentUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WorkspaceEquipmentUsages to fetch.
+     */
+    orderBy?: WorkspaceEquipmentUsageOrderByWithRelationInput | WorkspaceEquipmentUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WorkspaceEquipmentUsages.
+     */
+    cursor?: WorkspaceEquipmentUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WorkspaceEquipmentUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WorkspaceEquipmentUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WorkspaceEquipmentUsages.
+     */
+    distinct?: WorkspaceEquipmentUsageScalarFieldEnum | WorkspaceEquipmentUsageScalarFieldEnum[]
+  }
+
+  /**
+   * WorkspaceEquipmentUsage findFirstOrThrow
+   */
+  export type WorkspaceEquipmentUsageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which WorkspaceEquipmentUsage to fetch.
+     */
+    where?: WorkspaceEquipmentUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WorkspaceEquipmentUsages to fetch.
+     */
+    orderBy?: WorkspaceEquipmentUsageOrderByWithRelationInput | WorkspaceEquipmentUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WorkspaceEquipmentUsages.
+     */
+    cursor?: WorkspaceEquipmentUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WorkspaceEquipmentUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WorkspaceEquipmentUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WorkspaceEquipmentUsages.
+     */
+    distinct?: WorkspaceEquipmentUsageScalarFieldEnum | WorkspaceEquipmentUsageScalarFieldEnum[]
+  }
+
+  /**
+   * WorkspaceEquipmentUsage findMany
+   */
+  export type WorkspaceEquipmentUsageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which WorkspaceEquipmentUsages to fetch.
+     */
+    where?: WorkspaceEquipmentUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WorkspaceEquipmentUsages to fetch.
+     */
+    orderBy?: WorkspaceEquipmentUsageOrderByWithRelationInput | WorkspaceEquipmentUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing WorkspaceEquipmentUsages.
+     */
+    cursor?: WorkspaceEquipmentUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WorkspaceEquipmentUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WorkspaceEquipmentUsages.
+     */
+    skip?: number
+    distinct?: WorkspaceEquipmentUsageScalarFieldEnum | WorkspaceEquipmentUsageScalarFieldEnum[]
+  }
+
+  /**
+   * WorkspaceEquipmentUsage create
+   */
+  export type WorkspaceEquipmentUsageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * The data needed to create a WorkspaceEquipmentUsage.
+     */
+    data: XOR<WorkspaceEquipmentUsageCreateInput, WorkspaceEquipmentUsageUncheckedCreateInput>
+  }
+
+  /**
+   * WorkspaceEquipmentUsage createMany
+   */
+  export type WorkspaceEquipmentUsageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many WorkspaceEquipmentUsages.
+     */
+    data: WorkspaceEquipmentUsageCreateManyInput | WorkspaceEquipmentUsageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WorkspaceEquipmentUsage createManyAndReturn
+   */
+  export type WorkspaceEquipmentUsageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * The data used to create many WorkspaceEquipmentUsages.
+     */
+    data: WorkspaceEquipmentUsageCreateManyInput | WorkspaceEquipmentUsageCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WorkspaceEquipmentUsage update
+   */
+  export type WorkspaceEquipmentUsageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * The data needed to update a WorkspaceEquipmentUsage.
+     */
+    data: XOR<WorkspaceEquipmentUsageUpdateInput, WorkspaceEquipmentUsageUncheckedUpdateInput>
+    /**
+     * Choose, which WorkspaceEquipmentUsage to update.
+     */
+    where: WorkspaceEquipmentUsageWhereUniqueInput
+  }
+
+  /**
+   * WorkspaceEquipmentUsage updateMany
+   */
+  export type WorkspaceEquipmentUsageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update WorkspaceEquipmentUsages.
+     */
+    data: XOR<WorkspaceEquipmentUsageUpdateManyMutationInput, WorkspaceEquipmentUsageUncheckedUpdateManyInput>
+    /**
+     * Filter which WorkspaceEquipmentUsages to update
+     */
+    where?: WorkspaceEquipmentUsageWhereInput
+    /**
+     * Limit how many WorkspaceEquipmentUsages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * WorkspaceEquipmentUsage updateManyAndReturn
+   */
+  export type WorkspaceEquipmentUsageUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * The data used to update WorkspaceEquipmentUsages.
+     */
+    data: XOR<WorkspaceEquipmentUsageUpdateManyMutationInput, WorkspaceEquipmentUsageUncheckedUpdateManyInput>
+    /**
+     * Filter which WorkspaceEquipmentUsages to update
+     */
+    where?: WorkspaceEquipmentUsageWhereInput
+    /**
+     * Limit how many WorkspaceEquipmentUsages to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WorkspaceEquipmentUsage upsert
+   */
+  export type WorkspaceEquipmentUsageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * The filter to search for the WorkspaceEquipmentUsage to update in case it exists.
+     */
+    where: WorkspaceEquipmentUsageWhereUniqueInput
+    /**
+     * In case the WorkspaceEquipmentUsage found by the `where` argument doesn't exist, create a new WorkspaceEquipmentUsage with this data.
+     */
+    create: XOR<WorkspaceEquipmentUsageCreateInput, WorkspaceEquipmentUsageUncheckedCreateInput>
+    /**
+     * In case the WorkspaceEquipmentUsage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<WorkspaceEquipmentUsageUpdateInput, WorkspaceEquipmentUsageUncheckedUpdateInput>
+  }
+
+  /**
+   * WorkspaceEquipmentUsage delete
+   */
+  export type WorkspaceEquipmentUsageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter which WorkspaceEquipmentUsage to delete.
+     */
+    where: WorkspaceEquipmentUsageWhereUniqueInput
+  }
+
+  /**
+   * WorkspaceEquipmentUsage deleteMany
+   */
+  export type WorkspaceEquipmentUsageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WorkspaceEquipmentUsages to delete
+     */
+    where?: WorkspaceEquipmentUsageWhereInput
+    /**
+     * Limit how many WorkspaceEquipmentUsages to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * WorkspaceEquipmentUsage without action
+   */
+  export type WorkspaceEquipmentUsageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceEquipmentUsage
+     */
+    select?: WorkspaceEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceEquipmentUsage
+     */
+    omit?: WorkspaceEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceEquipmentUsageInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SampleEquipmentUsage
+   */
+
+  export type AggregateSampleEquipmentUsage = {
+    _count: SampleEquipmentUsageCountAggregateOutputType | null
+    _min: SampleEquipmentUsageMinAggregateOutputType | null
+    _max: SampleEquipmentUsageMaxAggregateOutputType | null
+  }
+
+  export type SampleEquipmentUsageMinAggregateOutputType = {
+    id: string | null
+    bookingServiceItemId: string | null
+    equipmentId: string | null
+    createdAt: Date | null
+  }
+
+  export type SampleEquipmentUsageMaxAggregateOutputType = {
+    id: string | null
+    bookingServiceItemId: string | null
+    equipmentId: string | null
+    createdAt: Date | null
+  }
+
+  export type SampleEquipmentUsageCountAggregateOutputType = {
+    id: number
+    bookingServiceItemId: number
+    equipmentId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SampleEquipmentUsageMinAggregateInputType = {
+    id?: true
+    bookingServiceItemId?: true
+    equipmentId?: true
+    createdAt?: true
+  }
+
+  export type SampleEquipmentUsageMaxAggregateInputType = {
+    id?: true
+    bookingServiceItemId?: true
+    equipmentId?: true
+    createdAt?: true
+  }
+
+  export type SampleEquipmentUsageCountAggregateInputType = {
+    id?: true
+    bookingServiceItemId?: true
+    equipmentId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SampleEquipmentUsageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SampleEquipmentUsage to aggregate.
+     */
+    where?: SampleEquipmentUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SampleEquipmentUsages to fetch.
+     */
+    orderBy?: SampleEquipmentUsageOrderByWithRelationInput | SampleEquipmentUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SampleEquipmentUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SampleEquipmentUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SampleEquipmentUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SampleEquipmentUsages
+    **/
+    _count?: true | SampleEquipmentUsageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SampleEquipmentUsageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SampleEquipmentUsageMaxAggregateInputType
+  }
+
+  export type GetSampleEquipmentUsageAggregateType<T extends SampleEquipmentUsageAggregateArgs> = {
+        [P in keyof T & keyof AggregateSampleEquipmentUsage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSampleEquipmentUsage[P]>
+      : GetScalarType<T[P], AggregateSampleEquipmentUsage[P]>
+  }
+
+
+
+
+  export type SampleEquipmentUsageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SampleEquipmentUsageWhereInput
+    orderBy?: SampleEquipmentUsageOrderByWithAggregationInput | SampleEquipmentUsageOrderByWithAggregationInput[]
+    by: SampleEquipmentUsageScalarFieldEnum[] | SampleEquipmentUsageScalarFieldEnum
+    having?: SampleEquipmentUsageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SampleEquipmentUsageCountAggregateInputType | true
+    _min?: SampleEquipmentUsageMinAggregateInputType
+    _max?: SampleEquipmentUsageMaxAggregateInputType
+  }
+
+  export type SampleEquipmentUsageGroupByOutputType = {
+    id: string
+    bookingServiceItemId: string
+    equipmentId: string
+    createdAt: Date
+    _count: SampleEquipmentUsageCountAggregateOutputType | null
+    _min: SampleEquipmentUsageMinAggregateOutputType | null
+    _max: SampleEquipmentUsageMaxAggregateOutputType | null
+  }
+
+  type GetSampleEquipmentUsageGroupByPayload<T extends SampleEquipmentUsageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SampleEquipmentUsageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SampleEquipmentUsageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SampleEquipmentUsageGroupByOutputType[P]>
+            : GetScalarType<T[P], SampleEquipmentUsageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SampleEquipmentUsageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    bookingServiceItemId?: boolean
+    equipmentId?: boolean
+    createdAt?: boolean
+    bookedItem?: boolean | BookingServiceItemDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sampleEquipmentUsage"]>
+
+  export type SampleEquipmentUsageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    bookingServiceItemId?: boolean
+    equipmentId?: boolean
+    createdAt?: boolean
+    bookedItem?: boolean | BookingServiceItemDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sampleEquipmentUsage"]>
+
+  export type SampleEquipmentUsageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    bookingServiceItemId?: boolean
+    equipmentId?: boolean
+    createdAt?: boolean
+    bookedItem?: boolean | BookingServiceItemDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sampleEquipmentUsage"]>
+
+  export type SampleEquipmentUsageSelectScalar = {
+    id?: boolean
+    bookingServiceItemId?: boolean
+    equipmentId?: boolean
+    createdAt?: boolean
+  }
+
+  export type SampleEquipmentUsageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bookingServiceItemId" | "equipmentId" | "createdAt", ExtArgs["result"]["sampleEquipmentUsage"]>
+  export type SampleEquipmentUsageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bookedItem?: boolean | BookingServiceItemDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }
+  export type SampleEquipmentUsageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bookedItem?: boolean | BookingServiceItemDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }
+  export type SampleEquipmentUsageIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bookedItem?: boolean | BookingServiceItemDefaultArgs<ExtArgs>
+    equipment?: boolean | LabEquipmentDefaultArgs<ExtArgs>
+  }
+
+  export type $SampleEquipmentUsagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SampleEquipmentUsage"
+    objects: {
+      bookedItem: Prisma.$BookingServiceItemPayload<ExtArgs>
+      equipment: Prisma.$LabEquipmentPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      bookingServiceItemId: string
+      equipmentId: string
+      createdAt: Date
+    }, ExtArgs["result"]["sampleEquipmentUsage"]>
+    composites: {}
+  }
+
+  type SampleEquipmentUsageGetPayload<S extends boolean | null | undefined | SampleEquipmentUsageDefaultArgs> = $Result.GetResult<Prisma.$SampleEquipmentUsagePayload, S>
+
+  type SampleEquipmentUsageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SampleEquipmentUsageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SampleEquipmentUsageCountAggregateInputType | true
+    }
+
+  export interface SampleEquipmentUsageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SampleEquipmentUsage'], meta: { name: 'SampleEquipmentUsage' } }
+    /**
+     * Find zero or one SampleEquipmentUsage that matches the filter.
+     * @param {SampleEquipmentUsageFindUniqueArgs} args - Arguments to find a SampleEquipmentUsage
+     * @example
+     * // Get one SampleEquipmentUsage
+     * const sampleEquipmentUsage = await prisma.sampleEquipmentUsage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SampleEquipmentUsageFindUniqueArgs>(args: SelectSubset<T, SampleEquipmentUsageFindUniqueArgs<ExtArgs>>): Prisma__SampleEquipmentUsageClient<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SampleEquipmentUsage that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SampleEquipmentUsageFindUniqueOrThrowArgs} args - Arguments to find a SampleEquipmentUsage
+     * @example
+     * // Get one SampleEquipmentUsage
+     * const sampleEquipmentUsage = await prisma.sampleEquipmentUsage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SampleEquipmentUsageFindUniqueOrThrowArgs>(args: SelectSubset<T, SampleEquipmentUsageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SampleEquipmentUsageClient<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SampleEquipmentUsage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SampleEquipmentUsageFindFirstArgs} args - Arguments to find a SampleEquipmentUsage
+     * @example
+     * // Get one SampleEquipmentUsage
+     * const sampleEquipmentUsage = await prisma.sampleEquipmentUsage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SampleEquipmentUsageFindFirstArgs>(args?: SelectSubset<T, SampleEquipmentUsageFindFirstArgs<ExtArgs>>): Prisma__SampleEquipmentUsageClient<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SampleEquipmentUsage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SampleEquipmentUsageFindFirstOrThrowArgs} args - Arguments to find a SampleEquipmentUsage
+     * @example
+     * // Get one SampleEquipmentUsage
+     * const sampleEquipmentUsage = await prisma.sampleEquipmentUsage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SampleEquipmentUsageFindFirstOrThrowArgs>(args?: SelectSubset<T, SampleEquipmentUsageFindFirstOrThrowArgs<ExtArgs>>): Prisma__SampleEquipmentUsageClient<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SampleEquipmentUsages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SampleEquipmentUsageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SampleEquipmentUsages
+     * const sampleEquipmentUsages = await prisma.sampleEquipmentUsage.findMany()
+     * 
+     * // Get first 10 SampleEquipmentUsages
+     * const sampleEquipmentUsages = await prisma.sampleEquipmentUsage.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sampleEquipmentUsageWithIdOnly = await prisma.sampleEquipmentUsage.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SampleEquipmentUsageFindManyArgs>(args?: SelectSubset<T, SampleEquipmentUsageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SampleEquipmentUsage.
+     * @param {SampleEquipmentUsageCreateArgs} args - Arguments to create a SampleEquipmentUsage.
+     * @example
+     * // Create one SampleEquipmentUsage
+     * const SampleEquipmentUsage = await prisma.sampleEquipmentUsage.create({
+     *   data: {
+     *     // ... data to create a SampleEquipmentUsage
+     *   }
+     * })
+     * 
+     */
+    create<T extends SampleEquipmentUsageCreateArgs>(args: SelectSubset<T, SampleEquipmentUsageCreateArgs<ExtArgs>>): Prisma__SampleEquipmentUsageClient<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SampleEquipmentUsages.
+     * @param {SampleEquipmentUsageCreateManyArgs} args - Arguments to create many SampleEquipmentUsages.
+     * @example
+     * // Create many SampleEquipmentUsages
+     * const sampleEquipmentUsage = await prisma.sampleEquipmentUsage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SampleEquipmentUsageCreateManyArgs>(args?: SelectSubset<T, SampleEquipmentUsageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SampleEquipmentUsages and returns the data saved in the database.
+     * @param {SampleEquipmentUsageCreateManyAndReturnArgs} args - Arguments to create many SampleEquipmentUsages.
+     * @example
+     * // Create many SampleEquipmentUsages
+     * const sampleEquipmentUsage = await prisma.sampleEquipmentUsage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SampleEquipmentUsages and only return the `id`
+     * const sampleEquipmentUsageWithIdOnly = await prisma.sampleEquipmentUsage.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SampleEquipmentUsageCreateManyAndReturnArgs>(args?: SelectSubset<T, SampleEquipmentUsageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SampleEquipmentUsage.
+     * @param {SampleEquipmentUsageDeleteArgs} args - Arguments to delete one SampleEquipmentUsage.
+     * @example
+     * // Delete one SampleEquipmentUsage
+     * const SampleEquipmentUsage = await prisma.sampleEquipmentUsage.delete({
+     *   where: {
+     *     // ... filter to delete one SampleEquipmentUsage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SampleEquipmentUsageDeleteArgs>(args: SelectSubset<T, SampleEquipmentUsageDeleteArgs<ExtArgs>>): Prisma__SampleEquipmentUsageClient<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SampleEquipmentUsage.
+     * @param {SampleEquipmentUsageUpdateArgs} args - Arguments to update one SampleEquipmentUsage.
+     * @example
+     * // Update one SampleEquipmentUsage
+     * const sampleEquipmentUsage = await prisma.sampleEquipmentUsage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SampleEquipmentUsageUpdateArgs>(args: SelectSubset<T, SampleEquipmentUsageUpdateArgs<ExtArgs>>): Prisma__SampleEquipmentUsageClient<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SampleEquipmentUsages.
+     * @param {SampleEquipmentUsageDeleteManyArgs} args - Arguments to filter SampleEquipmentUsages to delete.
+     * @example
+     * // Delete a few SampleEquipmentUsages
+     * const { count } = await prisma.sampleEquipmentUsage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SampleEquipmentUsageDeleteManyArgs>(args?: SelectSubset<T, SampleEquipmentUsageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SampleEquipmentUsages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SampleEquipmentUsageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SampleEquipmentUsages
+     * const sampleEquipmentUsage = await prisma.sampleEquipmentUsage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SampleEquipmentUsageUpdateManyArgs>(args: SelectSubset<T, SampleEquipmentUsageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SampleEquipmentUsages and returns the data updated in the database.
+     * @param {SampleEquipmentUsageUpdateManyAndReturnArgs} args - Arguments to update many SampleEquipmentUsages.
+     * @example
+     * // Update many SampleEquipmentUsages
+     * const sampleEquipmentUsage = await prisma.sampleEquipmentUsage.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SampleEquipmentUsages and only return the `id`
+     * const sampleEquipmentUsageWithIdOnly = await prisma.sampleEquipmentUsage.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SampleEquipmentUsageUpdateManyAndReturnArgs>(args: SelectSubset<T, SampleEquipmentUsageUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SampleEquipmentUsage.
+     * @param {SampleEquipmentUsageUpsertArgs} args - Arguments to update or create a SampleEquipmentUsage.
+     * @example
+     * // Update or create a SampleEquipmentUsage
+     * const sampleEquipmentUsage = await prisma.sampleEquipmentUsage.upsert({
+     *   create: {
+     *     // ... data to create a SampleEquipmentUsage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SampleEquipmentUsage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SampleEquipmentUsageUpsertArgs>(args: SelectSubset<T, SampleEquipmentUsageUpsertArgs<ExtArgs>>): Prisma__SampleEquipmentUsageClient<$Result.GetResult<Prisma.$SampleEquipmentUsagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SampleEquipmentUsages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SampleEquipmentUsageCountArgs} args - Arguments to filter SampleEquipmentUsages to count.
+     * @example
+     * // Count the number of SampleEquipmentUsages
+     * const count = await prisma.sampleEquipmentUsage.count({
+     *   where: {
+     *     // ... the filter for the SampleEquipmentUsages we want to count
+     *   }
+     * })
+    **/
+    count<T extends SampleEquipmentUsageCountArgs>(
+      args?: Subset<T, SampleEquipmentUsageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SampleEquipmentUsageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SampleEquipmentUsage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SampleEquipmentUsageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SampleEquipmentUsageAggregateArgs>(args: Subset<T, SampleEquipmentUsageAggregateArgs>): Prisma.PrismaPromise<GetSampleEquipmentUsageAggregateType<T>>
+
+    /**
+     * Group by SampleEquipmentUsage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SampleEquipmentUsageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SampleEquipmentUsageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SampleEquipmentUsageGroupByArgs['orderBy'] }
+        : { orderBy?: SampleEquipmentUsageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SampleEquipmentUsageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSampleEquipmentUsageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SampleEquipmentUsage model
+   */
+  readonly fields: SampleEquipmentUsageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SampleEquipmentUsage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SampleEquipmentUsageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    bookedItem<T extends BookingServiceItemDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BookingServiceItemDefaultArgs<ExtArgs>>): Prisma__BookingServiceItemClient<$Result.GetResult<Prisma.$BookingServiceItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    equipment<T extends LabEquipmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LabEquipmentDefaultArgs<ExtArgs>>): Prisma__LabEquipmentClient<$Result.GetResult<Prisma.$LabEquipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SampleEquipmentUsage model
+   */
+  interface SampleEquipmentUsageFieldRefs {
+    readonly id: FieldRef<"SampleEquipmentUsage", 'String'>
+    readonly bookingServiceItemId: FieldRef<"SampleEquipmentUsage", 'String'>
+    readonly equipmentId: FieldRef<"SampleEquipmentUsage", 'String'>
+    readonly createdAt: FieldRef<"SampleEquipmentUsage", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SampleEquipmentUsage findUnique
+   */
+  export type SampleEquipmentUsageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which SampleEquipmentUsage to fetch.
+     */
+    where: SampleEquipmentUsageWhereUniqueInput
+  }
+
+  /**
+   * SampleEquipmentUsage findUniqueOrThrow
+   */
+  export type SampleEquipmentUsageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which SampleEquipmentUsage to fetch.
+     */
+    where: SampleEquipmentUsageWhereUniqueInput
+  }
+
+  /**
+   * SampleEquipmentUsage findFirst
+   */
+  export type SampleEquipmentUsageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which SampleEquipmentUsage to fetch.
+     */
+    where?: SampleEquipmentUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SampleEquipmentUsages to fetch.
+     */
+    orderBy?: SampleEquipmentUsageOrderByWithRelationInput | SampleEquipmentUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SampleEquipmentUsages.
+     */
+    cursor?: SampleEquipmentUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SampleEquipmentUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SampleEquipmentUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SampleEquipmentUsages.
+     */
+    distinct?: SampleEquipmentUsageScalarFieldEnum | SampleEquipmentUsageScalarFieldEnum[]
+  }
+
+  /**
+   * SampleEquipmentUsage findFirstOrThrow
+   */
+  export type SampleEquipmentUsageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which SampleEquipmentUsage to fetch.
+     */
+    where?: SampleEquipmentUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SampleEquipmentUsages to fetch.
+     */
+    orderBy?: SampleEquipmentUsageOrderByWithRelationInput | SampleEquipmentUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SampleEquipmentUsages.
+     */
+    cursor?: SampleEquipmentUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SampleEquipmentUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SampleEquipmentUsages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SampleEquipmentUsages.
+     */
+    distinct?: SampleEquipmentUsageScalarFieldEnum | SampleEquipmentUsageScalarFieldEnum[]
+  }
+
+  /**
+   * SampleEquipmentUsage findMany
+   */
+  export type SampleEquipmentUsageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter, which SampleEquipmentUsages to fetch.
+     */
+    where?: SampleEquipmentUsageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SampleEquipmentUsages to fetch.
+     */
+    orderBy?: SampleEquipmentUsageOrderByWithRelationInput | SampleEquipmentUsageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SampleEquipmentUsages.
+     */
+    cursor?: SampleEquipmentUsageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SampleEquipmentUsages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SampleEquipmentUsages.
+     */
+    skip?: number
+    distinct?: SampleEquipmentUsageScalarFieldEnum | SampleEquipmentUsageScalarFieldEnum[]
+  }
+
+  /**
+   * SampleEquipmentUsage create
+   */
+  export type SampleEquipmentUsageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SampleEquipmentUsage.
+     */
+    data: XOR<SampleEquipmentUsageCreateInput, SampleEquipmentUsageUncheckedCreateInput>
+  }
+
+  /**
+   * SampleEquipmentUsage createMany
+   */
+  export type SampleEquipmentUsageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SampleEquipmentUsages.
+     */
+    data: SampleEquipmentUsageCreateManyInput | SampleEquipmentUsageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SampleEquipmentUsage createManyAndReturn
+   */
+  export type SampleEquipmentUsageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * The data used to create many SampleEquipmentUsages.
+     */
+    data: SampleEquipmentUsageCreateManyInput | SampleEquipmentUsageCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SampleEquipmentUsage update
+   */
+  export type SampleEquipmentUsageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SampleEquipmentUsage.
+     */
+    data: XOR<SampleEquipmentUsageUpdateInput, SampleEquipmentUsageUncheckedUpdateInput>
+    /**
+     * Choose, which SampleEquipmentUsage to update.
+     */
+    where: SampleEquipmentUsageWhereUniqueInput
+  }
+
+  /**
+   * SampleEquipmentUsage updateMany
+   */
+  export type SampleEquipmentUsageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SampleEquipmentUsages.
+     */
+    data: XOR<SampleEquipmentUsageUpdateManyMutationInput, SampleEquipmentUsageUncheckedUpdateManyInput>
+    /**
+     * Filter which SampleEquipmentUsages to update
+     */
+    where?: SampleEquipmentUsageWhereInput
+    /**
+     * Limit how many SampleEquipmentUsages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SampleEquipmentUsage updateManyAndReturn
+   */
+  export type SampleEquipmentUsageUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * The data used to update SampleEquipmentUsages.
+     */
+    data: XOR<SampleEquipmentUsageUpdateManyMutationInput, SampleEquipmentUsageUncheckedUpdateManyInput>
+    /**
+     * Filter which SampleEquipmentUsages to update
+     */
+    where?: SampleEquipmentUsageWhereInput
+    /**
+     * Limit how many SampleEquipmentUsages to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SampleEquipmentUsage upsert
+   */
+  export type SampleEquipmentUsageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SampleEquipmentUsage to update in case it exists.
+     */
+    where: SampleEquipmentUsageWhereUniqueInput
+    /**
+     * In case the SampleEquipmentUsage found by the `where` argument doesn't exist, create a new SampleEquipmentUsage with this data.
+     */
+    create: XOR<SampleEquipmentUsageCreateInput, SampleEquipmentUsageUncheckedCreateInput>
+    /**
+     * In case the SampleEquipmentUsage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SampleEquipmentUsageUpdateInput, SampleEquipmentUsageUncheckedUpdateInput>
+  }
+
+  /**
+   * SampleEquipmentUsage delete
+   */
+  export type SampleEquipmentUsageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+    /**
+     * Filter which SampleEquipmentUsage to delete.
+     */
+    where: SampleEquipmentUsageWhereUniqueInput
+  }
+
+  /**
+   * SampleEquipmentUsage deleteMany
+   */
+  export type SampleEquipmentUsageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SampleEquipmentUsages to delete
+     */
+    where?: SampleEquipmentUsageWhereInput
+    /**
+     * Limit how many SampleEquipmentUsages to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SampleEquipmentUsage without action
+   */
+  export type SampleEquipmentUsageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SampleEquipmentUsage
+     */
+    select?: SampleEquipmentUsageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SampleEquipmentUsage
+     */
+    omit?: SampleEquipmentUsageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SampleEquipmentUsageInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model AnalysisResult
    */
 
@@ -25099,6 +30550,3488 @@ export namespace Prisma {
 
 
   /**
+   * Model GlobalAddOnCatalog
+   */
+
+  export type AggregateGlobalAddOnCatalog = {
+    _count: GlobalAddOnCatalogCountAggregateOutputType | null
+    _avg: GlobalAddOnCatalogAvgAggregateOutputType | null
+    _sum: GlobalAddOnCatalogSumAggregateOutputType | null
+    _min: GlobalAddOnCatalogMinAggregateOutputType | null
+    _max: GlobalAddOnCatalogMaxAggregateOutputType | null
+  }
+
+  export type GlobalAddOnCatalogAvgAggregateOutputType = {
+    defaultAmount: Decimal | null
+  }
+
+  export type GlobalAddOnCatalogSumAggregateOutputType = {
+    defaultAmount: Decimal | null
+  }
+
+  export type GlobalAddOnCatalogMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    defaultAmount: Decimal | null
+    applicableTo: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GlobalAddOnCatalogMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    defaultAmount: Decimal | null
+    applicableTo: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GlobalAddOnCatalogCountAggregateOutputType = {
+    id: number
+    name: number
+    description: number
+    defaultAmount: number
+    applicableTo: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GlobalAddOnCatalogAvgAggregateInputType = {
+    defaultAmount?: true
+  }
+
+  export type GlobalAddOnCatalogSumAggregateInputType = {
+    defaultAmount?: true
+  }
+
+  export type GlobalAddOnCatalogMinAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    defaultAmount?: true
+    applicableTo?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GlobalAddOnCatalogMaxAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    defaultAmount?: true
+    applicableTo?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GlobalAddOnCatalogCountAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    defaultAmount?: true
+    applicableTo?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GlobalAddOnCatalogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GlobalAddOnCatalog to aggregate.
+     */
+    where?: GlobalAddOnCatalogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GlobalAddOnCatalogs to fetch.
+     */
+    orderBy?: GlobalAddOnCatalogOrderByWithRelationInput | GlobalAddOnCatalogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GlobalAddOnCatalogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GlobalAddOnCatalogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GlobalAddOnCatalogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GlobalAddOnCatalogs
+    **/
+    _count?: true | GlobalAddOnCatalogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GlobalAddOnCatalogAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GlobalAddOnCatalogSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GlobalAddOnCatalogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GlobalAddOnCatalogMaxAggregateInputType
+  }
+
+  export type GetGlobalAddOnCatalogAggregateType<T extends GlobalAddOnCatalogAggregateArgs> = {
+        [P in keyof T & keyof AggregateGlobalAddOnCatalog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGlobalAddOnCatalog[P]>
+      : GetScalarType<T[P], AggregateGlobalAddOnCatalog[P]>
+  }
+
+
+
+
+  export type GlobalAddOnCatalogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GlobalAddOnCatalogWhereInput
+    orderBy?: GlobalAddOnCatalogOrderByWithAggregationInput | GlobalAddOnCatalogOrderByWithAggregationInput[]
+    by: GlobalAddOnCatalogScalarFieldEnum[] | GlobalAddOnCatalogScalarFieldEnum
+    having?: GlobalAddOnCatalogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GlobalAddOnCatalogCountAggregateInputType | true
+    _avg?: GlobalAddOnCatalogAvgAggregateInputType
+    _sum?: GlobalAddOnCatalogSumAggregateInputType
+    _min?: GlobalAddOnCatalogMinAggregateInputType
+    _max?: GlobalAddOnCatalogMaxAggregateInputType
+  }
+
+  export type GlobalAddOnCatalogGroupByOutputType = {
+    id: string
+    name: string
+    description: string | null
+    defaultAmount: Decimal
+    applicableTo: string
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: GlobalAddOnCatalogCountAggregateOutputType | null
+    _avg: GlobalAddOnCatalogAvgAggregateOutputType | null
+    _sum: GlobalAddOnCatalogSumAggregateOutputType | null
+    _min: GlobalAddOnCatalogMinAggregateOutputType | null
+    _max: GlobalAddOnCatalogMaxAggregateOutputType | null
+  }
+
+  type GetGlobalAddOnCatalogGroupByPayload<T extends GlobalAddOnCatalogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GlobalAddOnCatalogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GlobalAddOnCatalogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GlobalAddOnCatalogGroupByOutputType[P]>
+            : GetScalarType<T[P], GlobalAddOnCatalogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GlobalAddOnCatalogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    defaultAmount?: boolean
+    applicableTo?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    serviceMappings?: boolean | GlobalAddOnCatalog$serviceMappingsArgs<ExtArgs>
+    serviceAddOns?: boolean | GlobalAddOnCatalog$serviceAddOnsArgs<ExtArgs>
+    _count?: boolean | GlobalAddOnCatalogCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["globalAddOnCatalog"]>
+
+  export type GlobalAddOnCatalogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    defaultAmount?: boolean
+    applicableTo?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["globalAddOnCatalog"]>
+
+  export type GlobalAddOnCatalogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    defaultAmount?: boolean
+    applicableTo?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["globalAddOnCatalog"]>
+
+  export type GlobalAddOnCatalogSelectScalar = {
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    defaultAmount?: boolean
+    applicableTo?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GlobalAddOnCatalogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "defaultAmount" | "applicableTo" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["globalAddOnCatalog"]>
+  export type GlobalAddOnCatalogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    serviceMappings?: boolean | GlobalAddOnCatalog$serviceMappingsArgs<ExtArgs>
+    serviceAddOns?: boolean | GlobalAddOnCatalog$serviceAddOnsArgs<ExtArgs>
+    _count?: boolean | GlobalAddOnCatalogCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type GlobalAddOnCatalogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type GlobalAddOnCatalogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $GlobalAddOnCatalogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GlobalAddOnCatalog"
+    objects: {
+      serviceMappings: Prisma.$ServiceAddOnMappingPayload<ExtArgs>[]
+      serviceAddOns: Prisma.$ServiceAddOnPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      description: string | null
+      defaultAmount: Prisma.Decimal
+      applicableTo: string
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["globalAddOnCatalog"]>
+    composites: {}
+  }
+
+  type GlobalAddOnCatalogGetPayload<S extends boolean | null | undefined | GlobalAddOnCatalogDefaultArgs> = $Result.GetResult<Prisma.$GlobalAddOnCatalogPayload, S>
+
+  type GlobalAddOnCatalogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GlobalAddOnCatalogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GlobalAddOnCatalogCountAggregateInputType | true
+    }
+
+  export interface GlobalAddOnCatalogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GlobalAddOnCatalog'], meta: { name: 'GlobalAddOnCatalog' } }
+    /**
+     * Find zero or one GlobalAddOnCatalog that matches the filter.
+     * @param {GlobalAddOnCatalogFindUniqueArgs} args - Arguments to find a GlobalAddOnCatalog
+     * @example
+     * // Get one GlobalAddOnCatalog
+     * const globalAddOnCatalog = await prisma.globalAddOnCatalog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GlobalAddOnCatalogFindUniqueArgs>(args: SelectSubset<T, GlobalAddOnCatalogFindUniqueArgs<ExtArgs>>): Prisma__GlobalAddOnCatalogClient<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GlobalAddOnCatalog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GlobalAddOnCatalogFindUniqueOrThrowArgs} args - Arguments to find a GlobalAddOnCatalog
+     * @example
+     * // Get one GlobalAddOnCatalog
+     * const globalAddOnCatalog = await prisma.globalAddOnCatalog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GlobalAddOnCatalogFindUniqueOrThrowArgs>(args: SelectSubset<T, GlobalAddOnCatalogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GlobalAddOnCatalogClient<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GlobalAddOnCatalog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GlobalAddOnCatalogFindFirstArgs} args - Arguments to find a GlobalAddOnCatalog
+     * @example
+     * // Get one GlobalAddOnCatalog
+     * const globalAddOnCatalog = await prisma.globalAddOnCatalog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GlobalAddOnCatalogFindFirstArgs>(args?: SelectSubset<T, GlobalAddOnCatalogFindFirstArgs<ExtArgs>>): Prisma__GlobalAddOnCatalogClient<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GlobalAddOnCatalog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GlobalAddOnCatalogFindFirstOrThrowArgs} args - Arguments to find a GlobalAddOnCatalog
+     * @example
+     * // Get one GlobalAddOnCatalog
+     * const globalAddOnCatalog = await prisma.globalAddOnCatalog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GlobalAddOnCatalogFindFirstOrThrowArgs>(args?: SelectSubset<T, GlobalAddOnCatalogFindFirstOrThrowArgs<ExtArgs>>): Prisma__GlobalAddOnCatalogClient<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GlobalAddOnCatalogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GlobalAddOnCatalogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GlobalAddOnCatalogs
+     * const globalAddOnCatalogs = await prisma.globalAddOnCatalog.findMany()
+     * 
+     * // Get first 10 GlobalAddOnCatalogs
+     * const globalAddOnCatalogs = await prisma.globalAddOnCatalog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const globalAddOnCatalogWithIdOnly = await prisma.globalAddOnCatalog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GlobalAddOnCatalogFindManyArgs>(args?: SelectSubset<T, GlobalAddOnCatalogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GlobalAddOnCatalog.
+     * @param {GlobalAddOnCatalogCreateArgs} args - Arguments to create a GlobalAddOnCatalog.
+     * @example
+     * // Create one GlobalAddOnCatalog
+     * const GlobalAddOnCatalog = await prisma.globalAddOnCatalog.create({
+     *   data: {
+     *     // ... data to create a GlobalAddOnCatalog
+     *   }
+     * })
+     * 
+     */
+    create<T extends GlobalAddOnCatalogCreateArgs>(args: SelectSubset<T, GlobalAddOnCatalogCreateArgs<ExtArgs>>): Prisma__GlobalAddOnCatalogClient<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GlobalAddOnCatalogs.
+     * @param {GlobalAddOnCatalogCreateManyArgs} args - Arguments to create many GlobalAddOnCatalogs.
+     * @example
+     * // Create many GlobalAddOnCatalogs
+     * const globalAddOnCatalog = await prisma.globalAddOnCatalog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GlobalAddOnCatalogCreateManyArgs>(args?: SelectSubset<T, GlobalAddOnCatalogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many GlobalAddOnCatalogs and returns the data saved in the database.
+     * @param {GlobalAddOnCatalogCreateManyAndReturnArgs} args - Arguments to create many GlobalAddOnCatalogs.
+     * @example
+     * // Create many GlobalAddOnCatalogs
+     * const globalAddOnCatalog = await prisma.globalAddOnCatalog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many GlobalAddOnCatalogs and only return the `id`
+     * const globalAddOnCatalogWithIdOnly = await prisma.globalAddOnCatalog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends GlobalAddOnCatalogCreateManyAndReturnArgs>(args?: SelectSubset<T, GlobalAddOnCatalogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a GlobalAddOnCatalog.
+     * @param {GlobalAddOnCatalogDeleteArgs} args - Arguments to delete one GlobalAddOnCatalog.
+     * @example
+     * // Delete one GlobalAddOnCatalog
+     * const GlobalAddOnCatalog = await prisma.globalAddOnCatalog.delete({
+     *   where: {
+     *     // ... filter to delete one GlobalAddOnCatalog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GlobalAddOnCatalogDeleteArgs>(args: SelectSubset<T, GlobalAddOnCatalogDeleteArgs<ExtArgs>>): Prisma__GlobalAddOnCatalogClient<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GlobalAddOnCatalog.
+     * @param {GlobalAddOnCatalogUpdateArgs} args - Arguments to update one GlobalAddOnCatalog.
+     * @example
+     * // Update one GlobalAddOnCatalog
+     * const globalAddOnCatalog = await prisma.globalAddOnCatalog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GlobalAddOnCatalogUpdateArgs>(args: SelectSubset<T, GlobalAddOnCatalogUpdateArgs<ExtArgs>>): Prisma__GlobalAddOnCatalogClient<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GlobalAddOnCatalogs.
+     * @param {GlobalAddOnCatalogDeleteManyArgs} args - Arguments to filter GlobalAddOnCatalogs to delete.
+     * @example
+     * // Delete a few GlobalAddOnCatalogs
+     * const { count } = await prisma.globalAddOnCatalog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GlobalAddOnCatalogDeleteManyArgs>(args?: SelectSubset<T, GlobalAddOnCatalogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GlobalAddOnCatalogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GlobalAddOnCatalogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GlobalAddOnCatalogs
+     * const globalAddOnCatalog = await prisma.globalAddOnCatalog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GlobalAddOnCatalogUpdateManyArgs>(args: SelectSubset<T, GlobalAddOnCatalogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GlobalAddOnCatalogs and returns the data updated in the database.
+     * @param {GlobalAddOnCatalogUpdateManyAndReturnArgs} args - Arguments to update many GlobalAddOnCatalogs.
+     * @example
+     * // Update many GlobalAddOnCatalogs
+     * const globalAddOnCatalog = await prisma.globalAddOnCatalog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more GlobalAddOnCatalogs and only return the `id`
+     * const globalAddOnCatalogWithIdOnly = await prisma.globalAddOnCatalog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends GlobalAddOnCatalogUpdateManyAndReturnArgs>(args: SelectSubset<T, GlobalAddOnCatalogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one GlobalAddOnCatalog.
+     * @param {GlobalAddOnCatalogUpsertArgs} args - Arguments to update or create a GlobalAddOnCatalog.
+     * @example
+     * // Update or create a GlobalAddOnCatalog
+     * const globalAddOnCatalog = await prisma.globalAddOnCatalog.upsert({
+     *   create: {
+     *     // ... data to create a GlobalAddOnCatalog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GlobalAddOnCatalog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GlobalAddOnCatalogUpsertArgs>(args: SelectSubset<T, GlobalAddOnCatalogUpsertArgs<ExtArgs>>): Prisma__GlobalAddOnCatalogClient<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of GlobalAddOnCatalogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GlobalAddOnCatalogCountArgs} args - Arguments to filter GlobalAddOnCatalogs to count.
+     * @example
+     * // Count the number of GlobalAddOnCatalogs
+     * const count = await prisma.globalAddOnCatalog.count({
+     *   where: {
+     *     // ... the filter for the GlobalAddOnCatalogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends GlobalAddOnCatalogCountArgs>(
+      args?: Subset<T, GlobalAddOnCatalogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GlobalAddOnCatalogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GlobalAddOnCatalog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GlobalAddOnCatalogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GlobalAddOnCatalogAggregateArgs>(args: Subset<T, GlobalAddOnCatalogAggregateArgs>): Prisma.PrismaPromise<GetGlobalAddOnCatalogAggregateType<T>>
+
+    /**
+     * Group by GlobalAddOnCatalog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GlobalAddOnCatalogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GlobalAddOnCatalogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GlobalAddOnCatalogGroupByArgs['orderBy'] }
+        : { orderBy?: GlobalAddOnCatalogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GlobalAddOnCatalogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGlobalAddOnCatalogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GlobalAddOnCatalog model
+   */
+  readonly fields: GlobalAddOnCatalogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GlobalAddOnCatalog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GlobalAddOnCatalogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    serviceMappings<T extends GlobalAddOnCatalog$serviceMappingsArgs<ExtArgs> = {}>(args?: Subset<T, GlobalAddOnCatalog$serviceMappingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    serviceAddOns<T extends GlobalAddOnCatalog$serviceAddOnsArgs<ExtArgs> = {}>(args?: Subset<T, GlobalAddOnCatalog$serviceAddOnsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GlobalAddOnCatalog model
+   */
+  interface GlobalAddOnCatalogFieldRefs {
+    readonly id: FieldRef<"GlobalAddOnCatalog", 'String'>
+    readonly name: FieldRef<"GlobalAddOnCatalog", 'String'>
+    readonly description: FieldRef<"GlobalAddOnCatalog", 'String'>
+    readonly defaultAmount: FieldRef<"GlobalAddOnCatalog", 'Decimal'>
+    readonly applicableTo: FieldRef<"GlobalAddOnCatalog", 'String'>
+    readonly isActive: FieldRef<"GlobalAddOnCatalog", 'Boolean'>
+    readonly createdAt: FieldRef<"GlobalAddOnCatalog", 'DateTime'>
+    readonly updatedAt: FieldRef<"GlobalAddOnCatalog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GlobalAddOnCatalog findUnique
+   */
+  export type GlobalAddOnCatalogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GlobalAddOnCatalogInclude<ExtArgs> | null
+    /**
+     * Filter, which GlobalAddOnCatalog to fetch.
+     */
+    where: GlobalAddOnCatalogWhereUniqueInput
+  }
+
+  /**
+   * GlobalAddOnCatalog findUniqueOrThrow
+   */
+  export type GlobalAddOnCatalogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GlobalAddOnCatalogInclude<ExtArgs> | null
+    /**
+     * Filter, which GlobalAddOnCatalog to fetch.
+     */
+    where: GlobalAddOnCatalogWhereUniqueInput
+  }
+
+  /**
+   * GlobalAddOnCatalog findFirst
+   */
+  export type GlobalAddOnCatalogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GlobalAddOnCatalogInclude<ExtArgs> | null
+    /**
+     * Filter, which GlobalAddOnCatalog to fetch.
+     */
+    where?: GlobalAddOnCatalogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GlobalAddOnCatalogs to fetch.
+     */
+    orderBy?: GlobalAddOnCatalogOrderByWithRelationInput | GlobalAddOnCatalogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GlobalAddOnCatalogs.
+     */
+    cursor?: GlobalAddOnCatalogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GlobalAddOnCatalogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GlobalAddOnCatalogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GlobalAddOnCatalogs.
+     */
+    distinct?: GlobalAddOnCatalogScalarFieldEnum | GlobalAddOnCatalogScalarFieldEnum[]
+  }
+
+  /**
+   * GlobalAddOnCatalog findFirstOrThrow
+   */
+  export type GlobalAddOnCatalogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GlobalAddOnCatalogInclude<ExtArgs> | null
+    /**
+     * Filter, which GlobalAddOnCatalog to fetch.
+     */
+    where?: GlobalAddOnCatalogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GlobalAddOnCatalogs to fetch.
+     */
+    orderBy?: GlobalAddOnCatalogOrderByWithRelationInput | GlobalAddOnCatalogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GlobalAddOnCatalogs.
+     */
+    cursor?: GlobalAddOnCatalogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GlobalAddOnCatalogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GlobalAddOnCatalogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GlobalAddOnCatalogs.
+     */
+    distinct?: GlobalAddOnCatalogScalarFieldEnum | GlobalAddOnCatalogScalarFieldEnum[]
+  }
+
+  /**
+   * GlobalAddOnCatalog findMany
+   */
+  export type GlobalAddOnCatalogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GlobalAddOnCatalogInclude<ExtArgs> | null
+    /**
+     * Filter, which GlobalAddOnCatalogs to fetch.
+     */
+    where?: GlobalAddOnCatalogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GlobalAddOnCatalogs to fetch.
+     */
+    orderBy?: GlobalAddOnCatalogOrderByWithRelationInput | GlobalAddOnCatalogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GlobalAddOnCatalogs.
+     */
+    cursor?: GlobalAddOnCatalogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GlobalAddOnCatalogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GlobalAddOnCatalogs.
+     */
+    skip?: number
+    distinct?: GlobalAddOnCatalogScalarFieldEnum | GlobalAddOnCatalogScalarFieldEnum[]
+  }
+
+  /**
+   * GlobalAddOnCatalog create
+   */
+  export type GlobalAddOnCatalogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GlobalAddOnCatalogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a GlobalAddOnCatalog.
+     */
+    data: XOR<GlobalAddOnCatalogCreateInput, GlobalAddOnCatalogUncheckedCreateInput>
+  }
+
+  /**
+   * GlobalAddOnCatalog createMany
+   */
+  export type GlobalAddOnCatalogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GlobalAddOnCatalogs.
+     */
+    data: GlobalAddOnCatalogCreateManyInput | GlobalAddOnCatalogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GlobalAddOnCatalog createManyAndReturn
+   */
+  export type GlobalAddOnCatalogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * The data used to create many GlobalAddOnCatalogs.
+     */
+    data: GlobalAddOnCatalogCreateManyInput | GlobalAddOnCatalogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GlobalAddOnCatalog update
+   */
+  export type GlobalAddOnCatalogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GlobalAddOnCatalogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a GlobalAddOnCatalog.
+     */
+    data: XOR<GlobalAddOnCatalogUpdateInput, GlobalAddOnCatalogUncheckedUpdateInput>
+    /**
+     * Choose, which GlobalAddOnCatalog to update.
+     */
+    where: GlobalAddOnCatalogWhereUniqueInput
+  }
+
+  /**
+   * GlobalAddOnCatalog updateMany
+   */
+  export type GlobalAddOnCatalogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GlobalAddOnCatalogs.
+     */
+    data: XOR<GlobalAddOnCatalogUpdateManyMutationInput, GlobalAddOnCatalogUncheckedUpdateManyInput>
+    /**
+     * Filter which GlobalAddOnCatalogs to update
+     */
+    where?: GlobalAddOnCatalogWhereInput
+    /**
+     * Limit how many GlobalAddOnCatalogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GlobalAddOnCatalog updateManyAndReturn
+   */
+  export type GlobalAddOnCatalogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * The data used to update GlobalAddOnCatalogs.
+     */
+    data: XOR<GlobalAddOnCatalogUpdateManyMutationInput, GlobalAddOnCatalogUncheckedUpdateManyInput>
+    /**
+     * Filter which GlobalAddOnCatalogs to update
+     */
+    where?: GlobalAddOnCatalogWhereInput
+    /**
+     * Limit how many GlobalAddOnCatalogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GlobalAddOnCatalog upsert
+   */
+  export type GlobalAddOnCatalogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GlobalAddOnCatalogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the GlobalAddOnCatalog to update in case it exists.
+     */
+    where: GlobalAddOnCatalogWhereUniqueInput
+    /**
+     * In case the GlobalAddOnCatalog found by the `where` argument doesn't exist, create a new GlobalAddOnCatalog with this data.
+     */
+    create: XOR<GlobalAddOnCatalogCreateInput, GlobalAddOnCatalogUncheckedCreateInput>
+    /**
+     * In case the GlobalAddOnCatalog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GlobalAddOnCatalogUpdateInput, GlobalAddOnCatalogUncheckedUpdateInput>
+  }
+
+  /**
+   * GlobalAddOnCatalog delete
+   */
+  export type GlobalAddOnCatalogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GlobalAddOnCatalogInclude<ExtArgs> | null
+    /**
+     * Filter which GlobalAddOnCatalog to delete.
+     */
+    where: GlobalAddOnCatalogWhereUniqueInput
+  }
+
+  /**
+   * GlobalAddOnCatalog deleteMany
+   */
+  export type GlobalAddOnCatalogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GlobalAddOnCatalogs to delete
+     */
+    where?: GlobalAddOnCatalogWhereInput
+    /**
+     * Limit how many GlobalAddOnCatalogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GlobalAddOnCatalog.serviceMappings
+   */
+  export type GlobalAddOnCatalog$serviceMappingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+    where?: ServiceAddOnMappingWhereInput
+    orderBy?: ServiceAddOnMappingOrderByWithRelationInput | ServiceAddOnMappingOrderByWithRelationInput[]
+    cursor?: ServiceAddOnMappingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ServiceAddOnMappingScalarFieldEnum | ServiceAddOnMappingScalarFieldEnum[]
+  }
+
+  /**
+   * GlobalAddOnCatalog.serviceAddOns
+   */
+  export type GlobalAddOnCatalog$serviceAddOnsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    where?: ServiceAddOnWhereInput
+    orderBy?: ServiceAddOnOrderByWithRelationInput | ServiceAddOnOrderByWithRelationInput[]
+    cursor?: ServiceAddOnWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ServiceAddOnScalarFieldEnum | ServiceAddOnScalarFieldEnum[]
+  }
+
+  /**
+   * GlobalAddOnCatalog without action
+   */
+  export type GlobalAddOnCatalogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GlobalAddOnCatalog
+     */
+    select?: GlobalAddOnCatalogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GlobalAddOnCatalog
+     */
+    omit?: GlobalAddOnCatalogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GlobalAddOnCatalogInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ServiceAddOnMapping
+   */
+
+  export type AggregateServiceAddOnMapping = {
+    _count: ServiceAddOnMappingCountAggregateOutputType | null
+    _avg: ServiceAddOnMappingAvgAggregateOutputType | null
+    _sum: ServiceAddOnMappingSumAggregateOutputType | null
+    _min: ServiceAddOnMappingMinAggregateOutputType | null
+    _max: ServiceAddOnMappingMaxAggregateOutputType | null
+  }
+
+  export type ServiceAddOnMappingAvgAggregateOutputType = {
+    customAmount: Decimal | null
+  }
+
+  export type ServiceAddOnMappingSumAggregateOutputType = {
+    customAmount: Decimal | null
+  }
+
+  export type ServiceAddOnMappingMinAggregateOutputType = {
+    id: string | null
+    serviceId: string | null
+    addOnId: string | null
+    isEnabled: boolean | null
+    customAmount: Decimal | null
+    createdAt: Date | null
+  }
+
+  export type ServiceAddOnMappingMaxAggregateOutputType = {
+    id: string | null
+    serviceId: string | null
+    addOnId: string | null
+    isEnabled: boolean | null
+    customAmount: Decimal | null
+    createdAt: Date | null
+  }
+
+  export type ServiceAddOnMappingCountAggregateOutputType = {
+    id: number
+    serviceId: number
+    addOnId: number
+    isEnabled: number
+    customAmount: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ServiceAddOnMappingAvgAggregateInputType = {
+    customAmount?: true
+  }
+
+  export type ServiceAddOnMappingSumAggregateInputType = {
+    customAmount?: true
+  }
+
+  export type ServiceAddOnMappingMinAggregateInputType = {
+    id?: true
+    serviceId?: true
+    addOnId?: true
+    isEnabled?: true
+    customAmount?: true
+    createdAt?: true
+  }
+
+  export type ServiceAddOnMappingMaxAggregateInputType = {
+    id?: true
+    serviceId?: true
+    addOnId?: true
+    isEnabled?: true
+    customAmount?: true
+    createdAt?: true
+  }
+
+  export type ServiceAddOnMappingCountAggregateInputType = {
+    id?: true
+    serviceId?: true
+    addOnId?: true
+    isEnabled?: true
+    customAmount?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ServiceAddOnMappingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ServiceAddOnMapping to aggregate.
+     */
+    where?: ServiceAddOnMappingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceAddOnMappings to fetch.
+     */
+    orderBy?: ServiceAddOnMappingOrderByWithRelationInput | ServiceAddOnMappingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ServiceAddOnMappingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceAddOnMappings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceAddOnMappings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ServiceAddOnMappings
+    **/
+    _count?: true | ServiceAddOnMappingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ServiceAddOnMappingAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ServiceAddOnMappingSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ServiceAddOnMappingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ServiceAddOnMappingMaxAggregateInputType
+  }
+
+  export type GetServiceAddOnMappingAggregateType<T extends ServiceAddOnMappingAggregateArgs> = {
+        [P in keyof T & keyof AggregateServiceAddOnMapping]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateServiceAddOnMapping[P]>
+      : GetScalarType<T[P], AggregateServiceAddOnMapping[P]>
+  }
+
+
+
+
+  export type ServiceAddOnMappingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ServiceAddOnMappingWhereInput
+    orderBy?: ServiceAddOnMappingOrderByWithAggregationInput | ServiceAddOnMappingOrderByWithAggregationInput[]
+    by: ServiceAddOnMappingScalarFieldEnum[] | ServiceAddOnMappingScalarFieldEnum
+    having?: ServiceAddOnMappingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ServiceAddOnMappingCountAggregateInputType | true
+    _avg?: ServiceAddOnMappingAvgAggregateInputType
+    _sum?: ServiceAddOnMappingSumAggregateInputType
+    _min?: ServiceAddOnMappingMinAggregateInputType
+    _max?: ServiceAddOnMappingMaxAggregateInputType
+  }
+
+  export type ServiceAddOnMappingGroupByOutputType = {
+    id: string
+    serviceId: string
+    addOnId: string
+    isEnabled: boolean
+    customAmount: Decimal | null
+    createdAt: Date
+    _count: ServiceAddOnMappingCountAggregateOutputType | null
+    _avg: ServiceAddOnMappingAvgAggregateOutputType | null
+    _sum: ServiceAddOnMappingSumAggregateOutputType | null
+    _min: ServiceAddOnMappingMinAggregateOutputType | null
+    _max: ServiceAddOnMappingMaxAggregateOutputType | null
+  }
+
+  type GetServiceAddOnMappingGroupByPayload<T extends ServiceAddOnMappingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ServiceAddOnMappingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ServiceAddOnMappingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ServiceAddOnMappingGroupByOutputType[P]>
+            : GetScalarType<T[P], ServiceAddOnMappingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ServiceAddOnMappingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    serviceId?: boolean
+    addOnId?: boolean
+    isEnabled?: boolean
+    customAmount?: boolean
+    createdAt?: boolean
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["serviceAddOnMapping"]>
+
+  export type ServiceAddOnMappingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    serviceId?: boolean
+    addOnId?: boolean
+    isEnabled?: boolean
+    customAmount?: boolean
+    createdAt?: boolean
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["serviceAddOnMapping"]>
+
+  export type ServiceAddOnMappingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    serviceId?: boolean
+    addOnId?: boolean
+    isEnabled?: boolean
+    customAmount?: boolean
+    createdAt?: boolean
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["serviceAddOnMapping"]>
+
+  export type ServiceAddOnMappingSelectScalar = {
+    id?: boolean
+    serviceId?: boolean
+    addOnId?: boolean
+    isEnabled?: boolean
+    customAmount?: boolean
+    createdAt?: boolean
+  }
+
+  export type ServiceAddOnMappingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "serviceId" | "addOnId" | "isEnabled" | "customAmount" | "createdAt", ExtArgs["result"]["serviceAddOnMapping"]>
+  export type ServiceAddOnMappingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }
+  export type ServiceAddOnMappingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }
+  export type ServiceAddOnMappingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }
+
+  export type $ServiceAddOnMappingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ServiceAddOnMapping"
+    objects: {
+      service: Prisma.$ServicePayload<ExtArgs>
+      addOnCatalog: Prisma.$GlobalAddOnCatalogPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      serviceId: string
+      addOnId: string
+      isEnabled: boolean
+      customAmount: Prisma.Decimal | null
+      createdAt: Date
+    }, ExtArgs["result"]["serviceAddOnMapping"]>
+    composites: {}
+  }
+
+  type ServiceAddOnMappingGetPayload<S extends boolean | null | undefined | ServiceAddOnMappingDefaultArgs> = $Result.GetResult<Prisma.$ServiceAddOnMappingPayload, S>
+
+  type ServiceAddOnMappingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ServiceAddOnMappingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ServiceAddOnMappingCountAggregateInputType | true
+    }
+
+  export interface ServiceAddOnMappingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ServiceAddOnMapping'], meta: { name: 'ServiceAddOnMapping' } }
+    /**
+     * Find zero or one ServiceAddOnMapping that matches the filter.
+     * @param {ServiceAddOnMappingFindUniqueArgs} args - Arguments to find a ServiceAddOnMapping
+     * @example
+     * // Get one ServiceAddOnMapping
+     * const serviceAddOnMapping = await prisma.serviceAddOnMapping.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ServiceAddOnMappingFindUniqueArgs>(args: SelectSubset<T, ServiceAddOnMappingFindUniqueArgs<ExtArgs>>): Prisma__ServiceAddOnMappingClient<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ServiceAddOnMapping that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ServiceAddOnMappingFindUniqueOrThrowArgs} args - Arguments to find a ServiceAddOnMapping
+     * @example
+     * // Get one ServiceAddOnMapping
+     * const serviceAddOnMapping = await prisma.serviceAddOnMapping.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ServiceAddOnMappingFindUniqueOrThrowArgs>(args: SelectSubset<T, ServiceAddOnMappingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ServiceAddOnMappingClient<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ServiceAddOnMapping that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnMappingFindFirstArgs} args - Arguments to find a ServiceAddOnMapping
+     * @example
+     * // Get one ServiceAddOnMapping
+     * const serviceAddOnMapping = await prisma.serviceAddOnMapping.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ServiceAddOnMappingFindFirstArgs>(args?: SelectSubset<T, ServiceAddOnMappingFindFirstArgs<ExtArgs>>): Prisma__ServiceAddOnMappingClient<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ServiceAddOnMapping that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnMappingFindFirstOrThrowArgs} args - Arguments to find a ServiceAddOnMapping
+     * @example
+     * // Get one ServiceAddOnMapping
+     * const serviceAddOnMapping = await prisma.serviceAddOnMapping.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ServiceAddOnMappingFindFirstOrThrowArgs>(args?: SelectSubset<T, ServiceAddOnMappingFindFirstOrThrowArgs<ExtArgs>>): Prisma__ServiceAddOnMappingClient<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ServiceAddOnMappings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnMappingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ServiceAddOnMappings
+     * const serviceAddOnMappings = await prisma.serviceAddOnMapping.findMany()
+     * 
+     * // Get first 10 ServiceAddOnMappings
+     * const serviceAddOnMappings = await prisma.serviceAddOnMapping.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const serviceAddOnMappingWithIdOnly = await prisma.serviceAddOnMapping.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ServiceAddOnMappingFindManyArgs>(args?: SelectSubset<T, ServiceAddOnMappingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ServiceAddOnMapping.
+     * @param {ServiceAddOnMappingCreateArgs} args - Arguments to create a ServiceAddOnMapping.
+     * @example
+     * // Create one ServiceAddOnMapping
+     * const ServiceAddOnMapping = await prisma.serviceAddOnMapping.create({
+     *   data: {
+     *     // ... data to create a ServiceAddOnMapping
+     *   }
+     * })
+     * 
+     */
+    create<T extends ServiceAddOnMappingCreateArgs>(args: SelectSubset<T, ServiceAddOnMappingCreateArgs<ExtArgs>>): Prisma__ServiceAddOnMappingClient<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ServiceAddOnMappings.
+     * @param {ServiceAddOnMappingCreateManyArgs} args - Arguments to create many ServiceAddOnMappings.
+     * @example
+     * // Create many ServiceAddOnMappings
+     * const serviceAddOnMapping = await prisma.serviceAddOnMapping.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ServiceAddOnMappingCreateManyArgs>(args?: SelectSubset<T, ServiceAddOnMappingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ServiceAddOnMappings and returns the data saved in the database.
+     * @param {ServiceAddOnMappingCreateManyAndReturnArgs} args - Arguments to create many ServiceAddOnMappings.
+     * @example
+     * // Create many ServiceAddOnMappings
+     * const serviceAddOnMapping = await prisma.serviceAddOnMapping.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ServiceAddOnMappings and only return the `id`
+     * const serviceAddOnMappingWithIdOnly = await prisma.serviceAddOnMapping.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ServiceAddOnMappingCreateManyAndReturnArgs>(args?: SelectSubset<T, ServiceAddOnMappingCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ServiceAddOnMapping.
+     * @param {ServiceAddOnMappingDeleteArgs} args - Arguments to delete one ServiceAddOnMapping.
+     * @example
+     * // Delete one ServiceAddOnMapping
+     * const ServiceAddOnMapping = await prisma.serviceAddOnMapping.delete({
+     *   where: {
+     *     // ... filter to delete one ServiceAddOnMapping
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ServiceAddOnMappingDeleteArgs>(args: SelectSubset<T, ServiceAddOnMappingDeleteArgs<ExtArgs>>): Prisma__ServiceAddOnMappingClient<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ServiceAddOnMapping.
+     * @param {ServiceAddOnMappingUpdateArgs} args - Arguments to update one ServiceAddOnMapping.
+     * @example
+     * // Update one ServiceAddOnMapping
+     * const serviceAddOnMapping = await prisma.serviceAddOnMapping.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ServiceAddOnMappingUpdateArgs>(args: SelectSubset<T, ServiceAddOnMappingUpdateArgs<ExtArgs>>): Prisma__ServiceAddOnMappingClient<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ServiceAddOnMappings.
+     * @param {ServiceAddOnMappingDeleteManyArgs} args - Arguments to filter ServiceAddOnMappings to delete.
+     * @example
+     * // Delete a few ServiceAddOnMappings
+     * const { count } = await prisma.serviceAddOnMapping.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ServiceAddOnMappingDeleteManyArgs>(args?: SelectSubset<T, ServiceAddOnMappingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ServiceAddOnMappings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnMappingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ServiceAddOnMappings
+     * const serviceAddOnMapping = await prisma.serviceAddOnMapping.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ServiceAddOnMappingUpdateManyArgs>(args: SelectSubset<T, ServiceAddOnMappingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ServiceAddOnMappings and returns the data updated in the database.
+     * @param {ServiceAddOnMappingUpdateManyAndReturnArgs} args - Arguments to update many ServiceAddOnMappings.
+     * @example
+     * // Update many ServiceAddOnMappings
+     * const serviceAddOnMapping = await prisma.serviceAddOnMapping.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ServiceAddOnMappings and only return the `id`
+     * const serviceAddOnMappingWithIdOnly = await prisma.serviceAddOnMapping.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ServiceAddOnMappingUpdateManyAndReturnArgs>(args: SelectSubset<T, ServiceAddOnMappingUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ServiceAddOnMapping.
+     * @param {ServiceAddOnMappingUpsertArgs} args - Arguments to update or create a ServiceAddOnMapping.
+     * @example
+     * // Update or create a ServiceAddOnMapping
+     * const serviceAddOnMapping = await prisma.serviceAddOnMapping.upsert({
+     *   create: {
+     *     // ... data to create a ServiceAddOnMapping
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ServiceAddOnMapping we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ServiceAddOnMappingUpsertArgs>(args: SelectSubset<T, ServiceAddOnMappingUpsertArgs<ExtArgs>>): Prisma__ServiceAddOnMappingClient<$Result.GetResult<Prisma.$ServiceAddOnMappingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ServiceAddOnMappings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnMappingCountArgs} args - Arguments to filter ServiceAddOnMappings to count.
+     * @example
+     * // Count the number of ServiceAddOnMappings
+     * const count = await prisma.serviceAddOnMapping.count({
+     *   where: {
+     *     // ... the filter for the ServiceAddOnMappings we want to count
+     *   }
+     * })
+    **/
+    count<T extends ServiceAddOnMappingCountArgs>(
+      args?: Subset<T, ServiceAddOnMappingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ServiceAddOnMappingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ServiceAddOnMapping.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnMappingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ServiceAddOnMappingAggregateArgs>(args: Subset<T, ServiceAddOnMappingAggregateArgs>): Prisma.PrismaPromise<GetServiceAddOnMappingAggregateType<T>>
+
+    /**
+     * Group by ServiceAddOnMapping.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnMappingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ServiceAddOnMappingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ServiceAddOnMappingGroupByArgs['orderBy'] }
+        : { orderBy?: ServiceAddOnMappingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ServiceAddOnMappingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetServiceAddOnMappingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ServiceAddOnMapping model
+   */
+  readonly fields: ServiceAddOnMappingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ServiceAddOnMapping.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ServiceAddOnMappingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    service<T extends ServiceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ServiceDefaultArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    addOnCatalog<T extends GlobalAddOnCatalogDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GlobalAddOnCatalogDefaultArgs<ExtArgs>>): Prisma__GlobalAddOnCatalogClient<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ServiceAddOnMapping model
+   */
+  interface ServiceAddOnMappingFieldRefs {
+    readonly id: FieldRef<"ServiceAddOnMapping", 'String'>
+    readonly serviceId: FieldRef<"ServiceAddOnMapping", 'String'>
+    readonly addOnId: FieldRef<"ServiceAddOnMapping", 'String'>
+    readonly isEnabled: FieldRef<"ServiceAddOnMapping", 'Boolean'>
+    readonly customAmount: FieldRef<"ServiceAddOnMapping", 'Decimal'>
+    readonly createdAt: FieldRef<"ServiceAddOnMapping", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ServiceAddOnMapping findUnique
+   */
+  export type ServiceAddOnMappingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceAddOnMapping to fetch.
+     */
+    where: ServiceAddOnMappingWhereUniqueInput
+  }
+
+  /**
+   * ServiceAddOnMapping findUniqueOrThrow
+   */
+  export type ServiceAddOnMappingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceAddOnMapping to fetch.
+     */
+    where: ServiceAddOnMappingWhereUniqueInput
+  }
+
+  /**
+   * ServiceAddOnMapping findFirst
+   */
+  export type ServiceAddOnMappingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceAddOnMapping to fetch.
+     */
+    where?: ServiceAddOnMappingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceAddOnMappings to fetch.
+     */
+    orderBy?: ServiceAddOnMappingOrderByWithRelationInput | ServiceAddOnMappingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ServiceAddOnMappings.
+     */
+    cursor?: ServiceAddOnMappingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceAddOnMappings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceAddOnMappings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceAddOnMappings.
+     */
+    distinct?: ServiceAddOnMappingScalarFieldEnum | ServiceAddOnMappingScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceAddOnMapping findFirstOrThrow
+   */
+  export type ServiceAddOnMappingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceAddOnMapping to fetch.
+     */
+    where?: ServiceAddOnMappingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceAddOnMappings to fetch.
+     */
+    orderBy?: ServiceAddOnMappingOrderByWithRelationInput | ServiceAddOnMappingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ServiceAddOnMappings.
+     */
+    cursor?: ServiceAddOnMappingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceAddOnMappings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceAddOnMappings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceAddOnMappings.
+     */
+    distinct?: ServiceAddOnMappingScalarFieldEnum | ServiceAddOnMappingScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceAddOnMapping findMany
+   */
+  export type ServiceAddOnMappingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceAddOnMappings to fetch.
+     */
+    where?: ServiceAddOnMappingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceAddOnMappings to fetch.
+     */
+    orderBy?: ServiceAddOnMappingOrderByWithRelationInput | ServiceAddOnMappingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ServiceAddOnMappings.
+     */
+    cursor?: ServiceAddOnMappingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceAddOnMappings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceAddOnMappings.
+     */
+    skip?: number
+    distinct?: ServiceAddOnMappingScalarFieldEnum | ServiceAddOnMappingScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceAddOnMapping create
+   */
+  export type ServiceAddOnMappingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ServiceAddOnMapping.
+     */
+    data: XOR<ServiceAddOnMappingCreateInput, ServiceAddOnMappingUncheckedCreateInput>
+  }
+
+  /**
+   * ServiceAddOnMapping createMany
+   */
+  export type ServiceAddOnMappingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ServiceAddOnMappings.
+     */
+    data: ServiceAddOnMappingCreateManyInput | ServiceAddOnMappingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ServiceAddOnMapping createManyAndReturn
+   */
+  export type ServiceAddOnMappingCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * The data used to create many ServiceAddOnMappings.
+     */
+    data: ServiceAddOnMappingCreateManyInput | ServiceAddOnMappingCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ServiceAddOnMapping update
+   */
+  export type ServiceAddOnMappingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ServiceAddOnMapping.
+     */
+    data: XOR<ServiceAddOnMappingUpdateInput, ServiceAddOnMappingUncheckedUpdateInput>
+    /**
+     * Choose, which ServiceAddOnMapping to update.
+     */
+    where: ServiceAddOnMappingWhereUniqueInput
+  }
+
+  /**
+   * ServiceAddOnMapping updateMany
+   */
+  export type ServiceAddOnMappingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ServiceAddOnMappings.
+     */
+    data: XOR<ServiceAddOnMappingUpdateManyMutationInput, ServiceAddOnMappingUncheckedUpdateManyInput>
+    /**
+     * Filter which ServiceAddOnMappings to update
+     */
+    where?: ServiceAddOnMappingWhereInput
+    /**
+     * Limit how many ServiceAddOnMappings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ServiceAddOnMapping updateManyAndReturn
+   */
+  export type ServiceAddOnMappingUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * The data used to update ServiceAddOnMappings.
+     */
+    data: XOR<ServiceAddOnMappingUpdateManyMutationInput, ServiceAddOnMappingUncheckedUpdateManyInput>
+    /**
+     * Filter which ServiceAddOnMappings to update
+     */
+    where?: ServiceAddOnMappingWhereInput
+    /**
+     * Limit how many ServiceAddOnMappings to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ServiceAddOnMapping upsert
+   */
+  export type ServiceAddOnMappingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ServiceAddOnMapping to update in case it exists.
+     */
+    where: ServiceAddOnMappingWhereUniqueInput
+    /**
+     * In case the ServiceAddOnMapping found by the `where` argument doesn't exist, create a new ServiceAddOnMapping with this data.
+     */
+    create: XOR<ServiceAddOnMappingCreateInput, ServiceAddOnMappingUncheckedCreateInput>
+    /**
+     * In case the ServiceAddOnMapping was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ServiceAddOnMappingUpdateInput, ServiceAddOnMappingUncheckedUpdateInput>
+  }
+
+  /**
+   * ServiceAddOnMapping delete
+   */
+  export type ServiceAddOnMappingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+    /**
+     * Filter which ServiceAddOnMapping to delete.
+     */
+    where: ServiceAddOnMappingWhereUniqueInput
+  }
+
+  /**
+   * ServiceAddOnMapping deleteMany
+   */
+  export type ServiceAddOnMappingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ServiceAddOnMappings to delete
+     */
+    where?: ServiceAddOnMappingWhereInput
+    /**
+     * Limit how many ServiceAddOnMappings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ServiceAddOnMapping without action
+   */
+  export type ServiceAddOnMappingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOnMapping
+     */
+    select?: ServiceAddOnMappingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOnMapping
+     */
+    omit?: ServiceAddOnMappingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnMappingInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ServiceAddOn
+   */
+
+  export type AggregateServiceAddOn = {
+    _count: ServiceAddOnCountAggregateOutputType | null
+    _avg: ServiceAddOnAvgAggregateOutputType | null
+    _sum: ServiceAddOnSumAggregateOutputType | null
+    _min: ServiceAddOnMinAggregateOutputType | null
+    _max: ServiceAddOnMaxAggregateOutputType | null
+  }
+
+  export type ServiceAddOnAvgAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type ServiceAddOnSumAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type ServiceAddOnMinAggregateOutputType = {
+    id: string | null
+    bookingServiceItemId: string | null
+    workspaceBookingId: string | null
+    addOnCatalogId: string | null
+    name: string | null
+    amount: Decimal | null
+    taxable: boolean | null
+    description: string | null
+    createdAt: Date | null
+  }
+
+  export type ServiceAddOnMaxAggregateOutputType = {
+    id: string | null
+    bookingServiceItemId: string | null
+    workspaceBookingId: string | null
+    addOnCatalogId: string | null
+    name: string | null
+    amount: Decimal | null
+    taxable: boolean | null
+    description: string | null
+    createdAt: Date | null
+  }
+
+  export type ServiceAddOnCountAggregateOutputType = {
+    id: number
+    bookingServiceItemId: number
+    workspaceBookingId: number
+    addOnCatalogId: number
+    name: number
+    amount: number
+    taxable: number
+    description: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ServiceAddOnAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type ServiceAddOnSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type ServiceAddOnMinAggregateInputType = {
+    id?: true
+    bookingServiceItemId?: true
+    workspaceBookingId?: true
+    addOnCatalogId?: true
+    name?: true
+    amount?: true
+    taxable?: true
+    description?: true
+    createdAt?: true
+  }
+
+  export type ServiceAddOnMaxAggregateInputType = {
+    id?: true
+    bookingServiceItemId?: true
+    workspaceBookingId?: true
+    addOnCatalogId?: true
+    name?: true
+    amount?: true
+    taxable?: true
+    description?: true
+    createdAt?: true
+  }
+
+  export type ServiceAddOnCountAggregateInputType = {
+    id?: true
+    bookingServiceItemId?: true
+    workspaceBookingId?: true
+    addOnCatalogId?: true
+    name?: true
+    amount?: true
+    taxable?: true
+    description?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ServiceAddOnAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ServiceAddOn to aggregate.
+     */
+    where?: ServiceAddOnWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceAddOns to fetch.
+     */
+    orderBy?: ServiceAddOnOrderByWithRelationInput | ServiceAddOnOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ServiceAddOnWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceAddOns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceAddOns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ServiceAddOns
+    **/
+    _count?: true | ServiceAddOnCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ServiceAddOnAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ServiceAddOnSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ServiceAddOnMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ServiceAddOnMaxAggregateInputType
+  }
+
+  export type GetServiceAddOnAggregateType<T extends ServiceAddOnAggregateArgs> = {
+        [P in keyof T & keyof AggregateServiceAddOn]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateServiceAddOn[P]>
+      : GetScalarType<T[P], AggregateServiceAddOn[P]>
+  }
+
+
+
+
+  export type ServiceAddOnGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ServiceAddOnWhereInput
+    orderBy?: ServiceAddOnOrderByWithAggregationInput | ServiceAddOnOrderByWithAggregationInput[]
+    by: ServiceAddOnScalarFieldEnum[] | ServiceAddOnScalarFieldEnum
+    having?: ServiceAddOnScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ServiceAddOnCountAggregateInputType | true
+    _avg?: ServiceAddOnAvgAggregateInputType
+    _sum?: ServiceAddOnSumAggregateInputType
+    _min?: ServiceAddOnMinAggregateInputType
+    _max?: ServiceAddOnMaxAggregateInputType
+  }
+
+  export type ServiceAddOnGroupByOutputType = {
+    id: string
+    bookingServiceItemId: string | null
+    workspaceBookingId: string | null
+    addOnCatalogId: string
+    name: string
+    amount: Decimal
+    taxable: boolean
+    description: string | null
+    createdAt: Date
+    _count: ServiceAddOnCountAggregateOutputType | null
+    _avg: ServiceAddOnAvgAggregateOutputType | null
+    _sum: ServiceAddOnSumAggregateOutputType | null
+    _min: ServiceAddOnMinAggregateOutputType | null
+    _max: ServiceAddOnMaxAggregateOutputType | null
+  }
+
+  type GetServiceAddOnGroupByPayload<T extends ServiceAddOnGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ServiceAddOnGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ServiceAddOnGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ServiceAddOnGroupByOutputType[P]>
+            : GetScalarType<T[P], ServiceAddOnGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ServiceAddOnSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    bookingServiceItemId?: boolean
+    workspaceBookingId?: boolean
+    addOnCatalogId?: boolean
+    name?: boolean
+    amount?: boolean
+    taxable?: boolean
+    description?: boolean
+    createdAt?: boolean
+    bookingServiceItem?: boolean | ServiceAddOn$bookingServiceItemArgs<ExtArgs>
+    workspaceBooking?: boolean | ServiceAddOn$workspaceBookingArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["serviceAddOn"]>
+
+  export type ServiceAddOnSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    bookingServiceItemId?: boolean
+    workspaceBookingId?: boolean
+    addOnCatalogId?: boolean
+    name?: boolean
+    amount?: boolean
+    taxable?: boolean
+    description?: boolean
+    createdAt?: boolean
+    bookingServiceItem?: boolean | ServiceAddOn$bookingServiceItemArgs<ExtArgs>
+    workspaceBooking?: boolean | ServiceAddOn$workspaceBookingArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["serviceAddOn"]>
+
+  export type ServiceAddOnSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    bookingServiceItemId?: boolean
+    workspaceBookingId?: boolean
+    addOnCatalogId?: boolean
+    name?: boolean
+    amount?: boolean
+    taxable?: boolean
+    description?: boolean
+    createdAt?: boolean
+    bookingServiceItem?: boolean | ServiceAddOn$bookingServiceItemArgs<ExtArgs>
+    workspaceBooking?: boolean | ServiceAddOn$workspaceBookingArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["serviceAddOn"]>
+
+  export type ServiceAddOnSelectScalar = {
+    id?: boolean
+    bookingServiceItemId?: boolean
+    workspaceBookingId?: boolean
+    addOnCatalogId?: boolean
+    name?: boolean
+    amount?: boolean
+    taxable?: boolean
+    description?: boolean
+    createdAt?: boolean
+  }
+
+  export type ServiceAddOnOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bookingServiceItemId" | "workspaceBookingId" | "addOnCatalogId" | "name" | "amount" | "taxable" | "description" | "createdAt", ExtArgs["result"]["serviceAddOn"]>
+  export type ServiceAddOnInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bookingServiceItem?: boolean | ServiceAddOn$bookingServiceItemArgs<ExtArgs>
+    workspaceBooking?: boolean | ServiceAddOn$workspaceBookingArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }
+  export type ServiceAddOnIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bookingServiceItem?: boolean | ServiceAddOn$bookingServiceItemArgs<ExtArgs>
+    workspaceBooking?: boolean | ServiceAddOn$workspaceBookingArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }
+  export type ServiceAddOnIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    bookingServiceItem?: boolean | ServiceAddOn$bookingServiceItemArgs<ExtArgs>
+    workspaceBooking?: boolean | ServiceAddOn$workspaceBookingArgs<ExtArgs>
+    addOnCatalog?: boolean | GlobalAddOnCatalogDefaultArgs<ExtArgs>
+  }
+
+  export type $ServiceAddOnPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ServiceAddOn"
+    objects: {
+      bookingServiceItem: Prisma.$BookingServiceItemPayload<ExtArgs> | null
+      workspaceBooking: Prisma.$WorkspaceBookingPayload<ExtArgs> | null
+      addOnCatalog: Prisma.$GlobalAddOnCatalogPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      bookingServiceItemId: string | null
+      workspaceBookingId: string | null
+      addOnCatalogId: string
+      name: string
+      amount: Prisma.Decimal
+      taxable: boolean
+      description: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["serviceAddOn"]>
+    composites: {}
+  }
+
+  type ServiceAddOnGetPayload<S extends boolean | null | undefined | ServiceAddOnDefaultArgs> = $Result.GetResult<Prisma.$ServiceAddOnPayload, S>
+
+  type ServiceAddOnCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ServiceAddOnFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ServiceAddOnCountAggregateInputType | true
+    }
+
+  export interface ServiceAddOnDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ServiceAddOn'], meta: { name: 'ServiceAddOn' } }
+    /**
+     * Find zero or one ServiceAddOn that matches the filter.
+     * @param {ServiceAddOnFindUniqueArgs} args - Arguments to find a ServiceAddOn
+     * @example
+     * // Get one ServiceAddOn
+     * const serviceAddOn = await prisma.serviceAddOn.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ServiceAddOnFindUniqueArgs>(args: SelectSubset<T, ServiceAddOnFindUniqueArgs<ExtArgs>>): Prisma__ServiceAddOnClient<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ServiceAddOn that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ServiceAddOnFindUniqueOrThrowArgs} args - Arguments to find a ServiceAddOn
+     * @example
+     * // Get one ServiceAddOn
+     * const serviceAddOn = await prisma.serviceAddOn.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ServiceAddOnFindUniqueOrThrowArgs>(args: SelectSubset<T, ServiceAddOnFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ServiceAddOnClient<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ServiceAddOn that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnFindFirstArgs} args - Arguments to find a ServiceAddOn
+     * @example
+     * // Get one ServiceAddOn
+     * const serviceAddOn = await prisma.serviceAddOn.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ServiceAddOnFindFirstArgs>(args?: SelectSubset<T, ServiceAddOnFindFirstArgs<ExtArgs>>): Prisma__ServiceAddOnClient<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ServiceAddOn that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnFindFirstOrThrowArgs} args - Arguments to find a ServiceAddOn
+     * @example
+     * // Get one ServiceAddOn
+     * const serviceAddOn = await prisma.serviceAddOn.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ServiceAddOnFindFirstOrThrowArgs>(args?: SelectSubset<T, ServiceAddOnFindFirstOrThrowArgs<ExtArgs>>): Prisma__ServiceAddOnClient<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ServiceAddOns that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ServiceAddOns
+     * const serviceAddOns = await prisma.serviceAddOn.findMany()
+     * 
+     * // Get first 10 ServiceAddOns
+     * const serviceAddOns = await prisma.serviceAddOn.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const serviceAddOnWithIdOnly = await prisma.serviceAddOn.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ServiceAddOnFindManyArgs>(args?: SelectSubset<T, ServiceAddOnFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ServiceAddOn.
+     * @param {ServiceAddOnCreateArgs} args - Arguments to create a ServiceAddOn.
+     * @example
+     * // Create one ServiceAddOn
+     * const ServiceAddOn = await prisma.serviceAddOn.create({
+     *   data: {
+     *     // ... data to create a ServiceAddOn
+     *   }
+     * })
+     * 
+     */
+    create<T extends ServiceAddOnCreateArgs>(args: SelectSubset<T, ServiceAddOnCreateArgs<ExtArgs>>): Prisma__ServiceAddOnClient<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ServiceAddOns.
+     * @param {ServiceAddOnCreateManyArgs} args - Arguments to create many ServiceAddOns.
+     * @example
+     * // Create many ServiceAddOns
+     * const serviceAddOn = await prisma.serviceAddOn.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ServiceAddOnCreateManyArgs>(args?: SelectSubset<T, ServiceAddOnCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ServiceAddOns and returns the data saved in the database.
+     * @param {ServiceAddOnCreateManyAndReturnArgs} args - Arguments to create many ServiceAddOns.
+     * @example
+     * // Create many ServiceAddOns
+     * const serviceAddOn = await prisma.serviceAddOn.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ServiceAddOns and only return the `id`
+     * const serviceAddOnWithIdOnly = await prisma.serviceAddOn.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ServiceAddOnCreateManyAndReturnArgs>(args?: SelectSubset<T, ServiceAddOnCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ServiceAddOn.
+     * @param {ServiceAddOnDeleteArgs} args - Arguments to delete one ServiceAddOn.
+     * @example
+     * // Delete one ServiceAddOn
+     * const ServiceAddOn = await prisma.serviceAddOn.delete({
+     *   where: {
+     *     // ... filter to delete one ServiceAddOn
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ServiceAddOnDeleteArgs>(args: SelectSubset<T, ServiceAddOnDeleteArgs<ExtArgs>>): Prisma__ServiceAddOnClient<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ServiceAddOn.
+     * @param {ServiceAddOnUpdateArgs} args - Arguments to update one ServiceAddOn.
+     * @example
+     * // Update one ServiceAddOn
+     * const serviceAddOn = await prisma.serviceAddOn.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ServiceAddOnUpdateArgs>(args: SelectSubset<T, ServiceAddOnUpdateArgs<ExtArgs>>): Prisma__ServiceAddOnClient<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ServiceAddOns.
+     * @param {ServiceAddOnDeleteManyArgs} args - Arguments to filter ServiceAddOns to delete.
+     * @example
+     * // Delete a few ServiceAddOns
+     * const { count } = await prisma.serviceAddOn.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ServiceAddOnDeleteManyArgs>(args?: SelectSubset<T, ServiceAddOnDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ServiceAddOns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ServiceAddOns
+     * const serviceAddOn = await prisma.serviceAddOn.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ServiceAddOnUpdateManyArgs>(args: SelectSubset<T, ServiceAddOnUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ServiceAddOns and returns the data updated in the database.
+     * @param {ServiceAddOnUpdateManyAndReturnArgs} args - Arguments to update many ServiceAddOns.
+     * @example
+     * // Update many ServiceAddOns
+     * const serviceAddOn = await prisma.serviceAddOn.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ServiceAddOns and only return the `id`
+     * const serviceAddOnWithIdOnly = await prisma.serviceAddOn.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ServiceAddOnUpdateManyAndReturnArgs>(args: SelectSubset<T, ServiceAddOnUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ServiceAddOn.
+     * @param {ServiceAddOnUpsertArgs} args - Arguments to update or create a ServiceAddOn.
+     * @example
+     * // Update or create a ServiceAddOn
+     * const serviceAddOn = await prisma.serviceAddOn.upsert({
+     *   create: {
+     *     // ... data to create a ServiceAddOn
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ServiceAddOn we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ServiceAddOnUpsertArgs>(args: SelectSubset<T, ServiceAddOnUpsertArgs<ExtArgs>>): Prisma__ServiceAddOnClient<$Result.GetResult<Prisma.$ServiceAddOnPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ServiceAddOns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnCountArgs} args - Arguments to filter ServiceAddOns to count.
+     * @example
+     * // Count the number of ServiceAddOns
+     * const count = await prisma.serviceAddOn.count({
+     *   where: {
+     *     // ... the filter for the ServiceAddOns we want to count
+     *   }
+     * })
+    **/
+    count<T extends ServiceAddOnCountArgs>(
+      args?: Subset<T, ServiceAddOnCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ServiceAddOnCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ServiceAddOn.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ServiceAddOnAggregateArgs>(args: Subset<T, ServiceAddOnAggregateArgs>): Prisma.PrismaPromise<GetServiceAddOnAggregateType<T>>
+
+    /**
+     * Group by ServiceAddOn.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceAddOnGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ServiceAddOnGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ServiceAddOnGroupByArgs['orderBy'] }
+        : { orderBy?: ServiceAddOnGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ServiceAddOnGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetServiceAddOnGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ServiceAddOn model
+   */
+  readonly fields: ServiceAddOnFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ServiceAddOn.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ServiceAddOnClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    bookingServiceItem<T extends ServiceAddOn$bookingServiceItemArgs<ExtArgs> = {}>(args?: Subset<T, ServiceAddOn$bookingServiceItemArgs<ExtArgs>>): Prisma__BookingServiceItemClient<$Result.GetResult<Prisma.$BookingServiceItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    workspaceBooking<T extends ServiceAddOn$workspaceBookingArgs<ExtArgs> = {}>(args?: Subset<T, ServiceAddOn$workspaceBookingArgs<ExtArgs>>): Prisma__WorkspaceBookingClient<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    addOnCatalog<T extends GlobalAddOnCatalogDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GlobalAddOnCatalogDefaultArgs<ExtArgs>>): Prisma__GlobalAddOnCatalogClient<$Result.GetResult<Prisma.$GlobalAddOnCatalogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ServiceAddOn model
+   */
+  interface ServiceAddOnFieldRefs {
+    readonly id: FieldRef<"ServiceAddOn", 'String'>
+    readonly bookingServiceItemId: FieldRef<"ServiceAddOn", 'String'>
+    readonly workspaceBookingId: FieldRef<"ServiceAddOn", 'String'>
+    readonly addOnCatalogId: FieldRef<"ServiceAddOn", 'String'>
+    readonly name: FieldRef<"ServiceAddOn", 'String'>
+    readonly amount: FieldRef<"ServiceAddOn", 'Decimal'>
+    readonly taxable: FieldRef<"ServiceAddOn", 'Boolean'>
+    readonly description: FieldRef<"ServiceAddOn", 'String'>
+    readonly createdAt: FieldRef<"ServiceAddOn", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ServiceAddOn findUnique
+   */
+  export type ServiceAddOnFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceAddOn to fetch.
+     */
+    where: ServiceAddOnWhereUniqueInput
+  }
+
+  /**
+   * ServiceAddOn findUniqueOrThrow
+   */
+  export type ServiceAddOnFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceAddOn to fetch.
+     */
+    where: ServiceAddOnWhereUniqueInput
+  }
+
+  /**
+   * ServiceAddOn findFirst
+   */
+  export type ServiceAddOnFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceAddOn to fetch.
+     */
+    where?: ServiceAddOnWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceAddOns to fetch.
+     */
+    orderBy?: ServiceAddOnOrderByWithRelationInput | ServiceAddOnOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ServiceAddOns.
+     */
+    cursor?: ServiceAddOnWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceAddOns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceAddOns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceAddOns.
+     */
+    distinct?: ServiceAddOnScalarFieldEnum | ServiceAddOnScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceAddOn findFirstOrThrow
+   */
+  export type ServiceAddOnFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceAddOn to fetch.
+     */
+    where?: ServiceAddOnWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceAddOns to fetch.
+     */
+    orderBy?: ServiceAddOnOrderByWithRelationInput | ServiceAddOnOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ServiceAddOns.
+     */
+    cursor?: ServiceAddOnWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceAddOns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceAddOns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceAddOns.
+     */
+    distinct?: ServiceAddOnScalarFieldEnum | ServiceAddOnScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceAddOn findMany
+   */
+  export type ServiceAddOnFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    /**
+     * Filter, which ServiceAddOns to fetch.
+     */
+    where?: ServiceAddOnWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceAddOns to fetch.
+     */
+    orderBy?: ServiceAddOnOrderByWithRelationInput | ServiceAddOnOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ServiceAddOns.
+     */
+    cursor?: ServiceAddOnWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceAddOns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceAddOns.
+     */
+    skip?: number
+    distinct?: ServiceAddOnScalarFieldEnum | ServiceAddOnScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceAddOn create
+   */
+  export type ServiceAddOnCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ServiceAddOn.
+     */
+    data: XOR<ServiceAddOnCreateInput, ServiceAddOnUncheckedCreateInput>
+  }
+
+  /**
+   * ServiceAddOn createMany
+   */
+  export type ServiceAddOnCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ServiceAddOns.
+     */
+    data: ServiceAddOnCreateManyInput | ServiceAddOnCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ServiceAddOn createManyAndReturn
+   */
+  export type ServiceAddOnCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * The data used to create many ServiceAddOns.
+     */
+    data: ServiceAddOnCreateManyInput | ServiceAddOnCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ServiceAddOn update
+   */
+  export type ServiceAddOnUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ServiceAddOn.
+     */
+    data: XOR<ServiceAddOnUpdateInput, ServiceAddOnUncheckedUpdateInput>
+    /**
+     * Choose, which ServiceAddOn to update.
+     */
+    where: ServiceAddOnWhereUniqueInput
+  }
+
+  /**
+   * ServiceAddOn updateMany
+   */
+  export type ServiceAddOnUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ServiceAddOns.
+     */
+    data: XOR<ServiceAddOnUpdateManyMutationInput, ServiceAddOnUncheckedUpdateManyInput>
+    /**
+     * Filter which ServiceAddOns to update
+     */
+    where?: ServiceAddOnWhereInput
+    /**
+     * Limit how many ServiceAddOns to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ServiceAddOn updateManyAndReturn
+   */
+  export type ServiceAddOnUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * The data used to update ServiceAddOns.
+     */
+    data: XOR<ServiceAddOnUpdateManyMutationInput, ServiceAddOnUncheckedUpdateManyInput>
+    /**
+     * Filter which ServiceAddOns to update
+     */
+    where?: ServiceAddOnWhereInput
+    /**
+     * Limit how many ServiceAddOns to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ServiceAddOn upsert
+   */
+  export type ServiceAddOnUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ServiceAddOn to update in case it exists.
+     */
+    where: ServiceAddOnWhereUniqueInput
+    /**
+     * In case the ServiceAddOn found by the `where` argument doesn't exist, create a new ServiceAddOn with this data.
+     */
+    create: XOR<ServiceAddOnCreateInput, ServiceAddOnUncheckedCreateInput>
+    /**
+     * In case the ServiceAddOn was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ServiceAddOnUpdateInput, ServiceAddOnUncheckedUpdateInput>
+  }
+
+  /**
+   * ServiceAddOn delete
+   */
+  export type ServiceAddOnDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+    /**
+     * Filter which ServiceAddOn to delete.
+     */
+    where: ServiceAddOnWhereUniqueInput
+  }
+
+  /**
+   * ServiceAddOn deleteMany
+   */
+  export type ServiceAddOnDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ServiceAddOns to delete
+     */
+    where?: ServiceAddOnWhereInput
+    /**
+     * Limit how many ServiceAddOns to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ServiceAddOn.bookingServiceItem
+   */
+  export type ServiceAddOn$bookingServiceItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookingServiceItem
+     */
+    select?: BookingServiceItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookingServiceItem
+     */
+    omit?: BookingServiceItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookingServiceItemInclude<ExtArgs> | null
+    where?: BookingServiceItemWhereInput
+  }
+
+  /**
+   * ServiceAddOn.workspaceBooking
+   */
+  export type ServiceAddOn$workspaceBookingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WorkspaceBooking
+     */
+    select?: WorkspaceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WorkspaceBooking
+     */
+    omit?: WorkspaceBookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WorkspaceBookingInclude<ExtArgs> | null
+    where?: WorkspaceBookingWhereInput
+  }
+
+  /**
+   * ServiceAddOn without action
+   */
+  export type ServiceAddOnDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceAddOn
+     */
+    select?: ServiceAddOnSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceAddOn
+     */
+    omit?: ServiceAddOnOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceAddOnInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -25271,6 +34204,7 @@ export namespace Prisma {
     durationMonths: 'durationMonths',
     unitPrice: 'unitPrice',
     totalPrice: 'totalPrice',
+    sampleName: 'sampleName',
     sampleDetails: 'sampleDetails',
     sampleType: 'sampleType',
     sampleHazard: 'sampleHazard',
@@ -25285,6 +34219,15 @@ export namespace Prisma {
     expectedRetentionTime: 'expectedRetentionTime',
     samplePreparation: 'samplePreparation',
     notes: 'notes',
+    expectedCompletionDate: 'expectedCompletionDate',
+    actualCompletionDate: 'actualCompletionDate',
+    turnaroundEstimate: 'turnaroundEstimate',
+    hplcPreparationRequired: 'hplcPreparationRequired',
+    temperatureControlled: 'temperatureControlled',
+    lightSensitive: 'lightSensitive',
+    hazardousMaterial: 'hazardousMaterial',
+    inertAtmosphere: 'inertAtmosphere',
+    otherEquipmentRequests: 'otherEquipmentRequests',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -25400,6 +34343,56 @@ export namespace Prisma {
   export type SampleTrackingScalarFieldEnum = (typeof SampleTrackingScalarFieldEnum)[keyof typeof SampleTrackingScalarFieldEnum]
 
 
+  export const WorkspaceBookingScalarFieldEnum: {
+    id: 'id',
+    bookingRequestId: 'bookingRequestId',
+    startDate: 'startDate',
+    endDate: 'endDate',
+    preferredTimeSlot: 'preferredTimeSlot',
+    specialEquipment: 'specialEquipment',
+    purpose: 'purpose',
+    notes: 'notes',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type WorkspaceBookingScalarFieldEnum = (typeof WorkspaceBookingScalarFieldEnum)[keyof typeof WorkspaceBookingScalarFieldEnum]
+
+
+  export const LabEquipmentScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    description: 'description',
+    isAvailable: 'isAvailable',
+    maintenanceNotes: 'maintenanceNotes',
+    expectedMaintenanceEnd: 'expectedMaintenanceEnd',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type LabEquipmentScalarFieldEnum = (typeof LabEquipmentScalarFieldEnum)[keyof typeof LabEquipmentScalarFieldEnum]
+
+
+  export const WorkspaceEquipmentUsageScalarFieldEnum: {
+    id: 'id',
+    workspaceBookingId: 'workspaceBookingId',
+    equipmentId: 'equipmentId',
+    createdAt: 'createdAt'
+  };
+
+  export type WorkspaceEquipmentUsageScalarFieldEnum = (typeof WorkspaceEquipmentUsageScalarFieldEnum)[keyof typeof WorkspaceEquipmentUsageScalarFieldEnum]
+
+
+  export const SampleEquipmentUsageScalarFieldEnum: {
+    id: 'id',
+    bookingServiceItemId: 'bookingServiceItemId',
+    equipmentId: 'equipmentId',
+    createdAt: 'createdAt'
+  };
+
+  export type SampleEquipmentUsageScalarFieldEnum = (typeof SampleEquipmentUsageScalarFieldEnum)[keyof typeof SampleEquipmentUsageScalarFieldEnum]
+
+
   export const AnalysisResultScalarFieldEnum: {
     id: 'id',
     sampleTrackingId: 'sampleTrackingId',
@@ -25446,6 +34439,47 @@ export namespace Prisma {
   };
 
   export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+  export const GlobalAddOnCatalogScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    description: 'description',
+    defaultAmount: 'defaultAmount',
+    applicableTo: 'applicableTo',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GlobalAddOnCatalogScalarFieldEnum = (typeof GlobalAddOnCatalogScalarFieldEnum)[keyof typeof GlobalAddOnCatalogScalarFieldEnum]
+
+
+  export const ServiceAddOnMappingScalarFieldEnum: {
+    id: 'id',
+    serviceId: 'serviceId',
+    addOnId: 'addOnId',
+    isEnabled: 'isEnabled',
+    customAmount: 'customAmount',
+    createdAt: 'createdAt'
+  };
+
+  export type ServiceAddOnMappingScalarFieldEnum = (typeof ServiceAddOnMappingScalarFieldEnum)[keyof typeof ServiceAddOnMappingScalarFieldEnum]
+
+
+  export const ServiceAddOnScalarFieldEnum: {
+    id: 'id',
+    bookingServiceItemId: 'bookingServiceItemId',
+    workspaceBookingId: 'workspaceBookingId',
+    addOnCatalogId: 'addOnCatalogId',
+    name: 'name',
+    amount: 'amount',
+    taxable: 'taxable',
+    description: 'description',
+    createdAt: 'createdAt'
+  };
+
+  export type ServiceAddOnScalarFieldEnum = (typeof ServiceAddOnScalarFieldEnum)[keyof typeof ServiceAddOnScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -26304,6 +35338,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Service"> | Date | string
     pricing?: ServicePricingListRelationFilter
     bookingItems?: BookingServiceItemListRelationFilter
+    addOnMappings?: ServiceAddOnMappingListRelationFilter
   }
 
   export type ServiceOrderByWithRelationInput = {
@@ -26320,6 +35355,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     pricing?: ServicePricingOrderByRelationAggregateInput
     bookingItems?: BookingServiceItemOrderByRelationAggregateInput
+    addOnMappings?: ServiceAddOnMappingOrderByRelationAggregateInput
   }
 
   export type ServiceWhereUniqueInput = Prisma.AtLeast<{
@@ -26339,6 +35375,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Service"> | Date | string
     pricing?: ServicePricingListRelationFilter
     bookingItems?: BookingServiceItemListRelationFilter
+    addOnMappings?: ServiceAddOnMappingListRelationFilter
   }, "id" | "code">
 
   export type ServiceOrderByWithAggregationInput = {
@@ -26475,6 +35512,7 @@ export namespace Prisma {
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     reviewedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     serviceItems?: BookingServiceItemListRelationFilter
+    workspaceBookings?: WorkspaceBookingListRelationFilter
     serviceForms?: ServiceFormListRelationFilter
   }
 
@@ -26496,6 +35534,7 @@ export namespace Prisma {
     user?: UserOrderByWithRelationInput
     reviewedByUser?: UserOrderByWithRelationInput
     serviceItems?: BookingServiceItemOrderByRelationAggregateInput
+    workspaceBookings?: WorkspaceBookingOrderByRelationAggregateInput
     serviceForms?: ServiceFormOrderByRelationAggregateInput
   }
 
@@ -26520,6 +35559,7 @@ export namespace Prisma {
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     reviewedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     serviceItems?: BookingServiceItemListRelationFilter
+    workspaceBookings?: WorkspaceBookingListRelationFilter
     serviceForms?: ServiceFormListRelationFilter
   }, "id" | "referenceNumber">
 
@@ -26576,6 +35616,7 @@ export namespace Prisma {
     durationMonths?: IntFilter<"BookingServiceItem"> | number
     unitPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
+    sampleName?: StringNullableFilter<"BookingServiceItem"> | string | null
     sampleDetails?: StringNullableFilter<"BookingServiceItem"> | string | null
     sampleType?: StringNullableFilter<"BookingServiceItem"> | string | null
     sampleHazard?: StringNullableFilter<"BookingServiceItem"> | string | null
@@ -26590,12 +35631,23 @@ export namespace Prisma {
     expectedRetentionTime?: DecimalNullableFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: StringNullableFilter<"BookingServiceItem"> | string | null
     notes?: StringNullableFilter<"BookingServiceItem"> | string | null
+    expectedCompletionDate?: DateTimeNullableFilter<"BookingServiceItem"> | Date | string | null
+    actualCompletionDate?: DateTimeNullableFilter<"BookingServiceItem"> | Date | string | null
+    turnaroundEstimate?: StringNullableFilter<"BookingServiceItem"> | string | null
+    hplcPreparationRequired?: BoolFilter<"BookingServiceItem"> | boolean
+    temperatureControlled?: BoolFilter<"BookingServiceItem"> | boolean
+    lightSensitive?: BoolFilter<"BookingServiceItem"> | boolean
+    hazardousMaterial?: BoolFilter<"BookingServiceItem"> | boolean
+    inertAtmosphere?: BoolFilter<"BookingServiceItem"> | boolean
+    otherEquipmentRequests?: JsonNullableFilter<"BookingServiceItem">
     createdAt?: DateTimeFilter<"BookingServiceItem"> | Date | string
     updatedAt?: DateTimeFilter<"BookingServiceItem"> | Date | string
     bookingRequest?: XOR<BookingRequestScalarRelationFilter, BookingRequestWhereInput>
     service?: XOR<ServiceScalarRelationFilter, ServiceWhereInput>
+    equipmentUsages?: SampleEquipmentUsageListRelationFilter
     modifications?: SampleModificationListRelationFilter
     sampleTracking?: SampleTrackingListRelationFilter
+    serviceAddOns?: ServiceAddOnListRelationFilter
   }
 
   export type BookingServiceItemOrderByWithRelationInput = {
@@ -26606,6 +35658,7 @@ export namespace Prisma {
     durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
+    sampleName?: SortOrderInput | SortOrder
     sampleDetails?: SortOrderInput | SortOrder
     sampleType?: SortOrderInput | SortOrder
     sampleHazard?: SortOrderInput | SortOrder
@@ -26620,12 +35673,23 @@ export namespace Prisma {
     expectedRetentionTime?: SortOrderInput | SortOrder
     samplePreparation?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    expectedCompletionDate?: SortOrderInput | SortOrder
+    actualCompletionDate?: SortOrderInput | SortOrder
+    turnaroundEstimate?: SortOrderInput | SortOrder
+    hplcPreparationRequired?: SortOrder
+    temperatureControlled?: SortOrder
+    lightSensitive?: SortOrder
+    hazardousMaterial?: SortOrder
+    inertAtmosphere?: SortOrder
+    otherEquipmentRequests?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     bookingRequest?: BookingRequestOrderByWithRelationInput
     service?: ServiceOrderByWithRelationInput
+    equipmentUsages?: SampleEquipmentUsageOrderByRelationAggregateInput
     modifications?: SampleModificationOrderByRelationAggregateInput
     sampleTracking?: SampleTrackingOrderByRelationAggregateInput
+    serviceAddOns?: ServiceAddOnOrderByRelationAggregateInput
   }
 
   export type BookingServiceItemWhereUniqueInput = Prisma.AtLeast<{
@@ -26639,6 +35703,7 @@ export namespace Prisma {
     durationMonths?: IntFilter<"BookingServiceItem"> | number
     unitPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
+    sampleName?: StringNullableFilter<"BookingServiceItem"> | string | null
     sampleDetails?: StringNullableFilter<"BookingServiceItem"> | string | null
     sampleType?: StringNullableFilter<"BookingServiceItem"> | string | null
     sampleHazard?: StringNullableFilter<"BookingServiceItem"> | string | null
@@ -26653,12 +35718,23 @@ export namespace Prisma {
     expectedRetentionTime?: DecimalNullableFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: StringNullableFilter<"BookingServiceItem"> | string | null
     notes?: StringNullableFilter<"BookingServiceItem"> | string | null
+    expectedCompletionDate?: DateTimeNullableFilter<"BookingServiceItem"> | Date | string | null
+    actualCompletionDate?: DateTimeNullableFilter<"BookingServiceItem"> | Date | string | null
+    turnaroundEstimate?: StringNullableFilter<"BookingServiceItem"> | string | null
+    hplcPreparationRequired?: BoolFilter<"BookingServiceItem"> | boolean
+    temperatureControlled?: BoolFilter<"BookingServiceItem"> | boolean
+    lightSensitive?: BoolFilter<"BookingServiceItem"> | boolean
+    hazardousMaterial?: BoolFilter<"BookingServiceItem"> | boolean
+    inertAtmosphere?: BoolFilter<"BookingServiceItem"> | boolean
+    otherEquipmentRequests?: JsonNullableFilter<"BookingServiceItem">
     createdAt?: DateTimeFilter<"BookingServiceItem"> | Date | string
     updatedAt?: DateTimeFilter<"BookingServiceItem"> | Date | string
     bookingRequest?: XOR<BookingRequestScalarRelationFilter, BookingRequestWhereInput>
     service?: XOR<ServiceScalarRelationFilter, ServiceWhereInput>
+    equipmentUsages?: SampleEquipmentUsageListRelationFilter
     modifications?: SampleModificationListRelationFilter
     sampleTracking?: SampleTrackingListRelationFilter
+    serviceAddOns?: ServiceAddOnListRelationFilter
   }, "id">
 
   export type BookingServiceItemOrderByWithAggregationInput = {
@@ -26669,6 +35745,7 @@ export namespace Prisma {
     durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
+    sampleName?: SortOrderInput | SortOrder
     sampleDetails?: SortOrderInput | SortOrder
     sampleType?: SortOrderInput | SortOrder
     sampleHazard?: SortOrderInput | SortOrder
@@ -26683,6 +35760,15 @@ export namespace Prisma {
     expectedRetentionTime?: SortOrderInput | SortOrder
     samplePreparation?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    expectedCompletionDate?: SortOrderInput | SortOrder
+    actualCompletionDate?: SortOrderInput | SortOrder
+    turnaroundEstimate?: SortOrderInput | SortOrder
+    hplcPreparationRequired?: SortOrder
+    temperatureControlled?: SortOrder
+    lightSensitive?: SortOrder
+    hazardousMaterial?: SortOrder
+    inertAtmosphere?: SortOrder
+    otherEquipmentRequests?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: BookingServiceItemCountOrderByAggregateInput
@@ -26703,6 +35789,7 @@ export namespace Prisma {
     durationMonths?: IntWithAggregatesFilter<"BookingServiceItem"> | number
     unitPrice?: DecimalWithAggregatesFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalWithAggregatesFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
+    sampleName?: StringNullableWithAggregatesFilter<"BookingServiceItem"> | string | null
     sampleDetails?: StringNullableWithAggregatesFilter<"BookingServiceItem"> | string | null
     sampleType?: StringNullableWithAggregatesFilter<"BookingServiceItem"> | string | null
     sampleHazard?: StringNullableWithAggregatesFilter<"BookingServiceItem"> | string | null
@@ -26717,6 +35804,15 @@ export namespace Prisma {
     expectedRetentionTime?: DecimalNullableWithAggregatesFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: StringNullableWithAggregatesFilter<"BookingServiceItem"> | string | null
     notes?: StringNullableWithAggregatesFilter<"BookingServiceItem"> | string | null
+    expectedCompletionDate?: DateTimeNullableWithAggregatesFilter<"BookingServiceItem"> | Date | string | null
+    actualCompletionDate?: DateTimeNullableWithAggregatesFilter<"BookingServiceItem"> | Date | string | null
+    turnaroundEstimate?: StringNullableWithAggregatesFilter<"BookingServiceItem"> | string | null
+    hplcPreparationRequired?: BoolWithAggregatesFilter<"BookingServiceItem"> | boolean
+    temperatureControlled?: BoolWithAggregatesFilter<"BookingServiceItem"> | boolean
+    lightSensitive?: BoolWithAggregatesFilter<"BookingServiceItem"> | boolean
+    hazardousMaterial?: BoolWithAggregatesFilter<"BookingServiceItem"> | boolean
+    inertAtmosphere?: BoolWithAggregatesFilter<"BookingServiceItem"> | boolean
+    otherEquipmentRequests?: JsonNullableWithAggregatesFilter<"BookingServiceItem">
     createdAt?: DateTimeWithAggregatesFilter<"BookingServiceItem"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"BookingServiceItem"> | Date | string
   }
@@ -27299,6 +36395,271 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"SampleTracking"> | Date | string
   }
 
+  export type WorkspaceBookingWhereInput = {
+    AND?: WorkspaceBookingWhereInput | WorkspaceBookingWhereInput[]
+    OR?: WorkspaceBookingWhereInput[]
+    NOT?: WorkspaceBookingWhereInput | WorkspaceBookingWhereInput[]
+    id?: UuidFilter<"WorkspaceBooking"> | string
+    bookingRequestId?: UuidFilter<"WorkspaceBooking"> | string
+    startDate?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+    endDate?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+    preferredTimeSlot?: StringNullableFilter<"WorkspaceBooking"> | string | null
+    specialEquipment?: JsonNullableFilter<"WorkspaceBooking">
+    purpose?: StringNullableFilter<"WorkspaceBooking"> | string | null
+    notes?: StringNullableFilter<"WorkspaceBooking"> | string | null
+    createdAt?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+    updatedAt?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+    bookingRequest?: XOR<BookingRequestScalarRelationFilter, BookingRequestWhereInput>
+    equipmentUsages?: WorkspaceEquipmentUsageListRelationFilter
+    serviceAddOns?: ServiceAddOnListRelationFilter
+  }
+
+  export type WorkspaceBookingOrderByWithRelationInput = {
+    id?: SortOrder
+    bookingRequestId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    preferredTimeSlot?: SortOrderInput | SortOrder
+    specialEquipment?: SortOrderInput | SortOrder
+    purpose?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    bookingRequest?: BookingRequestOrderByWithRelationInput
+    equipmentUsages?: WorkspaceEquipmentUsageOrderByRelationAggregateInput
+    serviceAddOns?: ServiceAddOnOrderByRelationAggregateInput
+  }
+
+  export type WorkspaceBookingWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: WorkspaceBookingWhereInput | WorkspaceBookingWhereInput[]
+    OR?: WorkspaceBookingWhereInput[]
+    NOT?: WorkspaceBookingWhereInput | WorkspaceBookingWhereInput[]
+    bookingRequestId?: UuidFilter<"WorkspaceBooking"> | string
+    startDate?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+    endDate?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+    preferredTimeSlot?: StringNullableFilter<"WorkspaceBooking"> | string | null
+    specialEquipment?: JsonNullableFilter<"WorkspaceBooking">
+    purpose?: StringNullableFilter<"WorkspaceBooking"> | string | null
+    notes?: StringNullableFilter<"WorkspaceBooking"> | string | null
+    createdAt?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+    updatedAt?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+    bookingRequest?: XOR<BookingRequestScalarRelationFilter, BookingRequestWhereInput>
+    equipmentUsages?: WorkspaceEquipmentUsageListRelationFilter
+    serviceAddOns?: ServiceAddOnListRelationFilter
+  }, "id">
+
+  export type WorkspaceBookingOrderByWithAggregationInput = {
+    id?: SortOrder
+    bookingRequestId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    preferredTimeSlot?: SortOrderInput | SortOrder
+    specialEquipment?: SortOrderInput | SortOrder
+    purpose?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: WorkspaceBookingCountOrderByAggregateInput
+    _max?: WorkspaceBookingMaxOrderByAggregateInput
+    _min?: WorkspaceBookingMinOrderByAggregateInput
+  }
+
+  export type WorkspaceBookingScalarWhereWithAggregatesInput = {
+    AND?: WorkspaceBookingScalarWhereWithAggregatesInput | WorkspaceBookingScalarWhereWithAggregatesInput[]
+    OR?: WorkspaceBookingScalarWhereWithAggregatesInput[]
+    NOT?: WorkspaceBookingScalarWhereWithAggregatesInput | WorkspaceBookingScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"WorkspaceBooking"> | string
+    bookingRequestId?: UuidWithAggregatesFilter<"WorkspaceBooking"> | string
+    startDate?: DateTimeWithAggregatesFilter<"WorkspaceBooking"> | Date | string
+    endDate?: DateTimeWithAggregatesFilter<"WorkspaceBooking"> | Date | string
+    preferredTimeSlot?: StringNullableWithAggregatesFilter<"WorkspaceBooking"> | string | null
+    specialEquipment?: JsonNullableWithAggregatesFilter<"WorkspaceBooking">
+    purpose?: StringNullableWithAggregatesFilter<"WorkspaceBooking"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"WorkspaceBooking"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"WorkspaceBooking"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"WorkspaceBooking"> | Date | string
+  }
+
+  export type LabEquipmentWhereInput = {
+    AND?: LabEquipmentWhereInput | LabEquipmentWhereInput[]
+    OR?: LabEquipmentWhereInput[]
+    NOT?: LabEquipmentWhereInput | LabEquipmentWhereInput[]
+    id?: UuidFilter<"LabEquipment"> | string
+    name?: StringFilter<"LabEquipment"> | string
+    description?: StringNullableFilter<"LabEquipment"> | string | null
+    isAvailable?: BoolFilter<"LabEquipment"> | boolean
+    maintenanceNotes?: StringNullableFilter<"LabEquipment"> | string | null
+    expectedMaintenanceEnd?: DateTimeNullableFilter<"LabEquipment"> | Date | string | null
+    createdAt?: DateTimeFilter<"LabEquipment"> | Date | string
+    updatedAt?: DateTimeFilter<"LabEquipment"> | Date | string
+    workspaceUsages?: WorkspaceEquipmentUsageListRelationFilter
+    sampleUsages?: SampleEquipmentUsageListRelationFilter
+  }
+
+  export type LabEquipmentOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    isAvailable?: SortOrder
+    maintenanceNotes?: SortOrderInput | SortOrder
+    expectedMaintenanceEnd?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    workspaceUsages?: WorkspaceEquipmentUsageOrderByRelationAggregateInput
+    sampleUsages?: SampleEquipmentUsageOrderByRelationAggregateInput
+  }
+
+  export type LabEquipmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    name?: string
+    AND?: LabEquipmentWhereInput | LabEquipmentWhereInput[]
+    OR?: LabEquipmentWhereInput[]
+    NOT?: LabEquipmentWhereInput | LabEquipmentWhereInput[]
+    description?: StringNullableFilter<"LabEquipment"> | string | null
+    isAvailable?: BoolFilter<"LabEquipment"> | boolean
+    maintenanceNotes?: StringNullableFilter<"LabEquipment"> | string | null
+    expectedMaintenanceEnd?: DateTimeNullableFilter<"LabEquipment"> | Date | string | null
+    createdAt?: DateTimeFilter<"LabEquipment"> | Date | string
+    updatedAt?: DateTimeFilter<"LabEquipment"> | Date | string
+    workspaceUsages?: WorkspaceEquipmentUsageListRelationFilter
+    sampleUsages?: SampleEquipmentUsageListRelationFilter
+  }, "id" | "name">
+
+  export type LabEquipmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    isAvailable?: SortOrder
+    maintenanceNotes?: SortOrderInput | SortOrder
+    expectedMaintenanceEnd?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: LabEquipmentCountOrderByAggregateInput
+    _max?: LabEquipmentMaxOrderByAggregateInput
+    _min?: LabEquipmentMinOrderByAggregateInput
+  }
+
+  export type LabEquipmentScalarWhereWithAggregatesInput = {
+    AND?: LabEquipmentScalarWhereWithAggregatesInput | LabEquipmentScalarWhereWithAggregatesInput[]
+    OR?: LabEquipmentScalarWhereWithAggregatesInput[]
+    NOT?: LabEquipmentScalarWhereWithAggregatesInput | LabEquipmentScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"LabEquipment"> | string
+    name?: StringWithAggregatesFilter<"LabEquipment"> | string
+    description?: StringNullableWithAggregatesFilter<"LabEquipment"> | string | null
+    isAvailable?: BoolWithAggregatesFilter<"LabEquipment"> | boolean
+    maintenanceNotes?: StringNullableWithAggregatesFilter<"LabEquipment"> | string | null
+    expectedMaintenanceEnd?: DateTimeNullableWithAggregatesFilter<"LabEquipment"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"LabEquipment"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"LabEquipment"> | Date | string
+  }
+
+  export type WorkspaceEquipmentUsageWhereInput = {
+    AND?: WorkspaceEquipmentUsageWhereInput | WorkspaceEquipmentUsageWhereInput[]
+    OR?: WorkspaceEquipmentUsageWhereInput[]
+    NOT?: WorkspaceEquipmentUsageWhereInput | WorkspaceEquipmentUsageWhereInput[]
+    id?: UuidFilter<"WorkspaceEquipmentUsage"> | string
+    workspaceBookingId?: UuidFilter<"WorkspaceEquipmentUsage"> | string
+    equipmentId?: UuidFilter<"WorkspaceEquipmentUsage"> | string
+    createdAt?: DateTimeFilter<"WorkspaceEquipmentUsage"> | Date | string
+    workspaceBooking?: XOR<WorkspaceBookingScalarRelationFilter, WorkspaceBookingWhereInput>
+    equipment?: XOR<LabEquipmentScalarRelationFilter, LabEquipmentWhereInput>
+  }
+
+  export type WorkspaceEquipmentUsageOrderByWithRelationInput = {
+    id?: SortOrder
+    workspaceBookingId?: SortOrder
+    equipmentId?: SortOrder
+    createdAt?: SortOrder
+    workspaceBooking?: WorkspaceBookingOrderByWithRelationInput
+    equipment?: LabEquipmentOrderByWithRelationInput
+  }
+
+  export type WorkspaceEquipmentUsageWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: WorkspaceEquipmentUsageWhereInput | WorkspaceEquipmentUsageWhereInput[]
+    OR?: WorkspaceEquipmentUsageWhereInput[]
+    NOT?: WorkspaceEquipmentUsageWhereInput | WorkspaceEquipmentUsageWhereInput[]
+    workspaceBookingId?: UuidFilter<"WorkspaceEquipmentUsage"> | string
+    equipmentId?: UuidFilter<"WorkspaceEquipmentUsage"> | string
+    createdAt?: DateTimeFilter<"WorkspaceEquipmentUsage"> | Date | string
+    workspaceBooking?: XOR<WorkspaceBookingScalarRelationFilter, WorkspaceBookingWhereInput>
+    equipment?: XOR<LabEquipmentScalarRelationFilter, LabEquipmentWhereInput>
+  }, "id">
+
+  export type WorkspaceEquipmentUsageOrderByWithAggregationInput = {
+    id?: SortOrder
+    workspaceBookingId?: SortOrder
+    equipmentId?: SortOrder
+    createdAt?: SortOrder
+    _count?: WorkspaceEquipmentUsageCountOrderByAggregateInput
+    _max?: WorkspaceEquipmentUsageMaxOrderByAggregateInput
+    _min?: WorkspaceEquipmentUsageMinOrderByAggregateInput
+  }
+
+  export type WorkspaceEquipmentUsageScalarWhereWithAggregatesInput = {
+    AND?: WorkspaceEquipmentUsageScalarWhereWithAggregatesInput | WorkspaceEquipmentUsageScalarWhereWithAggregatesInput[]
+    OR?: WorkspaceEquipmentUsageScalarWhereWithAggregatesInput[]
+    NOT?: WorkspaceEquipmentUsageScalarWhereWithAggregatesInput | WorkspaceEquipmentUsageScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"WorkspaceEquipmentUsage"> | string
+    workspaceBookingId?: UuidWithAggregatesFilter<"WorkspaceEquipmentUsage"> | string
+    equipmentId?: UuidWithAggregatesFilter<"WorkspaceEquipmentUsage"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"WorkspaceEquipmentUsage"> | Date | string
+  }
+
+  export type SampleEquipmentUsageWhereInput = {
+    AND?: SampleEquipmentUsageWhereInput | SampleEquipmentUsageWhereInput[]
+    OR?: SampleEquipmentUsageWhereInput[]
+    NOT?: SampleEquipmentUsageWhereInput | SampleEquipmentUsageWhereInput[]
+    id?: UuidFilter<"SampleEquipmentUsage"> | string
+    bookingServiceItemId?: UuidFilter<"SampleEquipmentUsage"> | string
+    equipmentId?: UuidFilter<"SampleEquipmentUsage"> | string
+    createdAt?: DateTimeFilter<"SampleEquipmentUsage"> | Date | string
+    bookedItem?: XOR<BookingServiceItemScalarRelationFilter, BookingServiceItemWhereInput>
+    equipment?: XOR<LabEquipmentScalarRelationFilter, LabEquipmentWhereInput>
+  }
+
+  export type SampleEquipmentUsageOrderByWithRelationInput = {
+    id?: SortOrder
+    bookingServiceItemId?: SortOrder
+    equipmentId?: SortOrder
+    createdAt?: SortOrder
+    bookedItem?: BookingServiceItemOrderByWithRelationInput
+    equipment?: LabEquipmentOrderByWithRelationInput
+  }
+
+  export type SampleEquipmentUsageWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SampleEquipmentUsageWhereInput | SampleEquipmentUsageWhereInput[]
+    OR?: SampleEquipmentUsageWhereInput[]
+    NOT?: SampleEquipmentUsageWhereInput | SampleEquipmentUsageWhereInput[]
+    bookingServiceItemId?: UuidFilter<"SampleEquipmentUsage"> | string
+    equipmentId?: UuidFilter<"SampleEquipmentUsage"> | string
+    createdAt?: DateTimeFilter<"SampleEquipmentUsage"> | Date | string
+    bookedItem?: XOR<BookingServiceItemScalarRelationFilter, BookingServiceItemWhereInput>
+    equipment?: XOR<LabEquipmentScalarRelationFilter, LabEquipmentWhereInput>
+  }, "id">
+
+  export type SampleEquipmentUsageOrderByWithAggregationInput = {
+    id?: SortOrder
+    bookingServiceItemId?: SortOrder
+    equipmentId?: SortOrder
+    createdAt?: SortOrder
+    _count?: SampleEquipmentUsageCountOrderByAggregateInput
+    _max?: SampleEquipmentUsageMaxOrderByAggregateInput
+    _min?: SampleEquipmentUsageMinOrderByAggregateInput
+  }
+
+  export type SampleEquipmentUsageScalarWhereWithAggregatesInput = {
+    AND?: SampleEquipmentUsageScalarWhereWithAggregatesInput | SampleEquipmentUsageScalarWhereWithAggregatesInput[]
+    OR?: SampleEquipmentUsageScalarWhereWithAggregatesInput[]
+    NOT?: SampleEquipmentUsageScalarWhereWithAggregatesInput | SampleEquipmentUsageScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"SampleEquipmentUsage"> | string
+    bookingServiceItemId?: UuidWithAggregatesFilter<"SampleEquipmentUsage"> | string
+    equipmentId?: UuidWithAggregatesFilter<"SampleEquipmentUsage"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"SampleEquipmentUsage"> | Date | string
+  }
+
   export type AnalysisResultWhereInput = {
     AND?: AnalysisResultWhereInput | AnalysisResultWhereInput[]
     OR?: AnalysisResultWhereInput[]
@@ -27542,6 +36903,230 @@ export namespace Prisma {
     entityId?: StringNullableWithAggregatesFilter<"AuditLog"> | string | null
     metadata?: JsonNullableWithAggregatesFilter<"AuditLog">
     createdAt?: DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
+  }
+
+  export type GlobalAddOnCatalogWhereInput = {
+    AND?: GlobalAddOnCatalogWhereInput | GlobalAddOnCatalogWhereInput[]
+    OR?: GlobalAddOnCatalogWhereInput[]
+    NOT?: GlobalAddOnCatalogWhereInput | GlobalAddOnCatalogWhereInput[]
+    id?: UuidFilter<"GlobalAddOnCatalog"> | string
+    name?: StringFilter<"GlobalAddOnCatalog"> | string
+    description?: StringNullableFilter<"GlobalAddOnCatalog"> | string | null
+    defaultAmount?: DecimalFilter<"GlobalAddOnCatalog"> | Decimal | DecimalJsLike | number | string
+    applicableTo?: StringFilter<"GlobalAddOnCatalog"> | string
+    isActive?: BoolFilter<"GlobalAddOnCatalog"> | boolean
+    createdAt?: DateTimeFilter<"GlobalAddOnCatalog"> | Date | string
+    updatedAt?: DateTimeFilter<"GlobalAddOnCatalog"> | Date | string
+    serviceMappings?: ServiceAddOnMappingListRelationFilter
+    serviceAddOns?: ServiceAddOnListRelationFilter
+  }
+
+  export type GlobalAddOnCatalogOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    defaultAmount?: SortOrder
+    applicableTo?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    serviceMappings?: ServiceAddOnMappingOrderByRelationAggregateInput
+    serviceAddOns?: ServiceAddOnOrderByRelationAggregateInput
+  }
+
+  export type GlobalAddOnCatalogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    name?: string
+    AND?: GlobalAddOnCatalogWhereInput | GlobalAddOnCatalogWhereInput[]
+    OR?: GlobalAddOnCatalogWhereInput[]
+    NOT?: GlobalAddOnCatalogWhereInput | GlobalAddOnCatalogWhereInput[]
+    description?: StringNullableFilter<"GlobalAddOnCatalog"> | string | null
+    defaultAmount?: DecimalFilter<"GlobalAddOnCatalog"> | Decimal | DecimalJsLike | number | string
+    applicableTo?: StringFilter<"GlobalAddOnCatalog"> | string
+    isActive?: BoolFilter<"GlobalAddOnCatalog"> | boolean
+    createdAt?: DateTimeFilter<"GlobalAddOnCatalog"> | Date | string
+    updatedAt?: DateTimeFilter<"GlobalAddOnCatalog"> | Date | string
+    serviceMappings?: ServiceAddOnMappingListRelationFilter
+    serviceAddOns?: ServiceAddOnListRelationFilter
+  }, "id" | "name">
+
+  export type GlobalAddOnCatalogOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    defaultAmount?: SortOrder
+    applicableTo?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GlobalAddOnCatalogCountOrderByAggregateInput
+    _avg?: GlobalAddOnCatalogAvgOrderByAggregateInput
+    _max?: GlobalAddOnCatalogMaxOrderByAggregateInput
+    _min?: GlobalAddOnCatalogMinOrderByAggregateInput
+    _sum?: GlobalAddOnCatalogSumOrderByAggregateInput
+  }
+
+  export type GlobalAddOnCatalogScalarWhereWithAggregatesInput = {
+    AND?: GlobalAddOnCatalogScalarWhereWithAggregatesInput | GlobalAddOnCatalogScalarWhereWithAggregatesInput[]
+    OR?: GlobalAddOnCatalogScalarWhereWithAggregatesInput[]
+    NOT?: GlobalAddOnCatalogScalarWhereWithAggregatesInput | GlobalAddOnCatalogScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"GlobalAddOnCatalog"> | string
+    name?: StringWithAggregatesFilter<"GlobalAddOnCatalog"> | string
+    description?: StringNullableWithAggregatesFilter<"GlobalAddOnCatalog"> | string | null
+    defaultAmount?: DecimalWithAggregatesFilter<"GlobalAddOnCatalog"> | Decimal | DecimalJsLike | number | string
+    applicableTo?: StringWithAggregatesFilter<"GlobalAddOnCatalog"> | string
+    isActive?: BoolWithAggregatesFilter<"GlobalAddOnCatalog"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"GlobalAddOnCatalog"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GlobalAddOnCatalog"> | Date | string
+  }
+
+  export type ServiceAddOnMappingWhereInput = {
+    AND?: ServiceAddOnMappingWhereInput | ServiceAddOnMappingWhereInput[]
+    OR?: ServiceAddOnMappingWhereInput[]
+    NOT?: ServiceAddOnMappingWhereInput | ServiceAddOnMappingWhereInput[]
+    id?: UuidFilter<"ServiceAddOnMapping"> | string
+    serviceId?: UuidFilter<"ServiceAddOnMapping"> | string
+    addOnId?: UuidFilter<"ServiceAddOnMapping"> | string
+    isEnabled?: BoolFilter<"ServiceAddOnMapping"> | boolean
+    customAmount?: DecimalNullableFilter<"ServiceAddOnMapping"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"ServiceAddOnMapping"> | Date | string
+    service?: XOR<ServiceScalarRelationFilter, ServiceWhereInput>
+    addOnCatalog?: XOR<GlobalAddOnCatalogScalarRelationFilter, GlobalAddOnCatalogWhereInput>
+  }
+
+  export type ServiceAddOnMappingOrderByWithRelationInput = {
+    id?: SortOrder
+    serviceId?: SortOrder
+    addOnId?: SortOrder
+    isEnabled?: SortOrder
+    customAmount?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    service?: ServiceOrderByWithRelationInput
+    addOnCatalog?: GlobalAddOnCatalogOrderByWithRelationInput
+  }
+
+  export type ServiceAddOnMappingWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    serviceId_addOnId?: ServiceAddOnMappingServiceIdAddOnIdCompoundUniqueInput
+    AND?: ServiceAddOnMappingWhereInput | ServiceAddOnMappingWhereInput[]
+    OR?: ServiceAddOnMappingWhereInput[]
+    NOT?: ServiceAddOnMappingWhereInput | ServiceAddOnMappingWhereInput[]
+    serviceId?: UuidFilter<"ServiceAddOnMapping"> | string
+    addOnId?: UuidFilter<"ServiceAddOnMapping"> | string
+    isEnabled?: BoolFilter<"ServiceAddOnMapping"> | boolean
+    customAmount?: DecimalNullableFilter<"ServiceAddOnMapping"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"ServiceAddOnMapping"> | Date | string
+    service?: XOR<ServiceScalarRelationFilter, ServiceWhereInput>
+    addOnCatalog?: XOR<GlobalAddOnCatalogScalarRelationFilter, GlobalAddOnCatalogWhereInput>
+  }, "id" | "serviceId_addOnId">
+
+  export type ServiceAddOnMappingOrderByWithAggregationInput = {
+    id?: SortOrder
+    serviceId?: SortOrder
+    addOnId?: SortOrder
+    isEnabled?: SortOrder
+    customAmount?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: ServiceAddOnMappingCountOrderByAggregateInput
+    _avg?: ServiceAddOnMappingAvgOrderByAggregateInput
+    _max?: ServiceAddOnMappingMaxOrderByAggregateInput
+    _min?: ServiceAddOnMappingMinOrderByAggregateInput
+    _sum?: ServiceAddOnMappingSumOrderByAggregateInput
+  }
+
+  export type ServiceAddOnMappingScalarWhereWithAggregatesInput = {
+    AND?: ServiceAddOnMappingScalarWhereWithAggregatesInput | ServiceAddOnMappingScalarWhereWithAggregatesInput[]
+    OR?: ServiceAddOnMappingScalarWhereWithAggregatesInput[]
+    NOT?: ServiceAddOnMappingScalarWhereWithAggregatesInput | ServiceAddOnMappingScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"ServiceAddOnMapping"> | string
+    serviceId?: UuidWithAggregatesFilter<"ServiceAddOnMapping"> | string
+    addOnId?: UuidWithAggregatesFilter<"ServiceAddOnMapping"> | string
+    isEnabled?: BoolWithAggregatesFilter<"ServiceAddOnMapping"> | boolean
+    customAmount?: DecimalNullableWithAggregatesFilter<"ServiceAddOnMapping"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ServiceAddOnMapping"> | Date | string
+  }
+
+  export type ServiceAddOnWhereInput = {
+    AND?: ServiceAddOnWhereInput | ServiceAddOnWhereInput[]
+    OR?: ServiceAddOnWhereInput[]
+    NOT?: ServiceAddOnWhereInput | ServiceAddOnWhereInput[]
+    id?: UuidFilter<"ServiceAddOn"> | string
+    bookingServiceItemId?: UuidNullableFilter<"ServiceAddOn"> | string | null
+    workspaceBookingId?: UuidNullableFilter<"ServiceAddOn"> | string | null
+    addOnCatalogId?: UuidFilter<"ServiceAddOn"> | string
+    name?: StringFilter<"ServiceAddOn"> | string
+    amount?: DecimalFilter<"ServiceAddOn"> | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFilter<"ServiceAddOn"> | boolean
+    description?: StringNullableFilter<"ServiceAddOn"> | string | null
+    createdAt?: DateTimeFilter<"ServiceAddOn"> | Date | string
+    bookingServiceItem?: XOR<BookingServiceItemNullableScalarRelationFilter, BookingServiceItemWhereInput> | null
+    workspaceBooking?: XOR<WorkspaceBookingNullableScalarRelationFilter, WorkspaceBookingWhereInput> | null
+    addOnCatalog?: XOR<GlobalAddOnCatalogScalarRelationFilter, GlobalAddOnCatalogWhereInput>
+  }
+
+  export type ServiceAddOnOrderByWithRelationInput = {
+    id?: SortOrder
+    bookingServiceItemId?: SortOrderInput | SortOrder
+    workspaceBookingId?: SortOrderInput | SortOrder
+    addOnCatalogId?: SortOrder
+    name?: SortOrder
+    amount?: SortOrder
+    taxable?: SortOrder
+    description?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    bookingServiceItem?: BookingServiceItemOrderByWithRelationInput
+    workspaceBooking?: WorkspaceBookingOrderByWithRelationInput
+    addOnCatalog?: GlobalAddOnCatalogOrderByWithRelationInput
+  }
+
+  export type ServiceAddOnWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ServiceAddOnWhereInput | ServiceAddOnWhereInput[]
+    OR?: ServiceAddOnWhereInput[]
+    NOT?: ServiceAddOnWhereInput | ServiceAddOnWhereInput[]
+    bookingServiceItemId?: UuidNullableFilter<"ServiceAddOn"> | string | null
+    workspaceBookingId?: UuidNullableFilter<"ServiceAddOn"> | string | null
+    addOnCatalogId?: UuidFilter<"ServiceAddOn"> | string
+    name?: StringFilter<"ServiceAddOn"> | string
+    amount?: DecimalFilter<"ServiceAddOn"> | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFilter<"ServiceAddOn"> | boolean
+    description?: StringNullableFilter<"ServiceAddOn"> | string | null
+    createdAt?: DateTimeFilter<"ServiceAddOn"> | Date | string
+    bookingServiceItem?: XOR<BookingServiceItemNullableScalarRelationFilter, BookingServiceItemWhereInput> | null
+    workspaceBooking?: XOR<WorkspaceBookingNullableScalarRelationFilter, WorkspaceBookingWhereInput> | null
+    addOnCatalog?: XOR<GlobalAddOnCatalogScalarRelationFilter, GlobalAddOnCatalogWhereInput>
+  }, "id">
+
+  export type ServiceAddOnOrderByWithAggregationInput = {
+    id?: SortOrder
+    bookingServiceItemId?: SortOrderInput | SortOrder
+    workspaceBookingId?: SortOrderInput | SortOrder
+    addOnCatalogId?: SortOrder
+    name?: SortOrder
+    amount?: SortOrder
+    taxable?: SortOrder
+    description?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: ServiceAddOnCountOrderByAggregateInput
+    _avg?: ServiceAddOnAvgOrderByAggregateInput
+    _max?: ServiceAddOnMaxOrderByAggregateInput
+    _min?: ServiceAddOnMinOrderByAggregateInput
+    _sum?: ServiceAddOnSumOrderByAggregateInput
+  }
+
+  export type ServiceAddOnScalarWhereWithAggregatesInput = {
+    AND?: ServiceAddOnScalarWhereWithAggregatesInput | ServiceAddOnScalarWhereWithAggregatesInput[]
+    OR?: ServiceAddOnScalarWhereWithAggregatesInput[]
+    NOT?: ServiceAddOnScalarWhereWithAggregatesInput | ServiceAddOnScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"ServiceAddOn"> | string
+    bookingServiceItemId?: UuidNullableWithAggregatesFilter<"ServiceAddOn"> | string | null
+    workspaceBookingId?: UuidNullableWithAggregatesFilter<"ServiceAddOn"> | string | null
+    addOnCatalogId?: UuidWithAggregatesFilter<"ServiceAddOn"> | string
+    name?: StringWithAggregatesFilter<"ServiceAddOn"> | string
+    amount?: DecimalWithAggregatesFilter<"ServiceAddOn"> | Decimal | DecimalJsLike | number | string
+    taxable?: BoolWithAggregatesFilter<"ServiceAddOn"> | boolean
+    description?: StringNullableWithAggregatesFilter<"ServiceAddOn"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ServiceAddOn"> | Date | string
   }
 
   export type BetterAuthUserCreateInput = {
@@ -28188,6 +37773,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     pricing?: ServicePricingCreateNestedManyWithoutServiceInput
     bookingItems?: BookingServiceItemCreateNestedManyWithoutServiceInput
+    addOnMappings?: ServiceAddOnMappingCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUncheckedCreateInput = {
@@ -28204,6 +37790,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     pricing?: ServicePricingUncheckedCreateNestedManyWithoutServiceInput
     bookingItems?: BookingServiceItemUncheckedCreateNestedManyWithoutServiceInput
+    addOnMappings?: ServiceAddOnMappingUncheckedCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUpdateInput = {
@@ -28220,6 +37807,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     pricing?: ServicePricingUpdateManyWithoutServiceNestedInput
     bookingItems?: BookingServiceItemUpdateManyWithoutServiceNestedInput
+    addOnMappings?: ServiceAddOnMappingUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateInput = {
@@ -28236,6 +37824,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     pricing?: ServicePricingUncheckedUpdateManyWithoutServiceNestedInput
     bookingItems?: BookingServiceItemUncheckedUpdateManyWithoutServiceNestedInput
+    addOnMappings?: ServiceAddOnMappingUncheckedUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceCreateManyInput = {
@@ -28379,6 +37968,7 @@ export namespace Prisma {
     user: UserCreateNestedOneWithoutBookingRequestsInput
     reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
     serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
   }
 
@@ -28398,6 +37988,7 @@ export namespace Prisma {
     reviewedBy?: string | null
     reviewNotes?: string | null
     serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
   }
 
@@ -28417,6 +38008,7 @@ export namespace Prisma {
     user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
     reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
     serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
   }
 
@@ -28436,6 +38028,7 @@ export namespace Prisma {
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
   }
 
@@ -28494,6 +38087,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -28508,12 +38102,23 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     bookingRequest: BookingRequestCreateNestedOneWithoutServiceItemsInput
     service: ServiceCreateNestedOneWithoutBookingItemsInput
+    equipmentUsages?: SampleEquipmentUsageCreateNestedManyWithoutBookedItemInput
     modifications?: SampleModificationCreateNestedManyWithoutBookingServiceItemInput
     sampleTracking?: SampleTrackingCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnCreateNestedManyWithoutBookingServiceItemInput
   }
 
   export type BookingServiceItemUncheckedCreateInput = {
@@ -28524,6 +38129,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -28538,10 +38144,21 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedCreateNestedManyWithoutBookedItemInput
     modifications?: SampleModificationUncheckedCreateNestedManyWithoutBookingServiceItemInput
     sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnUncheckedCreateNestedManyWithoutBookingServiceItemInput
   }
 
   export type BookingServiceItemUpdateInput = {
@@ -28550,6 +38167,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28564,12 +38182,23 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookingRequest?: BookingRequestUpdateOneRequiredWithoutServiceItemsNestedInput
     service?: ServiceUpdateOneRequiredWithoutBookingItemsNestedInput
+    equipmentUsages?: SampleEquipmentUsageUpdateManyWithoutBookedItemNestedInput
     modifications?: SampleModificationUpdateManyWithoutBookingServiceItemNestedInput
     sampleTracking?: SampleTrackingUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUpdateManyWithoutBookingServiceItemNestedInput
   }
 
   export type BookingServiceItemUncheckedUpdateInput = {
@@ -28580,6 +38209,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28594,10 +38224,21 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedUpdateManyWithoutBookedItemNestedInput
     modifications?: SampleModificationUncheckedUpdateManyWithoutBookingServiceItemNestedInput
     sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUncheckedUpdateManyWithoutBookingServiceItemNestedInput
   }
 
   export type BookingServiceItemCreateManyInput = {
@@ -28608,6 +38249,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -28622,6 +38264,15 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -28632,6 +38283,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28646,6 +38298,15 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -28658,6 +38319,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28672,6 +38334,15 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -29327,6 +38998,283 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type WorkspaceBookingCreateInput = {
+    id?: string
+    startDate: Date | string
+    endDate: Date | string
+    preferredTimeSlot?: string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookingRequest: BookingRequestCreateNestedOneWithoutWorkspaceBookingsInput
+    equipmentUsages?: WorkspaceEquipmentUsageCreateNestedManyWithoutWorkspaceBookingInput
+    serviceAddOns?: ServiceAddOnCreateNestedManyWithoutWorkspaceBookingInput
+  }
+
+  export type WorkspaceBookingUncheckedCreateInput = {
+    id?: string
+    bookingRequestId: string
+    startDate: Date | string
+    endDate: Date | string
+    preferredTimeSlot?: string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    equipmentUsages?: WorkspaceEquipmentUsageUncheckedCreateNestedManyWithoutWorkspaceBookingInput
+    serviceAddOns?: ServiceAddOnUncheckedCreateNestedManyWithoutWorkspaceBookingInput
+  }
+
+  export type WorkspaceBookingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    preferredTimeSlot?: NullableStringFieldUpdateOperationsInput | string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookingRequest?: BookingRequestUpdateOneRequiredWithoutWorkspaceBookingsNestedInput
+    equipmentUsages?: WorkspaceEquipmentUsageUpdateManyWithoutWorkspaceBookingNestedInput
+    serviceAddOns?: ServiceAddOnUpdateManyWithoutWorkspaceBookingNestedInput
+  }
+
+  export type WorkspaceBookingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingRequestId?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    preferredTimeSlot?: NullableStringFieldUpdateOperationsInput | string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipmentUsages?: WorkspaceEquipmentUsageUncheckedUpdateManyWithoutWorkspaceBookingNestedInput
+    serviceAddOns?: ServiceAddOnUncheckedUpdateManyWithoutWorkspaceBookingNestedInput
+  }
+
+  export type WorkspaceBookingCreateManyInput = {
+    id?: string
+    bookingRequestId: string
+    startDate: Date | string
+    endDate: Date | string
+    preferredTimeSlot?: string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WorkspaceBookingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    preferredTimeSlot?: NullableStringFieldUpdateOperationsInput | string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WorkspaceBookingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingRequestId?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    preferredTimeSlot?: NullableStringFieldUpdateOperationsInput | string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LabEquipmentCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isAvailable?: boolean
+    maintenanceNotes?: string | null
+    expectedMaintenanceEnd?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspaceUsages?: WorkspaceEquipmentUsageCreateNestedManyWithoutEquipmentInput
+    sampleUsages?: SampleEquipmentUsageCreateNestedManyWithoutEquipmentInput
+  }
+
+  export type LabEquipmentUncheckedCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isAvailable?: boolean
+    maintenanceNotes?: string | null
+    expectedMaintenanceEnd?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspaceUsages?: WorkspaceEquipmentUsageUncheckedCreateNestedManyWithoutEquipmentInput
+    sampleUsages?: SampleEquipmentUsageUncheckedCreateNestedManyWithoutEquipmentInput
+  }
+
+  export type LabEquipmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    maintenanceNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedMaintenanceEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceUsages?: WorkspaceEquipmentUsageUpdateManyWithoutEquipmentNestedInput
+    sampleUsages?: SampleEquipmentUsageUpdateManyWithoutEquipmentNestedInput
+  }
+
+  export type LabEquipmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    maintenanceNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedMaintenanceEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceUsages?: WorkspaceEquipmentUsageUncheckedUpdateManyWithoutEquipmentNestedInput
+    sampleUsages?: SampleEquipmentUsageUncheckedUpdateManyWithoutEquipmentNestedInput
+  }
+
+  export type LabEquipmentCreateManyInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isAvailable?: boolean
+    maintenanceNotes?: string | null
+    expectedMaintenanceEnd?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type LabEquipmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    maintenanceNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedMaintenanceEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LabEquipmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    maintenanceNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedMaintenanceEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WorkspaceEquipmentUsageCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    workspaceBooking: WorkspaceBookingCreateNestedOneWithoutEquipmentUsagesInput
+    equipment: LabEquipmentCreateNestedOneWithoutWorkspaceUsagesInput
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedCreateInput = {
+    id?: string
+    workspaceBookingId: string
+    equipmentId: string
+    createdAt?: Date | string
+  }
+
+  export type WorkspaceEquipmentUsageUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceBooking?: WorkspaceBookingUpdateOneRequiredWithoutEquipmentUsagesNestedInput
+    equipment?: LabEquipmentUpdateOneRequiredWithoutWorkspaceUsagesNestedInput
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceBookingId?: StringFieldUpdateOperationsInput | string
+    equipmentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WorkspaceEquipmentUsageCreateManyInput = {
+    id?: string
+    workspaceBookingId: string
+    equipmentId: string
+    createdAt?: Date | string
+  }
+
+  export type WorkspaceEquipmentUsageUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceBookingId?: StringFieldUpdateOperationsInput | string
+    equipmentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SampleEquipmentUsageCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    bookedItem: BookingServiceItemCreateNestedOneWithoutEquipmentUsagesInput
+    equipment: LabEquipmentCreateNestedOneWithoutSampleUsagesInput
+  }
+
+  export type SampleEquipmentUsageUncheckedCreateInput = {
+    id?: string
+    bookingServiceItemId: string
+    equipmentId: string
+    createdAt?: Date | string
+  }
+
+  export type SampleEquipmentUsageUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookedItem?: BookingServiceItemUpdateOneRequiredWithoutEquipmentUsagesNestedInput
+    equipment?: LabEquipmentUpdateOneRequiredWithoutSampleUsagesNestedInput
+  }
+
+  export type SampleEquipmentUsageUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingServiceItemId?: StringFieldUpdateOperationsInput | string
+    equipmentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SampleEquipmentUsageCreateManyInput = {
+    id?: string
+    bookingServiceItemId: string
+    equipmentId: string
+    createdAt?: Date | string
+  }
+
+  export type SampleEquipmentUsageUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SampleEquipmentUsageUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingServiceItemId?: StringFieldUpdateOperationsInput | string
+    equipmentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type AnalysisResultCreateInput = {
     id?: string
     fileName: string
@@ -29593,6 +39541,233 @@ export namespace Prisma {
     entity?: NullableStringFieldUpdateOperationsInput | string | null
     entityId?: NullableStringFieldUpdateOperationsInput | string | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GlobalAddOnCatalogCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    defaultAmount: Decimal | DecimalJsLike | number | string
+    applicableTo: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceMappings?: ServiceAddOnMappingCreateNestedManyWithoutAddOnCatalogInput
+    serviceAddOns?: ServiceAddOnCreateNestedManyWithoutAddOnCatalogInput
+  }
+
+  export type GlobalAddOnCatalogUncheckedCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    defaultAmount: Decimal | DecimalJsLike | number | string
+    applicableTo: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceMappings?: ServiceAddOnMappingUncheckedCreateNestedManyWithoutAddOnCatalogInput
+    serviceAddOns?: ServiceAddOnUncheckedCreateNestedManyWithoutAddOnCatalogInput
+  }
+
+  export type GlobalAddOnCatalogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    applicableTo?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceMappings?: ServiceAddOnMappingUpdateManyWithoutAddOnCatalogNestedInput
+    serviceAddOns?: ServiceAddOnUpdateManyWithoutAddOnCatalogNestedInput
+  }
+
+  export type GlobalAddOnCatalogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    applicableTo?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceMappings?: ServiceAddOnMappingUncheckedUpdateManyWithoutAddOnCatalogNestedInput
+    serviceAddOns?: ServiceAddOnUncheckedUpdateManyWithoutAddOnCatalogNestedInput
+  }
+
+  export type GlobalAddOnCatalogCreateManyInput = {
+    id?: string
+    name: string
+    description?: string | null
+    defaultAmount: Decimal | DecimalJsLike | number | string
+    applicableTo: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GlobalAddOnCatalogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    applicableTo?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GlobalAddOnCatalogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    applicableTo?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnMappingCreateInput = {
+    id?: string
+    isEnabled?: boolean
+    customAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    service: ServiceCreateNestedOneWithoutAddOnMappingsInput
+    addOnCatalog: GlobalAddOnCatalogCreateNestedOneWithoutServiceMappingsInput
+  }
+
+  export type ServiceAddOnMappingUncheckedCreateInput = {
+    id?: string
+    serviceId: string
+    addOnId: string
+    isEnabled?: boolean
+    customAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnMappingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    customAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    service?: ServiceUpdateOneRequiredWithoutAddOnMappingsNestedInput
+    addOnCatalog?: GlobalAddOnCatalogUpdateOneRequiredWithoutServiceMappingsNestedInput
+  }
+
+  export type ServiceAddOnMappingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceId?: StringFieldUpdateOperationsInput | string
+    addOnId?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    customAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnMappingCreateManyInput = {
+    id?: string
+    serviceId: string
+    addOnId: string
+    isEnabled?: boolean
+    customAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnMappingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    customAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnMappingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceId?: StringFieldUpdateOperationsInput | string
+    addOnId?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    customAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnCreateInput = {
+    id?: string
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+    bookingServiceItem?: BookingServiceItemCreateNestedOneWithoutServiceAddOnsInput
+    workspaceBooking?: WorkspaceBookingCreateNestedOneWithoutServiceAddOnsInput
+    addOnCatalog: GlobalAddOnCatalogCreateNestedOneWithoutServiceAddOnsInput
+  }
+
+  export type ServiceAddOnUncheckedCreateInput = {
+    id?: string
+    bookingServiceItemId?: string | null
+    workspaceBookingId?: string | null
+    addOnCatalogId: string
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookingServiceItem?: BookingServiceItemUpdateOneWithoutServiceAddOnsNestedInput
+    workspaceBooking?: WorkspaceBookingUpdateOneWithoutServiceAddOnsNestedInput
+    addOnCatalog?: GlobalAddOnCatalogUpdateOneRequiredWithoutServiceAddOnsNestedInput
+  }
+
+  export type ServiceAddOnUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingServiceItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceBookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    addOnCatalogId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnCreateManyInput = {
+    id?: string
+    bookingServiceItemId?: string | null
+    workspaceBookingId?: string | null
+    addOnCatalogId: string
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingServiceItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceBookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    addOnCatalogId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -30308,11 +40483,21 @@ export namespace Prisma {
     none?: BookingServiceItemWhereInput
   }
 
+  export type ServiceAddOnMappingListRelationFilter = {
+    every?: ServiceAddOnMappingWhereInput
+    some?: ServiceAddOnMappingWhereInput
+    none?: ServiceAddOnMappingWhereInput
+  }
+
   export type ServicePricingOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type BookingServiceItemOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ServiceAddOnMappingOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -30475,6 +40660,16 @@ export namespace Prisma {
     not?: NestedEnumbooking_status_enumFilter<$PrismaModel> | $Enums.booking_status_enum
   }
 
+  export type WorkspaceBookingListRelationFilter = {
+    every?: WorkspaceBookingWhereInput
+    some?: WorkspaceBookingWhereInput
+    none?: WorkspaceBookingWhereInput
+  }
+
+  export type WorkspaceBookingOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type BookingRequestCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
@@ -30571,6 +40766,26 @@ export namespace Prisma {
     isNot?: BookingRequestWhereInput
   }
 
+  export type SampleEquipmentUsageListRelationFilter = {
+    every?: SampleEquipmentUsageWhereInput
+    some?: SampleEquipmentUsageWhereInput
+    none?: SampleEquipmentUsageWhereInput
+  }
+
+  export type ServiceAddOnListRelationFilter = {
+    every?: ServiceAddOnWhereInput
+    some?: ServiceAddOnWhereInput
+    none?: ServiceAddOnWhereInput
+  }
+
+  export type SampleEquipmentUsageOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ServiceAddOnOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type BookingServiceItemCountOrderByAggregateInput = {
     id?: SortOrder
     bookingRequestId?: SortOrder
@@ -30579,6 +40794,7 @@ export namespace Prisma {
     durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
+    sampleName?: SortOrder
     sampleDetails?: SortOrder
     sampleType?: SortOrder
     sampleHazard?: SortOrder
@@ -30593,6 +40809,15 @@ export namespace Prisma {
     expectedRetentionTime?: SortOrder
     samplePreparation?: SortOrder
     notes?: SortOrder
+    expectedCompletionDate?: SortOrder
+    actualCompletionDate?: SortOrder
+    turnaroundEstimate?: SortOrder
+    hplcPreparationRequired?: SortOrder
+    temperatureControlled?: SortOrder
+    lightSensitive?: SortOrder
+    hazardousMaterial?: SortOrder
+    inertAtmosphere?: SortOrder
+    otherEquipmentRequests?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -30615,6 +40840,7 @@ export namespace Prisma {
     durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
+    sampleName?: SortOrder
     sampleDetails?: SortOrder
     sampleType?: SortOrder
     sampleHazard?: SortOrder
@@ -30629,6 +40855,14 @@ export namespace Prisma {
     expectedRetentionTime?: SortOrder
     samplePreparation?: SortOrder
     notes?: SortOrder
+    expectedCompletionDate?: SortOrder
+    actualCompletionDate?: SortOrder
+    turnaroundEstimate?: SortOrder
+    hplcPreparationRequired?: SortOrder
+    temperatureControlled?: SortOrder
+    lightSensitive?: SortOrder
+    hazardousMaterial?: SortOrder
+    inertAtmosphere?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -30641,6 +40875,7 @@ export namespace Prisma {
     durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
+    sampleName?: SortOrder
     sampleDetails?: SortOrder
     sampleType?: SortOrder
     sampleHazard?: SortOrder
@@ -30655,6 +40890,14 @@ export namespace Prisma {
     expectedRetentionTime?: SortOrder
     samplePreparation?: SortOrder
     notes?: SortOrder
+    expectedCompletionDate?: SortOrder
+    actualCompletionDate?: SortOrder
+    turnaroundEstimate?: SortOrder
+    hplcPreparationRequired?: SortOrder
+    temperatureControlled?: SortOrder
+    lightSensitive?: SortOrder
+    hazardousMaterial?: SortOrder
+    inertAtmosphere?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -31141,6 +41384,138 @@ export namespace Prisma {
     _max?: NestedEnumsample_status_enumFilter<$PrismaModel>
   }
 
+  export type WorkspaceEquipmentUsageListRelationFilter = {
+    every?: WorkspaceEquipmentUsageWhereInput
+    some?: WorkspaceEquipmentUsageWhereInput
+    none?: WorkspaceEquipmentUsageWhereInput
+  }
+
+  export type WorkspaceEquipmentUsageOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WorkspaceBookingCountOrderByAggregateInput = {
+    id?: SortOrder
+    bookingRequestId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    preferredTimeSlot?: SortOrder
+    specialEquipment?: SortOrder
+    purpose?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WorkspaceBookingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    bookingRequestId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    preferredTimeSlot?: SortOrder
+    purpose?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WorkspaceBookingMinOrderByAggregateInput = {
+    id?: SortOrder
+    bookingRequestId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    preferredTimeSlot?: SortOrder
+    purpose?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LabEquipmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isAvailable?: SortOrder
+    maintenanceNotes?: SortOrder
+    expectedMaintenanceEnd?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LabEquipmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isAvailable?: SortOrder
+    maintenanceNotes?: SortOrder
+    expectedMaintenanceEnd?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type LabEquipmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isAvailable?: SortOrder
+    maintenanceNotes?: SortOrder
+    expectedMaintenanceEnd?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WorkspaceBookingScalarRelationFilter = {
+    is?: WorkspaceBookingWhereInput
+    isNot?: WorkspaceBookingWhereInput
+  }
+
+  export type LabEquipmentScalarRelationFilter = {
+    is?: LabEquipmentWhereInput
+    isNot?: LabEquipmentWhereInput
+  }
+
+  export type WorkspaceEquipmentUsageCountOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceBookingId?: SortOrder
+    equipmentId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type WorkspaceEquipmentUsageMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceBookingId?: SortOrder
+    equipmentId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type WorkspaceEquipmentUsageMinOrderByAggregateInput = {
+    id?: SortOrder
+    workspaceBookingId?: SortOrder
+    equipmentId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SampleEquipmentUsageCountOrderByAggregateInput = {
+    id?: SortOrder
+    bookingServiceItemId?: SortOrder
+    equipmentId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SampleEquipmentUsageMaxOrderByAggregateInput = {
+    id?: SortOrder
+    bookingServiceItemId?: SortOrder
+    equipmentId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SampleEquipmentUsageMinOrderByAggregateInput = {
+    id?: SortOrder
+    bookingServiceItemId?: SortOrder
+    equipmentId?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type SampleTrackingScalarRelationFilter = {
     is?: SampleTrackingWhereInput
     isNot?: SampleTrackingWhereInput
@@ -31284,6 +41659,146 @@ export namespace Prisma {
     entity?: SortOrder
     entityId?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type GlobalAddOnCatalogCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    defaultAmount?: SortOrder
+    applicableTo?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GlobalAddOnCatalogAvgOrderByAggregateInput = {
+    defaultAmount?: SortOrder
+  }
+
+  export type GlobalAddOnCatalogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    defaultAmount?: SortOrder
+    applicableTo?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GlobalAddOnCatalogMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    defaultAmount?: SortOrder
+    applicableTo?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GlobalAddOnCatalogSumOrderByAggregateInput = {
+    defaultAmount?: SortOrder
+  }
+
+  export type GlobalAddOnCatalogScalarRelationFilter = {
+    is?: GlobalAddOnCatalogWhereInput
+    isNot?: GlobalAddOnCatalogWhereInput
+  }
+
+  export type ServiceAddOnMappingServiceIdAddOnIdCompoundUniqueInput = {
+    serviceId: string
+    addOnId: string
+  }
+
+  export type ServiceAddOnMappingCountOrderByAggregateInput = {
+    id?: SortOrder
+    serviceId?: SortOrder
+    addOnId?: SortOrder
+    isEnabled?: SortOrder
+    customAmount?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ServiceAddOnMappingAvgOrderByAggregateInput = {
+    customAmount?: SortOrder
+  }
+
+  export type ServiceAddOnMappingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    serviceId?: SortOrder
+    addOnId?: SortOrder
+    isEnabled?: SortOrder
+    customAmount?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ServiceAddOnMappingMinOrderByAggregateInput = {
+    id?: SortOrder
+    serviceId?: SortOrder
+    addOnId?: SortOrder
+    isEnabled?: SortOrder
+    customAmount?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ServiceAddOnMappingSumOrderByAggregateInput = {
+    customAmount?: SortOrder
+  }
+
+  export type BookingServiceItemNullableScalarRelationFilter = {
+    is?: BookingServiceItemWhereInput | null
+    isNot?: BookingServiceItemWhereInput | null
+  }
+
+  export type WorkspaceBookingNullableScalarRelationFilter = {
+    is?: WorkspaceBookingWhereInput | null
+    isNot?: WorkspaceBookingWhereInput | null
+  }
+
+  export type ServiceAddOnCountOrderByAggregateInput = {
+    id?: SortOrder
+    bookingServiceItemId?: SortOrder
+    workspaceBookingId?: SortOrder
+    addOnCatalogId?: SortOrder
+    name?: SortOrder
+    amount?: SortOrder
+    taxable?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ServiceAddOnAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type ServiceAddOnMaxOrderByAggregateInput = {
+    id?: SortOrder
+    bookingServiceItemId?: SortOrder
+    workspaceBookingId?: SortOrder
+    addOnCatalogId?: SortOrder
+    name?: SortOrder
+    amount?: SortOrder
+    taxable?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ServiceAddOnMinOrderByAggregateInput = {
+    id?: SortOrder
+    bookingServiceItemId?: SortOrder
+    workspaceBookingId?: SortOrder
+    addOnCatalogId?: SortOrder
+    name?: SortOrder
+    amount?: SortOrder
+    taxable?: SortOrder
+    description?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ServiceAddOnSumOrderByAggregateInput = {
+    amount?: SortOrder
   }
 
   export type BetterAuthSessionCreateNestedManyWithoutUserInput = {
@@ -32116,6 +42631,13 @@ export namespace Prisma {
     connect?: BookingServiceItemWhereUniqueInput | BookingServiceItemWhereUniqueInput[]
   }
 
+  export type ServiceAddOnMappingCreateNestedManyWithoutServiceInput = {
+    create?: XOR<ServiceAddOnMappingCreateWithoutServiceInput, ServiceAddOnMappingUncheckedCreateWithoutServiceInput> | ServiceAddOnMappingCreateWithoutServiceInput[] | ServiceAddOnMappingUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: ServiceAddOnMappingCreateOrConnectWithoutServiceInput | ServiceAddOnMappingCreateOrConnectWithoutServiceInput[]
+    createMany?: ServiceAddOnMappingCreateManyServiceInputEnvelope
+    connect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+  }
+
   export type ServicePricingUncheckedCreateNestedManyWithoutServiceInput = {
     create?: XOR<ServicePricingCreateWithoutServiceInput, ServicePricingUncheckedCreateWithoutServiceInput> | ServicePricingCreateWithoutServiceInput[] | ServicePricingUncheckedCreateWithoutServiceInput[]
     connectOrCreate?: ServicePricingCreateOrConnectWithoutServiceInput | ServicePricingCreateOrConnectWithoutServiceInput[]
@@ -32128,6 +42650,13 @@ export namespace Prisma {
     connectOrCreate?: BookingServiceItemCreateOrConnectWithoutServiceInput | BookingServiceItemCreateOrConnectWithoutServiceInput[]
     createMany?: BookingServiceItemCreateManyServiceInputEnvelope
     connect?: BookingServiceItemWhereUniqueInput | BookingServiceItemWhereUniqueInput[]
+  }
+
+  export type ServiceAddOnMappingUncheckedCreateNestedManyWithoutServiceInput = {
+    create?: XOR<ServiceAddOnMappingCreateWithoutServiceInput, ServiceAddOnMappingUncheckedCreateWithoutServiceInput> | ServiceAddOnMappingCreateWithoutServiceInput[] | ServiceAddOnMappingUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: ServiceAddOnMappingCreateOrConnectWithoutServiceInput | ServiceAddOnMappingCreateOrConnectWithoutServiceInput[]
+    createMany?: ServiceAddOnMappingCreateManyServiceInputEnvelope
+    connect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
   }
 
   export type Enumservice_category_enumFieldUpdateOperationsInput = {
@@ -32170,6 +42699,20 @@ export namespace Prisma {
     deleteMany?: BookingServiceItemScalarWhereInput | BookingServiceItemScalarWhereInput[]
   }
 
+  export type ServiceAddOnMappingUpdateManyWithoutServiceNestedInput = {
+    create?: XOR<ServiceAddOnMappingCreateWithoutServiceInput, ServiceAddOnMappingUncheckedCreateWithoutServiceInput> | ServiceAddOnMappingCreateWithoutServiceInput[] | ServiceAddOnMappingUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: ServiceAddOnMappingCreateOrConnectWithoutServiceInput | ServiceAddOnMappingCreateOrConnectWithoutServiceInput[]
+    upsert?: ServiceAddOnMappingUpsertWithWhereUniqueWithoutServiceInput | ServiceAddOnMappingUpsertWithWhereUniqueWithoutServiceInput[]
+    createMany?: ServiceAddOnMappingCreateManyServiceInputEnvelope
+    set?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    disconnect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    delete?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    connect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    update?: ServiceAddOnMappingUpdateWithWhereUniqueWithoutServiceInput | ServiceAddOnMappingUpdateWithWhereUniqueWithoutServiceInput[]
+    updateMany?: ServiceAddOnMappingUpdateManyWithWhereWithoutServiceInput | ServiceAddOnMappingUpdateManyWithWhereWithoutServiceInput[]
+    deleteMany?: ServiceAddOnMappingScalarWhereInput | ServiceAddOnMappingScalarWhereInput[]
+  }
+
   export type ServicePricingUncheckedUpdateManyWithoutServiceNestedInput = {
     create?: XOR<ServicePricingCreateWithoutServiceInput, ServicePricingUncheckedCreateWithoutServiceInput> | ServicePricingCreateWithoutServiceInput[] | ServicePricingUncheckedCreateWithoutServiceInput[]
     connectOrCreate?: ServicePricingCreateOrConnectWithoutServiceInput | ServicePricingCreateOrConnectWithoutServiceInput[]
@@ -32196,6 +42739,20 @@ export namespace Prisma {
     update?: BookingServiceItemUpdateWithWhereUniqueWithoutServiceInput | BookingServiceItemUpdateWithWhereUniqueWithoutServiceInput[]
     updateMany?: BookingServiceItemUpdateManyWithWhereWithoutServiceInput | BookingServiceItemUpdateManyWithWhereWithoutServiceInput[]
     deleteMany?: BookingServiceItemScalarWhereInput | BookingServiceItemScalarWhereInput[]
+  }
+
+  export type ServiceAddOnMappingUncheckedUpdateManyWithoutServiceNestedInput = {
+    create?: XOR<ServiceAddOnMappingCreateWithoutServiceInput, ServiceAddOnMappingUncheckedCreateWithoutServiceInput> | ServiceAddOnMappingCreateWithoutServiceInput[] | ServiceAddOnMappingUncheckedCreateWithoutServiceInput[]
+    connectOrCreate?: ServiceAddOnMappingCreateOrConnectWithoutServiceInput | ServiceAddOnMappingCreateOrConnectWithoutServiceInput[]
+    upsert?: ServiceAddOnMappingUpsertWithWhereUniqueWithoutServiceInput | ServiceAddOnMappingUpsertWithWhereUniqueWithoutServiceInput[]
+    createMany?: ServiceAddOnMappingCreateManyServiceInputEnvelope
+    set?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    disconnect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    delete?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    connect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    update?: ServiceAddOnMappingUpdateWithWhereUniqueWithoutServiceInput | ServiceAddOnMappingUpdateWithWhereUniqueWithoutServiceInput[]
+    updateMany?: ServiceAddOnMappingUpdateManyWithWhereWithoutServiceInput | ServiceAddOnMappingUpdateManyWithWhereWithoutServiceInput[]
+    deleteMany?: ServiceAddOnMappingScalarWhereInput | ServiceAddOnMappingScalarWhereInput[]
   }
 
   export type ServiceCreateNestedOneWithoutPricingInput = {
@@ -32239,6 +42796,13 @@ export namespace Prisma {
     connect?: BookingServiceItemWhereUniqueInput | BookingServiceItemWhereUniqueInput[]
   }
 
+  export type WorkspaceBookingCreateNestedManyWithoutBookingRequestInput = {
+    create?: XOR<WorkspaceBookingCreateWithoutBookingRequestInput, WorkspaceBookingUncheckedCreateWithoutBookingRequestInput> | WorkspaceBookingCreateWithoutBookingRequestInput[] | WorkspaceBookingUncheckedCreateWithoutBookingRequestInput[]
+    connectOrCreate?: WorkspaceBookingCreateOrConnectWithoutBookingRequestInput | WorkspaceBookingCreateOrConnectWithoutBookingRequestInput[]
+    createMany?: WorkspaceBookingCreateManyBookingRequestInputEnvelope
+    connect?: WorkspaceBookingWhereUniqueInput | WorkspaceBookingWhereUniqueInput[]
+  }
+
   export type ServiceFormCreateNestedManyWithoutBookingRequestInput = {
     create?: XOR<ServiceFormCreateWithoutBookingRequestInput, ServiceFormUncheckedCreateWithoutBookingRequestInput> | ServiceFormCreateWithoutBookingRequestInput[] | ServiceFormUncheckedCreateWithoutBookingRequestInput[]
     connectOrCreate?: ServiceFormCreateOrConnectWithoutBookingRequestInput | ServiceFormCreateOrConnectWithoutBookingRequestInput[]
@@ -32251,6 +42815,13 @@ export namespace Prisma {
     connectOrCreate?: BookingServiceItemCreateOrConnectWithoutBookingRequestInput | BookingServiceItemCreateOrConnectWithoutBookingRequestInput[]
     createMany?: BookingServiceItemCreateManyBookingRequestInputEnvelope
     connect?: BookingServiceItemWhereUniqueInput | BookingServiceItemWhereUniqueInput[]
+  }
+
+  export type WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput = {
+    create?: XOR<WorkspaceBookingCreateWithoutBookingRequestInput, WorkspaceBookingUncheckedCreateWithoutBookingRequestInput> | WorkspaceBookingCreateWithoutBookingRequestInput[] | WorkspaceBookingUncheckedCreateWithoutBookingRequestInput[]
+    connectOrCreate?: WorkspaceBookingCreateOrConnectWithoutBookingRequestInput | WorkspaceBookingCreateOrConnectWithoutBookingRequestInput[]
+    createMany?: WorkspaceBookingCreateManyBookingRequestInputEnvelope
+    connect?: WorkspaceBookingWhereUniqueInput | WorkspaceBookingWhereUniqueInput[]
   }
 
   export type ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput = {
@@ -32296,6 +42867,20 @@ export namespace Prisma {
     deleteMany?: BookingServiceItemScalarWhereInput | BookingServiceItemScalarWhereInput[]
   }
 
+  export type WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput = {
+    create?: XOR<WorkspaceBookingCreateWithoutBookingRequestInput, WorkspaceBookingUncheckedCreateWithoutBookingRequestInput> | WorkspaceBookingCreateWithoutBookingRequestInput[] | WorkspaceBookingUncheckedCreateWithoutBookingRequestInput[]
+    connectOrCreate?: WorkspaceBookingCreateOrConnectWithoutBookingRequestInput | WorkspaceBookingCreateOrConnectWithoutBookingRequestInput[]
+    upsert?: WorkspaceBookingUpsertWithWhereUniqueWithoutBookingRequestInput | WorkspaceBookingUpsertWithWhereUniqueWithoutBookingRequestInput[]
+    createMany?: WorkspaceBookingCreateManyBookingRequestInputEnvelope
+    set?: WorkspaceBookingWhereUniqueInput | WorkspaceBookingWhereUniqueInput[]
+    disconnect?: WorkspaceBookingWhereUniqueInput | WorkspaceBookingWhereUniqueInput[]
+    delete?: WorkspaceBookingWhereUniqueInput | WorkspaceBookingWhereUniqueInput[]
+    connect?: WorkspaceBookingWhereUniqueInput | WorkspaceBookingWhereUniqueInput[]
+    update?: WorkspaceBookingUpdateWithWhereUniqueWithoutBookingRequestInput | WorkspaceBookingUpdateWithWhereUniqueWithoutBookingRequestInput[]
+    updateMany?: WorkspaceBookingUpdateManyWithWhereWithoutBookingRequestInput | WorkspaceBookingUpdateManyWithWhereWithoutBookingRequestInput[]
+    deleteMany?: WorkspaceBookingScalarWhereInput | WorkspaceBookingScalarWhereInput[]
+  }
+
   export type ServiceFormUpdateManyWithoutBookingRequestNestedInput = {
     create?: XOR<ServiceFormCreateWithoutBookingRequestInput, ServiceFormUncheckedCreateWithoutBookingRequestInput> | ServiceFormCreateWithoutBookingRequestInput[] | ServiceFormUncheckedCreateWithoutBookingRequestInput[]
     connectOrCreate?: ServiceFormCreateOrConnectWithoutBookingRequestInput | ServiceFormCreateOrConnectWithoutBookingRequestInput[]
@@ -32324,6 +42909,20 @@ export namespace Prisma {
     deleteMany?: BookingServiceItemScalarWhereInput | BookingServiceItemScalarWhereInput[]
   }
 
+  export type WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput = {
+    create?: XOR<WorkspaceBookingCreateWithoutBookingRequestInput, WorkspaceBookingUncheckedCreateWithoutBookingRequestInput> | WorkspaceBookingCreateWithoutBookingRequestInput[] | WorkspaceBookingUncheckedCreateWithoutBookingRequestInput[]
+    connectOrCreate?: WorkspaceBookingCreateOrConnectWithoutBookingRequestInput | WorkspaceBookingCreateOrConnectWithoutBookingRequestInput[]
+    upsert?: WorkspaceBookingUpsertWithWhereUniqueWithoutBookingRequestInput | WorkspaceBookingUpsertWithWhereUniqueWithoutBookingRequestInput[]
+    createMany?: WorkspaceBookingCreateManyBookingRequestInputEnvelope
+    set?: WorkspaceBookingWhereUniqueInput | WorkspaceBookingWhereUniqueInput[]
+    disconnect?: WorkspaceBookingWhereUniqueInput | WorkspaceBookingWhereUniqueInput[]
+    delete?: WorkspaceBookingWhereUniqueInput | WorkspaceBookingWhereUniqueInput[]
+    connect?: WorkspaceBookingWhereUniqueInput | WorkspaceBookingWhereUniqueInput[]
+    update?: WorkspaceBookingUpdateWithWhereUniqueWithoutBookingRequestInput | WorkspaceBookingUpdateWithWhereUniqueWithoutBookingRequestInput[]
+    updateMany?: WorkspaceBookingUpdateManyWithWhereWithoutBookingRequestInput | WorkspaceBookingUpdateManyWithWhereWithoutBookingRequestInput[]
+    deleteMany?: WorkspaceBookingScalarWhereInput | WorkspaceBookingScalarWhereInput[]
+  }
+
   export type ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput = {
     create?: XOR<ServiceFormCreateWithoutBookingRequestInput, ServiceFormUncheckedCreateWithoutBookingRequestInput> | ServiceFormCreateWithoutBookingRequestInput[] | ServiceFormUncheckedCreateWithoutBookingRequestInput[]
     connectOrCreate?: ServiceFormCreateOrConnectWithoutBookingRequestInput | ServiceFormCreateOrConnectWithoutBookingRequestInput[]
@@ -32350,6 +42949,13 @@ export namespace Prisma {
     connect?: ServiceWhereUniqueInput
   }
 
+  export type SampleEquipmentUsageCreateNestedManyWithoutBookedItemInput = {
+    create?: XOR<SampleEquipmentUsageCreateWithoutBookedItemInput, SampleEquipmentUsageUncheckedCreateWithoutBookedItemInput> | SampleEquipmentUsageCreateWithoutBookedItemInput[] | SampleEquipmentUsageUncheckedCreateWithoutBookedItemInput[]
+    connectOrCreate?: SampleEquipmentUsageCreateOrConnectWithoutBookedItemInput | SampleEquipmentUsageCreateOrConnectWithoutBookedItemInput[]
+    createMany?: SampleEquipmentUsageCreateManyBookedItemInputEnvelope
+    connect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+  }
+
   export type SampleModificationCreateNestedManyWithoutBookingServiceItemInput = {
     create?: XOR<SampleModificationCreateWithoutBookingServiceItemInput, SampleModificationUncheckedCreateWithoutBookingServiceItemInput> | SampleModificationCreateWithoutBookingServiceItemInput[] | SampleModificationUncheckedCreateWithoutBookingServiceItemInput[]
     connectOrCreate?: SampleModificationCreateOrConnectWithoutBookingServiceItemInput | SampleModificationCreateOrConnectWithoutBookingServiceItemInput[]
@@ -32364,6 +42970,20 @@ export namespace Prisma {
     connect?: SampleTrackingWhereUniqueInput | SampleTrackingWhereUniqueInput[]
   }
 
+  export type ServiceAddOnCreateNestedManyWithoutBookingServiceItemInput = {
+    create?: XOR<ServiceAddOnCreateWithoutBookingServiceItemInput, ServiceAddOnUncheckedCreateWithoutBookingServiceItemInput> | ServiceAddOnCreateWithoutBookingServiceItemInput[] | ServiceAddOnUncheckedCreateWithoutBookingServiceItemInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutBookingServiceItemInput | ServiceAddOnCreateOrConnectWithoutBookingServiceItemInput[]
+    createMany?: ServiceAddOnCreateManyBookingServiceItemInputEnvelope
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+  }
+
+  export type SampleEquipmentUsageUncheckedCreateNestedManyWithoutBookedItemInput = {
+    create?: XOR<SampleEquipmentUsageCreateWithoutBookedItemInput, SampleEquipmentUsageUncheckedCreateWithoutBookedItemInput> | SampleEquipmentUsageCreateWithoutBookedItemInput[] | SampleEquipmentUsageUncheckedCreateWithoutBookedItemInput[]
+    connectOrCreate?: SampleEquipmentUsageCreateOrConnectWithoutBookedItemInput | SampleEquipmentUsageCreateOrConnectWithoutBookedItemInput[]
+    createMany?: SampleEquipmentUsageCreateManyBookedItemInputEnvelope
+    connect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+  }
+
   export type SampleModificationUncheckedCreateNestedManyWithoutBookingServiceItemInput = {
     create?: XOR<SampleModificationCreateWithoutBookingServiceItemInput, SampleModificationUncheckedCreateWithoutBookingServiceItemInput> | SampleModificationCreateWithoutBookingServiceItemInput[] | SampleModificationUncheckedCreateWithoutBookingServiceItemInput[]
     connectOrCreate?: SampleModificationCreateOrConnectWithoutBookingServiceItemInput | SampleModificationCreateOrConnectWithoutBookingServiceItemInput[]
@@ -32376,6 +42996,13 @@ export namespace Prisma {
     connectOrCreate?: SampleTrackingCreateOrConnectWithoutBookingServiceItemInput | SampleTrackingCreateOrConnectWithoutBookingServiceItemInput[]
     createMany?: SampleTrackingCreateManyBookingServiceItemInputEnvelope
     connect?: SampleTrackingWhereUniqueInput | SampleTrackingWhereUniqueInput[]
+  }
+
+  export type ServiceAddOnUncheckedCreateNestedManyWithoutBookingServiceItemInput = {
+    create?: XOR<ServiceAddOnCreateWithoutBookingServiceItemInput, ServiceAddOnUncheckedCreateWithoutBookingServiceItemInput> | ServiceAddOnCreateWithoutBookingServiceItemInput[] | ServiceAddOnUncheckedCreateWithoutBookingServiceItemInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutBookingServiceItemInput | ServiceAddOnCreateOrConnectWithoutBookingServiceItemInput[]
+    createMany?: ServiceAddOnCreateManyBookingServiceItemInputEnvelope
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -32410,6 +43037,20 @@ export namespace Prisma {
     update?: XOR<XOR<ServiceUpdateToOneWithWhereWithoutBookingItemsInput, ServiceUpdateWithoutBookingItemsInput>, ServiceUncheckedUpdateWithoutBookingItemsInput>
   }
 
+  export type SampleEquipmentUsageUpdateManyWithoutBookedItemNestedInput = {
+    create?: XOR<SampleEquipmentUsageCreateWithoutBookedItemInput, SampleEquipmentUsageUncheckedCreateWithoutBookedItemInput> | SampleEquipmentUsageCreateWithoutBookedItemInput[] | SampleEquipmentUsageUncheckedCreateWithoutBookedItemInput[]
+    connectOrCreate?: SampleEquipmentUsageCreateOrConnectWithoutBookedItemInput | SampleEquipmentUsageCreateOrConnectWithoutBookedItemInput[]
+    upsert?: SampleEquipmentUsageUpsertWithWhereUniqueWithoutBookedItemInput | SampleEquipmentUsageUpsertWithWhereUniqueWithoutBookedItemInput[]
+    createMany?: SampleEquipmentUsageCreateManyBookedItemInputEnvelope
+    set?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    disconnect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    delete?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    connect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    update?: SampleEquipmentUsageUpdateWithWhereUniqueWithoutBookedItemInput | SampleEquipmentUsageUpdateWithWhereUniqueWithoutBookedItemInput[]
+    updateMany?: SampleEquipmentUsageUpdateManyWithWhereWithoutBookedItemInput | SampleEquipmentUsageUpdateManyWithWhereWithoutBookedItemInput[]
+    deleteMany?: SampleEquipmentUsageScalarWhereInput | SampleEquipmentUsageScalarWhereInput[]
+  }
+
   export type SampleModificationUpdateManyWithoutBookingServiceItemNestedInput = {
     create?: XOR<SampleModificationCreateWithoutBookingServiceItemInput, SampleModificationUncheckedCreateWithoutBookingServiceItemInput> | SampleModificationCreateWithoutBookingServiceItemInput[] | SampleModificationUncheckedCreateWithoutBookingServiceItemInput[]
     connectOrCreate?: SampleModificationCreateOrConnectWithoutBookingServiceItemInput | SampleModificationCreateOrConnectWithoutBookingServiceItemInput[]
@@ -32438,6 +43079,34 @@ export namespace Prisma {
     deleteMany?: SampleTrackingScalarWhereInput | SampleTrackingScalarWhereInput[]
   }
 
+  export type ServiceAddOnUpdateManyWithoutBookingServiceItemNestedInput = {
+    create?: XOR<ServiceAddOnCreateWithoutBookingServiceItemInput, ServiceAddOnUncheckedCreateWithoutBookingServiceItemInput> | ServiceAddOnCreateWithoutBookingServiceItemInput[] | ServiceAddOnUncheckedCreateWithoutBookingServiceItemInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutBookingServiceItemInput | ServiceAddOnCreateOrConnectWithoutBookingServiceItemInput[]
+    upsert?: ServiceAddOnUpsertWithWhereUniqueWithoutBookingServiceItemInput | ServiceAddOnUpsertWithWhereUniqueWithoutBookingServiceItemInput[]
+    createMany?: ServiceAddOnCreateManyBookingServiceItemInputEnvelope
+    set?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    disconnect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    delete?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    update?: ServiceAddOnUpdateWithWhereUniqueWithoutBookingServiceItemInput | ServiceAddOnUpdateWithWhereUniqueWithoutBookingServiceItemInput[]
+    updateMany?: ServiceAddOnUpdateManyWithWhereWithoutBookingServiceItemInput | ServiceAddOnUpdateManyWithWhereWithoutBookingServiceItemInput[]
+    deleteMany?: ServiceAddOnScalarWhereInput | ServiceAddOnScalarWhereInput[]
+  }
+
+  export type SampleEquipmentUsageUncheckedUpdateManyWithoutBookedItemNestedInput = {
+    create?: XOR<SampleEquipmentUsageCreateWithoutBookedItemInput, SampleEquipmentUsageUncheckedCreateWithoutBookedItemInput> | SampleEquipmentUsageCreateWithoutBookedItemInput[] | SampleEquipmentUsageUncheckedCreateWithoutBookedItemInput[]
+    connectOrCreate?: SampleEquipmentUsageCreateOrConnectWithoutBookedItemInput | SampleEquipmentUsageCreateOrConnectWithoutBookedItemInput[]
+    upsert?: SampleEquipmentUsageUpsertWithWhereUniqueWithoutBookedItemInput | SampleEquipmentUsageUpsertWithWhereUniqueWithoutBookedItemInput[]
+    createMany?: SampleEquipmentUsageCreateManyBookedItemInputEnvelope
+    set?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    disconnect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    delete?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    connect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    update?: SampleEquipmentUsageUpdateWithWhereUniqueWithoutBookedItemInput | SampleEquipmentUsageUpdateWithWhereUniqueWithoutBookedItemInput[]
+    updateMany?: SampleEquipmentUsageUpdateManyWithWhereWithoutBookedItemInput | SampleEquipmentUsageUpdateManyWithWhereWithoutBookedItemInput[]
+    deleteMany?: SampleEquipmentUsageScalarWhereInput | SampleEquipmentUsageScalarWhereInput[]
+  }
+
   export type SampleModificationUncheckedUpdateManyWithoutBookingServiceItemNestedInput = {
     create?: XOR<SampleModificationCreateWithoutBookingServiceItemInput, SampleModificationUncheckedCreateWithoutBookingServiceItemInput> | SampleModificationCreateWithoutBookingServiceItemInput[] | SampleModificationUncheckedCreateWithoutBookingServiceItemInput[]
     connectOrCreate?: SampleModificationCreateOrConnectWithoutBookingServiceItemInput | SampleModificationCreateOrConnectWithoutBookingServiceItemInput[]
@@ -32464,6 +43133,20 @@ export namespace Prisma {
     update?: SampleTrackingUpdateWithWhereUniqueWithoutBookingServiceItemInput | SampleTrackingUpdateWithWhereUniqueWithoutBookingServiceItemInput[]
     updateMany?: SampleTrackingUpdateManyWithWhereWithoutBookingServiceItemInput | SampleTrackingUpdateManyWithWhereWithoutBookingServiceItemInput[]
     deleteMany?: SampleTrackingScalarWhereInput | SampleTrackingScalarWhereInput[]
+  }
+
+  export type ServiceAddOnUncheckedUpdateManyWithoutBookingServiceItemNestedInput = {
+    create?: XOR<ServiceAddOnCreateWithoutBookingServiceItemInput, ServiceAddOnUncheckedCreateWithoutBookingServiceItemInput> | ServiceAddOnCreateWithoutBookingServiceItemInput[] | ServiceAddOnUncheckedCreateWithoutBookingServiceItemInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutBookingServiceItemInput | ServiceAddOnCreateOrConnectWithoutBookingServiceItemInput[]
+    upsert?: ServiceAddOnUpsertWithWhereUniqueWithoutBookingServiceItemInput | ServiceAddOnUpsertWithWhereUniqueWithoutBookingServiceItemInput[]
+    createMany?: ServiceAddOnCreateManyBookingServiceItemInputEnvelope
+    set?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    disconnect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    delete?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    update?: ServiceAddOnUpdateWithWhereUniqueWithoutBookingServiceItemInput | ServiceAddOnUpdateWithWhereUniqueWithoutBookingServiceItemInput[]
+    updateMany?: ServiceAddOnUpdateManyWithWhereWithoutBookingServiceItemInput | ServiceAddOnUpdateManyWithWhereWithoutBookingServiceItemInput[]
+    deleteMany?: ServiceAddOnScalarWhereInput | ServiceAddOnScalarWhereInput[]
   }
 
   export type BookingServiceItemCreateNestedOneWithoutModificationsInput = {
@@ -32790,6 +43473,244 @@ export namespace Prisma {
     deleteMany?: AnalysisResultScalarWhereInput | AnalysisResultScalarWhereInput[]
   }
 
+  export type BookingRequestCreateNestedOneWithoutWorkspaceBookingsInput = {
+    create?: XOR<BookingRequestCreateWithoutWorkspaceBookingsInput, BookingRequestUncheckedCreateWithoutWorkspaceBookingsInput>
+    connectOrCreate?: BookingRequestCreateOrConnectWithoutWorkspaceBookingsInput
+    connect?: BookingRequestWhereUniqueInput
+  }
+
+  export type WorkspaceEquipmentUsageCreateNestedManyWithoutWorkspaceBookingInput = {
+    create?: XOR<WorkspaceEquipmentUsageCreateWithoutWorkspaceBookingInput, WorkspaceEquipmentUsageUncheckedCreateWithoutWorkspaceBookingInput> | WorkspaceEquipmentUsageCreateWithoutWorkspaceBookingInput[] | WorkspaceEquipmentUsageUncheckedCreateWithoutWorkspaceBookingInput[]
+    connectOrCreate?: WorkspaceEquipmentUsageCreateOrConnectWithoutWorkspaceBookingInput | WorkspaceEquipmentUsageCreateOrConnectWithoutWorkspaceBookingInput[]
+    createMany?: WorkspaceEquipmentUsageCreateManyWorkspaceBookingInputEnvelope
+    connect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+  }
+
+  export type ServiceAddOnCreateNestedManyWithoutWorkspaceBookingInput = {
+    create?: XOR<ServiceAddOnCreateWithoutWorkspaceBookingInput, ServiceAddOnUncheckedCreateWithoutWorkspaceBookingInput> | ServiceAddOnCreateWithoutWorkspaceBookingInput[] | ServiceAddOnUncheckedCreateWithoutWorkspaceBookingInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutWorkspaceBookingInput | ServiceAddOnCreateOrConnectWithoutWorkspaceBookingInput[]
+    createMany?: ServiceAddOnCreateManyWorkspaceBookingInputEnvelope
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedCreateNestedManyWithoutWorkspaceBookingInput = {
+    create?: XOR<WorkspaceEquipmentUsageCreateWithoutWorkspaceBookingInput, WorkspaceEquipmentUsageUncheckedCreateWithoutWorkspaceBookingInput> | WorkspaceEquipmentUsageCreateWithoutWorkspaceBookingInput[] | WorkspaceEquipmentUsageUncheckedCreateWithoutWorkspaceBookingInput[]
+    connectOrCreate?: WorkspaceEquipmentUsageCreateOrConnectWithoutWorkspaceBookingInput | WorkspaceEquipmentUsageCreateOrConnectWithoutWorkspaceBookingInput[]
+    createMany?: WorkspaceEquipmentUsageCreateManyWorkspaceBookingInputEnvelope
+    connect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+  }
+
+  export type ServiceAddOnUncheckedCreateNestedManyWithoutWorkspaceBookingInput = {
+    create?: XOR<ServiceAddOnCreateWithoutWorkspaceBookingInput, ServiceAddOnUncheckedCreateWithoutWorkspaceBookingInput> | ServiceAddOnCreateWithoutWorkspaceBookingInput[] | ServiceAddOnUncheckedCreateWithoutWorkspaceBookingInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutWorkspaceBookingInput | ServiceAddOnCreateOrConnectWithoutWorkspaceBookingInput[]
+    createMany?: ServiceAddOnCreateManyWorkspaceBookingInputEnvelope
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+  }
+
+  export type BookingRequestUpdateOneRequiredWithoutWorkspaceBookingsNestedInput = {
+    create?: XOR<BookingRequestCreateWithoutWorkspaceBookingsInput, BookingRequestUncheckedCreateWithoutWorkspaceBookingsInput>
+    connectOrCreate?: BookingRequestCreateOrConnectWithoutWorkspaceBookingsInput
+    upsert?: BookingRequestUpsertWithoutWorkspaceBookingsInput
+    connect?: BookingRequestWhereUniqueInput
+    update?: XOR<XOR<BookingRequestUpdateToOneWithWhereWithoutWorkspaceBookingsInput, BookingRequestUpdateWithoutWorkspaceBookingsInput>, BookingRequestUncheckedUpdateWithoutWorkspaceBookingsInput>
+  }
+
+  export type WorkspaceEquipmentUsageUpdateManyWithoutWorkspaceBookingNestedInput = {
+    create?: XOR<WorkspaceEquipmentUsageCreateWithoutWorkspaceBookingInput, WorkspaceEquipmentUsageUncheckedCreateWithoutWorkspaceBookingInput> | WorkspaceEquipmentUsageCreateWithoutWorkspaceBookingInput[] | WorkspaceEquipmentUsageUncheckedCreateWithoutWorkspaceBookingInput[]
+    connectOrCreate?: WorkspaceEquipmentUsageCreateOrConnectWithoutWorkspaceBookingInput | WorkspaceEquipmentUsageCreateOrConnectWithoutWorkspaceBookingInput[]
+    upsert?: WorkspaceEquipmentUsageUpsertWithWhereUniqueWithoutWorkspaceBookingInput | WorkspaceEquipmentUsageUpsertWithWhereUniqueWithoutWorkspaceBookingInput[]
+    createMany?: WorkspaceEquipmentUsageCreateManyWorkspaceBookingInputEnvelope
+    set?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    disconnect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    delete?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    connect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    update?: WorkspaceEquipmentUsageUpdateWithWhereUniqueWithoutWorkspaceBookingInput | WorkspaceEquipmentUsageUpdateWithWhereUniqueWithoutWorkspaceBookingInput[]
+    updateMany?: WorkspaceEquipmentUsageUpdateManyWithWhereWithoutWorkspaceBookingInput | WorkspaceEquipmentUsageUpdateManyWithWhereWithoutWorkspaceBookingInput[]
+    deleteMany?: WorkspaceEquipmentUsageScalarWhereInput | WorkspaceEquipmentUsageScalarWhereInput[]
+  }
+
+  export type ServiceAddOnUpdateManyWithoutWorkspaceBookingNestedInput = {
+    create?: XOR<ServiceAddOnCreateWithoutWorkspaceBookingInput, ServiceAddOnUncheckedCreateWithoutWorkspaceBookingInput> | ServiceAddOnCreateWithoutWorkspaceBookingInput[] | ServiceAddOnUncheckedCreateWithoutWorkspaceBookingInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutWorkspaceBookingInput | ServiceAddOnCreateOrConnectWithoutWorkspaceBookingInput[]
+    upsert?: ServiceAddOnUpsertWithWhereUniqueWithoutWorkspaceBookingInput | ServiceAddOnUpsertWithWhereUniqueWithoutWorkspaceBookingInput[]
+    createMany?: ServiceAddOnCreateManyWorkspaceBookingInputEnvelope
+    set?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    disconnect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    delete?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    update?: ServiceAddOnUpdateWithWhereUniqueWithoutWorkspaceBookingInput | ServiceAddOnUpdateWithWhereUniqueWithoutWorkspaceBookingInput[]
+    updateMany?: ServiceAddOnUpdateManyWithWhereWithoutWorkspaceBookingInput | ServiceAddOnUpdateManyWithWhereWithoutWorkspaceBookingInput[]
+    deleteMany?: ServiceAddOnScalarWhereInput | ServiceAddOnScalarWhereInput[]
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedUpdateManyWithoutWorkspaceBookingNestedInput = {
+    create?: XOR<WorkspaceEquipmentUsageCreateWithoutWorkspaceBookingInput, WorkspaceEquipmentUsageUncheckedCreateWithoutWorkspaceBookingInput> | WorkspaceEquipmentUsageCreateWithoutWorkspaceBookingInput[] | WorkspaceEquipmentUsageUncheckedCreateWithoutWorkspaceBookingInput[]
+    connectOrCreate?: WorkspaceEquipmentUsageCreateOrConnectWithoutWorkspaceBookingInput | WorkspaceEquipmentUsageCreateOrConnectWithoutWorkspaceBookingInput[]
+    upsert?: WorkspaceEquipmentUsageUpsertWithWhereUniqueWithoutWorkspaceBookingInput | WorkspaceEquipmentUsageUpsertWithWhereUniqueWithoutWorkspaceBookingInput[]
+    createMany?: WorkspaceEquipmentUsageCreateManyWorkspaceBookingInputEnvelope
+    set?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    disconnect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    delete?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    connect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    update?: WorkspaceEquipmentUsageUpdateWithWhereUniqueWithoutWorkspaceBookingInput | WorkspaceEquipmentUsageUpdateWithWhereUniqueWithoutWorkspaceBookingInput[]
+    updateMany?: WorkspaceEquipmentUsageUpdateManyWithWhereWithoutWorkspaceBookingInput | WorkspaceEquipmentUsageUpdateManyWithWhereWithoutWorkspaceBookingInput[]
+    deleteMany?: WorkspaceEquipmentUsageScalarWhereInput | WorkspaceEquipmentUsageScalarWhereInput[]
+  }
+
+  export type ServiceAddOnUncheckedUpdateManyWithoutWorkspaceBookingNestedInput = {
+    create?: XOR<ServiceAddOnCreateWithoutWorkspaceBookingInput, ServiceAddOnUncheckedCreateWithoutWorkspaceBookingInput> | ServiceAddOnCreateWithoutWorkspaceBookingInput[] | ServiceAddOnUncheckedCreateWithoutWorkspaceBookingInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutWorkspaceBookingInput | ServiceAddOnCreateOrConnectWithoutWorkspaceBookingInput[]
+    upsert?: ServiceAddOnUpsertWithWhereUniqueWithoutWorkspaceBookingInput | ServiceAddOnUpsertWithWhereUniqueWithoutWorkspaceBookingInput[]
+    createMany?: ServiceAddOnCreateManyWorkspaceBookingInputEnvelope
+    set?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    disconnect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    delete?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    update?: ServiceAddOnUpdateWithWhereUniqueWithoutWorkspaceBookingInput | ServiceAddOnUpdateWithWhereUniqueWithoutWorkspaceBookingInput[]
+    updateMany?: ServiceAddOnUpdateManyWithWhereWithoutWorkspaceBookingInput | ServiceAddOnUpdateManyWithWhereWithoutWorkspaceBookingInput[]
+    deleteMany?: ServiceAddOnScalarWhereInput | ServiceAddOnScalarWhereInput[]
+  }
+
+  export type WorkspaceEquipmentUsageCreateNestedManyWithoutEquipmentInput = {
+    create?: XOR<WorkspaceEquipmentUsageCreateWithoutEquipmentInput, WorkspaceEquipmentUsageUncheckedCreateWithoutEquipmentInput> | WorkspaceEquipmentUsageCreateWithoutEquipmentInput[] | WorkspaceEquipmentUsageUncheckedCreateWithoutEquipmentInput[]
+    connectOrCreate?: WorkspaceEquipmentUsageCreateOrConnectWithoutEquipmentInput | WorkspaceEquipmentUsageCreateOrConnectWithoutEquipmentInput[]
+    createMany?: WorkspaceEquipmentUsageCreateManyEquipmentInputEnvelope
+    connect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+  }
+
+  export type SampleEquipmentUsageCreateNestedManyWithoutEquipmentInput = {
+    create?: XOR<SampleEquipmentUsageCreateWithoutEquipmentInput, SampleEquipmentUsageUncheckedCreateWithoutEquipmentInput> | SampleEquipmentUsageCreateWithoutEquipmentInput[] | SampleEquipmentUsageUncheckedCreateWithoutEquipmentInput[]
+    connectOrCreate?: SampleEquipmentUsageCreateOrConnectWithoutEquipmentInput | SampleEquipmentUsageCreateOrConnectWithoutEquipmentInput[]
+    createMany?: SampleEquipmentUsageCreateManyEquipmentInputEnvelope
+    connect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedCreateNestedManyWithoutEquipmentInput = {
+    create?: XOR<WorkspaceEquipmentUsageCreateWithoutEquipmentInput, WorkspaceEquipmentUsageUncheckedCreateWithoutEquipmentInput> | WorkspaceEquipmentUsageCreateWithoutEquipmentInput[] | WorkspaceEquipmentUsageUncheckedCreateWithoutEquipmentInput[]
+    connectOrCreate?: WorkspaceEquipmentUsageCreateOrConnectWithoutEquipmentInput | WorkspaceEquipmentUsageCreateOrConnectWithoutEquipmentInput[]
+    createMany?: WorkspaceEquipmentUsageCreateManyEquipmentInputEnvelope
+    connect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+  }
+
+  export type SampleEquipmentUsageUncheckedCreateNestedManyWithoutEquipmentInput = {
+    create?: XOR<SampleEquipmentUsageCreateWithoutEquipmentInput, SampleEquipmentUsageUncheckedCreateWithoutEquipmentInput> | SampleEquipmentUsageCreateWithoutEquipmentInput[] | SampleEquipmentUsageUncheckedCreateWithoutEquipmentInput[]
+    connectOrCreate?: SampleEquipmentUsageCreateOrConnectWithoutEquipmentInput | SampleEquipmentUsageCreateOrConnectWithoutEquipmentInput[]
+    createMany?: SampleEquipmentUsageCreateManyEquipmentInputEnvelope
+    connect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+  }
+
+  export type WorkspaceEquipmentUsageUpdateManyWithoutEquipmentNestedInput = {
+    create?: XOR<WorkspaceEquipmentUsageCreateWithoutEquipmentInput, WorkspaceEquipmentUsageUncheckedCreateWithoutEquipmentInput> | WorkspaceEquipmentUsageCreateWithoutEquipmentInput[] | WorkspaceEquipmentUsageUncheckedCreateWithoutEquipmentInput[]
+    connectOrCreate?: WorkspaceEquipmentUsageCreateOrConnectWithoutEquipmentInput | WorkspaceEquipmentUsageCreateOrConnectWithoutEquipmentInput[]
+    upsert?: WorkspaceEquipmentUsageUpsertWithWhereUniqueWithoutEquipmentInput | WorkspaceEquipmentUsageUpsertWithWhereUniqueWithoutEquipmentInput[]
+    createMany?: WorkspaceEquipmentUsageCreateManyEquipmentInputEnvelope
+    set?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    disconnect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    delete?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    connect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    update?: WorkspaceEquipmentUsageUpdateWithWhereUniqueWithoutEquipmentInput | WorkspaceEquipmentUsageUpdateWithWhereUniqueWithoutEquipmentInput[]
+    updateMany?: WorkspaceEquipmentUsageUpdateManyWithWhereWithoutEquipmentInput | WorkspaceEquipmentUsageUpdateManyWithWhereWithoutEquipmentInput[]
+    deleteMany?: WorkspaceEquipmentUsageScalarWhereInput | WorkspaceEquipmentUsageScalarWhereInput[]
+  }
+
+  export type SampleEquipmentUsageUpdateManyWithoutEquipmentNestedInput = {
+    create?: XOR<SampleEquipmentUsageCreateWithoutEquipmentInput, SampleEquipmentUsageUncheckedCreateWithoutEquipmentInput> | SampleEquipmentUsageCreateWithoutEquipmentInput[] | SampleEquipmentUsageUncheckedCreateWithoutEquipmentInput[]
+    connectOrCreate?: SampleEquipmentUsageCreateOrConnectWithoutEquipmentInput | SampleEquipmentUsageCreateOrConnectWithoutEquipmentInput[]
+    upsert?: SampleEquipmentUsageUpsertWithWhereUniqueWithoutEquipmentInput | SampleEquipmentUsageUpsertWithWhereUniqueWithoutEquipmentInput[]
+    createMany?: SampleEquipmentUsageCreateManyEquipmentInputEnvelope
+    set?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    disconnect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    delete?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    connect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    update?: SampleEquipmentUsageUpdateWithWhereUniqueWithoutEquipmentInput | SampleEquipmentUsageUpdateWithWhereUniqueWithoutEquipmentInput[]
+    updateMany?: SampleEquipmentUsageUpdateManyWithWhereWithoutEquipmentInput | SampleEquipmentUsageUpdateManyWithWhereWithoutEquipmentInput[]
+    deleteMany?: SampleEquipmentUsageScalarWhereInput | SampleEquipmentUsageScalarWhereInput[]
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedUpdateManyWithoutEquipmentNestedInput = {
+    create?: XOR<WorkspaceEquipmentUsageCreateWithoutEquipmentInput, WorkspaceEquipmentUsageUncheckedCreateWithoutEquipmentInput> | WorkspaceEquipmentUsageCreateWithoutEquipmentInput[] | WorkspaceEquipmentUsageUncheckedCreateWithoutEquipmentInput[]
+    connectOrCreate?: WorkspaceEquipmentUsageCreateOrConnectWithoutEquipmentInput | WorkspaceEquipmentUsageCreateOrConnectWithoutEquipmentInput[]
+    upsert?: WorkspaceEquipmentUsageUpsertWithWhereUniqueWithoutEquipmentInput | WorkspaceEquipmentUsageUpsertWithWhereUniqueWithoutEquipmentInput[]
+    createMany?: WorkspaceEquipmentUsageCreateManyEquipmentInputEnvelope
+    set?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    disconnect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    delete?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    connect?: WorkspaceEquipmentUsageWhereUniqueInput | WorkspaceEquipmentUsageWhereUniqueInput[]
+    update?: WorkspaceEquipmentUsageUpdateWithWhereUniqueWithoutEquipmentInput | WorkspaceEquipmentUsageUpdateWithWhereUniqueWithoutEquipmentInput[]
+    updateMany?: WorkspaceEquipmentUsageUpdateManyWithWhereWithoutEquipmentInput | WorkspaceEquipmentUsageUpdateManyWithWhereWithoutEquipmentInput[]
+    deleteMany?: WorkspaceEquipmentUsageScalarWhereInput | WorkspaceEquipmentUsageScalarWhereInput[]
+  }
+
+  export type SampleEquipmentUsageUncheckedUpdateManyWithoutEquipmentNestedInput = {
+    create?: XOR<SampleEquipmentUsageCreateWithoutEquipmentInput, SampleEquipmentUsageUncheckedCreateWithoutEquipmentInput> | SampleEquipmentUsageCreateWithoutEquipmentInput[] | SampleEquipmentUsageUncheckedCreateWithoutEquipmentInput[]
+    connectOrCreate?: SampleEquipmentUsageCreateOrConnectWithoutEquipmentInput | SampleEquipmentUsageCreateOrConnectWithoutEquipmentInput[]
+    upsert?: SampleEquipmentUsageUpsertWithWhereUniqueWithoutEquipmentInput | SampleEquipmentUsageUpsertWithWhereUniqueWithoutEquipmentInput[]
+    createMany?: SampleEquipmentUsageCreateManyEquipmentInputEnvelope
+    set?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    disconnect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    delete?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    connect?: SampleEquipmentUsageWhereUniqueInput | SampleEquipmentUsageWhereUniqueInput[]
+    update?: SampleEquipmentUsageUpdateWithWhereUniqueWithoutEquipmentInput | SampleEquipmentUsageUpdateWithWhereUniqueWithoutEquipmentInput[]
+    updateMany?: SampleEquipmentUsageUpdateManyWithWhereWithoutEquipmentInput | SampleEquipmentUsageUpdateManyWithWhereWithoutEquipmentInput[]
+    deleteMany?: SampleEquipmentUsageScalarWhereInput | SampleEquipmentUsageScalarWhereInput[]
+  }
+
+  export type WorkspaceBookingCreateNestedOneWithoutEquipmentUsagesInput = {
+    create?: XOR<WorkspaceBookingCreateWithoutEquipmentUsagesInput, WorkspaceBookingUncheckedCreateWithoutEquipmentUsagesInput>
+    connectOrCreate?: WorkspaceBookingCreateOrConnectWithoutEquipmentUsagesInput
+    connect?: WorkspaceBookingWhereUniqueInput
+  }
+
+  export type LabEquipmentCreateNestedOneWithoutWorkspaceUsagesInput = {
+    create?: XOR<LabEquipmentCreateWithoutWorkspaceUsagesInput, LabEquipmentUncheckedCreateWithoutWorkspaceUsagesInput>
+    connectOrCreate?: LabEquipmentCreateOrConnectWithoutWorkspaceUsagesInput
+    connect?: LabEquipmentWhereUniqueInput
+  }
+
+  export type WorkspaceBookingUpdateOneRequiredWithoutEquipmentUsagesNestedInput = {
+    create?: XOR<WorkspaceBookingCreateWithoutEquipmentUsagesInput, WorkspaceBookingUncheckedCreateWithoutEquipmentUsagesInput>
+    connectOrCreate?: WorkspaceBookingCreateOrConnectWithoutEquipmentUsagesInput
+    upsert?: WorkspaceBookingUpsertWithoutEquipmentUsagesInput
+    connect?: WorkspaceBookingWhereUniqueInput
+    update?: XOR<XOR<WorkspaceBookingUpdateToOneWithWhereWithoutEquipmentUsagesInput, WorkspaceBookingUpdateWithoutEquipmentUsagesInput>, WorkspaceBookingUncheckedUpdateWithoutEquipmentUsagesInput>
+  }
+
+  export type LabEquipmentUpdateOneRequiredWithoutWorkspaceUsagesNestedInput = {
+    create?: XOR<LabEquipmentCreateWithoutWorkspaceUsagesInput, LabEquipmentUncheckedCreateWithoutWorkspaceUsagesInput>
+    connectOrCreate?: LabEquipmentCreateOrConnectWithoutWorkspaceUsagesInput
+    upsert?: LabEquipmentUpsertWithoutWorkspaceUsagesInput
+    connect?: LabEquipmentWhereUniqueInput
+    update?: XOR<XOR<LabEquipmentUpdateToOneWithWhereWithoutWorkspaceUsagesInput, LabEquipmentUpdateWithoutWorkspaceUsagesInput>, LabEquipmentUncheckedUpdateWithoutWorkspaceUsagesInput>
+  }
+
+  export type BookingServiceItemCreateNestedOneWithoutEquipmentUsagesInput = {
+    create?: XOR<BookingServiceItemCreateWithoutEquipmentUsagesInput, BookingServiceItemUncheckedCreateWithoutEquipmentUsagesInput>
+    connectOrCreate?: BookingServiceItemCreateOrConnectWithoutEquipmentUsagesInput
+    connect?: BookingServiceItemWhereUniqueInput
+  }
+
+  export type LabEquipmentCreateNestedOneWithoutSampleUsagesInput = {
+    create?: XOR<LabEquipmentCreateWithoutSampleUsagesInput, LabEquipmentUncheckedCreateWithoutSampleUsagesInput>
+    connectOrCreate?: LabEquipmentCreateOrConnectWithoutSampleUsagesInput
+    connect?: LabEquipmentWhereUniqueInput
+  }
+
+  export type BookingServiceItemUpdateOneRequiredWithoutEquipmentUsagesNestedInput = {
+    create?: XOR<BookingServiceItemCreateWithoutEquipmentUsagesInput, BookingServiceItemUncheckedCreateWithoutEquipmentUsagesInput>
+    connectOrCreate?: BookingServiceItemCreateOrConnectWithoutEquipmentUsagesInput
+    upsert?: BookingServiceItemUpsertWithoutEquipmentUsagesInput
+    connect?: BookingServiceItemWhereUniqueInput
+    update?: XOR<XOR<BookingServiceItemUpdateToOneWithWhereWithoutEquipmentUsagesInput, BookingServiceItemUpdateWithoutEquipmentUsagesInput>, BookingServiceItemUncheckedUpdateWithoutEquipmentUsagesInput>
+  }
+
+  export type LabEquipmentUpdateOneRequiredWithoutSampleUsagesNestedInput = {
+    create?: XOR<LabEquipmentCreateWithoutSampleUsagesInput, LabEquipmentUncheckedCreateWithoutSampleUsagesInput>
+    connectOrCreate?: LabEquipmentCreateOrConnectWithoutSampleUsagesInput
+    upsert?: LabEquipmentUpsertWithoutSampleUsagesInput
+    connect?: LabEquipmentWhereUniqueInput
+    update?: XOR<XOR<LabEquipmentUpdateToOneWithWhereWithoutSampleUsagesInput, LabEquipmentUpdateWithoutSampleUsagesInput>, LabEquipmentUncheckedUpdateWithoutSampleUsagesInput>
+  }
+
   export type SampleTrackingCreateNestedOneWithoutAnalysisResultsInput = {
     create?: XOR<SampleTrackingCreateWithoutAnalysisResultsInput, SampleTrackingUncheckedCreateWithoutAnalysisResultsInput>
     connectOrCreate?: SampleTrackingCreateOrConnectWithoutAnalysisResultsInput
@@ -32850,6 +43771,164 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuditLogsInput, UserUpdateWithoutAuditLogsInput>, UserUncheckedUpdateWithoutAuditLogsInput>
+  }
+
+  export type ServiceAddOnMappingCreateNestedManyWithoutAddOnCatalogInput = {
+    create?: XOR<ServiceAddOnMappingCreateWithoutAddOnCatalogInput, ServiceAddOnMappingUncheckedCreateWithoutAddOnCatalogInput> | ServiceAddOnMappingCreateWithoutAddOnCatalogInput[] | ServiceAddOnMappingUncheckedCreateWithoutAddOnCatalogInput[]
+    connectOrCreate?: ServiceAddOnMappingCreateOrConnectWithoutAddOnCatalogInput | ServiceAddOnMappingCreateOrConnectWithoutAddOnCatalogInput[]
+    createMany?: ServiceAddOnMappingCreateManyAddOnCatalogInputEnvelope
+    connect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+  }
+
+  export type ServiceAddOnCreateNestedManyWithoutAddOnCatalogInput = {
+    create?: XOR<ServiceAddOnCreateWithoutAddOnCatalogInput, ServiceAddOnUncheckedCreateWithoutAddOnCatalogInput> | ServiceAddOnCreateWithoutAddOnCatalogInput[] | ServiceAddOnUncheckedCreateWithoutAddOnCatalogInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutAddOnCatalogInput | ServiceAddOnCreateOrConnectWithoutAddOnCatalogInput[]
+    createMany?: ServiceAddOnCreateManyAddOnCatalogInputEnvelope
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+  }
+
+  export type ServiceAddOnMappingUncheckedCreateNestedManyWithoutAddOnCatalogInput = {
+    create?: XOR<ServiceAddOnMappingCreateWithoutAddOnCatalogInput, ServiceAddOnMappingUncheckedCreateWithoutAddOnCatalogInput> | ServiceAddOnMappingCreateWithoutAddOnCatalogInput[] | ServiceAddOnMappingUncheckedCreateWithoutAddOnCatalogInput[]
+    connectOrCreate?: ServiceAddOnMappingCreateOrConnectWithoutAddOnCatalogInput | ServiceAddOnMappingCreateOrConnectWithoutAddOnCatalogInput[]
+    createMany?: ServiceAddOnMappingCreateManyAddOnCatalogInputEnvelope
+    connect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+  }
+
+  export type ServiceAddOnUncheckedCreateNestedManyWithoutAddOnCatalogInput = {
+    create?: XOR<ServiceAddOnCreateWithoutAddOnCatalogInput, ServiceAddOnUncheckedCreateWithoutAddOnCatalogInput> | ServiceAddOnCreateWithoutAddOnCatalogInput[] | ServiceAddOnUncheckedCreateWithoutAddOnCatalogInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutAddOnCatalogInput | ServiceAddOnCreateOrConnectWithoutAddOnCatalogInput[]
+    createMany?: ServiceAddOnCreateManyAddOnCatalogInputEnvelope
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+  }
+
+  export type ServiceAddOnMappingUpdateManyWithoutAddOnCatalogNestedInput = {
+    create?: XOR<ServiceAddOnMappingCreateWithoutAddOnCatalogInput, ServiceAddOnMappingUncheckedCreateWithoutAddOnCatalogInput> | ServiceAddOnMappingCreateWithoutAddOnCatalogInput[] | ServiceAddOnMappingUncheckedCreateWithoutAddOnCatalogInput[]
+    connectOrCreate?: ServiceAddOnMappingCreateOrConnectWithoutAddOnCatalogInput | ServiceAddOnMappingCreateOrConnectWithoutAddOnCatalogInput[]
+    upsert?: ServiceAddOnMappingUpsertWithWhereUniqueWithoutAddOnCatalogInput | ServiceAddOnMappingUpsertWithWhereUniqueWithoutAddOnCatalogInput[]
+    createMany?: ServiceAddOnMappingCreateManyAddOnCatalogInputEnvelope
+    set?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    disconnect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    delete?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    connect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    update?: ServiceAddOnMappingUpdateWithWhereUniqueWithoutAddOnCatalogInput | ServiceAddOnMappingUpdateWithWhereUniqueWithoutAddOnCatalogInput[]
+    updateMany?: ServiceAddOnMappingUpdateManyWithWhereWithoutAddOnCatalogInput | ServiceAddOnMappingUpdateManyWithWhereWithoutAddOnCatalogInput[]
+    deleteMany?: ServiceAddOnMappingScalarWhereInput | ServiceAddOnMappingScalarWhereInput[]
+  }
+
+  export type ServiceAddOnUpdateManyWithoutAddOnCatalogNestedInput = {
+    create?: XOR<ServiceAddOnCreateWithoutAddOnCatalogInput, ServiceAddOnUncheckedCreateWithoutAddOnCatalogInput> | ServiceAddOnCreateWithoutAddOnCatalogInput[] | ServiceAddOnUncheckedCreateWithoutAddOnCatalogInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutAddOnCatalogInput | ServiceAddOnCreateOrConnectWithoutAddOnCatalogInput[]
+    upsert?: ServiceAddOnUpsertWithWhereUniqueWithoutAddOnCatalogInput | ServiceAddOnUpsertWithWhereUniqueWithoutAddOnCatalogInput[]
+    createMany?: ServiceAddOnCreateManyAddOnCatalogInputEnvelope
+    set?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    disconnect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    delete?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    update?: ServiceAddOnUpdateWithWhereUniqueWithoutAddOnCatalogInput | ServiceAddOnUpdateWithWhereUniqueWithoutAddOnCatalogInput[]
+    updateMany?: ServiceAddOnUpdateManyWithWhereWithoutAddOnCatalogInput | ServiceAddOnUpdateManyWithWhereWithoutAddOnCatalogInput[]
+    deleteMany?: ServiceAddOnScalarWhereInput | ServiceAddOnScalarWhereInput[]
+  }
+
+  export type ServiceAddOnMappingUncheckedUpdateManyWithoutAddOnCatalogNestedInput = {
+    create?: XOR<ServiceAddOnMappingCreateWithoutAddOnCatalogInput, ServiceAddOnMappingUncheckedCreateWithoutAddOnCatalogInput> | ServiceAddOnMappingCreateWithoutAddOnCatalogInput[] | ServiceAddOnMappingUncheckedCreateWithoutAddOnCatalogInput[]
+    connectOrCreate?: ServiceAddOnMappingCreateOrConnectWithoutAddOnCatalogInput | ServiceAddOnMappingCreateOrConnectWithoutAddOnCatalogInput[]
+    upsert?: ServiceAddOnMappingUpsertWithWhereUniqueWithoutAddOnCatalogInput | ServiceAddOnMappingUpsertWithWhereUniqueWithoutAddOnCatalogInput[]
+    createMany?: ServiceAddOnMappingCreateManyAddOnCatalogInputEnvelope
+    set?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    disconnect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    delete?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    connect?: ServiceAddOnMappingWhereUniqueInput | ServiceAddOnMappingWhereUniqueInput[]
+    update?: ServiceAddOnMappingUpdateWithWhereUniqueWithoutAddOnCatalogInput | ServiceAddOnMappingUpdateWithWhereUniqueWithoutAddOnCatalogInput[]
+    updateMany?: ServiceAddOnMappingUpdateManyWithWhereWithoutAddOnCatalogInput | ServiceAddOnMappingUpdateManyWithWhereWithoutAddOnCatalogInput[]
+    deleteMany?: ServiceAddOnMappingScalarWhereInput | ServiceAddOnMappingScalarWhereInput[]
+  }
+
+  export type ServiceAddOnUncheckedUpdateManyWithoutAddOnCatalogNestedInput = {
+    create?: XOR<ServiceAddOnCreateWithoutAddOnCatalogInput, ServiceAddOnUncheckedCreateWithoutAddOnCatalogInput> | ServiceAddOnCreateWithoutAddOnCatalogInput[] | ServiceAddOnUncheckedCreateWithoutAddOnCatalogInput[]
+    connectOrCreate?: ServiceAddOnCreateOrConnectWithoutAddOnCatalogInput | ServiceAddOnCreateOrConnectWithoutAddOnCatalogInput[]
+    upsert?: ServiceAddOnUpsertWithWhereUniqueWithoutAddOnCatalogInput | ServiceAddOnUpsertWithWhereUniqueWithoutAddOnCatalogInput[]
+    createMany?: ServiceAddOnCreateManyAddOnCatalogInputEnvelope
+    set?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    disconnect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    delete?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    connect?: ServiceAddOnWhereUniqueInput | ServiceAddOnWhereUniqueInput[]
+    update?: ServiceAddOnUpdateWithWhereUniqueWithoutAddOnCatalogInput | ServiceAddOnUpdateWithWhereUniqueWithoutAddOnCatalogInput[]
+    updateMany?: ServiceAddOnUpdateManyWithWhereWithoutAddOnCatalogInput | ServiceAddOnUpdateManyWithWhereWithoutAddOnCatalogInput[]
+    deleteMany?: ServiceAddOnScalarWhereInput | ServiceAddOnScalarWhereInput[]
+  }
+
+  export type ServiceCreateNestedOneWithoutAddOnMappingsInput = {
+    create?: XOR<ServiceCreateWithoutAddOnMappingsInput, ServiceUncheckedCreateWithoutAddOnMappingsInput>
+    connectOrCreate?: ServiceCreateOrConnectWithoutAddOnMappingsInput
+    connect?: ServiceWhereUniqueInput
+  }
+
+  export type GlobalAddOnCatalogCreateNestedOneWithoutServiceMappingsInput = {
+    create?: XOR<GlobalAddOnCatalogCreateWithoutServiceMappingsInput, GlobalAddOnCatalogUncheckedCreateWithoutServiceMappingsInput>
+    connectOrCreate?: GlobalAddOnCatalogCreateOrConnectWithoutServiceMappingsInput
+    connect?: GlobalAddOnCatalogWhereUniqueInput
+  }
+
+  export type ServiceUpdateOneRequiredWithoutAddOnMappingsNestedInput = {
+    create?: XOR<ServiceCreateWithoutAddOnMappingsInput, ServiceUncheckedCreateWithoutAddOnMappingsInput>
+    connectOrCreate?: ServiceCreateOrConnectWithoutAddOnMappingsInput
+    upsert?: ServiceUpsertWithoutAddOnMappingsInput
+    connect?: ServiceWhereUniqueInput
+    update?: XOR<XOR<ServiceUpdateToOneWithWhereWithoutAddOnMappingsInput, ServiceUpdateWithoutAddOnMappingsInput>, ServiceUncheckedUpdateWithoutAddOnMappingsInput>
+  }
+
+  export type GlobalAddOnCatalogUpdateOneRequiredWithoutServiceMappingsNestedInput = {
+    create?: XOR<GlobalAddOnCatalogCreateWithoutServiceMappingsInput, GlobalAddOnCatalogUncheckedCreateWithoutServiceMappingsInput>
+    connectOrCreate?: GlobalAddOnCatalogCreateOrConnectWithoutServiceMappingsInput
+    upsert?: GlobalAddOnCatalogUpsertWithoutServiceMappingsInput
+    connect?: GlobalAddOnCatalogWhereUniqueInput
+    update?: XOR<XOR<GlobalAddOnCatalogUpdateToOneWithWhereWithoutServiceMappingsInput, GlobalAddOnCatalogUpdateWithoutServiceMappingsInput>, GlobalAddOnCatalogUncheckedUpdateWithoutServiceMappingsInput>
+  }
+
+  export type BookingServiceItemCreateNestedOneWithoutServiceAddOnsInput = {
+    create?: XOR<BookingServiceItemCreateWithoutServiceAddOnsInput, BookingServiceItemUncheckedCreateWithoutServiceAddOnsInput>
+    connectOrCreate?: BookingServiceItemCreateOrConnectWithoutServiceAddOnsInput
+    connect?: BookingServiceItemWhereUniqueInput
+  }
+
+  export type WorkspaceBookingCreateNestedOneWithoutServiceAddOnsInput = {
+    create?: XOR<WorkspaceBookingCreateWithoutServiceAddOnsInput, WorkspaceBookingUncheckedCreateWithoutServiceAddOnsInput>
+    connectOrCreate?: WorkspaceBookingCreateOrConnectWithoutServiceAddOnsInput
+    connect?: WorkspaceBookingWhereUniqueInput
+  }
+
+  export type GlobalAddOnCatalogCreateNestedOneWithoutServiceAddOnsInput = {
+    create?: XOR<GlobalAddOnCatalogCreateWithoutServiceAddOnsInput, GlobalAddOnCatalogUncheckedCreateWithoutServiceAddOnsInput>
+    connectOrCreate?: GlobalAddOnCatalogCreateOrConnectWithoutServiceAddOnsInput
+    connect?: GlobalAddOnCatalogWhereUniqueInput
+  }
+
+  export type BookingServiceItemUpdateOneWithoutServiceAddOnsNestedInput = {
+    create?: XOR<BookingServiceItemCreateWithoutServiceAddOnsInput, BookingServiceItemUncheckedCreateWithoutServiceAddOnsInput>
+    connectOrCreate?: BookingServiceItemCreateOrConnectWithoutServiceAddOnsInput
+    upsert?: BookingServiceItemUpsertWithoutServiceAddOnsInput
+    disconnect?: BookingServiceItemWhereInput | boolean
+    delete?: BookingServiceItemWhereInput | boolean
+    connect?: BookingServiceItemWhereUniqueInput
+    update?: XOR<XOR<BookingServiceItemUpdateToOneWithWhereWithoutServiceAddOnsInput, BookingServiceItemUpdateWithoutServiceAddOnsInput>, BookingServiceItemUncheckedUpdateWithoutServiceAddOnsInput>
+  }
+
+  export type WorkspaceBookingUpdateOneWithoutServiceAddOnsNestedInput = {
+    create?: XOR<WorkspaceBookingCreateWithoutServiceAddOnsInput, WorkspaceBookingUncheckedCreateWithoutServiceAddOnsInput>
+    connectOrCreate?: WorkspaceBookingCreateOrConnectWithoutServiceAddOnsInput
+    upsert?: WorkspaceBookingUpsertWithoutServiceAddOnsInput
+    disconnect?: WorkspaceBookingWhereInput | boolean
+    delete?: WorkspaceBookingWhereInput | boolean
+    connect?: WorkspaceBookingWhereUniqueInput
+    update?: XOR<XOR<WorkspaceBookingUpdateToOneWithWhereWithoutServiceAddOnsInput, WorkspaceBookingUpdateWithoutServiceAddOnsInput>, WorkspaceBookingUncheckedUpdateWithoutServiceAddOnsInput>
+  }
+
+  export type GlobalAddOnCatalogUpdateOneRequiredWithoutServiceAddOnsNestedInput = {
+    create?: XOR<GlobalAddOnCatalogCreateWithoutServiceAddOnsInput, GlobalAddOnCatalogUncheckedCreateWithoutServiceAddOnsInput>
+    connectOrCreate?: GlobalAddOnCatalogCreateOrConnectWithoutServiceAddOnsInput
+    upsert?: GlobalAddOnCatalogUpsertWithoutServiceAddOnsInput
+    connect?: GlobalAddOnCatalogWhereUniqueInput
+    update?: XOR<XOR<GlobalAddOnCatalogUpdateToOneWithWhereWithoutServiceAddOnsInput, GlobalAddOnCatalogUpdateWithoutServiceAddOnsInput>, GlobalAddOnCatalogUncheckedUpdateWithoutServiceAddOnsInput>
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -33983,6 +45062,7 @@ export namespace Prisma {
     reviewNotes?: string | null
     reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
     serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
   }
 
@@ -34001,6 +45081,7 @@ export namespace Prisma {
     reviewedBy?: string | null
     reviewNotes?: string | null
     serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
   }
 
@@ -34029,6 +45110,7 @@ export namespace Prisma {
     reviewNotes?: string | null
     user: UserCreateNestedOneWithoutBookingRequestsInput
     serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
   }
 
@@ -34047,6 +45129,7 @@ export namespace Prisma {
     reviewedAt?: Date | string | null
     reviewNotes?: string | null
     serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
   }
 
@@ -35173,6 +46256,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -35187,11 +46271,22 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     bookingRequest: BookingRequestCreateNestedOneWithoutServiceItemsInput
+    equipmentUsages?: SampleEquipmentUsageCreateNestedManyWithoutBookedItemInput
     modifications?: SampleModificationCreateNestedManyWithoutBookingServiceItemInput
     sampleTracking?: SampleTrackingCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnCreateNestedManyWithoutBookingServiceItemInput
   }
 
   export type BookingServiceItemUncheckedCreateWithoutServiceInput = {
@@ -35201,6 +46296,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -35215,10 +46311,21 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedCreateNestedManyWithoutBookedItemInput
     modifications?: SampleModificationUncheckedCreateNestedManyWithoutBookingServiceItemInput
     sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnUncheckedCreateNestedManyWithoutBookingServiceItemInput
   }
 
   export type BookingServiceItemCreateOrConnectWithoutServiceInput = {
@@ -35228,6 +46335,32 @@ export namespace Prisma {
 
   export type BookingServiceItemCreateManyServiceInputEnvelope = {
     data: BookingServiceItemCreateManyServiceInput | BookingServiceItemCreateManyServiceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ServiceAddOnMappingCreateWithoutServiceInput = {
+    id?: string
+    isEnabled?: boolean
+    customAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    addOnCatalog: GlobalAddOnCatalogCreateNestedOneWithoutServiceMappingsInput
+  }
+
+  export type ServiceAddOnMappingUncheckedCreateWithoutServiceInput = {
+    id?: string
+    addOnId: string
+    isEnabled?: boolean
+    customAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnMappingCreateOrConnectWithoutServiceInput = {
+    where: ServiceAddOnMappingWhereUniqueInput
+    create: XOR<ServiceAddOnMappingCreateWithoutServiceInput, ServiceAddOnMappingUncheckedCreateWithoutServiceInput>
+  }
+
+  export type ServiceAddOnMappingCreateManyServiceInputEnvelope = {
+    data: ServiceAddOnMappingCreateManyServiceInput | ServiceAddOnMappingCreateManyServiceInput[]
     skipDuplicates?: boolean
   }
 
@@ -35289,6 +46422,7 @@ export namespace Prisma {
     durationMonths?: IntFilter<"BookingServiceItem"> | number
     unitPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
+    sampleName?: StringNullableFilter<"BookingServiceItem"> | string | null
     sampleDetails?: StringNullableFilter<"BookingServiceItem"> | string | null
     sampleType?: StringNullableFilter<"BookingServiceItem"> | string | null
     sampleHazard?: StringNullableFilter<"BookingServiceItem"> | string | null
@@ -35303,8 +46437,45 @@ export namespace Prisma {
     expectedRetentionTime?: DecimalNullableFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: StringNullableFilter<"BookingServiceItem"> | string | null
     notes?: StringNullableFilter<"BookingServiceItem"> | string | null
+    expectedCompletionDate?: DateTimeNullableFilter<"BookingServiceItem"> | Date | string | null
+    actualCompletionDate?: DateTimeNullableFilter<"BookingServiceItem"> | Date | string | null
+    turnaroundEstimate?: StringNullableFilter<"BookingServiceItem"> | string | null
+    hplcPreparationRequired?: BoolFilter<"BookingServiceItem"> | boolean
+    temperatureControlled?: BoolFilter<"BookingServiceItem"> | boolean
+    lightSensitive?: BoolFilter<"BookingServiceItem"> | boolean
+    hazardousMaterial?: BoolFilter<"BookingServiceItem"> | boolean
+    inertAtmosphere?: BoolFilter<"BookingServiceItem"> | boolean
+    otherEquipmentRequests?: JsonNullableFilter<"BookingServiceItem">
     createdAt?: DateTimeFilter<"BookingServiceItem"> | Date | string
     updatedAt?: DateTimeFilter<"BookingServiceItem"> | Date | string
+  }
+
+  export type ServiceAddOnMappingUpsertWithWhereUniqueWithoutServiceInput = {
+    where: ServiceAddOnMappingWhereUniqueInput
+    update: XOR<ServiceAddOnMappingUpdateWithoutServiceInput, ServiceAddOnMappingUncheckedUpdateWithoutServiceInput>
+    create: XOR<ServiceAddOnMappingCreateWithoutServiceInput, ServiceAddOnMappingUncheckedCreateWithoutServiceInput>
+  }
+
+  export type ServiceAddOnMappingUpdateWithWhereUniqueWithoutServiceInput = {
+    where: ServiceAddOnMappingWhereUniqueInput
+    data: XOR<ServiceAddOnMappingUpdateWithoutServiceInput, ServiceAddOnMappingUncheckedUpdateWithoutServiceInput>
+  }
+
+  export type ServiceAddOnMappingUpdateManyWithWhereWithoutServiceInput = {
+    where: ServiceAddOnMappingScalarWhereInput
+    data: XOR<ServiceAddOnMappingUpdateManyMutationInput, ServiceAddOnMappingUncheckedUpdateManyWithoutServiceInput>
+  }
+
+  export type ServiceAddOnMappingScalarWhereInput = {
+    AND?: ServiceAddOnMappingScalarWhereInput | ServiceAddOnMappingScalarWhereInput[]
+    OR?: ServiceAddOnMappingScalarWhereInput[]
+    NOT?: ServiceAddOnMappingScalarWhereInput | ServiceAddOnMappingScalarWhereInput[]
+    id?: UuidFilter<"ServiceAddOnMapping"> | string
+    serviceId?: UuidFilter<"ServiceAddOnMapping"> | string
+    addOnId?: UuidFilter<"ServiceAddOnMapping"> | string
+    isEnabled?: BoolFilter<"ServiceAddOnMapping"> | boolean
+    customAmount?: DecimalNullableFilter<"ServiceAddOnMapping"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"ServiceAddOnMapping"> | Date | string
   }
 
   export type ServiceCreateWithoutPricingInput = {
@@ -35320,6 +46491,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     bookingItems?: BookingServiceItemCreateNestedManyWithoutServiceInput
+    addOnMappings?: ServiceAddOnMappingCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUncheckedCreateWithoutPricingInput = {
@@ -35335,6 +46507,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     bookingItems?: BookingServiceItemUncheckedCreateNestedManyWithoutServiceInput
+    addOnMappings?: ServiceAddOnMappingUncheckedCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceCreateOrConnectWithoutPricingInput = {
@@ -35366,6 +46539,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookingItems?: BookingServiceItemUpdateManyWithoutServiceNestedInput
+    addOnMappings?: ServiceAddOnMappingUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateWithoutPricingInput = {
@@ -35381,6 +46555,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookingItems?: BookingServiceItemUncheckedUpdateManyWithoutServiceNestedInput
+    addOnMappings?: ServiceAddOnMappingUncheckedUpdateManyWithoutServiceNestedInput
   }
 
   export type UserCreateWithoutBookingRequestsInput = {
@@ -35543,6 +46718,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -35557,11 +46733,22 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     service: ServiceCreateNestedOneWithoutBookingItemsInput
+    equipmentUsages?: SampleEquipmentUsageCreateNestedManyWithoutBookedItemInput
     modifications?: SampleModificationCreateNestedManyWithoutBookingServiceItemInput
     sampleTracking?: SampleTrackingCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnCreateNestedManyWithoutBookingServiceItemInput
   }
 
   export type BookingServiceItemUncheckedCreateWithoutBookingRequestInput = {
@@ -35571,6 +46758,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -35585,10 +46773,21 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedCreateNestedManyWithoutBookedItemInput
     modifications?: SampleModificationUncheckedCreateNestedManyWithoutBookingServiceItemInput
     sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnUncheckedCreateNestedManyWithoutBookingServiceItemInput
   }
 
   export type BookingServiceItemCreateOrConnectWithoutBookingRequestInput = {
@@ -35598,6 +46797,44 @@ export namespace Prisma {
 
   export type BookingServiceItemCreateManyBookingRequestInputEnvelope = {
     data: BookingServiceItemCreateManyBookingRequestInput | BookingServiceItemCreateManyBookingRequestInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WorkspaceBookingCreateWithoutBookingRequestInput = {
+    id?: string
+    startDate: Date | string
+    endDate: Date | string
+    preferredTimeSlot?: string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    equipmentUsages?: WorkspaceEquipmentUsageCreateNestedManyWithoutWorkspaceBookingInput
+    serviceAddOns?: ServiceAddOnCreateNestedManyWithoutWorkspaceBookingInput
+  }
+
+  export type WorkspaceBookingUncheckedCreateWithoutBookingRequestInput = {
+    id?: string
+    startDate: Date | string
+    endDate: Date | string
+    preferredTimeSlot?: string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    equipmentUsages?: WorkspaceEquipmentUsageUncheckedCreateNestedManyWithoutWorkspaceBookingInput
+    serviceAddOns?: ServiceAddOnUncheckedCreateNestedManyWithoutWorkspaceBookingInput
+  }
+
+  export type WorkspaceBookingCreateOrConnectWithoutBookingRequestInput = {
+    where: WorkspaceBookingWhereUniqueInput
+    create: XOR<WorkspaceBookingCreateWithoutBookingRequestInput, WorkspaceBookingUncheckedCreateWithoutBookingRequestInput>
+  }
+
+  export type WorkspaceBookingCreateManyBookingRequestInputEnvelope = {
+    data: WorkspaceBookingCreateManyBookingRequestInput | WorkspaceBookingCreateManyBookingRequestInput[]
     skipDuplicates?: boolean
   }
 
@@ -35847,6 +47084,38 @@ export namespace Prisma {
     data: XOR<BookingServiceItemUpdateManyMutationInput, BookingServiceItemUncheckedUpdateManyWithoutBookingRequestInput>
   }
 
+  export type WorkspaceBookingUpsertWithWhereUniqueWithoutBookingRequestInput = {
+    where: WorkspaceBookingWhereUniqueInput
+    update: XOR<WorkspaceBookingUpdateWithoutBookingRequestInput, WorkspaceBookingUncheckedUpdateWithoutBookingRequestInput>
+    create: XOR<WorkspaceBookingCreateWithoutBookingRequestInput, WorkspaceBookingUncheckedCreateWithoutBookingRequestInput>
+  }
+
+  export type WorkspaceBookingUpdateWithWhereUniqueWithoutBookingRequestInput = {
+    where: WorkspaceBookingWhereUniqueInput
+    data: XOR<WorkspaceBookingUpdateWithoutBookingRequestInput, WorkspaceBookingUncheckedUpdateWithoutBookingRequestInput>
+  }
+
+  export type WorkspaceBookingUpdateManyWithWhereWithoutBookingRequestInput = {
+    where: WorkspaceBookingScalarWhereInput
+    data: XOR<WorkspaceBookingUpdateManyMutationInput, WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestInput>
+  }
+
+  export type WorkspaceBookingScalarWhereInput = {
+    AND?: WorkspaceBookingScalarWhereInput | WorkspaceBookingScalarWhereInput[]
+    OR?: WorkspaceBookingScalarWhereInput[]
+    NOT?: WorkspaceBookingScalarWhereInput | WorkspaceBookingScalarWhereInput[]
+    id?: UuidFilter<"WorkspaceBooking"> | string
+    bookingRequestId?: UuidFilter<"WorkspaceBooking"> | string
+    startDate?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+    endDate?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+    preferredTimeSlot?: StringNullableFilter<"WorkspaceBooking"> | string | null
+    specialEquipment?: JsonNullableFilter<"WorkspaceBooking">
+    purpose?: StringNullableFilter<"WorkspaceBooking"> | string | null
+    notes?: StringNullableFilter<"WorkspaceBooking"> | string | null
+    createdAt?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+    updatedAt?: DateTimeFilter<"WorkspaceBooking"> | Date | string
+  }
+
   export type ServiceFormUpsertWithWhereUniqueWithoutBookingRequestInput = {
     where: ServiceFormWhereUniqueInput
     update: XOR<ServiceFormUpdateWithoutBookingRequestInput, ServiceFormUncheckedUpdateWithoutBookingRequestInput>
@@ -35878,6 +47147,7 @@ export namespace Prisma {
     reviewNotes?: string | null
     user: UserCreateNestedOneWithoutBookingRequestsInput
     reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
+    workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
   }
 
@@ -35896,6 +47166,7 @@ export namespace Prisma {
     reviewedAt?: Date | string | null
     reviewedBy?: string | null
     reviewNotes?: string | null
+    workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
   }
 
@@ -35917,6 +47188,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     pricing?: ServicePricingCreateNestedManyWithoutServiceInput
+    addOnMappings?: ServiceAddOnMappingCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceUncheckedCreateWithoutBookingItemsInput = {
@@ -35932,11 +47204,34 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     pricing?: ServicePricingUncheckedCreateNestedManyWithoutServiceInput
+    addOnMappings?: ServiceAddOnMappingUncheckedCreateNestedManyWithoutServiceInput
   }
 
   export type ServiceCreateOrConnectWithoutBookingItemsInput = {
     where: ServiceWhereUniqueInput
     create: XOR<ServiceCreateWithoutBookingItemsInput, ServiceUncheckedCreateWithoutBookingItemsInput>
+  }
+
+  export type SampleEquipmentUsageCreateWithoutBookedItemInput = {
+    id?: string
+    createdAt?: Date | string
+    equipment: LabEquipmentCreateNestedOneWithoutSampleUsagesInput
+  }
+
+  export type SampleEquipmentUsageUncheckedCreateWithoutBookedItemInput = {
+    id?: string
+    equipmentId: string
+    createdAt?: Date | string
+  }
+
+  export type SampleEquipmentUsageCreateOrConnectWithoutBookedItemInput = {
+    where: SampleEquipmentUsageWhereUniqueInput
+    create: XOR<SampleEquipmentUsageCreateWithoutBookedItemInput, SampleEquipmentUsageUncheckedCreateWithoutBookedItemInput>
+  }
+
+  export type SampleEquipmentUsageCreateManyBookedItemInputEnvelope = {
+    data: SampleEquipmentUsageCreateManyBookedItemInput | SampleEquipmentUsageCreateManyBookedItemInput[]
+    skipDuplicates?: boolean
   }
 
   export type SampleModificationCreateWithoutBookingServiceItemInput = {
@@ -36023,6 +47318,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ServiceAddOnCreateWithoutBookingServiceItemInput = {
+    id?: string
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+    workspaceBooking?: WorkspaceBookingCreateNestedOneWithoutServiceAddOnsInput
+    addOnCatalog: GlobalAddOnCatalogCreateNestedOneWithoutServiceAddOnsInput
+  }
+
+  export type ServiceAddOnUncheckedCreateWithoutBookingServiceItemInput = {
+    id?: string
+    workspaceBookingId?: string | null
+    addOnCatalogId: string
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnCreateOrConnectWithoutBookingServiceItemInput = {
+    where: ServiceAddOnWhereUniqueInput
+    create: XOR<ServiceAddOnCreateWithoutBookingServiceItemInput, ServiceAddOnUncheckedCreateWithoutBookingServiceItemInput>
+  }
+
+  export type ServiceAddOnCreateManyBookingServiceItemInputEnvelope = {
+    data: ServiceAddOnCreateManyBookingServiceItemInput | ServiceAddOnCreateManyBookingServiceItemInput[]
+    skipDuplicates?: boolean
+  }
+
   export type BookingRequestUpsertWithoutServiceItemsInput = {
     update: XOR<BookingRequestUpdateWithoutServiceItemsInput, BookingRequestUncheckedUpdateWithoutServiceItemsInput>
     create: XOR<BookingRequestCreateWithoutServiceItemsInput, BookingRequestUncheckedCreateWithoutServiceItemsInput>
@@ -36049,6 +47376,7 @@ export namespace Prisma {
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
     reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
+    workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
   }
 
@@ -36067,6 +47395,7 @@ export namespace Prisma {
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
   }
 
@@ -36094,6 +47423,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     pricing?: ServicePricingUpdateManyWithoutServiceNestedInput
+    addOnMappings?: ServiceAddOnMappingUpdateManyWithoutServiceNestedInput
   }
 
   export type ServiceUncheckedUpdateWithoutBookingItemsInput = {
@@ -36109,6 +47439,33 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     pricing?: ServicePricingUncheckedUpdateManyWithoutServiceNestedInput
+    addOnMappings?: ServiceAddOnMappingUncheckedUpdateManyWithoutServiceNestedInput
+  }
+
+  export type SampleEquipmentUsageUpsertWithWhereUniqueWithoutBookedItemInput = {
+    where: SampleEquipmentUsageWhereUniqueInput
+    update: XOR<SampleEquipmentUsageUpdateWithoutBookedItemInput, SampleEquipmentUsageUncheckedUpdateWithoutBookedItemInput>
+    create: XOR<SampleEquipmentUsageCreateWithoutBookedItemInput, SampleEquipmentUsageUncheckedCreateWithoutBookedItemInput>
+  }
+
+  export type SampleEquipmentUsageUpdateWithWhereUniqueWithoutBookedItemInput = {
+    where: SampleEquipmentUsageWhereUniqueInput
+    data: XOR<SampleEquipmentUsageUpdateWithoutBookedItemInput, SampleEquipmentUsageUncheckedUpdateWithoutBookedItemInput>
+  }
+
+  export type SampleEquipmentUsageUpdateManyWithWhereWithoutBookedItemInput = {
+    where: SampleEquipmentUsageScalarWhereInput
+    data: XOR<SampleEquipmentUsageUpdateManyMutationInput, SampleEquipmentUsageUncheckedUpdateManyWithoutBookedItemInput>
+  }
+
+  export type SampleEquipmentUsageScalarWhereInput = {
+    AND?: SampleEquipmentUsageScalarWhereInput | SampleEquipmentUsageScalarWhereInput[]
+    OR?: SampleEquipmentUsageScalarWhereInput[]
+    NOT?: SampleEquipmentUsageScalarWhereInput | SampleEquipmentUsageScalarWhereInput[]
+    id?: UuidFilter<"SampleEquipmentUsage"> | string
+    bookingServiceItemId?: UuidFilter<"SampleEquipmentUsage"> | string
+    equipmentId?: UuidFilter<"SampleEquipmentUsage"> | string
+    createdAt?: DateTimeFilter<"SampleEquipmentUsage"> | Date | string
   }
 
   export type SampleModificationUpsertWithWhereUniqueWithoutBookingServiceItemInput = {
@@ -36143,12 +47500,44 @@ export namespace Prisma {
     data: XOR<SampleTrackingUpdateManyMutationInput, SampleTrackingUncheckedUpdateManyWithoutBookingServiceItemInput>
   }
 
+  export type ServiceAddOnUpsertWithWhereUniqueWithoutBookingServiceItemInput = {
+    where: ServiceAddOnWhereUniqueInput
+    update: XOR<ServiceAddOnUpdateWithoutBookingServiceItemInput, ServiceAddOnUncheckedUpdateWithoutBookingServiceItemInput>
+    create: XOR<ServiceAddOnCreateWithoutBookingServiceItemInput, ServiceAddOnUncheckedCreateWithoutBookingServiceItemInput>
+  }
+
+  export type ServiceAddOnUpdateWithWhereUniqueWithoutBookingServiceItemInput = {
+    where: ServiceAddOnWhereUniqueInput
+    data: XOR<ServiceAddOnUpdateWithoutBookingServiceItemInput, ServiceAddOnUncheckedUpdateWithoutBookingServiceItemInput>
+  }
+
+  export type ServiceAddOnUpdateManyWithWhereWithoutBookingServiceItemInput = {
+    where: ServiceAddOnScalarWhereInput
+    data: XOR<ServiceAddOnUpdateManyMutationInput, ServiceAddOnUncheckedUpdateManyWithoutBookingServiceItemInput>
+  }
+
+  export type ServiceAddOnScalarWhereInput = {
+    AND?: ServiceAddOnScalarWhereInput | ServiceAddOnScalarWhereInput[]
+    OR?: ServiceAddOnScalarWhereInput[]
+    NOT?: ServiceAddOnScalarWhereInput | ServiceAddOnScalarWhereInput[]
+    id?: UuidFilter<"ServiceAddOn"> | string
+    bookingServiceItemId?: UuidNullableFilter<"ServiceAddOn"> | string | null
+    workspaceBookingId?: UuidNullableFilter<"ServiceAddOn"> | string | null
+    addOnCatalogId?: UuidFilter<"ServiceAddOn"> | string
+    name?: StringFilter<"ServiceAddOn"> | string
+    amount?: DecimalFilter<"ServiceAddOn"> | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFilter<"ServiceAddOn"> | boolean
+    description?: StringNullableFilter<"ServiceAddOn"> | string | null
+    createdAt?: DateTimeFilter<"ServiceAddOn"> | Date | string
+  }
+
   export type BookingServiceItemCreateWithoutModificationsInput = {
     id?: string
     quantity?: number
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -36163,11 +47552,22 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     bookingRequest: BookingRequestCreateNestedOneWithoutServiceItemsInput
     service: ServiceCreateNestedOneWithoutBookingItemsInput
+    equipmentUsages?: SampleEquipmentUsageCreateNestedManyWithoutBookedItemInput
     sampleTracking?: SampleTrackingCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnCreateNestedManyWithoutBookingServiceItemInput
   }
 
   export type BookingServiceItemUncheckedCreateWithoutModificationsInput = {
@@ -36178,6 +47578,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -36192,9 +47593,20 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedCreateNestedManyWithoutBookedItemInput
     sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnUncheckedCreateNestedManyWithoutBookingServiceItemInput
   }
 
   export type BookingServiceItemCreateOrConnectWithoutModificationsInput = {
@@ -36373,6 +47785,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36387,11 +47800,22 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookingRequest?: BookingRequestUpdateOneRequiredWithoutServiceItemsNestedInput
     service?: ServiceUpdateOneRequiredWithoutBookingItemsNestedInput
+    equipmentUsages?: SampleEquipmentUsageUpdateManyWithoutBookedItemNestedInput
     sampleTracking?: SampleTrackingUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUpdateManyWithoutBookingServiceItemNestedInput
   }
 
   export type BookingServiceItemUncheckedUpdateWithoutModificationsInput = {
@@ -36402,6 +47826,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36416,9 +47841,20 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedUpdateManyWithoutBookedItemNestedInput
     sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUncheckedUpdateManyWithoutBookingServiceItemNestedInput
   }
 
   export type UserUpsertWithoutCreatedModificationsInput = {
@@ -36603,6 +48039,7 @@ export namespace Prisma {
     user: UserCreateNestedOneWithoutBookingRequestsInput
     reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
     serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
   }
 
   export type BookingRequestUncheckedCreateWithoutServiceFormsInput = {
@@ -36621,6 +48058,7 @@ export namespace Prisma {
     reviewedBy?: string | null
     reviewNotes?: string | null
     serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
   }
 
   export type BookingRequestCreateOrConnectWithoutServiceFormsInput = {
@@ -36772,6 +48210,7 @@ export namespace Prisma {
     user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
     reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
     serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
   }
 
   export type BookingRequestUncheckedUpdateWithoutServiceFormsInput = {
@@ -36790,6 +48229,7 @@ export namespace Prisma {
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
   }
 
   export type UserUpsertWithoutServiceFormsInput = {
@@ -37637,6 +49077,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -37651,11 +49092,22 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     bookingRequest: BookingRequestCreateNestedOneWithoutServiceItemsInput
     service: ServiceCreateNestedOneWithoutBookingItemsInput
+    equipmentUsages?: SampleEquipmentUsageCreateNestedManyWithoutBookedItemInput
     modifications?: SampleModificationCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnCreateNestedManyWithoutBookingServiceItemInput
   }
 
   export type BookingServiceItemUncheckedCreateWithoutSampleTrackingInput = {
@@ -37666,6 +49118,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -37680,9 +49133,20 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedCreateNestedManyWithoutBookedItemInput
     modifications?: SampleModificationUncheckedCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnUncheckedCreateNestedManyWithoutBookingServiceItemInput
   }
 
   export type BookingServiceItemCreateOrConnectWithoutSampleTrackingInput = {
@@ -37820,6 +49284,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37834,11 +49299,22 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookingRequest?: BookingRequestUpdateOneRequiredWithoutServiceItemsNestedInput
     service?: ServiceUpdateOneRequiredWithoutBookingItemsNestedInput
+    equipmentUsages?: SampleEquipmentUsageUpdateManyWithoutBookedItemNestedInput
     modifications?: SampleModificationUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUpdateManyWithoutBookingServiceItemNestedInput
   }
 
   export type BookingServiceItemUncheckedUpdateWithoutSampleTrackingInput = {
@@ -37849,6 +49325,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37863,9 +49340,20 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedUpdateManyWithoutBookedItemNestedInput
     modifications?: SampleModificationUncheckedUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUncheckedUpdateManyWithoutBookingServiceItemNestedInput
   }
 
   export type UserUpsertWithoutSampleTrackingInput = {
@@ -37965,6 +49453,642 @@ export namespace Prisma {
   export type AnalysisResultUpdateManyWithWhereWithoutSampleTrackingInput = {
     where: AnalysisResultScalarWhereInput
     data: XOR<AnalysisResultUpdateManyMutationInput, AnalysisResultUncheckedUpdateManyWithoutSampleTrackingInput>
+  }
+
+  export type BookingRequestCreateWithoutWorkspaceBookingsInput = {
+    id?: string
+    referenceNumber: string
+    projectDescription?: string | null
+    preferredStartDate?: Date | string | null
+    preferredEndDate?: Date | string | null
+    totalAmount?: Decimal | DecimalJsLike | number | string
+    status?: $Enums.booking_status_enum
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewNotes?: string | null
+    user: UserCreateNestedOneWithoutBookingRequestsInput
+    reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
+    serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
+    serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
+  }
+
+  export type BookingRequestUncheckedCreateWithoutWorkspaceBookingsInput = {
+    id?: string
+    userId: string
+    referenceNumber: string
+    projectDescription?: string | null
+    preferredStartDate?: Date | string | null
+    preferredEndDate?: Date | string | null
+    totalAmount?: Decimal | DecimalJsLike | number | string
+    status?: $Enums.booking_status_enum
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNotes?: string | null
+    serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
+    serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
+  }
+
+  export type BookingRequestCreateOrConnectWithoutWorkspaceBookingsInput = {
+    where: BookingRequestWhereUniqueInput
+    create: XOR<BookingRequestCreateWithoutWorkspaceBookingsInput, BookingRequestUncheckedCreateWithoutWorkspaceBookingsInput>
+  }
+
+  export type WorkspaceEquipmentUsageCreateWithoutWorkspaceBookingInput = {
+    id?: string
+    createdAt?: Date | string
+    equipment: LabEquipmentCreateNestedOneWithoutWorkspaceUsagesInput
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedCreateWithoutWorkspaceBookingInput = {
+    id?: string
+    equipmentId: string
+    createdAt?: Date | string
+  }
+
+  export type WorkspaceEquipmentUsageCreateOrConnectWithoutWorkspaceBookingInput = {
+    where: WorkspaceEquipmentUsageWhereUniqueInput
+    create: XOR<WorkspaceEquipmentUsageCreateWithoutWorkspaceBookingInput, WorkspaceEquipmentUsageUncheckedCreateWithoutWorkspaceBookingInput>
+  }
+
+  export type WorkspaceEquipmentUsageCreateManyWorkspaceBookingInputEnvelope = {
+    data: WorkspaceEquipmentUsageCreateManyWorkspaceBookingInput | WorkspaceEquipmentUsageCreateManyWorkspaceBookingInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ServiceAddOnCreateWithoutWorkspaceBookingInput = {
+    id?: string
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+    bookingServiceItem?: BookingServiceItemCreateNestedOneWithoutServiceAddOnsInput
+    addOnCatalog: GlobalAddOnCatalogCreateNestedOneWithoutServiceAddOnsInput
+  }
+
+  export type ServiceAddOnUncheckedCreateWithoutWorkspaceBookingInput = {
+    id?: string
+    bookingServiceItemId?: string | null
+    addOnCatalogId: string
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnCreateOrConnectWithoutWorkspaceBookingInput = {
+    where: ServiceAddOnWhereUniqueInput
+    create: XOR<ServiceAddOnCreateWithoutWorkspaceBookingInput, ServiceAddOnUncheckedCreateWithoutWorkspaceBookingInput>
+  }
+
+  export type ServiceAddOnCreateManyWorkspaceBookingInputEnvelope = {
+    data: ServiceAddOnCreateManyWorkspaceBookingInput | ServiceAddOnCreateManyWorkspaceBookingInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BookingRequestUpsertWithoutWorkspaceBookingsInput = {
+    update: XOR<BookingRequestUpdateWithoutWorkspaceBookingsInput, BookingRequestUncheckedUpdateWithoutWorkspaceBookingsInput>
+    create: XOR<BookingRequestCreateWithoutWorkspaceBookingsInput, BookingRequestUncheckedCreateWithoutWorkspaceBookingsInput>
+    where?: BookingRequestWhereInput
+  }
+
+  export type BookingRequestUpdateToOneWithWhereWithoutWorkspaceBookingsInput = {
+    where?: BookingRequestWhereInput
+    data: XOR<BookingRequestUpdateWithoutWorkspaceBookingsInput, BookingRequestUncheckedUpdateWithoutWorkspaceBookingsInput>
+  }
+
+  export type BookingRequestUpdateWithoutWorkspaceBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    projectDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferredEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumbooking_status_enumFieldUpdateOperationsInput | $Enums.booking_status_enum
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
+    reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
+    serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
+    serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
+  }
+
+  export type BookingRequestUncheckedUpdateWithoutWorkspaceBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    projectDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferredEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumbooking_status_enumFieldUpdateOperationsInput | $Enums.booking_status_enum
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
+    serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
+  }
+
+  export type WorkspaceEquipmentUsageUpsertWithWhereUniqueWithoutWorkspaceBookingInput = {
+    where: WorkspaceEquipmentUsageWhereUniqueInput
+    update: XOR<WorkspaceEquipmentUsageUpdateWithoutWorkspaceBookingInput, WorkspaceEquipmentUsageUncheckedUpdateWithoutWorkspaceBookingInput>
+    create: XOR<WorkspaceEquipmentUsageCreateWithoutWorkspaceBookingInput, WorkspaceEquipmentUsageUncheckedCreateWithoutWorkspaceBookingInput>
+  }
+
+  export type WorkspaceEquipmentUsageUpdateWithWhereUniqueWithoutWorkspaceBookingInput = {
+    where: WorkspaceEquipmentUsageWhereUniqueInput
+    data: XOR<WorkspaceEquipmentUsageUpdateWithoutWorkspaceBookingInput, WorkspaceEquipmentUsageUncheckedUpdateWithoutWorkspaceBookingInput>
+  }
+
+  export type WorkspaceEquipmentUsageUpdateManyWithWhereWithoutWorkspaceBookingInput = {
+    where: WorkspaceEquipmentUsageScalarWhereInput
+    data: XOR<WorkspaceEquipmentUsageUpdateManyMutationInput, WorkspaceEquipmentUsageUncheckedUpdateManyWithoutWorkspaceBookingInput>
+  }
+
+  export type WorkspaceEquipmentUsageScalarWhereInput = {
+    AND?: WorkspaceEquipmentUsageScalarWhereInput | WorkspaceEquipmentUsageScalarWhereInput[]
+    OR?: WorkspaceEquipmentUsageScalarWhereInput[]
+    NOT?: WorkspaceEquipmentUsageScalarWhereInput | WorkspaceEquipmentUsageScalarWhereInput[]
+    id?: UuidFilter<"WorkspaceEquipmentUsage"> | string
+    workspaceBookingId?: UuidFilter<"WorkspaceEquipmentUsage"> | string
+    equipmentId?: UuidFilter<"WorkspaceEquipmentUsage"> | string
+    createdAt?: DateTimeFilter<"WorkspaceEquipmentUsage"> | Date | string
+  }
+
+  export type ServiceAddOnUpsertWithWhereUniqueWithoutWorkspaceBookingInput = {
+    where: ServiceAddOnWhereUniqueInput
+    update: XOR<ServiceAddOnUpdateWithoutWorkspaceBookingInput, ServiceAddOnUncheckedUpdateWithoutWorkspaceBookingInput>
+    create: XOR<ServiceAddOnCreateWithoutWorkspaceBookingInput, ServiceAddOnUncheckedCreateWithoutWorkspaceBookingInput>
+  }
+
+  export type ServiceAddOnUpdateWithWhereUniqueWithoutWorkspaceBookingInput = {
+    where: ServiceAddOnWhereUniqueInput
+    data: XOR<ServiceAddOnUpdateWithoutWorkspaceBookingInput, ServiceAddOnUncheckedUpdateWithoutWorkspaceBookingInput>
+  }
+
+  export type ServiceAddOnUpdateManyWithWhereWithoutWorkspaceBookingInput = {
+    where: ServiceAddOnScalarWhereInput
+    data: XOR<ServiceAddOnUpdateManyMutationInput, ServiceAddOnUncheckedUpdateManyWithoutWorkspaceBookingInput>
+  }
+
+  export type WorkspaceEquipmentUsageCreateWithoutEquipmentInput = {
+    id?: string
+    createdAt?: Date | string
+    workspaceBooking: WorkspaceBookingCreateNestedOneWithoutEquipmentUsagesInput
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedCreateWithoutEquipmentInput = {
+    id?: string
+    workspaceBookingId: string
+    createdAt?: Date | string
+  }
+
+  export type WorkspaceEquipmentUsageCreateOrConnectWithoutEquipmentInput = {
+    where: WorkspaceEquipmentUsageWhereUniqueInput
+    create: XOR<WorkspaceEquipmentUsageCreateWithoutEquipmentInput, WorkspaceEquipmentUsageUncheckedCreateWithoutEquipmentInput>
+  }
+
+  export type WorkspaceEquipmentUsageCreateManyEquipmentInputEnvelope = {
+    data: WorkspaceEquipmentUsageCreateManyEquipmentInput | WorkspaceEquipmentUsageCreateManyEquipmentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SampleEquipmentUsageCreateWithoutEquipmentInput = {
+    id?: string
+    createdAt?: Date | string
+    bookedItem: BookingServiceItemCreateNestedOneWithoutEquipmentUsagesInput
+  }
+
+  export type SampleEquipmentUsageUncheckedCreateWithoutEquipmentInput = {
+    id?: string
+    bookingServiceItemId: string
+    createdAt?: Date | string
+  }
+
+  export type SampleEquipmentUsageCreateOrConnectWithoutEquipmentInput = {
+    where: SampleEquipmentUsageWhereUniqueInput
+    create: XOR<SampleEquipmentUsageCreateWithoutEquipmentInput, SampleEquipmentUsageUncheckedCreateWithoutEquipmentInput>
+  }
+
+  export type SampleEquipmentUsageCreateManyEquipmentInputEnvelope = {
+    data: SampleEquipmentUsageCreateManyEquipmentInput | SampleEquipmentUsageCreateManyEquipmentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WorkspaceEquipmentUsageUpsertWithWhereUniqueWithoutEquipmentInput = {
+    where: WorkspaceEquipmentUsageWhereUniqueInput
+    update: XOR<WorkspaceEquipmentUsageUpdateWithoutEquipmentInput, WorkspaceEquipmentUsageUncheckedUpdateWithoutEquipmentInput>
+    create: XOR<WorkspaceEquipmentUsageCreateWithoutEquipmentInput, WorkspaceEquipmentUsageUncheckedCreateWithoutEquipmentInput>
+  }
+
+  export type WorkspaceEquipmentUsageUpdateWithWhereUniqueWithoutEquipmentInput = {
+    where: WorkspaceEquipmentUsageWhereUniqueInput
+    data: XOR<WorkspaceEquipmentUsageUpdateWithoutEquipmentInput, WorkspaceEquipmentUsageUncheckedUpdateWithoutEquipmentInput>
+  }
+
+  export type WorkspaceEquipmentUsageUpdateManyWithWhereWithoutEquipmentInput = {
+    where: WorkspaceEquipmentUsageScalarWhereInput
+    data: XOR<WorkspaceEquipmentUsageUpdateManyMutationInput, WorkspaceEquipmentUsageUncheckedUpdateManyWithoutEquipmentInput>
+  }
+
+  export type SampleEquipmentUsageUpsertWithWhereUniqueWithoutEquipmentInput = {
+    where: SampleEquipmentUsageWhereUniqueInput
+    update: XOR<SampleEquipmentUsageUpdateWithoutEquipmentInput, SampleEquipmentUsageUncheckedUpdateWithoutEquipmentInput>
+    create: XOR<SampleEquipmentUsageCreateWithoutEquipmentInput, SampleEquipmentUsageUncheckedCreateWithoutEquipmentInput>
+  }
+
+  export type SampleEquipmentUsageUpdateWithWhereUniqueWithoutEquipmentInput = {
+    where: SampleEquipmentUsageWhereUniqueInput
+    data: XOR<SampleEquipmentUsageUpdateWithoutEquipmentInput, SampleEquipmentUsageUncheckedUpdateWithoutEquipmentInput>
+  }
+
+  export type SampleEquipmentUsageUpdateManyWithWhereWithoutEquipmentInput = {
+    where: SampleEquipmentUsageScalarWhereInput
+    data: XOR<SampleEquipmentUsageUpdateManyMutationInput, SampleEquipmentUsageUncheckedUpdateManyWithoutEquipmentInput>
+  }
+
+  export type WorkspaceBookingCreateWithoutEquipmentUsagesInput = {
+    id?: string
+    startDate: Date | string
+    endDate: Date | string
+    preferredTimeSlot?: string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookingRequest: BookingRequestCreateNestedOneWithoutWorkspaceBookingsInput
+    serviceAddOns?: ServiceAddOnCreateNestedManyWithoutWorkspaceBookingInput
+  }
+
+  export type WorkspaceBookingUncheckedCreateWithoutEquipmentUsagesInput = {
+    id?: string
+    bookingRequestId: string
+    startDate: Date | string
+    endDate: Date | string
+    preferredTimeSlot?: string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceAddOns?: ServiceAddOnUncheckedCreateNestedManyWithoutWorkspaceBookingInput
+  }
+
+  export type WorkspaceBookingCreateOrConnectWithoutEquipmentUsagesInput = {
+    where: WorkspaceBookingWhereUniqueInput
+    create: XOR<WorkspaceBookingCreateWithoutEquipmentUsagesInput, WorkspaceBookingUncheckedCreateWithoutEquipmentUsagesInput>
+  }
+
+  export type LabEquipmentCreateWithoutWorkspaceUsagesInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isAvailable?: boolean
+    maintenanceNotes?: string | null
+    expectedMaintenanceEnd?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sampleUsages?: SampleEquipmentUsageCreateNestedManyWithoutEquipmentInput
+  }
+
+  export type LabEquipmentUncheckedCreateWithoutWorkspaceUsagesInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isAvailable?: boolean
+    maintenanceNotes?: string | null
+    expectedMaintenanceEnd?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sampleUsages?: SampleEquipmentUsageUncheckedCreateNestedManyWithoutEquipmentInput
+  }
+
+  export type LabEquipmentCreateOrConnectWithoutWorkspaceUsagesInput = {
+    where: LabEquipmentWhereUniqueInput
+    create: XOR<LabEquipmentCreateWithoutWorkspaceUsagesInput, LabEquipmentUncheckedCreateWithoutWorkspaceUsagesInput>
+  }
+
+  export type WorkspaceBookingUpsertWithoutEquipmentUsagesInput = {
+    update: XOR<WorkspaceBookingUpdateWithoutEquipmentUsagesInput, WorkspaceBookingUncheckedUpdateWithoutEquipmentUsagesInput>
+    create: XOR<WorkspaceBookingCreateWithoutEquipmentUsagesInput, WorkspaceBookingUncheckedCreateWithoutEquipmentUsagesInput>
+    where?: WorkspaceBookingWhereInput
+  }
+
+  export type WorkspaceBookingUpdateToOneWithWhereWithoutEquipmentUsagesInput = {
+    where?: WorkspaceBookingWhereInput
+    data: XOR<WorkspaceBookingUpdateWithoutEquipmentUsagesInput, WorkspaceBookingUncheckedUpdateWithoutEquipmentUsagesInput>
+  }
+
+  export type WorkspaceBookingUpdateWithoutEquipmentUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    preferredTimeSlot?: NullableStringFieldUpdateOperationsInput | string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookingRequest?: BookingRequestUpdateOneRequiredWithoutWorkspaceBookingsNestedInput
+    serviceAddOns?: ServiceAddOnUpdateManyWithoutWorkspaceBookingNestedInput
+  }
+
+  export type WorkspaceBookingUncheckedUpdateWithoutEquipmentUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingRequestId?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    preferredTimeSlot?: NullableStringFieldUpdateOperationsInput | string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceAddOns?: ServiceAddOnUncheckedUpdateManyWithoutWorkspaceBookingNestedInput
+  }
+
+  export type LabEquipmentUpsertWithoutWorkspaceUsagesInput = {
+    update: XOR<LabEquipmentUpdateWithoutWorkspaceUsagesInput, LabEquipmentUncheckedUpdateWithoutWorkspaceUsagesInput>
+    create: XOR<LabEquipmentCreateWithoutWorkspaceUsagesInput, LabEquipmentUncheckedCreateWithoutWorkspaceUsagesInput>
+    where?: LabEquipmentWhereInput
+  }
+
+  export type LabEquipmentUpdateToOneWithWhereWithoutWorkspaceUsagesInput = {
+    where?: LabEquipmentWhereInput
+    data: XOR<LabEquipmentUpdateWithoutWorkspaceUsagesInput, LabEquipmentUncheckedUpdateWithoutWorkspaceUsagesInput>
+  }
+
+  export type LabEquipmentUpdateWithoutWorkspaceUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    maintenanceNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedMaintenanceEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sampleUsages?: SampleEquipmentUsageUpdateManyWithoutEquipmentNestedInput
+  }
+
+  export type LabEquipmentUncheckedUpdateWithoutWorkspaceUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    maintenanceNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedMaintenanceEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sampleUsages?: SampleEquipmentUsageUncheckedUpdateManyWithoutEquipmentNestedInput
+  }
+
+  export type BookingServiceItemCreateWithoutEquipmentUsagesInput = {
+    id?: string
+    quantity?: number
+    durationMonths?: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
+    sampleDetails?: string | null
+    sampleType?: string | null
+    sampleHazard?: string | null
+    testingMethod?: string | null
+    degasConditions?: string | null
+    solventSystem?: string | null
+    solvents?: string | null
+    solventComposition?: string | null
+    columnType?: string | null
+    flowRate?: Decimal | DecimalJsLike | number | string | null
+    wavelength?: number | null
+    expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
+    samplePreparation?: string | null
+    notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookingRequest: BookingRequestCreateNestedOneWithoutServiceItemsInput
+    service: ServiceCreateNestedOneWithoutBookingItemsInput
+    modifications?: SampleModificationCreateNestedManyWithoutBookingServiceItemInput
+    sampleTracking?: SampleTrackingCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnCreateNestedManyWithoutBookingServiceItemInput
+  }
+
+  export type BookingServiceItemUncheckedCreateWithoutEquipmentUsagesInput = {
+    id?: string
+    bookingRequestId: string
+    serviceId: string
+    quantity?: number
+    durationMonths?: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
+    sampleDetails?: string | null
+    sampleType?: string | null
+    sampleHazard?: string | null
+    testingMethod?: string | null
+    degasConditions?: string | null
+    solventSystem?: string | null
+    solvents?: string | null
+    solventComposition?: string | null
+    columnType?: string | null
+    flowRate?: Decimal | DecimalJsLike | number | string | null
+    wavelength?: number | null
+    expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
+    samplePreparation?: string | null
+    notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    modifications?: SampleModificationUncheckedCreateNestedManyWithoutBookingServiceItemInput
+    sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutBookingServiceItemInput
+    serviceAddOns?: ServiceAddOnUncheckedCreateNestedManyWithoutBookingServiceItemInput
+  }
+
+  export type BookingServiceItemCreateOrConnectWithoutEquipmentUsagesInput = {
+    where: BookingServiceItemWhereUniqueInput
+    create: XOR<BookingServiceItemCreateWithoutEquipmentUsagesInput, BookingServiceItemUncheckedCreateWithoutEquipmentUsagesInput>
+  }
+
+  export type LabEquipmentCreateWithoutSampleUsagesInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isAvailable?: boolean
+    maintenanceNotes?: string | null
+    expectedMaintenanceEnd?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspaceUsages?: WorkspaceEquipmentUsageCreateNestedManyWithoutEquipmentInput
+  }
+
+  export type LabEquipmentUncheckedCreateWithoutSampleUsagesInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isAvailable?: boolean
+    maintenanceNotes?: string | null
+    expectedMaintenanceEnd?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workspaceUsages?: WorkspaceEquipmentUsageUncheckedCreateNestedManyWithoutEquipmentInput
+  }
+
+  export type LabEquipmentCreateOrConnectWithoutSampleUsagesInput = {
+    where: LabEquipmentWhereUniqueInput
+    create: XOR<LabEquipmentCreateWithoutSampleUsagesInput, LabEquipmentUncheckedCreateWithoutSampleUsagesInput>
+  }
+
+  export type BookingServiceItemUpsertWithoutEquipmentUsagesInput = {
+    update: XOR<BookingServiceItemUpdateWithoutEquipmentUsagesInput, BookingServiceItemUncheckedUpdateWithoutEquipmentUsagesInput>
+    create: XOR<BookingServiceItemCreateWithoutEquipmentUsagesInput, BookingServiceItemUncheckedCreateWithoutEquipmentUsagesInput>
+    where?: BookingServiceItemWhereInput
+  }
+
+  export type BookingServiceItemUpdateToOneWithWhereWithoutEquipmentUsagesInput = {
+    where?: BookingServiceItemWhereInput
+    data: XOR<BookingServiceItemUpdateWithoutEquipmentUsagesInput, BookingServiceItemUncheckedUpdateWithoutEquipmentUsagesInput>
+  }
+
+  export type BookingServiceItemUpdateWithoutEquipmentUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    durationMonths?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleType?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
+    testingMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    degasConditions?: NullableStringFieldUpdateOperationsInput | string | null
+    solventSystem?: NullableStringFieldUpdateOperationsInput | string | null
+    solvents?: NullableStringFieldUpdateOperationsInput | string | null
+    solventComposition?: NullableStringFieldUpdateOperationsInput | string | null
+    columnType?: NullableStringFieldUpdateOperationsInput | string | null
+    flowRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    wavelength?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookingRequest?: BookingRequestUpdateOneRequiredWithoutServiceItemsNestedInput
+    service?: ServiceUpdateOneRequiredWithoutBookingItemsNestedInput
+    modifications?: SampleModificationUpdateManyWithoutBookingServiceItemNestedInput
+    sampleTracking?: SampleTrackingUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUpdateManyWithoutBookingServiceItemNestedInput
+  }
+
+  export type BookingServiceItemUncheckedUpdateWithoutEquipmentUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingRequestId?: StringFieldUpdateOperationsInput | string
+    serviceId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    durationMonths?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleType?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
+    testingMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    degasConditions?: NullableStringFieldUpdateOperationsInput | string | null
+    solventSystem?: NullableStringFieldUpdateOperationsInput | string | null
+    solvents?: NullableStringFieldUpdateOperationsInput | string | null
+    solventComposition?: NullableStringFieldUpdateOperationsInput | string | null
+    columnType?: NullableStringFieldUpdateOperationsInput | string | null
+    flowRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    wavelength?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    modifications?: SampleModificationUncheckedUpdateManyWithoutBookingServiceItemNestedInput
+    sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUncheckedUpdateManyWithoutBookingServiceItemNestedInput
+  }
+
+  export type LabEquipmentUpsertWithoutSampleUsagesInput = {
+    update: XOR<LabEquipmentUpdateWithoutSampleUsagesInput, LabEquipmentUncheckedUpdateWithoutSampleUsagesInput>
+    create: XOR<LabEquipmentCreateWithoutSampleUsagesInput, LabEquipmentUncheckedCreateWithoutSampleUsagesInput>
+    where?: LabEquipmentWhereInput
+  }
+
+  export type LabEquipmentUpdateToOneWithWhereWithoutSampleUsagesInput = {
+    where?: LabEquipmentWhereInput
+    data: XOR<LabEquipmentUpdateWithoutSampleUsagesInput, LabEquipmentUncheckedUpdateWithoutSampleUsagesInput>
+  }
+
+  export type LabEquipmentUpdateWithoutSampleUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    maintenanceNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedMaintenanceEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceUsages?: WorkspaceEquipmentUsageUpdateManyWithoutEquipmentNestedInput
+  }
+
+  export type LabEquipmentUncheckedUpdateWithoutSampleUsagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    maintenanceNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedMaintenanceEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceUsages?: WorkspaceEquipmentUsageUncheckedUpdateManyWithoutEquipmentNestedInput
   }
 
   export type SampleTrackingCreateWithoutAnalysisResultsInput = {
@@ -38527,6 +50651,548 @@ export namespace Prisma {
     uploadedPayments?: PaymentUncheckedUpdateManyWithoutUploadedByUserNestedInput
   }
 
+  export type ServiceAddOnMappingCreateWithoutAddOnCatalogInput = {
+    id?: string
+    isEnabled?: boolean
+    customAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    service: ServiceCreateNestedOneWithoutAddOnMappingsInput
+  }
+
+  export type ServiceAddOnMappingUncheckedCreateWithoutAddOnCatalogInput = {
+    id?: string
+    serviceId: string
+    isEnabled?: boolean
+    customAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnMappingCreateOrConnectWithoutAddOnCatalogInput = {
+    where: ServiceAddOnMappingWhereUniqueInput
+    create: XOR<ServiceAddOnMappingCreateWithoutAddOnCatalogInput, ServiceAddOnMappingUncheckedCreateWithoutAddOnCatalogInput>
+  }
+
+  export type ServiceAddOnMappingCreateManyAddOnCatalogInputEnvelope = {
+    data: ServiceAddOnMappingCreateManyAddOnCatalogInput | ServiceAddOnMappingCreateManyAddOnCatalogInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ServiceAddOnCreateWithoutAddOnCatalogInput = {
+    id?: string
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+    bookingServiceItem?: BookingServiceItemCreateNestedOneWithoutServiceAddOnsInput
+    workspaceBooking?: WorkspaceBookingCreateNestedOneWithoutServiceAddOnsInput
+  }
+
+  export type ServiceAddOnUncheckedCreateWithoutAddOnCatalogInput = {
+    id?: string
+    bookingServiceItemId?: string | null
+    workspaceBookingId?: string | null
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnCreateOrConnectWithoutAddOnCatalogInput = {
+    where: ServiceAddOnWhereUniqueInput
+    create: XOR<ServiceAddOnCreateWithoutAddOnCatalogInput, ServiceAddOnUncheckedCreateWithoutAddOnCatalogInput>
+  }
+
+  export type ServiceAddOnCreateManyAddOnCatalogInputEnvelope = {
+    data: ServiceAddOnCreateManyAddOnCatalogInput | ServiceAddOnCreateManyAddOnCatalogInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ServiceAddOnMappingUpsertWithWhereUniqueWithoutAddOnCatalogInput = {
+    where: ServiceAddOnMappingWhereUniqueInput
+    update: XOR<ServiceAddOnMappingUpdateWithoutAddOnCatalogInput, ServiceAddOnMappingUncheckedUpdateWithoutAddOnCatalogInput>
+    create: XOR<ServiceAddOnMappingCreateWithoutAddOnCatalogInput, ServiceAddOnMappingUncheckedCreateWithoutAddOnCatalogInput>
+  }
+
+  export type ServiceAddOnMappingUpdateWithWhereUniqueWithoutAddOnCatalogInput = {
+    where: ServiceAddOnMappingWhereUniqueInput
+    data: XOR<ServiceAddOnMappingUpdateWithoutAddOnCatalogInput, ServiceAddOnMappingUncheckedUpdateWithoutAddOnCatalogInput>
+  }
+
+  export type ServiceAddOnMappingUpdateManyWithWhereWithoutAddOnCatalogInput = {
+    where: ServiceAddOnMappingScalarWhereInput
+    data: XOR<ServiceAddOnMappingUpdateManyMutationInput, ServiceAddOnMappingUncheckedUpdateManyWithoutAddOnCatalogInput>
+  }
+
+  export type ServiceAddOnUpsertWithWhereUniqueWithoutAddOnCatalogInput = {
+    where: ServiceAddOnWhereUniqueInput
+    update: XOR<ServiceAddOnUpdateWithoutAddOnCatalogInput, ServiceAddOnUncheckedUpdateWithoutAddOnCatalogInput>
+    create: XOR<ServiceAddOnCreateWithoutAddOnCatalogInput, ServiceAddOnUncheckedCreateWithoutAddOnCatalogInput>
+  }
+
+  export type ServiceAddOnUpdateWithWhereUniqueWithoutAddOnCatalogInput = {
+    where: ServiceAddOnWhereUniqueInput
+    data: XOR<ServiceAddOnUpdateWithoutAddOnCatalogInput, ServiceAddOnUncheckedUpdateWithoutAddOnCatalogInput>
+  }
+
+  export type ServiceAddOnUpdateManyWithWhereWithoutAddOnCatalogInput = {
+    where: ServiceAddOnScalarWhereInput
+    data: XOR<ServiceAddOnUpdateManyMutationInput, ServiceAddOnUncheckedUpdateManyWithoutAddOnCatalogInput>
+  }
+
+  export type ServiceCreateWithoutAddOnMappingsInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    category: $Enums.service_category_enum
+    isActive?: boolean
+    requiresSample?: boolean
+    minSampleMass?: Decimal | DecimalJsLike | number | string | null
+    operatingHours?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    pricing?: ServicePricingCreateNestedManyWithoutServiceInput
+    bookingItems?: BookingServiceItemCreateNestedManyWithoutServiceInput
+  }
+
+  export type ServiceUncheckedCreateWithoutAddOnMappingsInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    category: $Enums.service_category_enum
+    isActive?: boolean
+    requiresSample?: boolean
+    minSampleMass?: Decimal | DecimalJsLike | number | string | null
+    operatingHours?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    pricing?: ServicePricingUncheckedCreateNestedManyWithoutServiceInput
+    bookingItems?: BookingServiceItemUncheckedCreateNestedManyWithoutServiceInput
+  }
+
+  export type ServiceCreateOrConnectWithoutAddOnMappingsInput = {
+    where: ServiceWhereUniqueInput
+    create: XOR<ServiceCreateWithoutAddOnMappingsInput, ServiceUncheckedCreateWithoutAddOnMappingsInput>
+  }
+
+  export type GlobalAddOnCatalogCreateWithoutServiceMappingsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    defaultAmount: Decimal | DecimalJsLike | number | string
+    applicableTo: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceAddOns?: ServiceAddOnCreateNestedManyWithoutAddOnCatalogInput
+  }
+
+  export type GlobalAddOnCatalogUncheckedCreateWithoutServiceMappingsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    defaultAmount: Decimal | DecimalJsLike | number | string
+    applicableTo: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceAddOns?: ServiceAddOnUncheckedCreateNestedManyWithoutAddOnCatalogInput
+  }
+
+  export type GlobalAddOnCatalogCreateOrConnectWithoutServiceMappingsInput = {
+    where: GlobalAddOnCatalogWhereUniqueInput
+    create: XOR<GlobalAddOnCatalogCreateWithoutServiceMappingsInput, GlobalAddOnCatalogUncheckedCreateWithoutServiceMappingsInput>
+  }
+
+  export type ServiceUpsertWithoutAddOnMappingsInput = {
+    update: XOR<ServiceUpdateWithoutAddOnMappingsInput, ServiceUncheckedUpdateWithoutAddOnMappingsInput>
+    create: XOR<ServiceCreateWithoutAddOnMappingsInput, ServiceUncheckedCreateWithoutAddOnMappingsInput>
+    where?: ServiceWhereInput
+  }
+
+  export type ServiceUpdateToOneWithWhereWithoutAddOnMappingsInput = {
+    where?: ServiceWhereInput
+    data: XOR<ServiceUpdateWithoutAddOnMappingsInput, ServiceUncheckedUpdateWithoutAddOnMappingsInput>
+  }
+
+  export type ServiceUpdateWithoutAddOnMappingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: Enumservice_category_enumFieldUpdateOperationsInput | $Enums.service_category_enum
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    requiresSample?: BoolFieldUpdateOperationsInput | boolean
+    minSampleMass?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    operatingHours?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pricing?: ServicePricingUpdateManyWithoutServiceNestedInput
+    bookingItems?: BookingServiceItemUpdateManyWithoutServiceNestedInput
+  }
+
+  export type ServiceUncheckedUpdateWithoutAddOnMappingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: Enumservice_category_enumFieldUpdateOperationsInput | $Enums.service_category_enum
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    requiresSample?: BoolFieldUpdateOperationsInput | boolean
+    minSampleMass?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    operatingHours?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pricing?: ServicePricingUncheckedUpdateManyWithoutServiceNestedInput
+    bookingItems?: BookingServiceItemUncheckedUpdateManyWithoutServiceNestedInput
+  }
+
+  export type GlobalAddOnCatalogUpsertWithoutServiceMappingsInput = {
+    update: XOR<GlobalAddOnCatalogUpdateWithoutServiceMappingsInput, GlobalAddOnCatalogUncheckedUpdateWithoutServiceMappingsInput>
+    create: XOR<GlobalAddOnCatalogCreateWithoutServiceMappingsInput, GlobalAddOnCatalogUncheckedCreateWithoutServiceMappingsInput>
+    where?: GlobalAddOnCatalogWhereInput
+  }
+
+  export type GlobalAddOnCatalogUpdateToOneWithWhereWithoutServiceMappingsInput = {
+    where?: GlobalAddOnCatalogWhereInput
+    data: XOR<GlobalAddOnCatalogUpdateWithoutServiceMappingsInput, GlobalAddOnCatalogUncheckedUpdateWithoutServiceMappingsInput>
+  }
+
+  export type GlobalAddOnCatalogUpdateWithoutServiceMappingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    applicableTo?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceAddOns?: ServiceAddOnUpdateManyWithoutAddOnCatalogNestedInput
+  }
+
+  export type GlobalAddOnCatalogUncheckedUpdateWithoutServiceMappingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    applicableTo?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceAddOns?: ServiceAddOnUncheckedUpdateManyWithoutAddOnCatalogNestedInput
+  }
+
+  export type BookingServiceItemCreateWithoutServiceAddOnsInput = {
+    id?: string
+    quantity?: number
+    durationMonths?: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
+    sampleDetails?: string | null
+    sampleType?: string | null
+    sampleHazard?: string | null
+    testingMethod?: string | null
+    degasConditions?: string | null
+    solventSystem?: string | null
+    solvents?: string | null
+    solventComposition?: string | null
+    columnType?: string | null
+    flowRate?: Decimal | DecimalJsLike | number | string | null
+    wavelength?: number | null
+    expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
+    samplePreparation?: string | null
+    notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookingRequest: BookingRequestCreateNestedOneWithoutServiceItemsInput
+    service: ServiceCreateNestedOneWithoutBookingItemsInput
+    equipmentUsages?: SampleEquipmentUsageCreateNestedManyWithoutBookedItemInput
+    modifications?: SampleModificationCreateNestedManyWithoutBookingServiceItemInput
+    sampleTracking?: SampleTrackingCreateNestedManyWithoutBookingServiceItemInput
+  }
+
+  export type BookingServiceItemUncheckedCreateWithoutServiceAddOnsInput = {
+    id?: string
+    bookingRequestId: string
+    serviceId: string
+    quantity?: number
+    durationMonths?: number
+    unitPrice: Decimal | DecimalJsLike | number | string
+    totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
+    sampleDetails?: string | null
+    sampleType?: string | null
+    sampleHazard?: string | null
+    testingMethod?: string | null
+    degasConditions?: string | null
+    solventSystem?: string | null
+    solvents?: string | null
+    solventComposition?: string | null
+    columnType?: string | null
+    flowRate?: Decimal | DecimalJsLike | number | string | null
+    wavelength?: number | null
+    expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
+    samplePreparation?: string | null
+    notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedCreateNestedManyWithoutBookedItemInput
+    modifications?: SampleModificationUncheckedCreateNestedManyWithoutBookingServiceItemInput
+    sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutBookingServiceItemInput
+  }
+
+  export type BookingServiceItemCreateOrConnectWithoutServiceAddOnsInput = {
+    where: BookingServiceItemWhereUniqueInput
+    create: XOR<BookingServiceItemCreateWithoutServiceAddOnsInput, BookingServiceItemUncheckedCreateWithoutServiceAddOnsInput>
+  }
+
+  export type WorkspaceBookingCreateWithoutServiceAddOnsInput = {
+    id?: string
+    startDate: Date | string
+    endDate: Date | string
+    preferredTimeSlot?: string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookingRequest: BookingRequestCreateNestedOneWithoutWorkspaceBookingsInput
+    equipmentUsages?: WorkspaceEquipmentUsageCreateNestedManyWithoutWorkspaceBookingInput
+  }
+
+  export type WorkspaceBookingUncheckedCreateWithoutServiceAddOnsInput = {
+    id?: string
+    bookingRequestId: string
+    startDate: Date | string
+    endDate: Date | string
+    preferredTimeSlot?: string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    equipmentUsages?: WorkspaceEquipmentUsageUncheckedCreateNestedManyWithoutWorkspaceBookingInput
+  }
+
+  export type WorkspaceBookingCreateOrConnectWithoutServiceAddOnsInput = {
+    where: WorkspaceBookingWhereUniqueInput
+    create: XOR<WorkspaceBookingCreateWithoutServiceAddOnsInput, WorkspaceBookingUncheckedCreateWithoutServiceAddOnsInput>
+  }
+
+  export type GlobalAddOnCatalogCreateWithoutServiceAddOnsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    defaultAmount: Decimal | DecimalJsLike | number | string
+    applicableTo: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceMappings?: ServiceAddOnMappingCreateNestedManyWithoutAddOnCatalogInput
+  }
+
+  export type GlobalAddOnCatalogUncheckedCreateWithoutServiceAddOnsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    defaultAmount: Decimal | DecimalJsLike | number | string
+    applicableTo: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    serviceMappings?: ServiceAddOnMappingUncheckedCreateNestedManyWithoutAddOnCatalogInput
+  }
+
+  export type GlobalAddOnCatalogCreateOrConnectWithoutServiceAddOnsInput = {
+    where: GlobalAddOnCatalogWhereUniqueInput
+    create: XOR<GlobalAddOnCatalogCreateWithoutServiceAddOnsInput, GlobalAddOnCatalogUncheckedCreateWithoutServiceAddOnsInput>
+  }
+
+  export type BookingServiceItemUpsertWithoutServiceAddOnsInput = {
+    update: XOR<BookingServiceItemUpdateWithoutServiceAddOnsInput, BookingServiceItemUncheckedUpdateWithoutServiceAddOnsInput>
+    create: XOR<BookingServiceItemCreateWithoutServiceAddOnsInput, BookingServiceItemUncheckedCreateWithoutServiceAddOnsInput>
+    where?: BookingServiceItemWhereInput
+  }
+
+  export type BookingServiceItemUpdateToOneWithWhereWithoutServiceAddOnsInput = {
+    where?: BookingServiceItemWhereInput
+    data: XOR<BookingServiceItemUpdateWithoutServiceAddOnsInput, BookingServiceItemUncheckedUpdateWithoutServiceAddOnsInput>
+  }
+
+  export type BookingServiceItemUpdateWithoutServiceAddOnsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    durationMonths?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleType?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
+    testingMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    degasConditions?: NullableStringFieldUpdateOperationsInput | string | null
+    solventSystem?: NullableStringFieldUpdateOperationsInput | string | null
+    solvents?: NullableStringFieldUpdateOperationsInput | string | null
+    solventComposition?: NullableStringFieldUpdateOperationsInput | string | null
+    columnType?: NullableStringFieldUpdateOperationsInput | string | null
+    flowRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    wavelength?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookingRequest?: BookingRequestUpdateOneRequiredWithoutServiceItemsNestedInput
+    service?: ServiceUpdateOneRequiredWithoutBookingItemsNestedInput
+    equipmentUsages?: SampleEquipmentUsageUpdateManyWithoutBookedItemNestedInput
+    modifications?: SampleModificationUpdateManyWithoutBookingServiceItemNestedInput
+    sampleTracking?: SampleTrackingUpdateManyWithoutBookingServiceItemNestedInput
+  }
+
+  export type BookingServiceItemUncheckedUpdateWithoutServiceAddOnsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingRequestId?: StringFieldUpdateOperationsInput | string
+    serviceId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    durationMonths?: IntFieldUpdateOperationsInput | number
+    unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleType?: NullableStringFieldUpdateOperationsInput | string | null
+    sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
+    testingMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    degasConditions?: NullableStringFieldUpdateOperationsInput | string | null
+    solventSystem?: NullableStringFieldUpdateOperationsInput | string | null
+    solvents?: NullableStringFieldUpdateOperationsInput | string | null
+    solventComposition?: NullableStringFieldUpdateOperationsInput | string | null
+    columnType?: NullableStringFieldUpdateOperationsInput | string | null
+    flowRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    wavelength?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedUpdateManyWithoutBookedItemNestedInput
+    modifications?: SampleModificationUncheckedUpdateManyWithoutBookingServiceItemNestedInput
+    sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutBookingServiceItemNestedInput
+  }
+
+  export type WorkspaceBookingUpsertWithoutServiceAddOnsInput = {
+    update: XOR<WorkspaceBookingUpdateWithoutServiceAddOnsInput, WorkspaceBookingUncheckedUpdateWithoutServiceAddOnsInput>
+    create: XOR<WorkspaceBookingCreateWithoutServiceAddOnsInput, WorkspaceBookingUncheckedCreateWithoutServiceAddOnsInput>
+    where?: WorkspaceBookingWhereInput
+  }
+
+  export type WorkspaceBookingUpdateToOneWithWhereWithoutServiceAddOnsInput = {
+    where?: WorkspaceBookingWhereInput
+    data: XOR<WorkspaceBookingUpdateWithoutServiceAddOnsInput, WorkspaceBookingUncheckedUpdateWithoutServiceAddOnsInput>
+  }
+
+  export type WorkspaceBookingUpdateWithoutServiceAddOnsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    preferredTimeSlot?: NullableStringFieldUpdateOperationsInput | string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookingRequest?: BookingRequestUpdateOneRequiredWithoutWorkspaceBookingsNestedInput
+    equipmentUsages?: WorkspaceEquipmentUsageUpdateManyWithoutWorkspaceBookingNestedInput
+  }
+
+  export type WorkspaceBookingUncheckedUpdateWithoutServiceAddOnsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingRequestId?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    preferredTimeSlot?: NullableStringFieldUpdateOperationsInput | string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipmentUsages?: WorkspaceEquipmentUsageUncheckedUpdateManyWithoutWorkspaceBookingNestedInput
+  }
+
+  export type GlobalAddOnCatalogUpsertWithoutServiceAddOnsInput = {
+    update: XOR<GlobalAddOnCatalogUpdateWithoutServiceAddOnsInput, GlobalAddOnCatalogUncheckedUpdateWithoutServiceAddOnsInput>
+    create: XOR<GlobalAddOnCatalogCreateWithoutServiceAddOnsInput, GlobalAddOnCatalogUncheckedCreateWithoutServiceAddOnsInput>
+    where?: GlobalAddOnCatalogWhereInput
+  }
+
+  export type GlobalAddOnCatalogUpdateToOneWithWhereWithoutServiceAddOnsInput = {
+    where?: GlobalAddOnCatalogWhereInput
+    data: XOR<GlobalAddOnCatalogUpdateWithoutServiceAddOnsInput, GlobalAddOnCatalogUncheckedUpdateWithoutServiceAddOnsInput>
+  }
+
+  export type GlobalAddOnCatalogUpdateWithoutServiceAddOnsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    applicableTo?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceMappings?: ServiceAddOnMappingUpdateManyWithoutAddOnCatalogNestedInput
+  }
+
+  export type GlobalAddOnCatalogUncheckedUpdateWithoutServiceAddOnsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    applicableTo?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    serviceMappings?: ServiceAddOnMappingUncheckedUpdateManyWithoutAddOnCatalogNestedInput
+  }
+
   export type BetterAuthSessionCreateManyUserInput = {
     id?: string
     expiresAt: Date | string
@@ -39050,6 +51716,7 @@ export namespace Prisma {
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
     serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
   }
 
@@ -39068,6 +51735,7 @@ export namespace Prisma {
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
   }
 
@@ -39102,6 +51770,7 @@ export namespace Prisma {
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
     serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
   }
 
@@ -39120,6 +51789,7 @@ export namespace Prisma {
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
   }
 
@@ -39607,6 +52277,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -39621,8 +52292,25 @@ export namespace Prisma {
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
     notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type ServiceAddOnMappingCreateManyServiceInput = {
+    id?: string
+    addOnId: string
+    isEnabled?: boolean
+    customAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
   }
 
   export type ServicePricingUpdateWithoutServiceInput = {
@@ -39664,6 +52352,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39678,11 +52367,22 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookingRequest?: BookingRequestUpdateOneRequiredWithoutServiceItemsNestedInput
+    equipmentUsages?: SampleEquipmentUsageUpdateManyWithoutBookedItemNestedInput
     modifications?: SampleModificationUpdateManyWithoutBookingServiceItemNestedInput
     sampleTracking?: SampleTrackingUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUpdateManyWithoutBookingServiceItemNestedInput
   }
 
   export type BookingServiceItemUncheckedUpdateWithoutServiceInput = {
@@ -39692,6 +52392,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39706,10 +52407,21 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedUpdateManyWithoutBookedItemNestedInput
     modifications?: SampleModificationUncheckedUpdateManyWithoutBookingServiceItemNestedInput
     sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUncheckedUpdateManyWithoutBookingServiceItemNestedInput
   }
 
   export type BookingServiceItemUncheckedUpdateManyWithoutServiceInput = {
@@ -39719,6 +52431,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39733,8 +52446,41 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnMappingUpdateWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    customAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    addOnCatalog?: GlobalAddOnCatalogUpdateOneRequiredWithoutServiceMappingsNestedInput
+  }
+
+  export type ServiceAddOnMappingUncheckedUpdateWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    addOnId?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    customAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnMappingUncheckedUpdateManyWithoutServiceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    addOnId?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    customAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookingServiceItemCreateManyBookingRequestInput = {
@@ -39744,6 +52490,7 @@ export namespace Prisma {
     durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
+    sampleName?: string | null
     sampleDetails?: string | null
     sampleType?: string | null
     sampleHazard?: string | null
@@ -39757,6 +52504,27 @@ export namespace Prisma {
     wavelength?: number | null
     expectedRetentionTime?: Decimal | DecimalJsLike | number | string | null
     samplePreparation?: string | null
+    notes?: string | null
+    expectedCompletionDate?: Date | string | null
+    actualCompletionDate?: Date | string | null
+    turnaroundEstimate?: string | null
+    hplcPreparationRequired?: boolean
+    temperatureControlled?: boolean
+    lightSensitive?: boolean
+    hazardousMaterial?: boolean
+    inertAtmosphere?: boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WorkspaceBookingCreateManyBookingRequestInput = {
+    id?: string
+    startDate: Date | string
+    endDate: Date | string
+    preferredTimeSlot?: string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: string | null
     notes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -39794,6 +52562,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39808,11 +52577,22 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     service?: ServiceUpdateOneRequiredWithoutBookingItemsNestedInput
+    equipmentUsages?: SampleEquipmentUsageUpdateManyWithoutBookedItemNestedInput
     modifications?: SampleModificationUpdateManyWithoutBookingServiceItemNestedInput
     sampleTracking?: SampleTrackingUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUpdateManyWithoutBookingServiceItemNestedInput
   }
 
   export type BookingServiceItemUncheckedUpdateWithoutBookingRequestInput = {
@@ -39822,6 +52602,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39836,10 +52617,21 @@ export namespace Prisma {
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipmentUsages?: SampleEquipmentUsageUncheckedUpdateManyWithoutBookedItemNestedInput
     modifications?: SampleModificationUncheckedUpdateManyWithoutBookingServiceItemNestedInput
     sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutBookingServiceItemNestedInput
+    serviceAddOns?: ServiceAddOnUncheckedUpdateManyWithoutBookingServiceItemNestedInput
   }
 
   export type BookingServiceItemUncheckedUpdateManyWithoutBookingRequestInput = {
@@ -39849,6 +52641,7 @@ export namespace Prisma {
     durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    sampleName?: NullableStringFieldUpdateOperationsInput | string | null
     sampleDetails?: NullableStringFieldUpdateOperationsInput | string | null
     sampleType?: NullableStringFieldUpdateOperationsInput | string | null
     sampleHazard?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39862,6 +52655,55 @@ export namespace Prisma {
     wavelength?: NullableIntFieldUpdateOperationsInput | number | null
     expectedRetentionTime?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     samplePreparation?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualCompletionDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    turnaroundEstimate?: NullableStringFieldUpdateOperationsInput | string | null
+    hplcPreparationRequired?: BoolFieldUpdateOperationsInput | boolean
+    temperatureControlled?: BoolFieldUpdateOperationsInput | boolean
+    lightSensitive?: BoolFieldUpdateOperationsInput | boolean
+    hazardousMaterial?: BoolFieldUpdateOperationsInput | boolean
+    inertAtmosphere?: BoolFieldUpdateOperationsInput | boolean
+    otherEquipmentRequests?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WorkspaceBookingUpdateWithoutBookingRequestInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    preferredTimeSlot?: NullableStringFieldUpdateOperationsInput | string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipmentUsages?: WorkspaceEquipmentUsageUpdateManyWithoutWorkspaceBookingNestedInput
+    serviceAddOns?: ServiceAddOnUpdateManyWithoutWorkspaceBookingNestedInput
+  }
+
+  export type WorkspaceBookingUncheckedUpdateWithoutBookingRequestInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    preferredTimeSlot?: NullableStringFieldUpdateOperationsInput | string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipmentUsages?: WorkspaceEquipmentUsageUncheckedUpdateManyWithoutWorkspaceBookingNestedInput
+    serviceAddOns?: ServiceAddOnUncheckedUpdateManyWithoutWorkspaceBookingNestedInput
+  }
+
+  export type WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    preferredTimeSlot?: NullableStringFieldUpdateOperationsInput | string | null
+    specialEquipment?: NullableJsonNullValueInput | InputJsonValue
+    purpose?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -39947,6 +52789,12 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SampleEquipmentUsageCreateManyBookedItemInput = {
+    id?: string
+    equipmentId: string
+    createdAt?: Date | string
+  }
+
   export type SampleModificationCreateManyBookingServiceItemInput = {
     id?: string
     originalQuantity: number
@@ -39976,6 +52824,35 @@ export namespace Prisma {
     updatedBy?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type ServiceAddOnCreateManyBookingServiceItemInput = {
+    id?: string
+    workspaceBookingId?: string | null
+    addOnCatalogId: string
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SampleEquipmentUsageUpdateWithoutBookedItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipment?: LabEquipmentUpdateOneRequiredWithoutSampleUsagesNestedInput
+  }
+
+  export type SampleEquipmentUsageUncheckedUpdateWithoutBookedItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    equipmentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SampleEquipmentUsageUncheckedUpdateManyWithoutBookedItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    equipmentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SampleModificationUpdateWithoutBookingServiceItemInput = {
@@ -40071,6 +52948,39 @@ export namespace Prisma {
     updatedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnUpdateWithoutBookingServiceItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceBooking?: WorkspaceBookingUpdateOneWithoutServiceAddOnsNestedInput
+    addOnCatalog?: GlobalAddOnCatalogUpdateOneRequiredWithoutServiceAddOnsNestedInput
+  }
+
+  export type ServiceAddOnUncheckedUpdateWithoutBookingServiceItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceBookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    addOnCatalogId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnUncheckedUpdateManyWithoutBookingServiceItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceBookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    addOnCatalogId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InvoiceCreateManyServiceFormInput = {
@@ -40249,6 +53159,198 @@ export namespace Prisma {
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WorkspaceEquipmentUsageCreateManyWorkspaceBookingInput = {
+    id?: string
+    equipmentId: string
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnCreateManyWorkspaceBookingInput = {
+    id?: string
+    bookingServiceItemId?: string | null
+    addOnCatalogId: string
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+  }
+
+  export type WorkspaceEquipmentUsageUpdateWithoutWorkspaceBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    equipment?: LabEquipmentUpdateOneRequiredWithoutWorkspaceUsagesNestedInput
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedUpdateWithoutWorkspaceBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    equipmentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedUpdateManyWithoutWorkspaceBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    equipmentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnUpdateWithoutWorkspaceBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookingServiceItem?: BookingServiceItemUpdateOneWithoutServiceAddOnsNestedInput
+    addOnCatalog?: GlobalAddOnCatalogUpdateOneRequiredWithoutServiceAddOnsNestedInput
+  }
+
+  export type ServiceAddOnUncheckedUpdateWithoutWorkspaceBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingServiceItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    addOnCatalogId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnUncheckedUpdateManyWithoutWorkspaceBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingServiceItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    addOnCatalogId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WorkspaceEquipmentUsageCreateManyEquipmentInput = {
+    id?: string
+    workspaceBookingId: string
+    createdAt?: Date | string
+  }
+
+  export type SampleEquipmentUsageCreateManyEquipmentInput = {
+    id?: string
+    bookingServiceItemId: string
+    createdAt?: Date | string
+  }
+
+  export type WorkspaceEquipmentUsageUpdateWithoutEquipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workspaceBooking?: WorkspaceBookingUpdateOneRequiredWithoutEquipmentUsagesNestedInput
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedUpdateWithoutEquipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceBookingId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WorkspaceEquipmentUsageUncheckedUpdateManyWithoutEquipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workspaceBookingId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SampleEquipmentUsageUpdateWithoutEquipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookedItem?: BookingServiceItemUpdateOneRequiredWithoutEquipmentUsagesNestedInput
+  }
+
+  export type SampleEquipmentUsageUncheckedUpdateWithoutEquipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingServiceItemId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SampleEquipmentUsageUncheckedUpdateManyWithoutEquipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingServiceItemId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnMappingCreateManyAddOnCatalogInput = {
+    id?: string
+    serviceId: string
+    isEnabled?: boolean
+    customAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnCreateManyAddOnCatalogInput = {
+    id?: string
+    bookingServiceItemId?: string | null
+    workspaceBookingId?: string | null
+    name: string
+    amount: Decimal | DecimalJsLike | number | string
+    taxable?: boolean
+    description?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ServiceAddOnMappingUpdateWithoutAddOnCatalogInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    customAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    service?: ServiceUpdateOneRequiredWithoutAddOnMappingsNestedInput
+  }
+
+  export type ServiceAddOnMappingUncheckedUpdateWithoutAddOnCatalogInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceId?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    customAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnMappingUncheckedUpdateManyWithoutAddOnCatalogInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceId?: StringFieldUpdateOperationsInput | string
+    isEnabled?: BoolFieldUpdateOperationsInput | boolean
+    customAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnUpdateWithoutAddOnCatalogInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookingServiceItem?: BookingServiceItemUpdateOneWithoutServiceAddOnsNestedInput
+    workspaceBooking?: WorkspaceBookingUpdateOneWithoutServiceAddOnsNestedInput
+  }
+
+  export type ServiceAddOnUncheckedUpdateWithoutAddOnCatalogInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingServiceItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceBookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceAddOnUncheckedUpdateManyWithoutAddOnCatalogInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingServiceItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    workspaceBookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxable?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

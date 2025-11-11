@@ -17,4 +17,3 @@ export interface ServiceSelectionState {
 	selectedServices: SelectedService[];
 	userType: UserType | null;
 }
-

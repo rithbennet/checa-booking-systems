@@ -147,10 +147,10 @@ export default function GenerateServiceForms() {
 												<TableCell>{booking.completionDate}</TableCell>
 												<TableCell>
 													<div className="flex flex-col gap-1">
-														{booking.services.map((service, index) => (
+														{booking.services.map((service) => (
 															<Badge
 																className="w-fit"
-																key={index}
+																key={service}
 																variant="secondary"
 															>
 																{service}
@@ -216,8 +216,8 @@ export default function GenerateServiceForms() {
 											</p>
 											<div className="ml-2">
 												{getBookingById(selectedBooking)?.services.map(
-													(service, index) => (
-														<p className="text-gray-600 text-sm" key={index}>
+													(service) => (
+														<p className="text-gray-600 text-sm" key={service}>
 															• {service}
 														</p>
 													),

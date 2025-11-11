@@ -137,7 +137,7 @@ export default function ManageUsers() {
 		setSelectedUser(null);
 	};
 
-	const handleRejectUser = () => {
+	const _handleRejectUser = () => {
 		// Handle user rejection logic
 		setReviewDialogOpen(false);
 		setSelectedUser(null);

@@ -31,8 +31,7 @@ export async function POST(request: Request) {
 		if (!signUpResult.data) {
 			return NextResponse.json(
 				{
-					error:
-						signUpResult.error?.message || "Failed to create user",
+					error: signUpResult.error?.message || "Failed to create user",
 				},
 				{ status: 400 },
 			);
@@ -50,7 +49,10 @@ export async function POST(request: Request) {
 				email,
 				firstName,
 				lastName,
-				userType: userType as "utm_member" | "external_member" | "lab_administrator",
+				userType: userType as
+					| "utm_member"
+					| "external_member"
+					| "lab_administrator",
 				status: "pending", // New users start as pending
 				emailVerifiedAt: new Date(),
 			},
@@ -61,7 +63,7 @@ export async function POST(request: Request) {
 		});
 	} catch (error) {
 		console.error("Registration error:", error);
-		
+
 		// If user already exists, clean up
 		if (error && typeof error === "object" && "code" in error) {
 			if (error.code === "P2002") {
@@ -78,13 +80,9 @@ export async function POST(request: Request) {
 
 		return NextResponse.json(
 			{
-				error:
-					error instanceof Error
-						? error.message
-						: "Registration failed",
+				error: error instanceof Error ? error.message : "Registration failed",
 			},
 			{ status: 500 },
 		);
 	}
 }
-

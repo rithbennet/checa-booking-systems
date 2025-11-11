@@ -23,4 +23,3 @@ export const registrationSchema = z
 
 export type SignInFormData = z.infer<typeof signInSchema>;
 export type RegistrationFormData = z.infer<typeof registrationSchema>;
-

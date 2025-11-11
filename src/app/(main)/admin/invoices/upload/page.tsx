@@ -100,11 +100,12 @@ export default function UploadInvoice() {
 
 					{/* Upload Area */}
 					<div className="flex flex-col gap-6 md:w-2/3">
-						<div
+						<button
 							className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-white p-8 transition-colors ${error ? "border-red-500" : "border-gray-300 hover:border-indigo-500"}`}
 							onClick={() => fileInputRef.current?.click()}
 							onDragOver={(e) => e.preventDefault()}
 							onDrop={handleDrop}
+							type="button"
 						>
 							<UploadCloud className="mb-4 h-12 w-12 text-indigo-500" />
 							<div className="mb-2 font-medium text-gray-700 text-lg">
@@ -130,7 +131,7 @@ export default function UploadInvoice() {
 							{error && (
 								<div className="mt-2 text-red-600 text-xs">{error}</div>
 							)}
-						</div>
+						</button>
 
 						{/* Processing Notes */}
 						<div>

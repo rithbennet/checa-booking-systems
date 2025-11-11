@@ -57,9 +57,7 @@ export function getServicePricingTiers(
 /**
  * Format service category for display
  */
-export function formatServiceCategory(
-	category: Service["category"],
-): string {
+export function formatServiceCategory(category: Service["category"]): string {
 	const categoryMap: Record<Service["category"], string> = {
 		ftir_atr: "FTIR Spectroscopy - ATR",
 		ftir_kbr: "FTIR Spectroscopy - KBr",
@@ -92,4 +90,3 @@ export function formatUserType(userType: UserType): string {
 
 	return typeMap[userType] || userType;
 }
-

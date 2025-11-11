@@ -253,6 +253,7 @@ exports.Prisma.BookingServiceItemScalarFieldEnum = {
   durationMonths: 'durationMonths',
   unitPrice: 'unitPrice',
   totalPrice: 'totalPrice',
+  sampleName: 'sampleName',
   sampleDetails: 'sampleDetails',
   sampleType: 'sampleType',
   sampleHazard: 'sampleHazard',
@@ -267,6 +268,15 @@ exports.Prisma.BookingServiceItemScalarFieldEnum = {
   expectedRetentionTime: 'expectedRetentionTime',
   samplePreparation: 'samplePreparation',
   notes: 'notes',
+  expectedCompletionDate: 'expectedCompletionDate',
+  actualCompletionDate: 'actualCompletionDate',
+  turnaroundEstimate: 'turnaroundEstimate',
+  hplcPreparationRequired: 'hplcPreparationRequired',
+  temperatureControlled: 'temperatureControlled',
+  lightSensitive: 'lightSensitive',
+  hazardousMaterial: 'hazardousMaterial',
+  inertAtmosphere: 'inertAtmosphere',
+  otherEquipmentRequests: 'otherEquipmentRequests',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -364,6 +374,44 @@ exports.Prisma.SampleTrackingScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.WorkspaceBookingScalarFieldEnum = {
+  id: 'id',
+  bookingRequestId: 'bookingRequestId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  preferredTimeSlot: 'preferredTimeSlot',
+  specialEquipment: 'specialEquipment',
+  purpose: 'purpose',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.LabEquipmentScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  isAvailable: 'isAvailable',
+  maintenanceNotes: 'maintenanceNotes',
+  expectedMaintenanceEnd: 'expectedMaintenanceEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WorkspaceEquipmentUsageScalarFieldEnum = {
+  id: 'id',
+  workspaceBookingId: 'workspaceBookingId',
+  equipmentId: 'equipmentId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SampleEquipmentUsageScalarFieldEnum = {
+  id: 'id',
+  bookingServiceItemId: 'bookingServiceItemId',
+  equipmentId: 'equipmentId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.AnalysisResultScalarFieldEnum = {
   id: 'id',
   sampleTrackingId: 'sampleTrackingId',
@@ -400,6 +448,38 @@ exports.Prisma.AuditLogScalarFieldEnum = {
   entity: 'entity',
   entityId: 'entityId',
   metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.GlobalAddOnCatalogScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  defaultAmount: 'defaultAmount',
+  applicableTo: 'applicableTo',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ServiceAddOnMappingScalarFieldEnum = {
+  id: 'id',
+  serviceId: 'serviceId',
+  addOnId: 'addOnId',
+  isEnabled: 'isEnabled',
+  customAmount: 'customAmount',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ServiceAddOnScalarFieldEnum = {
+  id: 'id',
+  bookingServiceItemId: 'bookingServiceItemId',
+  workspaceBookingId: 'workspaceBookingId',
+  addOnCatalogId: 'addOnCatalogId',
+  name: 'name',
+  amount: 'amount',
+  taxable: 'taxable',
+  description: 'description',
   createdAt: 'createdAt'
 };
 
@@ -538,9 +618,16 @@ exports.Prisma.ModelName = {
   Invoice: 'Invoice',
   Payment: 'Payment',
   SampleTracking: 'SampleTracking',
+  WorkspaceBooking: 'WorkspaceBooking',
+  LabEquipment: 'LabEquipment',
+  WorkspaceEquipmentUsage: 'WorkspaceEquipmentUsage',
+  SampleEquipmentUsage: 'SampleEquipmentUsage',
   AnalysisResult: 'AnalysisResult',
   Notification: 'Notification',
-  AuditLog: 'AuditLog'
+  AuditLog: 'AuditLog',
+  GlobalAddOnCatalog: 'GlobalAddOnCatalog',
+  ServiceAddOnMapping: 'ServiceAddOnMapping',
+  ServiceAddOn: 'ServiceAddOn'
 };
 
 /**

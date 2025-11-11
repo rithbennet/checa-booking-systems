@@ -26,6 +26,17 @@ export interface ServicePricing {
 	effectiveTo?: Date;
 }
 
+export interface ServiceAddOn {
+	id: string;
+	mappingId: string;
+	name: string;
+	description: string | null;
+	defaultAmount: number;
+	customAmount: number | null;
+	effectiveAmount: number;
+	applicableTo: string;
+}
+
 export interface Service {
 	id: string;
 	code: string;
@@ -39,6 +50,7 @@ export interface Service {
 	createdAt: Date;
 	updatedAt: Date;
 	pricing?: ServicePricing[];
+	addOns?: ServiceAddOn[];
 }
 
 export interface ServiceWithPricing extends Service {
@@ -59,4 +71,3 @@ export interface ServiceSortOption {
 	field: "name" | "price" | "category";
 	direction: "asc" | "desc";
 }
-
