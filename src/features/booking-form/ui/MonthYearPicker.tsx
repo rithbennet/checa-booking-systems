@@ -1,7 +1,6 @@
 "use client";
 
 import { format } from "date-fns";
-import { useMemo } from "react";
 import { cn } from "@/shared/lib/utils";
 import {
 	Select,
@@ -28,28 +27,25 @@ export function MonthYearPicker({
 }: MonthYearPickerProps) {
 	const selectedDate = value || new Date();
 
-	// Generate month options
-	const months = useMemo(() => {
-		return Array.from({ length: 12 }, (_, i) => {
-			const date = new Date(2024, i, 1);
-			return {
-				value: i.toString(),
-				label: format(date, "MMMM"),
-			};
-		});
-	}, []);
+	// Generate month options (static, never changes)
+	const months = Array.from({ length: 12 }, (_, i) => {
+		const date = new Date(2024, i, 1);
+		return {
+			value: i.toString(),
+			label: format(date, "MMMM"),
+		};
+	});
 
 	// Generate year options (current year and next 2 years)
-	const years = useMemo(() => {
-		const currentYear = new Date().getFullYear();
-		return Array.from({ length: 3 }, (_, i) => {
-			const year = currentYear + i;
-			return {
-				value: year.toString(),
-				label: year.toString(),
-			};
-		});
-	}, []);
+	// Note: Recalculates current year on each render (fast operation)
+	const currentYear = new Date().getFullYear();
+	const years = Array.from({ length: 3 }, (_, i) => {
+		const year = currentYear + i;
+		return {
+			value: year.toString(),
+			label: year.toString(),
+		};
+	});
 
 	const selectedMonth = selectedDate.getMonth().toString();
 	const selectedYear = selectedDate.getFullYear().toString();

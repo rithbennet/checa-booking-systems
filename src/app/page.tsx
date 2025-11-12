@@ -74,7 +74,7 @@ export default async function Home() {
 	return (
 		<div className="flex min-h-screen flex-col">
 			{/* Hero Section */}
-			<section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 py-20 sm:py-32">
+			<section className="relative overflow-hidden bg-linear-to-br from-blue-50 via-indigo-50 to-blue-100 py-20 sm:py-32">
 				<div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="mx-auto max-w-4xl text-center">
 						<div className="mb-6 inline-flex items-center gap-2 rounded-full border bg-white/80 px-4 py-2 text-sm backdrop-blur-sm">
@@ -85,7 +85,7 @@ export default async function Home() {
 						</div>
 						<h1 className="mb-6 font-extrabold text-4xl text-gray-900 tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
 							Chemical Energy Conversions &{" "}
-							<span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+							<span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
 								Applications Lab
 							</span>
 						</h1>
@@ -134,7 +134,7 @@ export default async function Home() {
 					</div>
 				</div>
 				{/* Decorative elements */}
-				<div className="-z-0 absolute inset-0">
+				<div className="absolute inset-0 z-0">
 					<div className="absolute top-1/4 left-1/4 h-64 w-64 rounded-full bg-blue-200/30 blur-3xl" />
 					<div className="absolute right-1/4 bottom-1/4 h-64 w-64 rounded-full bg-indigo-200/30 blur-3xl" />
 				</div>
@@ -213,7 +213,7 @@ export default async function Home() {
 			</section>
 
 			{/* CTA Section */}
-			<section className="bg-gradient-to-r from-blue-600 to-indigo-600 py-20 sm:py-24">
+			<section className="bg-linear-to-r from-blue-600 to-indigo-600 py-20 sm:py-24">
 				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="mx-auto max-w-3xl text-center">
 						<div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 text-sm backdrop-blur-sm">

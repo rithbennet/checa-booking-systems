@@ -1,7 +1,11 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Plus, Save } from "lucide-react";
-import type { BookingServiceItem, BookingStep } from "@/entities/booking";
+import type {
+	BookingServiceItem,
+	BookingStep,
+	LabEquipment,
+} from "@/entities/booking";
 import type { Service } from "@/entities/service";
 import {
 	BookingProgress,
@@ -24,18 +28,24 @@ interface BookingPageProps {
 	userType?: "mjiit_member" | "utm_member" | "external_member";
 	userStatus?: string;
 	initialServices?: Array<{ service: Service; item: BookingServiceItem }>;
+	services?: Service[];
+	equipment?: LabEquipment[];
 }
 
 export function BookingPage({
 	userType = "mjiit_member",
 	userStatus,
 	initialServices = [],
+	services = [],
+	equipment = [],
 }: BookingPageProps) {
 	const bookingForm = useBookingForm({
 		userType,
 		userStatus,
 		initialServices,
 	});
+
+	const availableEquipment = equipment ?? [];
 
 	const {
 		form,
@@ -127,6 +137,7 @@ export function BookingPage({
 
 											return (
 												<ServiceGroupForm
+													availableEquipment={availableEquipment}
 													key={serviceId}
 													onAddSample={handleAddSample}
 													onRemove={handleRemoveService}
@@ -216,6 +227,7 @@ export function BookingPage({
 				onSelectService={handleAddService}
 				open={isServiceDialogOpen}
 				selectedServiceIds={selectedServiceIds}
+				services={services}
 				userType={userType}
 			/>
 		</div>

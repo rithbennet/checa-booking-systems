@@ -8,7 +8,7 @@ import type {
 	ServiceFilters as ServiceFiltersType,
 	UserType,
 } from "@/entities/service";
-import { useServices } from "@/entities/service";
+import { useBookingStore } from "@/features/booking-form/model/use-booking-store";
 import {
 	ServiceCard,
 	ServiceFiltersComponent,
@@ -37,21 +37,26 @@ export function ServicesPage({
 	const [sortBy, setSortBy] = useState<"name" | "price" | null>(null);
 	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-	// Fetch ALL services once (no filters) - small dataset, can load everything
+	// Services are fetched server-side and passed as props
 	// All filtering, sorting, and searching happens client-side for instant performance
-	const { data: allServices = initialServices, isLoading: loading } =
-		useServices({
-			userType, // Only pass userType to get correct pricing
-		});
+	const allServices = initialServices;
+	const loading = false;
 
 	const handleViewDetails = (serviceId: string) => {
 		// Navigate to service details page or open modal
 		console.log("View details for service:", serviceId);
 	};
 
+	const addService = useBookingStore((state) => state.addService);
+
 	const handleAddToBooking = (serviceId: string) => {
-		// Navigate to booking page with service preselected
-		router.push(`/booking?serviceId=${serviceId}`);
+		// Find the service and add it to the Zustand store
+		const service = allServices.find((s) => s.id === serviceId);
+		if (service?.isActive) {
+			addService(service);
+			// Navigate to booking page - service is already in the store
+			router.push("/booking");
+		}
 	};
 
 	// Client-side filtering, sorting, and searching - instant performance
@@ -81,8 +86,9 @@ export function ServicesPage({
 		if (filters.availability && filters.availability !== "all") {
 			if (filters.availability === "available") {
 				result = result.filter((service) => service.isActive);
+			} else if (filters.availability === "unavailable") {
+				result = result.filter((service) => !service.isActive);
 			}
-			// Add more availability filters if needed
 		}
 
 		// Filter by price range (using user's pricing)

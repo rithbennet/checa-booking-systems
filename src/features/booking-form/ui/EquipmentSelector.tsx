@@ -21,15 +21,17 @@ interface EquipmentSelectorProps {
     onEquipmentChange: (equipmentIds: string[]) => void;
     onOtherEquipmentChange?: (equipment: string[]) => void;
     disabled?: boolean;
+    isLoading?: boolean;
 }
 
 export function EquipmentSelector({
-    availableEquipment,
+    availableEquipment = [],
     selectedEquipmentIds,
     otherEquipmentRequests = [],
     onEquipmentChange,
     onOtherEquipmentChange,
     disabled = false,
+    isLoading = false,
 }: EquipmentSelectorProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [customEquipmentInput, setCustomEquipmentInput] = useState("");
@@ -62,7 +64,8 @@ export function EquipmentSelector({
         );
     };
 
-    const selectedEquipment = availableEquipment.filter((eq) =>
+    const equipmentList = availableEquipment ?? [];
+    const selectedEquipment = equipmentList.filter((eq) =>
         selectedEquipmentIds.includes(eq.id),
     );
 
@@ -136,10 +139,16 @@ export function EquipmentSelector({
                             <Label className="font-medium text-gray-700 text-sm">
                                 Available Equipment
                             </Label>
-                            {availableEquipment.length === 0 ? (
-                                <p className="text-gray-500 text-sm">No equipment available</p>
-                            ) : (
-                                availableEquipment.map((equipment) => {
+                                    { (equipmentList.length === 0) ? (
+                                        <div className="space-y-1">
+                                            {isLoading ? (
+                                                <p className="text-gray-500 text-sm">Loading equipment...</p>
+                                            ) : (
+                                                <p className="text-gray-500 text-sm">No equipment available</p>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        equipmentList.map((equipment) => {
                                     const isSelected = selectedEquipmentIds.includes(
                                         equipment.id,
                                     );

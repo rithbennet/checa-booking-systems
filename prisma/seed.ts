@@ -318,6 +318,24 @@ async function main() {
         },
       ],
     },
+    {
+      code: "HPLC-MAINT-001",
+      name: "HPLC System Maintenance",
+      category: "hplc_pda" as const,
+      description:
+        "HPLC system temporarily unavailable while maintenance is in progress.",
+      requiresSample: true,
+      isActive: false,
+      pricing: [
+        { userType: "mjiit_member" as const, price: 65, unit: "per sample" },
+        { userType: "utm_member" as const, price: 95, unit: "per sample" },
+        {
+          userType: "external_member" as const,
+          price: 170,
+          unit: "per sample",
+        },
+      ],
+    },
   ];
 
   const createdServices: Record<string, { id: string; code: string }> = {};
@@ -341,6 +359,39 @@ async function main() {
     }
 
     console.log(`✅ Created service: ${service.name} (${service.code})`);
+  }
+
+  // Seed Equipment
+  console.log("\n🌱 Seeding equipment...");
+
+  await db.workspaceEquipmentUsage.deleteMany({});
+  await db.sampleEquipmentUsage.deleteMany({});
+  await db.labEquipment.deleteMany({});
+
+  const equipmentList = [
+    {
+      name: "FTIR Spectrometer",
+      description:
+        "Bruker Vertex 70 FTIR system for material characterization.",
+    },
+    {
+      name: "BET Surface Analyzer",
+      description: "Micromeritics ASAP 2020 analyzer for BET measurements.",
+    },
+    {
+      name: "HPLC System",
+      description:
+        "Agilent Infinity II system currently undergoing maintenance.",
+      isAvailable: false,
+      maintenanceNotes: "Scheduled maintenance until next week.",
+    },
+  ];
+
+  for (const equipment of equipmentList) {
+    await db.labEquipment.create({
+      data: equipment,
+    });
+    console.log(`✅ Created equipment: ${equipment.name}`);
   }
 
   // Seed Add-Ons

@@ -1,12 +1,11 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import type { Service, UserType } from "@/entities/service";
 import {
 	formatServiceCategory,
 	getServicePrice,
-	useServices,
 } from "@/entities/service";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
@@ -26,6 +25,7 @@ interface ServiceSelectionDialogProps {
 	userType: UserType;
 	selectedServiceIds: string[];
 	onSelectService: (service: Service) => void;
+	services: Service[];
 }
 
 export function ServiceSelectionDialog({
@@ -34,24 +34,24 @@ export function ServiceSelectionDialog({
 	userType,
 	selectedServiceIds,
 	onSelectService,
+	services,
 }: ServiceSelectionDialogProps) {
 	const [searchQuery, setSearchQuery] = useState("");
-	const { data: services = [], isLoading } = useServices({ userType });
+	const isLoading = false;
 
 	// Filter services: exclude already selected, filter by search, only active
-	const availableServices = useMemo(() => {
-		return services.filter(
-			(service) =>
-				service.isActive &&
-				!selectedServiceIds.includes(service.id) &&
-				(searchQuery === "" ||
-					service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-					service.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-					service.description
-						?.toLowerCase()
-						.includes(searchQuery.toLowerCase())),
-		);
-	}, [services, selectedServiceIds, searchQuery]);
+	// No memoization needed - small dataset (<10 services), simple filtering
+	const availableServices = services.filter(
+		(service) =>
+			service.isActive &&
+			!selectedServiceIds.includes(service.id) &&
+			(searchQuery === "" ||
+				service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				service.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				service.description
+					?.toLowerCase()
+					.includes(searchQuery.toLowerCase())),
+	);
 
 	const handleSelect = (service: Service) => {
 		onSelectService(service);

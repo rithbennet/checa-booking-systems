@@ -138,8 +138,7 @@ export function ServiceFiltersComponent({
 						<SelectContent>
 							<SelectItem value="all">All Availability</SelectItem>
 							<SelectItem value="available">Available Now</SelectItem>
-							<SelectItem value="limited">Limited Slots</SelectItem>
-							<SelectItem value="upcoming">Upcoming</SelectItem>
+							<SelectItem value="unavailable">Unavailable</SelectItem>
 						</SelectContent>
 					</Select>
 				</div>

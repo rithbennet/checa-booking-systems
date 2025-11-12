@@ -1,5 +1,6 @@
 "use client";
 
+import type { LabEquipment } from "@/entities/booking";
 import type { CreateBookingInput } from "@/entities/booking/model/schemas";
 import type { Service } from "@/entities/service";
 import { Checkbox } from "@/shared/ui/shadcn/checkbox";
@@ -26,6 +27,8 @@ interface ServiceItemFormProps {
 	serviceItem: Partial<ServiceItem>;
 	index: number;
 	onUpdate: (data: Partial<ServiceItem>) => void;
+	availableEquipment: LabEquipment[];
+	isEquipmentLoading?: boolean;
 }
 
 export function ServiceItemForm({
@@ -33,6 +36,8 @@ export function ServiceItemForm({
 	serviceItem,
 	index,
 	onUpdate,
+	availableEquipment,
+	isEquipmentLoading = false,
 }: ServiceItemFormProps) {
 	// Note: Workspace bookings are now handled separately via WorkspaceBookingForm
 
@@ -561,7 +566,8 @@ export function ServiceItemForm({
 					Equipment Needs
 				</h4>
 				<EquipmentSelector
-					availableEquipment={[]} // TODO: Fetch from API
+					availableEquipment={availableEquipment}
+					isLoading={isEquipmentLoading}
 					onEquipmentChange={(equipmentIds) => {
 						onUpdate({ equipmentIds });
 					}}

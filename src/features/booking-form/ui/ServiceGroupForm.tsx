@@ -2,7 +2,7 @@
 
 import { differenceInDays } from "date-fns";
 import { CheckCircle2, Circle, Plus, X } from "lucide-react";
-import { useMemo } from "react";
+import type { LabEquipment } from "@/entities/booking";
 import type { CreateBookingInput } from "@/entities/booking/model/schemas";
 import type { Service } from "@/entities/service";
 import {
@@ -35,6 +35,8 @@ interface ServiceGroupFormProps {
 	onRemove: (index: number) => void;
 	onRemoveGroup?: (serviceId: string) => void;
 	onAddSample?: (serviceId: string) => void;
+	availableEquipment: LabEquipment[];
+	isEquipmentLoading?: boolean;
 }
 
 export function ServiceGroupForm({
@@ -44,37 +46,38 @@ export function ServiceGroupForm({
 	onRemove,
 	onRemoveGroup,
 	onAddSample,
+	availableEquipment,
+	isEquipmentLoading = false,
 }: ServiceGroupFormProps) {
 	const isWorkingSpace = service.category === "working_space";
 	const isAnalysisService = !isWorkingSpace;
 
 	// Check if all samples/slots are complete
-	const allComplete = useMemo(() => {
-		return serviceItems.every(({ item }) => {
-			if (isAnalysisService) {
-				return (
-					!!item.sampleName &&
-					item.sampleName.trim() !== "" &&
-					!!item.sampleType &&
-					!!item.quantity &&
-					item.quantity > 0
-				);
-			} else {
-				// Workspace slots: must have start and end dates with minimum 30 days duration
-				const notes = (item.notes as string) || "";
-				const startMatch = notes.match(/START_DATE:([^|]+)/);
-				const endMatch = notes.match(/END_DATE:([^|]+)/);
-				if (startMatch && endMatch && startMatch[1] && endMatch[1]) {
-					const start = new Date(startMatch[1]);
-					const end = new Date(endMatch[1]);
-					const days = differenceInDays(end, start) + 1;
-					return days >= 30 && end >= start;
-				}
-				// Backward compatibility
-				return !!item.expectedCompletionDate && (item.durationMonths || 0) >= 1;
+	// No memoization needed - small dataset, simple checks, component re-renders when serviceItems changes
+	const allComplete = serviceItems.every(({ item }) => {
+		if (isAnalysisService) {
+			return (
+				!!item.sampleName &&
+				item.sampleName.trim() !== "" &&
+				!!item.sampleType &&
+				!!item.quantity &&
+				item.quantity > 0
+			);
+		} else {
+			// Workspace slots: must have start and end dates with minimum 30 days duration
+			const notes = (item.notes as string) || "";
+			const startMatch = notes.match(/START_DATE:([^|]+)/);
+			const endMatch = notes.match(/END_DATE:([^|]+)/);
+			if (startMatch && endMatch && startMatch[1] && endMatch[1]) {
+				const start = new Date(startMatch[1]);
+				const end = new Date(endMatch[1]);
+				const days = differenceInDays(end, start) + 1;
+				return days >= 30 && end >= start;
 			}
-		});
-	}, [serviceItems, isAnalysisService]);
+			// Backward compatibility
+			return !!item.expectedCompletionDate && (item.durationMonths || 0) >= 1;
+		}
+	});
 
 	const handleAddSample = () => {
 		if (onAddSample) {
@@ -190,7 +193,9 @@ export function ServiceGroupForm({
 											</div>
 											<AccordionContentNoAutoClose className="px-4 pb-4">
 												<ServiceItemForm
+													availableEquipment={availableEquipment}
 													index={index}
+													isEquipmentLoading={isEquipmentLoading}
 													onUpdate={(data) => onUpdate(index, data)}
 													service={service}
 													serviceItem={item}
@@ -219,8 +224,10 @@ export function ServiceGroupForm({
 								{serviceItems.map(({ index, item }) => (
 									<WorkspaceSlotForm
 										allSlots={serviceItems.map(({ item }) => item)}
+										availableEquipment={availableEquipment}
 										excludeIndex={index}
 										index={index}
+										isEquipmentLoading={isEquipmentLoading}
 										key={index}
 										onRemove={onRemove}
 										onUpdate={(data) => onUpdate(index, data)}

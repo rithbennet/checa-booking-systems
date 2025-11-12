@@ -10,7 +10,8 @@ import {
 	Sparkles,
 	X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import type { LabEquipment } from "@/entities/booking";
 import type { CreateBookingInput } from "@/entities/booking/model/schemas";
 import type { Service } from "@/entities/service";
 import { cn } from "@/shared/lib/utils";
@@ -63,6 +64,8 @@ interface WorkspaceSlotFormProps {
 	excludeIndex: number;
 	onRemove?: (index: number) => void;
 	totalSlots?: number;
+	availableEquipment: LabEquipment[];
+	isEquipmentLoading?: boolean;
 }
 
 export function WorkspaceSlotForm({
@@ -74,6 +77,8 @@ export function WorkspaceSlotForm({
 	excludeIndex,
 	onRemove,
 	totalSlots = 1,
+	availableEquipment,
+	isEquipmentLoading = false,
 }: WorkspaceSlotFormProps) {
 	const [localStartDate, setLocalStartDate] = useState<Date | undefined>();
 	const [localMonths, setLocalMonths] = useState<number>(1);
@@ -99,37 +104,33 @@ export function WorkspaceSlotForm({
 	const selectedAddOnIds = (serviceItem.addOnIds as string[]) || [];
 
 	// Calculate end date from start date and months
-	const calculatedEndDate = useMemo(() => {
-		if (!localStartDate) return undefined;
-		return calculateWorkspaceEndDate(localStartDate, localMonths);
-	}, [localStartDate, localMonths]);
+	const calculatedEndDate = localStartDate
+		? calculateWorkspaceEndDate(localStartDate, localMonths)
+		: undefined;
 
 	// Check for overlapping bookings
-	const hasOverlap = useMemo(() => {
-		if (!localStartDate || !calculatedEndDate) return false;
-		return hasOverlappingBooking(
-			localStartDate,
-			calculatedEndDate,
-			allSlots,
-			excludeIndex,
-		);
-	}, [localStartDate, calculatedEndDate, allSlots, excludeIndex]);
+	const hasOverlap =
+		localStartDate && calculatedEndDate
+			? hasOverlappingBooking(
+				localStartDate,
+				calculatedEndDate,
+				allSlots,
+				excludeIndex,
+			)
+			: false;
 
 	// Check if form is complete (minimum 1 month = 30 days duration, no overlaps)
-	const isComplete = useMemo(() => {
-		if (!localStartDate) return false;
-		return (
-			localMonths >= 1 &&
-			isValidWorkspaceStartDate(localStartDate) &&
-			!hasOverlap
-		);
-	}, [localStartDate, localMonths, hasOverlap]);
+	const isComplete =
+		localStartDate !== undefined &&
+		localMonths >= 1 &&
+		isValidWorkspaceStartDate(localStartDate) &&
+		!hasOverlap;
 
 	// Format date range for display
-	const dateRangeDisplay = useMemo(() => {
-		if (!localStartDate || !calculatedEndDate) return "Select start date";
-		return `${format(localStartDate, "MMM d, yyyy")} - ${format(calculatedEndDate, "MMM d, yyyy")}`;
-	}, [localStartDate, calculatedEndDate]);
+	const dateRangeDisplay =
+		localStartDate && calculatedEndDate
+			? `${format(localStartDate, "MMM d, yyyy")} - ${format(calculatedEndDate, "MMM d, yyyy")}`
+			: "Select start date";
 
 	const handleStartDateChange = (date: Date | undefined) => {
 		if (!date) return;
@@ -534,7 +535,8 @@ export function WorkspaceSlotForm({
 								Equipment Needs
 							</h4>
 							<EquipmentSelector
-								availableEquipment={[]} // TODO: Fetch from API
+								availableEquipment={availableEquipment}
+								isLoading={isEquipmentLoading}
 								onEquipmentChange={(equipmentIds) => {
 									onUpdate({ equipmentIds });
 								}}

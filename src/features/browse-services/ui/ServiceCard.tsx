@@ -11,6 +11,7 @@ import {
 import { useState } from "react";
 import type { UserType } from "@/entities/service";
 import { formatServiceCategory, getServicePrice } from "@/entities/service";
+import { cn } from "@/shared/lib/utils";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -42,6 +43,7 @@ export function ServiceCard({
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const IconComponent = iconMap[service.category] || FlaskConical;
 	const pricing = getServicePrice(service, userType);
+	const isUnavailable = !service.isActive;
 
 	const getUserTypeLabel = (type: UserType): string => {
 		switch (type) {
@@ -63,7 +65,12 @@ export function ServiceCard({
 
 	return (
 		<>
-			<Card className="transition-shadow hover:shadow-lg">
+			<Card
+				className={cn(
+					"transition-shadow hover:shadow-lg",
+					isUnavailable && "border-dashed opacity-80"
+				)}
+			>
 				<CardHeader>
 					<div className="flex items-start justify-between">
 						<div className="flex items-center space-x-3">
@@ -78,8 +85,10 @@ export function ServiceCard({
 							</div>
 						</div>
 						<Badge
-							className={service.isActive ? "bg-green-500" : "bg-yellow-500"}
-							variant={service.isActive ? "default" : "secondary"}
+							className={cn(
+								"text-white",
+								service.isActive ? "bg-green-500" : "bg-red-500"
+							)}
 						>
 							{service.isActive ? "Available" : "Unavailable"}
 						</Badge>
@@ -117,6 +126,12 @@ export function ServiceCard({
 						)}
 					</div>
 
+					{isUnavailable && (
+						<p className="mt-2 font-medium text-amber-700 text-sm">
+							Currently unavailable for booking.
+						</p>
+					)}
+
 					<div className="mt-4 flex items-center space-x-2">
 						<Button
 							className="flex-1"
@@ -127,7 +142,8 @@ export function ServiceCard({
 							View Details
 						</Button>
 						<Button
-							className="flex-1 bg-blue-600 hover:bg-blue-700"
+							className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400 disabled:hover:bg-blue-400"
+							disabled={isUnavailable}
 							onClick={() => onAddToBooking(service.id)}
 						>
 							<Plus className="mr-2 h-4 w-4" />
