@@ -168,6 +168,62 @@ exports.Prisma.BetterAuthVerificationScalarFieldEnum = {
   userId: 'userId'
 };
 
+exports.Prisma.FacultyScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DepartmentScalarFieldEnum = {
+  id: 'id',
+  facultyId: 'facultyId',
+  code: 'code',
+  name: 'name',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.IkohzaScalarFieldEnum = {
+  id: 'id',
+  facultyId: 'facultyId',
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  isActive: 'isActive',
+  leaderName: 'leaderName',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CompanyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  legalName: 'legalName',
+  regNo: 'regNo',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CompanyBranchScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  name: 'name',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  postcode: 'postcode',
+  country: 'country',
+  phone: 'phone',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   firstName: 'firstName',
@@ -176,11 +232,15 @@ exports.Prisma.UserScalarFieldEnum = {
   phone: 'phone',
   userType: 'userType',
   status: 'status',
-  matrixNo: 'matrixNo',
-  staffId: 'staffId',
-  faculty: 'faculty',
-  department: 'department',
-  companyName: 'companyName',
+  academicType: 'academicType',
+  userIdentifier: 'userIdentifier',
+  supervisorName: 'supervisorName',
+  facultyId: 'facultyId',
+  departmentId: 'departmentId',
+  ikohzaId: 'ikohzaId',
+  companyId: 'companyId',
+  companyBranchId: 'companyBranchId',
+  UTM: 'UTM',
   address: 'address',
   email: 'email',
   emailVerifiedAt: 'emailVerifiedAt',
@@ -242,7 +302,9 @@ exports.Prisma.BookingRequestScalarFieldEnum = {
   updatedAt: 'updatedAt',
   reviewedAt: 'reviewedAt',
   reviewedBy: 'reviewedBy',
-  reviewNotes: 'reviewNotes'
+  reviewNotes: 'reviewNotes',
+  companyId: 'companyId',
+  companyBranchId: 'companyBranchId'
 };
 
 exports.Prisma.BookingServiceItemScalarFieldEnum = {
@@ -523,6 +585,18 @@ exports.user_status_enum = exports.$Enums.user_status_enum = {
   suspended: 'suspended'
 };
 
+exports.academic_type_enum = exports.$Enums.academic_type_enum = {
+  student: 'student',
+  staff: 'staff',
+  none: 'none'
+};
+
+exports.UTM = exports.$Enums.UTM = {
+  johor_bahru: 'johor_bahru',
+  kuala_lumpur: 'kuala_lumpur',
+  none: 'none'
+};
+
 exports.service_category_enum = exports.$Enums.service_category_enum = {
   ftir_atr: 'ftir_atr',
   ftir_kbr: 'ftir_kbr',
@@ -534,6 +608,7 @@ exports.service_category_enum = exports.$Enums.service_category_enum = {
 };
 
 exports.booking_status_enum = exports.$Enums.booking_status_enum = {
+  draft: 'draft',
   pending_user_verification: 'pending_user_verification',
   pending_approval: 'pending_approval',
   approved: 'approved',
@@ -607,6 +682,11 @@ exports.Prisma.ModelName = {
   BetterAuthSession: 'BetterAuthSession',
   BetterAuthAccount: 'BetterAuthAccount',
   BetterAuthVerification: 'BetterAuthVerification',
+  Faculty: 'Faculty',
+  Department: 'Department',
+  Ikohza: 'Ikohza',
+  Company: 'Company',
+  CompanyBranch: 'CompanyBranch',
   User: 'User',
   AuthProvider: 'AuthProvider',
   Service: 'Service',

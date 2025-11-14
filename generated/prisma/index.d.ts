@@ -34,6 +34,31 @@ export type BetterAuthAccount = $Result.DefaultSelection<Prisma.$BetterAuthAccou
  */
 export type BetterAuthVerification = $Result.DefaultSelection<Prisma.$BetterAuthVerificationPayload>
 /**
+ * Model Faculty
+ * 
+ */
+export type Faculty = $Result.DefaultSelection<Prisma.$FacultyPayload>
+/**
+ * Model Department
+ * 
+ */
+export type Department = $Result.DefaultSelection<Prisma.$DepartmentPayload>
+/**
+ * Model Ikohza
+ * 
+ */
+export type Ikohza = $Result.DefaultSelection<Prisma.$IkohzaPayload>
+/**
+ * Model Company
+ * 
+ */
+export type Company = $Result.DefaultSelection<Prisma.$CompanyPayload>
+/**
+ * Model CompanyBranch
+ * 
+ */
+export type CompanyBranch = $Result.DefaultSelection<Prisma.$CompanyBranchPayload>
+/**
  * Model User
  * 
  */
@@ -164,6 +189,24 @@ export const user_status_enum: {
 export type user_status_enum = (typeof user_status_enum)[keyof typeof user_status_enum]
 
 
+export const academic_type_enum: {
+  student: 'student',
+  staff: 'staff',
+  none: 'none'
+};
+
+export type academic_type_enum = (typeof academic_type_enum)[keyof typeof academic_type_enum]
+
+
+export const UTM: {
+  johor_bahru: 'johor_bahru',
+  kuala_lumpur: 'kuala_lumpur',
+  none: 'none'
+};
+
+export type UTM = (typeof UTM)[keyof typeof UTM]
+
+
 export const service_category_enum: {
   ftir_atr: 'ftir_atr',
   ftir_kbr: 'ftir_kbr',
@@ -178,6 +221,7 @@ export type service_category_enum = (typeof service_category_enum)[keyof typeof 
 
 
 export const booking_status_enum: {
+  draft: 'draft',
   pending_user_verification: 'pending_user_verification',
   pending_approval: 'pending_approval',
   approved: 'approved',
@@ -278,6 +322,14 @@ export const user_type_enum: typeof $Enums.user_type_enum
 export type user_status_enum = $Enums.user_status_enum
 
 export const user_status_enum: typeof $Enums.user_status_enum
+
+export type academic_type_enum = $Enums.academic_type_enum
+
+export const academic_type_enum: typeof $Enums.academic_type_enum
+
+export type UTM = $Enums.UTM
+
+export const UTM: typeof $Enums.UTM
 
 export type service_category_enum = $Enums.service_category_enum
 
@@ -472,6 +524,56 @@ export class PrismaClient<
     * ```
     */
   get betterAuthVerification(): Prisma.BetterAuthVerificationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.faculty`: Exposes CRUD operations for the **Faculty** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Faculties
+    * const faculties = await prisma.faculty.findMany()
+    * ```
+    */
+  get faculty(): Prisma.FacultyDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.department`: Exposes CRUD operations for the **Department** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Departments
+    * const departments = await prisma.department.findMany()
+    * ```
+    */
+  get department(): Prisma.DepartmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.ikohza`: Exposes CRUD operations for the **Ikohza** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Ikohzas
+    * const ikohzas = await prisma.ikohza.findMany()
+    * ```
+    */
+  get ikohza(): Prisma.IkohzaDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.company`: Exposes CRUD operations for the **Company** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Companies
+    * const companies = await prisma.company.findMany()
+    * ```
+    */
+  get company(): Prisma.CompanyDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.companyBranch`: Exposes CRUD operations for the **CompanyBranch** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CompanyBranches
+    * const companyBranches = await prisma.companyBranch.findMany()
+    * ```
+    */
+  get companyBranch(): Prisma.CompanyBranchDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
@@ -1127,6 +1229,11 @@ export namespace Prisma {
     BetterAuthSession: 'BetterAuthSession',
     BetterAuthAccount: 'BetterAuthAccount',
     BetterAuthVerification: 'BetterAuthVerification',
+    Faculty: 'Faculty',
+    Department: 'Department',
+    Ikohza: 'Ikohza',
+    Company: 'Company',
+    CompanyBranch: 'CompanyBranch',
     User: 'User',
     AuthProvider: 'AuthProvider',
     Service: 'Service',
@@ -1166,7 +1273,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "betterAuthUser" | "betterAuthSession" | "betterAuthAccount" | "betterAuthVerification" | "user" | "authProvider" | "service" | "servicePricing" | "bookingRequest" | "bookingServiceItem" | "sampleModification" | "serviceForm" | "invoice" | "payment" | "sampleTracking" | "workspaceBooking" | "labEquipment" | "workspaceEquipmentUsage" | "sampleEquipmentUsage" | "analysisResult" | "notification" | "auditLog" | "globalAddOnCatalog" | "serviceAddOnMapping" | "serviceAddOn"
+      modelProps: "betterAuthUser" | "betterAuthSession" | "betterAuthAccount" | "betterAuthVerification" | "faculty" | "department" | "ikohza" | "company" | "companyBranch" | "user" | "authProvider" | "service" | "servicePricing" | "bookingRequest" | "bookingServiceItem" | "sampleModification" | "serviceForm" | "invoice" | "payment" | "sampleTracking" | "workspaceBooking" | "labEquipment" | "workspaceEquipmentUsage" | "sampleEquipmentUsage" | "analysisResult" | "notification" | "auditLog" | "globalAddOnCatalog" | "serviceAddOnMapping" | "serviceAddOn"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1463,6 +1570,376 @@ export namespace Prisma {
           count: {
             args: Prisma.BetterAuthVerificationCountArgs<ExtArgs>
             result: $Utils.Optional<BetterAuthVerificationCountAggregateOutputType> | number
+          }
+        }
+      }
+      Faculty: {
+        payload: Prisma.$FacultyPayload<ExtArgs>
+        fields: Prisma.FacultyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FacultyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FacultyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FacultyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FacultyPayload>
+          }
+          findFirst: {
+            args: Prisma.FacultyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FacultyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FacultyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FacultyPayload>
+          }
+          findMany: {
+            args: Prisma.FacultyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FacultyPayload>[]
+          }
+          create: {
+            args: Prisma.FacultyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FacultyPayload>
+          }
+          createMany: {
+            args: Prisma.FacultyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FacultyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FacultyPayload>[]
+          }
+          delete: {
+            args: Prisma.FacultyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FacultyPayload>
+          }
+          update: {
+            args: Prisma.FacultyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FacultyPayload>
+          }
+          deleteMany: {
+            args: Prisma.FacultyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FacultyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FacultyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FacultyPayload>[]
+          }
+          upsert: {
+            args: Prisma.FacultyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FacultyPayload>
+          }
+          aggregate: {
+            args: Prisma.FacultyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFaculty>
+          }
+          groupBy: {
+            args: Prisma.FacultyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FacultyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FacultyCountArgs<ExtArgs>
+            result: $Utils.Optional<FacultyCountAggregateOutputType> | number
+          }
+        }
+      }
+      Department: {
+        payload: Prisma.$DepartmentPayload<ExtArgs>
+        fields: Prisma.DepartmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DepartmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DepartmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          findFirst: {
+            args: Prisma.DepartmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DepartmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          findMany: {
+            args: Prisma.DepartmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>[]
+          }
+          create: {
+            args: Prisma.DepartmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          createMany: {
+            args: Prisma.DepartmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DepartmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>[]
+          }
+          delete: {
+            args: Prisma.DepartmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          update: {
+            args: Prisma.DepartmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.DepartmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DepartmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DepartmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.DepartmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentPayload>
+          }
+          aggregate: {
+            args: Prisma.DepartmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDepartment>
+          }
+          groupBy: {
+            args: Prisma.DepartmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DepartmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DepartmentCountArgs<ExtArgs>
+            result: $Utils.Optional<DepartmentCountAggregateOutputType> | number
+          }
+        }
+      }
+      Ikohza: {
+        payload: Prisma.$IkohzaPayload<ExtArgs>
+        fields: Prisma.IkohzaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.IkohzaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IkohzaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.IkohzaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IkohzaPayload>
+          }
+          findFirst: {
+            args: Prisma.IkohzaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IkohzaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.IkohzaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IkohzaPayload>
+          }
+          findMany: {
+            args: Prisma.IkohzaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IkohzaPayload>[]
+          }
+          create: {
+            args: Prisma.IkohzaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IkohzaPayload>
+          }
+          createMany: {
+            args: Prisma.IkohzaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.IkohzaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IkohzaPayload>[]
+          }
+          delete: {
+            args: Prisma.IkohzaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IkohzaPayload>
+          }
+          update: {
+            args: Prisma.IkohzaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IkohzaPayload>
+          }
+          deleteMany: {
+            args: Prisma.IkohzaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.IkohzaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.IkohzaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IkohzaPayload>[]
+          }
+          upsert: {
+            args: Prisma.IkohzaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IkohzaPayload>
+          }
+          aggregate: {
+            args: Prisma.IkohzaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateIkohza>
+          }
+          groupBy: {
+            args: Prisma.IkohzaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<IkohzaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.IkohzaCountArgs<ExtArgs>
+            result: $Utils.Optional<IkohzaCountAggregateOutputType> | number
+          }
+        }
+      }
+      Company: {
+        payload: Prisma.$CompanyPayload<ExtArgs>
+        fields: Prisma.CompanyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CompanyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CompanyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          findFirst: {
+            args: Prisma.CompanyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CompanyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          findMany: {
+            args: Prisma.CompanyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>[]
+          }
+          create: {
+            args: Prisma.CompanyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          createMany: {
+            args: Prisma.CompanyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CompanyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>[]
+          }
+          delete: {
+            args: Prisma.CompanyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          update: {
+            args: Prisma.CompanyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          deleteMany: {
+            args: Prisma.CompanyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CompanyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CompanyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>[]
+          }
+          upsert: {
+            args: Prisma.CompanyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyPayload>
+          }
+          aggregate: {
+            args: Prisma.CompanyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCompany>
+          }
+          groupBy: {
+            args: Prisma.CompanyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CompanyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CompanyCountArgs<ExtArgs>
+            result: $Utils.Optional<CompanyCountAggregateOutputType> | number
+          }
+        }
+      }
+      CompanyBranch: {
+        payload: Prisma.$CompanyBranchPayload<ExtArgs>
+        fields: Prisma.CompanyBranchFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CompanyBranchFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyBranchPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CompanyBranchFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyBranchPayload>
+          }
+          findFirst: {
+            args: Prisma.CompanyBranchFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyBranchPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CompanyBranchFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyBranchPayload>
+          }
+          findMany: {
+            args: Prisma.CompanyBranchFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyBranchPayload>[]
+          }
+          create: {
+            args: Prisma.CompanyBranchCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyBranchPayload>
+          }
+          createMany: {
+            args: Prisma.CompanyBranchCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CompanyBranchCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyBranchPayload>[]
+          }
+          delete: {
+            args: Prisma.CompanyBranchDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyBranchPayload>
+          }
+          update: {
+            args: Prisma.CompanyBranchUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyBranchPayload>
+          }
+          deleteMany: {
+            args: Prisma.CompanyBranchDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CompanyBranchUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CompanyBranchUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyBranchPayload>[]
+          }
+          upsert: {
+            args: Prisma.CompanyBranchUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CompanyBranchPayload>
+          }
+          aggregate: {
+            args: Prisma.CompanyBranchAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCompanyBranch>
+          }
+          groupBy: {
+            args: Prisma.CompanyBranchGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CompanyBranchGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CompanyBranchCountArgs<ExtArgs>
+            result: $Utils.Optional<CompanyBranchCountAggregateOutputType> | number
           }
         }
       }
@@ -3120,6 +3597,11 @@ export namespace Prisma {
     betterAuthSession?: BetterAuthSessionOmit
     betterAuthAccount?: BetterAuthAccountOmit
     betterAuthVerification?: BetterAuthVerificationOmit
+    faculty?: FacultyOmit
+    department?: DepartmentOmit
+    ikohza?: IkohzaOmit
+    company?: CompanyOmit
+    companyBranch?: CompanyBranchOmit
     user?: UserOmit
     authProvider?: AuthProviderOmit
     service?: ServiceOmit
@@ -3262,6 +3744,206 @@ export namespace Prisma {
    */
   export type BetterAuthUserCountOutputTypeCountVerificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BetterAuthVerificationWhereInput
+  }
+
+
+  /**
+   * Count Type FacultyCountOutputType
+   */
+
+  export type FacultyCountOutputType = {
+    departments: number
+    ikohzas: number
+    users: number
+  }
+
+  export type FacultyCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    departments?: boolean | FacultyCountOutputTypeCountDepartmentsArgs
+    ikohzas?: boolean | FacultyCountOutputTypeCountIkohzasArgs
+    users?: boolean | FacultyCountOutputTypeCountUsersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * FacultyCountOutputType without action
+   */
+  export type FacultyCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FacultyCountOutputType
+     */
+    select?: FacultyCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * FacultyCountOutputType without action
+   */
+  export type FacultyCountOutputTypeCountDepartmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DepartmentWhereInput
+  }
+
+  /**
+   * FacultyCountOutputType without action
+   */
+  export type FacultyCountOutputTypeCountIkohzasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IkohzaWhereInput
+  }
+
+  /**
+   * FacultyCountOutputType without action
+   */
+  export type FacultyCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
+  }
+
+
+  /**
+   * Count Type DepartmentCountOutputType
+   */
+
+  export type DepartmentCountOutputType = {
+    users: number
+  }
+
+  export type DepartmentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | DepartmentCountOutputTypeCountUsersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * DepartmentCountOutputType without action
+   */
+  export type DepartmentCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentCountOutputType
+     */
+    select?: DepartmentCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * DepartmentCountOutputType without action
+   */
+  export type DepartmentCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
+  }
+
+
+  /**
+   * Count Type IkohzaCountOutputType
+   */
+
+  export type IkohzaCountOutputType = {
+    users: number
+  }
+
+  export type IkohzaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | IkohzaCountOutputTypeCountUsersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * IkohzaCountOutputType without action
+   */
+  export type IkohzaCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IkohzaCountOutputType
+     */
+    select?: IkohzaCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * IkohzaCountOutputType without action
+   */
+  export type IkohzaCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
+  }
+
+
+  /**
+   * Count Type CompanyCountOutputType
+   */
+
+  export type CompanyCountOutputType = {
+    branches: number
+    users: number
+    bookings: number
+  }
+
+  export type CompanyCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    branches?: boolean | CompanyCountOutputTypeCountBranchesArgs
+    users?: boolean | CompanyCountOutputTypeCountUsersArgs
+    bookings?: boolean | CompanyCountOutputTypeCountBookingsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CompanyCountOutputType without action
+   */
+  export type CompanyCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyCountOutputType
+     */
+    select?: CompanyCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CompanyCountOutputType without action
+   */
+  export type CompanyCountOutputTypeCountBranchesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CompanyBranchWhereInput
+  }
+
+  /**
+   * CompanyCountOutputType without action
+   */
+  export type CompanyCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
+  }
+
+  /**
+   * CompanyCountOutputType without action
+   */
+  export type CompanyCountOutputTypeCountBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BookingRequestWhereInput
+  }
+
+
+  /**
+   * Count Type CompanyBranchCountOutputType
+   */
+
+  export type CompanyBranchCountOutputType = {
+    users: number
+    bookings: number
+  }
+
+  export type CompanyBranchCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | CompanyBranchCountOutputTypeCountUsersArgs
+    bookings?: boolean | CompanyBranchCountOutputTypeCountBookingsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CompanyBranchCountOutputType without action
+   */
+  export type CompanyBranchCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranchCountOutputType
+     */
+    select?: CompanyBranchCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CompanyBranchCountOutputType without action
+   */
+  export type CompanyBranchCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
+  }
+
+  /**
+   * CompanyBranchCountOutputType without action
+   */
+  export type CompanyBranchCountOutputTypeCountBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BookingRequestWhereInput
   }
 
 
@@ -8301,6 +8983,5758 @@ export namespace Prisma {
 
 
   /**
+   * Model Faculty
+   */
+
+  export type AggregateFaculty = {
+    _count: FacultyCountAggregateOutputType | null
+    _min: FacultyMinAggregateOutputType | null
+    _max: FacultyMaxAggregateOutputType | null
+  }
+
+  export type FacultyMinAggregateOutputType = {
+    id: string | null
+    code: string | null
+    name: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FacultyMaxAggregateOutputType = {
+    id: string | null
+    code: string | null
+    name: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FacultyCountAggregateOutputType = {
+    id: number
+    code: number
+    name: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type FacultyMinAggregateInputType = {
+    id?: true
+    code?: true
+    name?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FacultyMaxAggregateInputType = {
+    id?: true
+    code?: true
+    name?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FacultyCountAggregateInputType = {
+    id?: true
+    code?: true
+    name?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type FacultyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Faculty to aggregate.
+     */
+    where?: FacultyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Faculties to fetch.
+     */
+    orderBy?: FacultyOrderByWithRelationInput | FacultyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FacultyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Faculties from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Faculties.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Faculties
+    **/
+    _count?: true | FacultyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FacultyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FacultyMaxAggregateInputType
+  }
+
+  export type GetFacultyAggregateType<T extends FacultyAggregateArgs> = {
+        [P in keyof T & keyof AggregateFaculty]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFaculty[P]>
+      : GetScalarType<T[P], AggregateFaculty[P]>
+  }
+
+
+
+
+  export type FacultyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FacultyWhereInput
+    orderBy?: FacultyOrderByWithAggregationInput | FacultyOrderByWithAggregationInput[]
+    by: FacultyScalarFieldEnum[] | FacultyScalarFieldEnum
+    having?: FacultyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FacultyCountAggregateInputType | true
+    _min?: FacultyMinAggregateInputType
+    _max?: FacultyMaxAggregateInputType
+  }
+
+  export type FacultyGroupByOutputType = {
+    id: string
+    code: string
+    name: string
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: FacultyCountAggregateOutputType | null
+    _min: FacultyMinAggregateOutputType | null
+    _max: FacultyMaxAggregateOutputType | null
+  }
+
+  type GetFacultyGroupByPayload<T extends FacultyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FacultyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FacultyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FacultyGroupByOutputType[P]>
+            : GetScalarType<T[P], FacultyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FacultySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    code?: boolean
+    name?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    departments?: boolean | Faculty$departmentsArgs<ExtArgs>
+    ikohzas?: boolean | Faculty$ikohzasArgs<ExtArgs>
+    users?: boolean | Faculty$usersArgs<ExtArgs>
+    _count?: boolean | FacultyCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["faculty"]>
+
+  export type FacultySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    code?: boolean
+    name?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["faculty"]>
+
+  export type FacultySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    code?: boolean
+    name?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["faculty"]>
+
+  export type FacultySelectScalar = {
+    id?: boolean
+    code?: boolean
+    name?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type FacultyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["faculty"]>
+  export type FacultyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    departments?: boolean | Faculty$departmentsArgs<ExtArgs>
+    ikohzas?: boolean | Faculty$ikohzasArgs<ExtArgs>
+    users?: boolean | Faculty$usersArgs<ExtArgs>
+    _count?: boolean | FacultyCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type FacultyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type FacultyIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $FacultyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Faculty"
+    objects: {
+      departments: Prisma.$DepartmentPayload<ExtArgs>[]
+      ikohzas: Prisma.$IkohzaPayload<ExtArgs>[]
+      users: Prisma.$UserPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      code: string
+      name: string
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["faculty"]>
+    composites: {}
+  }
+
+  type FacultyGetPayload<S extends boolean | null | undefined | FacultyDefaultArgs> = $Result.GetResult<Prisma.$FacultyPayload, S>
+
+  type FacultyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FacultyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FacultyCountAggregateInputType | true
+    }
+
+  export interface FacultyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Faculty'], meta: { name: 'Faculty' } }
+    /**
+     * Find zero or one Faculty that matches the filter.
+     * @param {FacultyFindUniqueArgs} args - Arguments to find a Faculty
+     * @example
+     * // Get one Faculty
+     * const faculty = await prisma.faculty.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FacultyFindUniqueArgs>(args: SelectSubset<T, FacultyFindUniqueArgs<ExtArgs>>): Prisma__FacultyClient<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Faculty that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FacultyFindUniqueOrThrowArgs} args - Arguments to find a Faculty
+     * @example
+     * // Get one Faculty
+     * const faculty = await prisma.faculty.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FacultyFindUniqueOrThrowArgs>(args: SelectSubset<T, FacultyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FacultyClient<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Faculty that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyFindFirstArgs} args - Arguments to find a Faculty
+     * @example
+     * // Get one Faculty
+     * const faculty = await prisma.faculty.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FacultyFindFirstArgs>(args?: SelectSubset<T, FacultyFindFirstArgs<ExtArgs>>): Prisma__FacultyClient<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Faculty that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyFindFirstOrThrowArgs} args - Arguments to find a Faculty
+     * @example
+     * // Get one Faculty
+     * const faculty = await prisma.faculty.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FacultyFindFirstOrThrowArgs>(args?: SelectSubset<T, FacultyFindFirstOrThrowArgs<ExtArgs>>): Prisma__FacultyClient<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Faculties that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Faculties
+     * const faculties = await prisma.faculty.findMany()
+     * 
+     * // Get first 10 Faculties
+     * const faculties = await prisma.faculty.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const facultyWithIdOnly = await prisma.faculty.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FacultyFindManyArgs>(args?: SelectSubset<T, FacultyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Faculty.
+     * @param {FacultyCreateArgs} args - Arguments to create a Faculty.
+     * @example
+     * // Create one Faculty
+     * const Faculty = await prisma.faculty.create({
+     *   data: {
+     *     // ... data to create a Faculty
+     *   }
+     * })
+     * 
+     */
+    create<T extends FacultyCreateArgs>(args: SelectSubset<T, FacultyCreateArgs<ExtArgs>>): Prisma__FacultyClient<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Faculties.
+     * @param {FacultyCreateManyArgs} args - Arguments to create many Faculties.
+     * @example
+     * // Create many Faculties
+     * const faculty = await prisma.faculty.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FacultyCreateManyArgs>(args?: SelectSubset<T, FacultyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Faculties and returns the data saved in the database.
+     * @param {FacultyCreateManyAndReturnArgs} args - Arguments to create many Faculties.
+     * @example
+     * // Create many Faculties
+     * const faculty = await prisma.faculty.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Faculties and only return the `id`
+     * const facultyWithIdOnly = await prisma.faculty.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FacultyCreateManyAndReturnArgs>(args?: SelectSubset<T, FacultyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Faculty.
+     * @param {FacultyDeleteArgs} args - Arguments to delete one Faculty.
+     * @example
+     * // Delete one Faculty
+     * const Faculty = await prisma.faculty.delete({
+     *   where: {
+     *     // ... filter to delete one Faculty
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FacultyDeleteArgs>(args: SelectSubset<T, FacultyDeleteArgs<ExtArgs>>): Prisma__FacultyClient<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Faculty.
+     * @param {FacultyUpdateArgs} args - Arguments to update one Faculty.
+     * @example
+     * // Update one Faculty
+     * const faculty = await prisma.faculty.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FacultyUpdateArgs>(args: SelectSubset<T, FacultyUpdateArgs<ExtArgs>>): Prisma__FacultyClient<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Faculties.
+     * @param {FacultyDeleteManyArgs} args - Arguments to filter Faculties to delete.
+     * @example
+     * // Delete a few Faculties
+     * const { count } = await prisma.faculty.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FacultyDeleteManyArgs>(args?: SelectSubset<T, FacultyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Faculties.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Faculties
+     * const faculty = await prisma.faculty.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FacultyUpdateManyArgs>(args: SelectSubset<T, FacultyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Faculties and returns the data updated in the database.
+     * @param {FacultyUpdateManyAndReturnArgs} args - Arguments to update many Faculties.
+     * @example
+     * // Update many Faculties
+     * const faculty = await prisma.faculty.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Faculties and only return the `id`
+     * const facultyWithIdOnly = await prisma.faculty.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FacultyUpdateManyAndReturnArgs>(args: SelectSubset<T, FacultyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Faculty.
+     * @param {FacultyUpsertArgs} args - Arguments to update or create a Faculty.
+     * @example
+     * // Update or create a Faculty
+     * const faculty = await prisma.faculty.upsert({
+     *   create: {
+     *     // ... data to create a Faculty
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Faculty we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FacultyUpsertArgs>(args: SelectSubset<T, FacultyUpsertArgs<ExtArgs>>): Prisma__FacultyClient<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Faculties.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyCountArgs} args - Arguments to filter Faculties to count.
+     * @example
+     * // Count the number of Faculties
+     * const count = await prisma.faculty.count({
+     *   where: {
+     *     // ... the filter for the Faculties we want to count
+     *   }
+     * })
+    **/
+    count<T extends FacultyCountArgs>(
+      args?: Subset<T, FacultyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FacultyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Faculty.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FacultyAggregateArgs>(args: Subset<T, FacultyAggregateArgs>): Prisma.PrismaPromise<GetFacultyAggregateType<T>>
+
+    /**
+     * Group by Faculty.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FacultyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FacultyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FacultyGroupByArgs['orderBy'] }
+        : { orderBy?: FacultyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FacultyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFacultyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Faculty model
+   */
+  readonly fields: FacultyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Faculty.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FacultyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    departments<T extends Faculty$departmentsArgs<ExtArgs> = {}>(args?: Subset<T, Faculty$departmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    ikohzas<T extends Faculty$ikohzasArgs<ExtArgs> = {}>(args?: Subset<T, Faculty$ikohzasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    users<T extends Faculty$usersArgs<ExtArgs> = {}>(args?: Subset<T, Faculty$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Faculty model
+   */
+  interface FacultyFieldRefs {
+    readonly id: FieldRef<"Faculty", 'String'>
+    readonly code: FieldRef<"Faculty", 'String'>
+    readonly name: FieldRef<"Faculty", 'String'>
+    readonly isActive: FieldRef<"Faculty", 'Boolean'>
+    readonly createdAt: FieldRef<"Faculty", 'DateTime'>
+    readonly updatedAt: FieldRef<"Faculty", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Faculty findUnique
+   */
+  export type FacultyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FacultyInclude<ExtArgs> | null
+    /**
+     * Filter, which Faculty to fetch.
+     */
+    where: FacultyWhereUniqueInput
+  }
+
+  /**
+   * Faculty findUniqueOrThrow
+   */
+  export type FacultyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FacultyInclude<ExtArgs> | null
+    /**
+     * Filter, which Faculty to fetch.
+     */
+    where: FacultyWhereUniqueInput
+  }
+
+  /**
+   * Faculty findFirst
+   */
+  export type FacultyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FacultyInclude<ExtArgs> | null
+    /**
+     * Filter, which Faculty to fetch.
+     */
+    where?: FacultyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Faculties to fetch.
+     */
+    orderBy?: FacultyOrderByWithRelationInput | FacultyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Faculties.
+     */
+    cursor?: FacultyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Faculties from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Faculties.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Faculties.
+     */
+    distinct?: FacultyScalarFieldEnum | FacultyScalarFieldEnum[]
+  }
+
+  /**
+   * Faculty findFirstOrThrow
+   */
+  export type FacultyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FacultyInclude<ExtArgs> | null
+    /**
+     * Filter, which Faculty to fetch.
+     */
+    where?: FacultyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Faculties to fetch.
+     */
+    orderBy?: FacultyOrderByWithRelationInput | FacultyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Faculties.
+     */
+    cursor?: FacultyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Faculties from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Faculties.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Faculties.
+     */
+    distinct?: FacultyScalarFieldEnum | FacultyScalarFieldEnum[]
+  }
+
+  /**
+   * Faculty findMany
+   */
+  export type FacultyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FacultyInclude<ExtArgs> | null
+    /**
+     * Filter, which Faculties to fetch.
+     */
+    where?: FacultyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Faculties to fetch.
+     */
+    orderBy?: FacultyOrderByWithRelationInput | FacultyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Faculties.
+     */
+    cursor?: FacultyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Faculties from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Faculties.
+     */
+    skip?: number
+    distinct?: FacultyScalarFieldEnum | FacultyScalarFieldEnum[]
+  }
+
+  /**
+   * Faculty create
+   */
+  export type FacultyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FacultyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Faculty.
+     */
+    data: XOR<FacultyCreateInput, FacultyUncheckedCreateInput>
+  }
+
+  /**
+   * Faculty createMany
+   */
+  export type FacultyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Faculties.
+     */
+    data: FacultyCreateManyInput | FacultyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Faculty createManyAndReturn
+   */
+  export type FacultyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * The data used to create many Faculties.
+     */
+    data: FacultyCreateManyInput | FacultyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Faculty update
+   */
+  export type FacultyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FacultyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Faculty.
+     */
+    data: XOR<FacultyUpdateInput, FacultyUncheckedUpdateInput>
+    /**
+     * Choose, which Faculty to update.
+     */
+    where: FacultyWhereUniqueInput
+  }
+
+  /**
+   * Faculty updateMany
+   */
+  export type FacultyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Faculties.
+     */
+    data: XOR<FacultyUpdateManyMutationInput, FacultyUncheckedUpdateManyInput>
+    /**
+     * Filter which Faculties to update
+     */
+    where?: FacultyWhereInput
+    /**
+     * Limit how many Faculties to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Faculty updateManyAndReturn
+   */
+  export type FacultyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * The data used to update Faculties.
+     */
+    data: XOR<FacultyUpdateManyMutationInput, FacultyUncheckedUpdateManyInput>
+    /**
+     * Filter which Faculties to update
+     */
+    where?: FacultyWhereInput
+    /**
+     * Limit how many Faculties to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Faculty upsert
+   */
+  export type FacultyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FacultyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Faculty to update in case it exists.
+     */
+    where: FacultyWhereUniqueInput
+    /**
+     * In case the Faculty found by the `where` argument doesn't exist, create a new Faculty with this data.
+     */
+    create: XOR<FacultyCreateInput, FacultyUncheckedCreateInput>
+    /**
+     * In case the Faculty was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FacultyUpdateInput, FacultyUncheckedUpdateInput>
+  }
+
+  /**
+   * Faculty delete
+   */
+  export type FacultyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FacultyInclude<ExtArgs> | null
+    /**
+     * Filter which Faculty to delete.
+     */
+    where: FacultyWhereUniqueInput
+  }
+
+  /**
+   * Faculty deleteMany
+   */
+  export type FacultyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Faculties to delete
+     */
+    where?: FacultyWhereInput
+    /**
+     * Limit how many Faculties to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Faculty.departments
+   */
+  export type Faculty$departmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    where?: DepartmentWhereInput
+    orderBy?: DepartmentOrderByWithRelationInput | DepartmentOrderByWithRelationInput[]
+    cursor?: DepartmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DepartmentScalarFieldEnum | DepartmentScalarFieldEnum[]
+  }
+
+  /**
+   * Faculty.ikohzas
+   */
+  export type Faculty$ikohzasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+    where?: IkohzaWhereInput
+    orderBy?: IkohzaOrderByWithRelationInput | IkohzaOrderByWithRelationInput[]
+    cursor?: IkohzaWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: IkohzaScalarFieldEnum | IkohzaScalarFieldEnum[]
+  }
+
+  /**
+   * Faculty.users
+   */
+  export type Faculty$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * Faculty without action
+   */
+  export type FacultyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FacultyInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Department
+   */
+
+  export type AggregateDepartment = {
+    _count: DepartmentCountAggregateOutputType | null
+    _min: DepartmentMinAggregateOutputType | null
+    _max: DepartmentMaxAggregateOutputType | null
+  }
+
+  export type DepartmentMinAggregateOutputType = {
+    id: string | null
+    facultyId: string | null
+    code: string | null
+    name: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DepartmentMaxAggregateOutputType = {
+    id: string | null
+    facultyId: string | null
+    code: string | null
+    name: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DepartmentCountAggregateOutputType = {
+    id: number
+    facultyId: number
+    code: number
+    name: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type DepartmentMinAggregateInputType = {
+    id?: true
+    facultyId?: true
+    code?: true
+    name?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DepartmentMaxAggregateInputType = {
+    id?: true
+    facultyId?: true
+    code?: true
+    name?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DepartmentCountAggregateInputType = {
+    id?: true
+    facultyId?: true
+    code?: true
+    name?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type DepartmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Department to aggregate.
+     */
+    where?: DepartmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Departments to fetch.
+     */
+    orderBy?: DepartmentOrderByWithRelationInput | DepartmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DepartmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Departments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Departments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Departments
+    **/
+    _count?: true | DepartmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DepartmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DepartmentMaxAggregateInputType
+  }
+
+  export type GetDepartmentAggregateType<T extends DepartmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateDepartment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDepartment[P]>
+      : GetScalarType<T[P], AggregateDepartment[P]>
+  }
+
+
+
+
+  export type DepartmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DepartmentWhereInput
+    orderBy?: DepartmentOrderByWithAggregationInput | DepartmentOrderByWithAggregationInput[]
+    by: DepartmentScalarFieldEnum[] | DepartmentScalarFieldEnum
+    having?: DepartmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DepartmentCountAggregateInputType | true
+    _min?: DepartmentMinAggregateInputType
+    _max?: DepartmentMaxAggregateInputType
+  }
+
+  export type DepartmentGroupByOutputType = {
+    id: string
+    facultyId: string
+    code: string
+    name: string
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: DepartmentCountAggregateOutputType | null
+    _min: DepartmentMinAggregateOutputType | null
+    _max: DepartmentMaxAggregateOutputType | null
+  }
+
+  type GetDepartmentGroupByPayload<T extends DepartmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DepartmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DepartmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DepartmentGroupByOutputType[P]>
+            : GetScalarType<T[P], DepartmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DepartmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    facultyId?: boolean
+    code?: boolean
+    name?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+    users?: boolean | Department$usersArgs<ExtArgs>
+    _count?: boolean | DepartmentCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["department"]>
+
+  export type DepartmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    facultyId?: boolean
+    code?: boolean
+    name?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["department"]>
+
+  export type DepartmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    facultyId?: boolean
+    code?: boolean
+    name?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["department"]>
+
+  export type DepartmentSelectScalar = {
+    id?: boolean
+    facultyId?: boolean
+    code?: boolean
+    name?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type DepartmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "facultyId" | "code" | "name" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["department"]>
+  export type DepartmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+    users?: boolean | Department$usersArgs<ExtArgs>
+    _count?: boolean | DepartmentCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type DepartmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+  }
+  export type DepartmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+  }
+
+  export type $DepartmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Department"
+    objects: {
+      faculty: Prisma.$FacultyPayload<ExtArgs>
+      users: Prisma.$UserPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      facultyId: string
+      code: string
+      name: string
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["department"]>
+    composites: {}
+  }
+
+  type DepartmentGetPayload<S extends boolean | null | undefined | DepartmentDefaultArgs> = $Result.GetResult<Prisma.$DepartmentPayload, S>
+
+  type DepartmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DepartmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DepartmentCountAggregateInputType | true
+    }
+
+  export interface DepartmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Department'], meta: { name: 'Department' } }
+    /**
+     * Find zero or one Department that matches the filter.
+     * @param {DepartmentFindUniqueArgs} args - Arguments to find a Department
+     * @example
+     * // Get one Department
+     * const department = await prisma.department.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DepartmentFindUniqueArgs>(args: SelectSubset<T, DepartmentFindUniqueArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Department that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DepartmentFindUniqueOrThrowArgs} args - Arguments to find a Department
+     * @example
+     * // Get one Department
+     * const department = await prisma.department.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DepartmentFindUniqueOrThrowArgs>(args: SelectSubset<T, DepartmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Department that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentFindFirstArgs} args - Arguments to find a Department
+     * @example
+     * // Get one Department
+     * const department = await prisma.department.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DepartmentFindFirstArgs>(args?: SelectSubset<T, DepartmentFindFirstArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Department that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentFindFirstOrThrowArgs} args - Arguments to find a Department
+     * @example
+     * // Get one Department
+     * const department = await prisma.department.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DepartmentFindFirstOrThrowArgs>(args?: SelectSubset<T, DepartmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Departments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Departments
+     * const departments = await prisma.department.findMany()
+     * 
+     * // Get first 10 Departments
+     * const departments = await prisma.department.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const departmentWithIdOnly = await prisma.department.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DepartmentFindManyArgs>(args?: SelectSubset<T, DepartmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Department.
+     * @param {DepartmentCreateArgs} args - Arguments to create a Department.
+     * @example
+     * // Create one Department
+     * const Department = await prisma.department.create({
+     *   data: {
+     *     // ... data to create a Department
+     *   }
+     * })
+     * 
+     */
+    create<T extends DepartmentCreateArgs>(args: SelectSubset<T, DepartmentCreateArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Departments.
+     * @param {DepartmentCreateManyArgs} args - Arguments to create many Departments.
+     * @example
+     * // Create many Departments
+     * const department = await prisma.department.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DepartmentCreateManyArgs>(args?: SelectSubset<T, DepartmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Departments and returns the data saved in the database.
+     * @param {DepartmentCreateManyAndReturnArgs} args - Arguments to create many Departments.
+     * @example
+     * // Create many Departments
+     * const department = await prisma.department.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Departments and only return the `id`
+     * const departmentWithIdOnly = await prisma.department.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DepartmentCreateManyAndReturnArgs>(args?: SelectSubset<T, DepartmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Department.
+     * @param {DepartmentDeleteArgs} args - Arguments to delete one Department.
+     * @example
+     * // Delete one Department
+     * const Department = await prisma.department.delete({
+     *   where: {
+     *     // ... filter to delete one Department
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DepartmentDeleteArgs>(args: SelectSubset<T, DepartmentDeleteArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Department.
+     * @param {DepartmentUpdateArgs} args - Arguments to update one Department.
+     * @example
+     * // Update one Department
+     * const department = await prisma.department.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DepartmentUpdateArgs>(args: SelectSubset<T, DepartmentUpdateArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Departments.
+     * @param {DepartmentDeleteManyArgs} args - Arguments to filter Departments to delete.
+     * @example
+     * // Delete a few Departments
+     * const { count } = await prisma.department.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DepartmentDeleteManyArgs>(args?: SelectSubset<T, DepartmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Departments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Departments
+     * const department = await prisma.department.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DepartmentUpdateManyArgs>(args: SelectSubset<T, DepartmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Departments and returns the data updated in the database.
+     * @param {DepartmentUpdateManyAndReturnArgs} args - Arguments to update many Departments.
+     * @example
+     * // Update many Departments
+     * const department = await prisma.department.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Departments and only return the `id`
+     * const departmentWithIdOnly = await prisma.department.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DepartmentUpdateManyAndReturnArgs>(args: SelectSubset<T, DepartmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Department.
+     * @param {DepartmentUpsertArgs} args - Arguments to update or create a Department.
+     * @example
+     * // Update or create a Department
+     * const department = await prisma.department.upsert({
+     *   create: {
+     *     // ... data to create a Department
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Department we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DepartmentUpsertArgs>(args: SelectSubset<T, DepartmentUpsertArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Departments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentCountArgs} args - Arguments to filter Departments to count.
+     * @example
+     * // Count the number of Departments
+     * const count = await prisma.department.count({
+     *   where: {
+     *     // ... the filter for the Departments we want to count
+     *   }
+     * })
+    **/
+    count<T extends DepartmentCountArgs>(
+      args?: Subset<T, DepartmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DepartmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Department.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DepartmentAggregateArgs>(args: Subset<T, DepartmentAggregateArgs>): Prisma.PrismaPromise<GetDepartmentAggregateType<T>>
+
+    /**
+     * Group by Department.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DepartmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DepartmentGroupByArgs['orderBy'] }
+        : { orderBy?: DepartmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DepartmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDepartmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Department model
+   */
+  readonly fields: DepartmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Department.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DepartmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    faculty<T extends FacultyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FacultyDefaultArgs<ExtArgs>>): Prisma__FacultyClient<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    users<T extends Department$usersArgs<ExtArgs> = {}>(args?: Subset<T, Department$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Department model
+   */
+  interface DepartmentFieldRefs {
+    readonly id: FieldRef<"Department", 'String'>
+    readonly facultyId: FieldRef<"Department", 'String'>
+    readonly code: FieldRef<"Department", 'String'>
+    readonly name: FieldRef<"Department", 'String'>
+    readonly isActive: FieldRef<"Department", 'Boolean'>
+    readonly createdAt: FieldRef<"Department", 'DateTime'>
+    readonly updatedAt: FieldRef<"Department", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Department findUnique
+   */
+  export type DepartmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Department to fetch.
+     */
+    where: DepartmentWhereUniqueInput
+  }
+
+  /**
+   * Department findUniqueOrThrow
+   */
+  export type DepartmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Department to fetch.
+     */
+    where: DepartmentWhereUniqueInput
+  }
+
+  /**
+   * Department findFirst
+   */
+  export type DepartmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Department to fetch.
+     */
+    where?: DepartmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Departments to fetch.
+     */
+    orderBy?: DepartmentOrderByWithRelationInput | DepartmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Departments.
+     */
+    cursor?: DepartmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Departments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Departments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Departments.
+     */
+    distinct?: DepartmentScalarFieldEnum | DepartmentScalarFieldEnum[]
+  }
+
+  /**
+   * Department findFirstOrThrow
+   */
+  export type DepartmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Department to fetch.
+     */
+    where?: DepartmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Departments to fetch.
+     */
+    orderBy?: DepartmentOrderByWithRelationInput | DepartmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Departments.
+     */
+    cursor?: DepartmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Departments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Departments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Departments.
+     */
+    distinct?: DepartmentScalarFieldEnum | DepartmentScalarFieldEnum[]
+  }
+
+  /**
+   * Department findMany
+   */
+  export type DepartmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Departments to fetch.
+     */
+    where?: DepartmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Departments to fetch.
+     */
+    orderBy?: DepartmentOrderByWithRelationInput | DepartmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Departments.
+     */
+    cursor?: DepartmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Departments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Departments.
+     */
+    skip?: number
+    distinct?: DepartmentScalarFieldEnum | DepartmentScalarFieldEnum[]
+  }
+
+  /**
+   * Department create
+   */
+  export type DepartmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Department.
+     */
+    data: XOR<DepartmentCreateInput, DepartmentUncheckedCreateInput>
+  }
+
+  /**
+   * Department createMany
+   */
+  export type DepartmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Departments.
+     */
+    data: DepartmentCreateManyInput | DepartmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Department createManyAndReturn
+   */
+  export type DepartmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many Departments.
+     */
+    data: DepartmentCreateManyInput | DepartmentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Department update
+   */
+  export type DepartmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Department.
+     */
+    data: XOR<DepartmentUpdateInput, DepartmentUncheckedUpdateInput>
+    /**
+     * Choose, which Department to update.
+     */
+    where: DepartmentWhereUniqueInput
+  }
+
+  /**
+   * Department updateMany
+   */
+  export type DepartmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Departments.
+     */
+    data: XOR<DepartmentUpdateManyMutationInput, DepartmentUncheckedUpdateManyInput>
+    /**
+     * Filter which Departments to update
+     */
+    where?: DepartmentWhereInput
+    /**
+     * Limit how many Departments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Department updateManyAndReturn
+   */
+  export type DepartmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * The data used to update Departments.
+     */
+    data: XOR<DepartmentUpdateManyMutationInput, DepartmentUncheckedUpdateManyInput>
+    /**
+     * Filter which Departments to update
+     */
+    where?: DepartmentWhereInput
+    /**
+     * Limit how many Departments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Department upsert
+   */
+  export type DepartmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Department to update in case it exists.
+     */
+    where: DepartmentWhereUniqueInput
+    /**
+     * In case the Department found by the `where` argument doesn't exist, create a new Department with this data.
+     */
+    create: XOR<DepartmentCreateInput, DepartmentUncheckedCreateInput>
+    /**
+     * In case the Department was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DepartmentUpdateInput, DepartmentUncheckedUpdateInput>
+  }
+
+  /**
+   * Department delete
+   */
+  export type DepartmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    /**
+     * Filter which Department to delete.
+     */
+    where: DepartmentWhereUniqueInput
+  }
+
+  /**
+   * Department deleteMany
+   */
+  export type DepartmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Departments to delete
+     */
+    where?: DepartmentWhereInput
+    /**
+     * Limit how many Departments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Department.users
+   */
+  export type Department$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * Department without action
+   */
+  export type DepartmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Ikohza
+   */
+
+  export type AggregateIkohza = {
+    _count: IkohzaCountAggregateOutputType | null
+    _min: IkohzaMinAggregateOutputType | null
+    _max: IkohzaMaxAggregateOutputType | null
+  }
+
+  export type IkohzaMinAggregateOutputType = {
+    id: string | null
+    facultyId: string | null
+    code: string | null
+    name: string | null
+    description: string | null
+    isActive: boolean | null
+    leaderName: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type IkohzaMaxAggregateOutputType = {
+    id: string | null
+    facultyId: string | null
+    code: string | null
+    name: string | null
+    description: string | null
+    isActive: boolean | null
+    leaderName: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type IkohzaCountAggregateOutputType = {
+    id: number
+    facultyId: number
+    code: number
+    name: number
+    description: number
+    isActive: number
+    leaderName: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type IkohzaMinAggregateInputType = {
+    id?: true
+    facultyId?: true
+    code?: true
+    name?: true
+    description?: true
+    isActive?: true
+    leaderName?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type IkohzaMaxAggregateInputType = {
+    id?: true
+    facultyId?: true
+    code?: true
+    name?: true
+    description?: true
+    isActive?: true
+    leaderName?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type IkohzaCountAggregateInputType = {
+    id?: true
+    facultyId?: true
+    code?: true
+    name?: true
+    description?: true
+    isActive?: true
+    leaderName?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type IkohzaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Ikohza to aggregate.
+     */
+    where?: IkohzaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Ikohzas to fetch.
+     */
+    orderBy?: IkohzaOrderByWithRelationInput | IkohzaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: IkohzaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Ikohzas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Ikohzas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Ikohzas
+    **/
+    _count?: true | IkohzaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: IkohzaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: IkohzaMaxAggregateInputType
+  }
+
+  export type GetIkohzaAggregateType<T extends IkohzaAggregateArgs> = {
+        [P in keyof T & keyof AggregateIkohza]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateIkohza[P]>
+      : GetScalarType<T[P], AggregateIkohza[P]>
+  }
+
+
+
+
+  export type IkohzaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IkohzaWhereInput
+    orderBy?: IkohzaOrderByWithAggregationInput | IkohzaOrderByWithAggregationInput[]
+    by: IkohzaScalarFieldEnum[] | IkohzaScalarFieldEnum
+    having?: IkohzaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: IkohzaCountAggregateInputType | true
+    _min?: IkohzaMinAggregateInputType
+    _max?: IkohzaMaxAggregateInputType
+  }
+
+  export type IkohzaGroupByOutputType = {
+    id: string
+    facultyId: string
+    code: string
+    name: string
+    description: string | null
+    isActive: boolean
+    leaderName: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: IkohzaCountAggregateOutputType | null
+    _min: IkohzaMinAggregateOutputType | null
+    _max: IkohzaMaxAggregateOutputType | null
+  }
+
+  type GetIkohzaGroupByPayload<T extends IkohzaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<IkohzaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof IkohzaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], IkohzaGroupByOutputType[P]>
+            : GetScalarType<T[P], IkohzaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type IkohzaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    facultyId?: boolean
+    code?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    leaderName?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+    users?: boolean | Ikohza$usersArgs<ExtArgs>
+    _count?: boolean | IkohzaCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ikohza"]>
+
+  export type IkohzaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    facultyId?: boolean
+    code?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    leaderName?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ikohza"]>
+
+  export type IkohzaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    facultyId?: boolean
+    code?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    leaderName?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ikohza"]>
+
+  export type IkohzaSelectScalar = {
+    id?: boolean
+    facultyId?: boolean
+    code?: boolean
+    name?: boolean
+    description?: boolean
+    isActive?: boolean
+    leaderName?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type IkohzaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "facultyId" | "code" | "name" | "description" | "isActive" | "leaderName" | "createdAt" | "updatedAt", ExtArgs["result"]["ikohza"]>
+  export type IkohzaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+    users?: boolean | Ikohza$usersArgs<ExtArgs>
+    _count?: boolean | IkohzaCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type IkohzaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+  }
+  export type IkohzaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    faculty?: boolean | FacultyDefaultArgs<ExtArgs>
+  }
+
+  export type $IkohzaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Ikohza"
+    objects: {
+      faculty: Prisma.$FacultyPayload<ExtArgs>
+      users: Prisma.$UserPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      facultyId: string
+      code: string
+      name: string
+      description: string | null
+      isActive: boolean
+      leaderName: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["ikohza"]>
+    composites: {}
+  }
+
+  type IkohzaGetPayload<S extends boolean | null | undefined | IkohzaDefaultArgs> = $Result.GetResult<Prisma.$IkohzaPayload, S>
+
+  type IkohzaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<IkohzaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: IkohzaCountAggregateInputType | true
+    }
+
+  export interface IkohzaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Ikohza'], meta: { name: 'Ikohza' } }
+    /**
+     * Find zero or one Ikohza that matches the filter.
+     * @param {IkohzaFindUniqueArgs} args - Arguments to find a Ikohza
+     * @example
+     * // Get one Ikohza
+     * const ikohza = await prisma.ikohza.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends IkohzaFindUniqueArgs>(args: SelectSubset<T, IkohzaFindUniqueArgs<ExtArgs>>): Prisma__IkohzaClient<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Ikohza that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {IkohzaFindUniqueOrThrowArgs} args - Arguments to find a Ikohza
+     * @example
+     * // Get one Ikohza
+     * const ikohza = await prisma.ikohza.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends IkohzaFindUniqueOrThrowArgs>(args: SelectSubset<T, IkohzaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__IkohzaClient<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Ikohza that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IkohzaFindFirstArgs} args - Arguments to find a Ikohza
+     * @example
+     * // Get one Ikohza
+     * const ikohza = await prisma.ikohza.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends IkohzaFindFirstArgs>(args?: SelectSubset<T, IkohzaFindFirstArgs<ExtArgs>>): Prisma__IkohzaClient<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Ikohza that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IkohzaFindFirstOrThrowArgs} args - Arguments to find a Ikohza
+     * @example
+     * // Get one Ikohza
+     * const ikohza = await prisma.ikohza.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends IkohzaFindFirstOrThrowArgs>(args?: SelectSubset<T, IkohzaFindFirstOrThrowArgs<ExtArgs>>): Prisma__IkohzaClient<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Ikohzas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IkohzaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Ikohzas
+     * const ikohzas = await prisma.ikohza.findMany()
+     * 
+     * // Get first 10 Ikohzas
+     * const ikohzas = await prisma.ikohza.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const ikohzaWithIdOnly = await prisma.ikohza.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends IkohzaFindManyArgs>(args?: SelectSubset<T, IkohzaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Ikohza.
+     * @param {IkohzaCreateArgs} args - Arguments to create a Ikohza.
+     * @example
+     * // Create one Ikohza
+     * const Ikohza = await prisma.ikohza.create({
+     *   data: {
+     *     // ... data to create a Ikohza
+     *   }
+     * })
+     * 
+     */
+    create<T extends IkohzaCreateArgs>(args: SelectSubset<T, IkohzaCreateArgs<ExtArgs>>): Prisma__IkohzaClient<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Ikohzas.
+     * @param {IkohzaCreateManyArgs} args - Arguments to create many Ikohzas.
+     * @example
+     * // Create many Ikohzas
+     * const ikohza = await prisma.ikohza.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends IkohzaCreateManyArgs>(args?: SelectSubset<T, IkohzaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Ikohzas and returns the data saved in the database.
+     * @param {IkohzaCreateManyAndReturnArgs} args - Arguments to create many Ikohzas.
+     * @example
+     * // Create many Ikohzas
+     * const ikohza = await prisma.ikohza.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Ikohzas and only return the `id`
+     * const ikohzaWithIdOnly = await prisma.ikohza.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends IkohzaCreateManyAndReturnArgs>(args?: SelectSubset<T, IkohzaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Ikohza.
+     * @param {IkohzaDeleteArgs} args - Arguments to delete one Ikohza.
+     * @example
+     * // Delete one Ikohza
+     * const Ikohza = await prisma.ikohza.delete({
+     *   where: {
+     *     // ... filter to delete one Ikohza
+     *   }
+     * })
+     * 
+     */
+    delete<T extends IkohzaDeleteArgs>(args: SelectSubset<T, IkohzaDeleteArgs<ExtArgs>>): Prisma__IkohzaClient<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Ikohza.
+     * @param {IkohzaUpdateArgs} args - Arguments to update one Ikohza.
+     * @example
+     * // Update one Ikohza
+     * const ikohza = await prisma.ikohza.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends IkohzaUpdateArgs>(args: SelectSubset<T, IkohzaUpdateArgs<ExtArgs>>): Prisma__IkohzaClient<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Ikohzas.
+     * @param {IkohzaDeleteManyArgs} args - Arguments to filter Ikohzas to delete.
+     * @example
+     * // Delete a few Ikohzas
+     * const { count } = await prisma.ikohza.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends IkohzaDeleteManyArgs>(args?: SelectSubset<T, IkohzaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Ikohzas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IkohzaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Ikohzas
+     * const ikohza = await prisma.ikohza.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends IkohzaUpdateManyArgs>(args: SelectSubset<T, IkohzaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Ikohzas and returns the data updated in the database.
+     * @param {IkohzaUpdateManyAndReturnArgs} args - Arguments to update many Ikohzas.
+     * @example
+     * // Update many Ikohzas
+     * const ikohza = await prisma.ikohza.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Ikohzas and only return the `id`
+     * const ikohzaWithIdOnly = await prisma.ikohza.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends IkohzaUpdateManyAndReturnArgs>(args: SelectSubset<T, IkohzaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Ikohza.
+     * @param {IkohzaUpsertArgs} args - Arguments to update or create a Ikohza.
+     * @example
+     * // Update or create a Ikohza
+     * const ikohza = await prisma.ikohza.upsert({
+     *   create: {
+     *     // ... data to create a Ikohza
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Ikohza we want to update
+     *   }
+     * })
+     */
+    upsert<T extends IkohzaUpsertArgs>(args: SelectSubset<T, IkohzaUpsertArgs<ExtArgs>>): Prisma__IkohzaClient<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Ikohzas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IkohzaCountArgs} args - Arguments to filter Ikohzas to count.
+     * @example
+     * // Count the number of Ikohzas
+     * const count = await prisma.ikohza.count({
+     *   where: {
+     *     // ... the filter for the Ikohzas we want to count
+     *   }
+     * })
+    **/
+    count<T extends IkohzaCountArgs>(
+      args?: Subset<T, IkohzaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], IkohzaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Ikohza.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IkohzaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends IkohzaAggregateArgs>(args: Subset<T, IkohzaAggregateArgs>): Prisma.PrismaPromise<GetIkohzaAggregateType<T>>
+
+    /**
+     * Group by Ikohza.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IkohzaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends IkohzaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: IkohzaGroupByArgs['orderBy'] }
+        : { orderBy?: IkohzaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, IkohzaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetIkohzaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Ikohza model
+   */
+  readonly fields: IkohzaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Ikohza.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__IkohzaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    faculty<T extends FacultyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FacultyDefaultArgs<ExtArgs>>): Prisma__FacultyClient<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    users<T extends Ikohza$usersArgs<ExtArgs> = {}>(args?: Subset<T, Ikohza$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Ikohza model
+   */
+  interface IkohzaFieldRefs {
+    readonly id: FieldRef<"Ikohza", 'String'>
+    readonly facultyId: FieldRef<"Ikohza", 'String'>
+    readonly code: FieldRef<"Ikohza", 'String'>
+    readonly name: FieldRef<"Ikohza", 'String'>
+    readonly description: FieldRef<"Ikohza", 'String'>
+    readonly isActive: FieldRef<"Ikohza", 'Boolean'>
+    readonly leaderName: FieldRef<"Ikohza", 'String'>
+    readonly createdAt: FieldRef<"Ikohza", 'DateTime'>
+    readonly updatedAt: FieldRef<"Ikohza", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Ikohza findUnique
+   */
+  export type IkohzaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+    /**
+     * Filter, which Ikohza to fetch.
+     */
+    where: IkohzaWhereUniqueInput
+  }
+
+  /**
+   * Ikohza findUniqueOrThrow
+   */
+  export type IkohzaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+    /**
+     * Filter, which Ikohza to fetch.
+     */
+    where: IkohzaWhereUniqueInput
+  }
+
+  /**
+   * Ikohza findFirst
+   */
+  export type IkohzaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+    /**
+     * Filter, which Ikohza to fetch.
+     */
+    where?: IkohzaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Ikohzas to fetch.
+     */
+    orderBy?: IkohzaOrderByWithRelationInput | IkohzaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Ikohzas.
+     */
+    cursor?: IkohzaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Ikohzas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Ikohzas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Ikohzas.
+     */
+    distinct?: IkohzaScalarFieldEnum | IkohzaScalarFieldEnum[]
+  }
+
+  /**
+   * Ikohza findFirstOrThrow
+   */
+  export type IkohzaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+    /**
+     * Filter, which Ikohza to fetch.
+     */
+    where?: IkohzaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Ikohzas to fetch.
+     */
+    orderBy?: IkohzaOrderByWithRelationInput | IkohzaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Ikohzas.
+     */
+    cursor?: IkohzaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Ikohzas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Ikohzas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Ikohzas.
+     */
+    distinct?: IkohzaScalarFieldEnum | IkohzaScalarFieldEnum[]
+  }
+
+  /**
+   * Ikohza findMany
+   */
+  export type IkohzaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+    /**
+     * Filter, which Ikohzas to fetch.
+     */
+    where?: IkohzaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Ikohzas to fetch.
+     */
+    orderBy?: IkohzaOrderByWithRelationInput | IkohzaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Ikohzas.
+     */
+    cursor?: IkohzaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Ikohzas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Ikohzas.
+     */
+    skip?: number
+    distinct?: IkohzaScalarFieldEnum | IkohzaScalarFieldEnum[]
+  }
+
+  /**
+   * Ikohza create
+   */
+  export type IkohzaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Ikohza.
+     */
+    data: XOR<IkohzaCreateInput, IkohzaUncheckedCreateInput>
+  }
+
+  /**
+   * Ikohza createMany
+   */
+  export type IkohzaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Ikohzas.
+     */
+    data: IkohzaCreateManyInput | IkohzaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Ikohza createManyAndReturn
+   */
+  export type IkohzaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * The data used to create many Ikohzas.
+     */
+    data: IkohzaCreateManyInput | IkohzaCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Ikohza update
+   */
+  export type IkohzaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Ikohza.
+     */
+    data: XOR<IkohzaUpdateInput, IkohzaUncheckedUpdateInput>
+    /**
+     * Choose, which Ikohza to update.
+     */
+    where: IkohzaWhereUniqueInput
+  }
+
+  /**
+   * Ikohza updateMany
+   */
+  export type IkohzaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Ikohzas.
+     */
+    data: XOR<IkohzaUpdateManyMutationInput, IkohzaUncheckedUpdateManyInput>
+    /**
+     * Filter which Ikohzas to update
+     */
+    where?: IkohzaWhereInput
+    /**
+     * Limit how many Ikohzas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Ikohza updateManyAndReturn
+   */
+  export type IkohzaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * The data used to update Ikohzas.
+     */
+    data: XOR<IkohzaUpdateManyMutationInput, IkohzaUncheckedUpdateManyInput>
+    /**
+     * Filter which Ikohzas to update
+     */
+    where?: IkohzaWhereInput
+    /**
+     * Limit how many Ikohzas to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Ikohza upsert
+   */
+  export type IkohzaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Ikohza to update in case it exists.
+     */
+    where: IkohzaWhereUniqueInput
+    /**
+     * In case the Ikohza found by the `where` argument doesn't exist, create a new Ikohza with this data.
+     */
+    create: XOR<IkohzaCreateInput, IkohzaUncheckedCreateInput>
+    /**
+     * In case the Ikohza was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<IkohzaUpdateInput, IkohzaUncheckedUpdateInput>
+  }
+
+  /**
+   * Ikohza delete
+   */
+  export type IkohzaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+    /**
+     * Filter which Ikohza to delete.
+     */
+    where: IkohzaWhereUniqueInput
+  }
+
+  /**
+   * Ikohza deleteMany
+   */
+  export type IkohzaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Ikohzas to delete
+     */
+    where?: IkohzaWhereInput
+    /**
+     * Limit how many Ikohzas to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Ikohza.users
+   */
+  export type Ikohza$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * Ikohza without action
+   */
+  export type IkohzaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Company
+   */
+
+  export type AggregateCompany = {
+    _count: CompanyCountAggregateOutputType | null
+    _min: CompanyMinAggregateOutputType | null
+    _max: CompanyMaxAggregateOutputType | null
+  }
+
+  export type CompanyMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    legalName: string | null
+    regNo: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CompanyMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    legalName: string | null
+    regNo: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CompanyCountAggregateOutputType = {
+    id: number
+    name: number
+    legalName: number
+    regNo: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CompanyMinAggregateInputType = {
+    id?: true
+    name?: true
+    legalName?: true
+    regNo?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CompanyMaxAggregateInputType = {
+    id?: true
+    name?: true
+    legalName?: true
+    regNo?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CompanyCountAggregateInputType = {
+    id?: true
+    name?: true
+    legalName?: true
+    regNo?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CompanyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Company to aggregate.
+     */
+    where?: CompanyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Companies to fetch.
+     */
+    orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CompanyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Companies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Companies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Companies
+    **/
+    _count?: true | CompanyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CompanyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CompanyMaxAggregateInputType
+  }
+
+  export type GetCompanyAggregateType<T extends CompanyAggregateArgs> = {
+        [P in keyof T & keyof AggregateCompany]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCompany[P]>
+      : GetScalarType<T[P], AggregateCompany[P]>
+  }
+
+
+
+
+  export type CompanyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CompanyWhereInput
+    orderBy?: CompanyOrderByWithAggregationInput | CompanyOrderByWithAggregationInput[]
+    by: CompanyScalarFieldEnum[] | CompanyScalarFieldEnum
+    having?: CompanyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CompanyCountAggregateInputType | true
+    _min?: CompanyMinAggregateInputType
+    _max?: CompanyMaxAggregateInputType
+  }
+
+  export type CompanyGroupByOutputType = {
+    id: string
+    name: string
+    legalName: string | null
+    regNo: string | null
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: CompanyCountAggregateOutputType | null
+    _min: CompanyMinAggregateOutputType | null
+    _max: CompanyMaxAggregateOutputType | null
+  }
+
+  type GetCompanyGroupByPayload<T extends CompanyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CompanyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CompanyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CompanyGroupByOutputType[P]>
+            : GetScalarType<T[P], CompanyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CompanySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    legalName?: boolean
+    regNo?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    branches?: boolean | Company$branchesArgs<ExtArgs>
+    users?: boolean | Company$usersArgs<ExtArgs>
+    bookings?: boolean | Company$bookingsArgs<ExtArgs>
+    _count?: boolean | CompanyCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["company"]>
+
+  export type CompanySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    legalName?: boolean
+    regNo?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["company"]>
+
+  export type CompanySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    legalName?: boolean
+    regNo?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["company"]>
+
+  export type CompanySelectScalar = {
+    id?: boolean
+    name?: boolean
+    legalName?: boolean
+    regNo?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CompanyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "legalName" | "regNo" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["company"]>
+  export type CompanyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    branches?: boolean | Company$branchesArgs<ExtArgs>
+    users?: boolean | Company$usersArgs<ExtArgs>
+    bookings?: boolean | Company$bookingsArgs<ExtArgs>
+    _count?: boolean | CompanyCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type CompanyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type CompanyIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $CompanyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Company"
+    objects: {
+      branches: Prisma.$CompanyBranchPayload<ExtArgs>[]
+      users: Prisma.$UserPayload<ExtArgs>[]
+      bookings: Prisma.$BookingRequestPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      legalName: string | null
+      regNo: string | null
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["company"]>
+    composites: {}
+  }
+
+  type CompanyGetPayload<S extends boolean | null | undefined | CompanyDefaultArgs> = $Result.GetResult<Prisma.$CompanyPayload, S>
+
+  type CompanyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CompanyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CompanyCountAggregateInputType | true
+    }
+
+  export interface CompanyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Company'], meta: { name: 'Company' } }
+    /**
+     * Find zero or one Company that matches the filter.
+     * @param {CompanyFindUniqueArgs} args - Arguments to find a Company
+     * @example
+     * // Get one Company
+     * const company = await prisma.company.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CompanyFindUniqueArgs>(args: SelectSubset<T, CompanyFindUniqueArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Company that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CompanyFindUniqueOrThrowArgs} args - Arguments to find a Company
+     * @example
+     * // Get one Company
+     * const company = await prisma.company.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CompanyFindUniqueOrThrowArgs>(args: SelectSubset<T, CompanyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Company that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyFindFirstArgs} args - Arguments to find a Company
+     * @example
+     * // Get one Company
+     * const company = await prisma.company.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CompanyFindFirstArgs>(args?: SelectSubset<T, CompanyFindFirstArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Company that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyFindFirstOrThrowArgs} args - Arguments to find a Company
+     * @example
+     * // Get one Company
+     * const company = await prisma.company.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CompanyFindFirstOrThrowArgs>(args?: SelectSubset<T, CompanyFindFirstOrThrowArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Companies that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Companies
+     * const companies = await prisma.company.findMany()
+     * 
+     * // Get first 10 Companies
+     * const companies = await prisma.company.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const companyWithIdOnly = await prisma.company.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CompanyFindManyArgs>(args?: SelectSubset<T, CompanyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Company.
+     * @param {CompanyCreateArgs} args - Arguments to create a Company.
+     * @example
+     * // Create one Company
+     * const Company = await prisma.company.create({
+     *   data: {
+     *     // ... data to create a Company
+     *   }
+     * })
+     * 
+     */
+    create<T extends CompanyCreateArgs>(args: SelectSubset<T, CompanyCreateArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Companies.
+     * @param {CompanyCreateManyArgs} args - Arguments to create many Companies.
+     * @example
+     * // Create many Companies
+     * const company = await prisma.company.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CompanyCreateManyArgs>(args?: SelectSubset<T, CompanyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Companies and returns the data saved in the database.
+     * @param {CompanyCreateManyAndReturnArgs} args - Arguments to create many Companies.
+     * @example
+     * // Create many Companies
+     * const company = await prisma.company.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Companies and only return the `id`
+     * const companyWithIdOnly = await prisma.company.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CompanyCreateManyAndReturnArgs>(args?: SelectSubset<T, CompanyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Company.
+     * @param {CompanyDeleteArgs} args - Arguments to delete one Company.
+     * @example
+     * // Delete one Company
+     * const Company = await prisma.company.delete({
+     *   where: {
+     *     // ... filter to delete one Company
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CompanyDeleteArgs>(args: SelectSubset<T, CompanyDeleteArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Company.
+     * @param {CompanyUpdateArgs} args - Arguments to update one Company.
+     * @example
+     * // Update one Company
+     * const company = await prisma.company.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CompanyUpdateArgs>(args: SelectSubset<T, CompanyUpdateArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Companies.
+     * @param {CompanyDeleteManyArgs} args - Arguments to filter Companies to delete.
+     * @example
+     * // Delete a few Companies
+     * const { count } = await prisma.company.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CompanyDeleteManyArgs>(args?: SelectSubset<T, CompanyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Companies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Companies
+     * const company = await prisma.company.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CompanyUpdateManyArgs>(args: SelectSubset<T, CompanyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Companies and returns the data updated in the database.
+     * @param {CompanyUpdateManyAndReturnArgs} args - Arguments to update many Companies.
+     * @example
+     * // Update many Companies
+     * const company = await prisma.company.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Companies and only return the `id`
+     * const companyWithIdOnly = await prisma.company.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CompanyUpdateManyAndReturnArgs>(args: SelectSubset<T, CompanyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Company.
+     * @param {CompanyUpsertArgs} args - Arguments to update or create a Company.
+     * @example
+     * // Update or create a Company
+     * const company = await prisma.company.upsert({
+     *   create: {
+     *     // ... data to create a Company
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Company we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CompanyUpsertArgs>(args: SelectSubset<T, CompanyUpsertArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Companies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyCountArgs} args - Arguments to filter Companies to count.
+     * @example
+     * // Count the number of Companies
+     * const count = await prisma.company.count({
+     *   where: {
+     *     // ... the filter for the Companies we want to count
+     *   }
+     * })
+    **/
+    count<T extends CompanyCountArgs>(
+      args?: Subset<T, CompanyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CompanyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Company.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CompanyAggregateArgs>(args: Subset<T, CompanyAggregateArgs>): Prisma.PrismaPromise<GetCompanyAggregateType<T>>
+
+    /**
+     * Group by Company.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CompanyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CompanyGroupByArgs['orderBy'] }
+        : { orderBy?: CompanyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CompanyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCompanyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Company model
+   */
+  readonly fields: CompanyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Company.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    branches<T extends Company$branchesArgs<ExtArgs> = {}>(args?: Subset<T, Company$branchesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    users<T extends Company$usersArgs<ExtArgs> = {}>(args?: Subset<T, Company$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    bookings<T extends Company$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, Company$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Company model
+   */
+  interface CompanyFieldRefs {
+    readonly id: FieldRef<"Company", 'String'>
+    readonly name: FieldRef<"Company", 'String'>
+    readonly legalName: FieldRef<"Company", 'String'>
+    readonly regNo: FieldRef<"Company", 'String'>
+    readonly isActive: FieldRef<"Company", 'Boolean'>
+    readonly createdAt: FieldRef<"Company", 'DateTime'>
+    readonly updatedAt: FieldRef<"Company", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Company findUnique
+   */
+  export type CompanyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter, which Company to fetch.
+     */
+    where: CompanyWhereUniqueInput
+  }
+
+  /**
+   * Company findUniqueOrThrow
+   */
+  export type CompanyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter, which Company to fetch.
+     */
+    where: CompanyWhereUniqueInput
+  }
+
+  /**
+   * Company findFirst
+   */
+  export type CompanyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter, which Company to fetch.
+     */
+    where?: CompanyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Companies to fetch.
+     */
+    orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Companies.
+     */
+    cursor?: CompanyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Companies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Companies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Companies.
+     */
+    distinct?: CompanyScalarFieldEnum | CompanyScalarFieldEnum[]
+  }
+
+  /**
+   * Company findFirstOrThrow
+   */
+  export type CompanyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter, which Company to fetch.
+     */
+    where?: CompanyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Companies to fetch.
+     */
+    orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Companies.
+     */
+    cursor?: CompanyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Companies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Companies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Companies.
+     */
+    distinct?: CompanyScalarFieldEnum | CompanyScalarFieldEnum[]
+  }
+
+  /**
+   * Company findMany
+   */
+  export type CompanyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter, which Companies to fetch.
+     */
+    where?: CompanyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Companies to fetch.
+     */
+    orderBy?: CompanyOrderByWithRelationInput | CompanyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Companies.
+     */
+    cursor?: CompanyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Companies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Companies.
+     */
+    skip?: number
+    distinct?: CompanyScalarFieldEnum | CompanyScalarFieldEnum[]
+  }
+
+  /**
+   * Company create
+   */
+  export type CompanyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Company.
+     */
+    data: XOR<CompanyCreateInput, CompanyUncheckedCreateInput>
+  }
+
+  /**
+   * Company createMany
+   */
+  export type CompanyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Companies.
+     */
+    data: CompanyCreateManyInput | CompanyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Company createManyAndReturn
+   */
+  export type CompanyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * The data used to create many Companies.
+     */
+    data: CompanyCreateManyInput | CompanyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Company update
+   */
+  export type CompanyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Company.
+     */
+    data: XOR<CompanyUpdateInput, CompanyUncheckedUpdateInput>
+    /**
+     * Choose, which Company to update.
+     */
+    where: CompanyWhereUniqueInput
+  }
+
+  /**
+   * Company updateMany
+   */
+  export type CompanyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Companies.
+     */
+    data: XOR<CompanyUpdateManyMutationInput, CompanyUncheckedUpdateManyInput>
+    /**
+     * Filter which Companies to update
+     */
+    where?: CompanyWhereInput
+    /**
+     * Limit how many Companies to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Company updateManyAndReturn
+   */
+  export type CompanyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * The data used to update Companies.
+     */
+    data: XOR<CompanyUpdateManyMutationInput, CompanyUncheckedUpdateManyInput>
+    /**
+     * Filter which Companies to update
+     */
+    where?: CompanyWhereInput
+    /**
+     * Limit how many Companies to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Company upsert
+   */
+  export type CompanyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Company to update in case it exists.
+     */
+    where: CompanyWhereUniqueInput
+    /**
+     * In case the Company found by the `where` argument doesn't exist, create a new Company with this data.
+     */
+    create: XOR<CompanyCreateInput, CompanyUncheckedCreateInput>
+    /**
+     * In case the Company was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CompanyUpdateInput, CompanyUncheckedUpdateInput>
+  }
+
+  /**
+   * Company delete
+   */
+  export type CompanyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    /**
+     * Filter which Company to delete.
+     */
+    where: CompanyWhereUniqueInput
+  }
+
+  /**
+   * Company deleteMany
+   */
+  export type CompanyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Companies to delete
+     */
+    where?: CompanyWhereInput
+    /**
+     * Limit how many Companies to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Company.branches
+   */
+  export type Company$branchesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    where?: CompanyBranchWhereInput
+    orderBy?: CompanyBranchOrderByWithRelationInput | CompanyBranchOrderByWithRelationInput[]
+    cursor?: CompanyBranchWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CompanyBranchScalarFieldEnum | CompanyBranchScalarFieldEnum[]
+  }
+
+  /**
+   * Company.users
+   */
+  export type Company$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * Company.bookings
+   */
+  export type Company$bookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookingRequest
+     */
+    select?: BookingRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookingRequest
+     */
+    omit?: BookingRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookingRequestInclude<ExtArgs> | null
+    where?: BookingRequestWhereInput
+    orderBy?: BookingRequestOrderByWithRelationInput | BookingRequestOrderByWithRelationInput[]
+    cursor?: BookingRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BookingRequestScalarFieldEnum | BookingRequestScalarFieldEnum[]
+  }
+
+  /**
+   * Company without action
+   */
+  export type CompanyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CompanyBranch
+   */
+
+  export type AggregateCompanyBranch = {
+    _count: CompanyBranchCountAggregateOutputType | null
+    _min: CompanyBranchMinAggregateOutputType | null
+    _max: CompanyBranchMaxAggregateOutputType | null
+  }
+
+  export type CompanyBranchMinAggregateOutputType = {
+    id: string | null
+    companyId: string | null
+    name: string | null
+    address: string | null
+    city: string | null
+    state: string | null
+    postcode: string | null
+    country: string | null
+    phone: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CompanyBranchMaxAggregateOutputType = {
+    id: string | null
+    companyId: string | null
+    name: string | null
+    address: string | null
+    city: string | null
+    state: string | null
+    postcode: string | null
+    country: string | null
+    phone: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CompanyBranchCountAggregateOutputType = {
+    id: number
+    companyId: number
+    name: number
+    address: number
+    city: number
+    state: number
+    postcode: number
+    country: number
+    phone: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CompanyBranchMinAggregateInputType = {
+    id?: true
+    companyId?: true
+    name?: true
+    address?: true
+    city?: true
+    state?: true
+    postcode?: true
+    country?: true
+    phone?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CompanyBranchMaxAggregateInputType = {
+    id?: true
+    companyId?: true
+    name?: true
+    address?: true
+    city?: true
+    state?: true
+    postcode?: true
+    country?: true
+    phone?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CompanyBranchCountAggregateInputType = {
+    id?: true
+    companyId?: true
+    name?: true
+    address?: true
+    city?: true
+    state?: true
+    postcode?: true
+    country?: true
+    phone?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CompanyBranchAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CompanyBranch to aggregate.
+     */
+    where?: CompanyBranchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CompanyBranches to fetch.
+     */
+    orderBy?: CompanyBranchOrderByWithRelationInput | CompanyBranchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CompanyBranchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CompanyBranches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CompanyBranches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CompanyBranches
+    **/
+    _count?: true | CompanyBranchCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CompanyBranchMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CompanyBranchMaxAggregateInputType
+  }
+
+  export type GetCompanyBranchAggregateType<T extends CompanyBranchAggregateArgs> = {
+        [P in keyof T & keyof AggregateCompanyBranch]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCompanyBranch[P]>
+      : GetScalarType<T[P], AggregateCompanyBranch[P]>
+  }
+
+
+
+
+  export type CompanyBranchGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CompanyBranchWhereInput
+    orderBy?: CompanyBranchOrderByWithAggregationInput | CompanyBranchOrderByWithAggregationInput[]
+    by: CompanyBranchScalarFieldEnum[] | CompanyBranchScalarFieldEnum
+    having?: CompanyBranchScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CompanyBranchCountAggregateInputType | true
+    _min?: CompanyBranchMinAggregateInputType
+    _max?: CompanyBranchMaxAggregateInputType
+  }
+
+  export type CompanyBranchGroupByOutputType = {
+    id: string
+    companyId: string
+    name: string
+    address: string | null
+    city: string | null
+    state: string | null
+    postcode: string | null
+    country: string | null
+    phone: string | null
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: CompanyBranchCountAggregateOutputType | null
+    _min: CompanyBranchMinAggregateOutputType | null
+    _max: CompanyBranchMaxAggregateOutputType | null
+  }
+
+  type GetCompanyBranchGroupByPayload<T extends CompanyBranchGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CompanyBranchGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CompanyBranchGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CompanyBranchGroupByOutputType[P]>
+            : GetScalarType<T[P], CompanyBranchGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CompanyBranchSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    companyId?: boolean
+    name?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    postcode?: boolean
+    country?: boolean
+    phone?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+    users?: boolean | CompanyBranch$usersArgs<ExtArgs>
+    bookings?: boolean | CompanyBranch$bookingsArgs<ExtArgs>
+    _count?: boolean | CompanyBranchCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["companyBranch"]>
+
+  export type CompanyBranchSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    companyId?: boolean
+    name?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    postcode?: boolean
+    country?: boolean
+    phone?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["companyBranch"]>
+
+  export type CompanyBranchSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    companyId?: boolean
+    name?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    postcode?: boolean
+    country?: boolean
+    phone?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["companyBranch"]>
+
+  export type CompanyBranchSelectScalar = {
+    id?: boolean
+    companyId?: boolean
+    name?: boolean
+    address?: boolean
+    city?: boolean
+    state?: boolean
+    postcode?: boolean
+    country?: boolean
+    phone?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CompanyBranchOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "companyId" | "name" | "address" | "city" | "state" | "postcode" | "country" | "phone" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["companyBranch"]>
+  export type CompanyBranchInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+    users?: boolean | CompanyBranch$usersArgs<ExtArgs>
+    bookings?: boolean | CompanyBranch$bookingsArgs<ExtArgs>
+    _count?: boolean | CompanyBranchCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type CompanyBranchIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }
+  export type CompanyBranchIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    company?: boolean | CompanyDefaultArgs<ExtArgs>
+  }
+
+  export type $CompanyBranchPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CompanyBranch"
+    objects: {
+      company: Prisma.$CompanyPayload<ExtArgs>
+      users: Prisma.$UserPayload<ExtArgs>[]
+      bookings: Prisma.$BookingRequestPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      companyId: string
+      name: string
+      address: string | null
+      city: string | null
+      state: string | null
+      postcode: string | null
+      country: string | null
+      phone: string | null
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["companyBranch"]>
+    composites: {}
+  }
+
+  type CompanyBranchGetPayload<S extends boolean | null | undefined | CompanyBranchDefaultArgs> = $Result.GetResult<Prisma.$CompanyBranchPayload, S>
+
+  type CompanyBranchCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CompanyBranchFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CompanyBranchCountAggregateInputType | true
+    }
+
+  export interface CompanyBranchDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CompanyBranch'], meta: { name: 'CompanyBranch' } }
+    /**
+     * Find zero or one CompanyBranch that matches the filter.
+     * @param {CompanyBranchFindUniqueArgs} args - Arguments to find a CompanyBranch
+     * @example
+     * // Get one CompanyBranch
+     * const companyBranch = await prisma.companyBranch.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CompanyBranchFindUniqueArgs>(args: SelectSubset<T, CompanyBranchFindUniqueArgs<ExtArgs>>): Prisma__CompanyBranchClient<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CompanyBranch that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CompanyBranchFindUniqueOrThrowArgs} args - Arguments to find a CompanyBranch
+     * @example
+     * // Get one CompanyBranch
+     * const companyBranch = await prisma.companyBranch.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CompanyBranchFindUniqueOrThrowArgs>(args: SelectSubset<T, CompanyBranchFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CompanyBranchClient<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CompanyBranch that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyBranchFindFirstArgs} args - Arguments to find a CompanyBranch
+     * @example
+     * // Get one CompanyBranch
+     * const companyBranch = await prisma.companyBranch.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CompanyBranchFindFirstArgs>(args?: SelectSubset<T, CompanyBranchFindFirstArgs<ExtArgs>>): Prisma__CompanyBranchClient<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CompanyBranch that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyBranchFindFirstOrThrowArgs} args - Arguments to find a CompanyBranch
+     * @example
+     * // Get one CompanyBranch
+     * const companyBranch = await prisma.companyBranch.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CompanyBranchFindFirstOrThrowArgs>(args?: SelectSubset<T, CompanyBranchFindFirstOrThrowArgs<ExtArgs>>): Prisma__CompanyBranchClient<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CompanyBranches that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyBranchFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CompanyBranches
+     * const companyBranches = await prisma.companyBranch.findMany()
+     * 
+     * // Get first 10 CompanyBranches
+     * const companyBranches = await prisma.companyBranch.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const companyBranchWithIdOnly = await prisma.companyBranch.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CompanyBranchFindManyArgs>(args?: SelectSubset<T, CompanyBranchFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CompanyBranch.
+     * @param {CompanyBranchCreateArgs} args - Arguments to create a CompanyBranch.
+     * @example
+     * // Create one CompanyBranch
+     * const CompanyBranch = await prisma.companyBranch.create({
+     *   data: {
+     *     // ... data to create a CompanyBranch
+     *   }
+     * })
+     * 
+     */
+    create<T extends CompanyBranchCreateArgs>(args: SelectSubset<T, CompanyBranchCreateArgs<ExtArgs>>): Prisma__CompanyBranchClient<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CompanyBranches.
+     * @param {CompanyBranchCreateManyArgs} args - Arguments to create many CompanyBranches.
+     * @example
+     * // Create many CompanyBranches
+     * const companyBranch = await prisma.companyBranch.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CompanyBranchCreateManyArgs>(args?: SelectSubset<T, CompanyBranchCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CompanyBranches and returns the data saved in the database.
+     * @param {CompanyBranchCreateManyAndReturnArgs} args - Arguments to create many CompanyBranches.
+     * @example
+     * // Create many CompanyBranches
+     * const companyBranch = await prisma.companyBranch.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CompanyBranches and only return the `id`
+     * const companyBranchWithIdOnly = await prisma.companyBranch.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CompanyBranchCreateManyAndReturnArgs>(args?: SelectSubset<T, CompanyBranchCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CompanyBranch.
+     * @param {CompanyBranchDeleteArgs} args - Arguments to delete one CompanyBranch.
+     * @example
+     * // Delete one CompanyBranch
+     * const CompanyBranch = await prisma.companyBranch.delete({
+     *   where: {
+     *     // ... filter to delete one CompanyBranch
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CompanyBranchDeleteArgs>(args: SelectSubset<T, CompanyBranchDeleteArgs<ExtArgs>>): Prisma__CompanyBranchClient<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CompanyBranch.
+     * @param {CompanyBranchUpdateArgs} args - Arguments to update one CompanyBranch.
+     * @example
+     * // Update one CompanyBranch
+     * const companyBranch = await prisma.companyBranch.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CompanyBranchUpdateArgs>(args: SelectSubset<T, CompanyBranchUpdateArgs<ExtArgs>>): Prisma__CompanyBranchClient<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CompanyBranches.
+     * @param {CompanyBranchDeleteManyArgs} args - Arguments to filter CompanyBranches to delete.
+     * @example
+     * // Delete a few CompanyBranches
+     * const { count } = await prisma.companyBranch.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CompanyBranchDeleteManyArgs>(args?: SelectSubset<T, CompanyBranchDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CompanyBranches.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyBranchUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CompanyBranches
+     * const companyBranch = await prisma.companyBranch.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CompanyBranchUpdateManyArgs>(args: SelectSubset<T, CompanyBranchUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CompanyBranches and returns the data updated in the database.
+     * @param {CompanyBranchUpdateManyAndReturnArgs} args - Arguments to update many CompanyBranches.
+     * @example
+     * // Update many CompanyBranches
+     * const companyBranch = await prisma.companyBranch.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CompanyBranches and only return the `id`
+     * const companyBranchWithIdOnly = await prisma.companyBranch.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CompanyBranchUpdateManyAndReturnArgs>(args: SelectSubset<T, CompanyBranchUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CompanyBranch.
+     * @param {CompanyBranchUpsertArgs} args - Arguments to update or create a CompanyBranch.
+     * @example
+     * // Update or create a CompanyBranch
+     * const companyBranch = await prisma.companyBranch.upsert({
+     *   create: {
+     *     // ... data to create a CompanyBranch
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CompanyBranch we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CompanyBranchUpsertArgs>(args: SelectSubset<T, CompanyBranchUpsertArgs<ExtArgs>>): Prisma__CompanyBranchClient<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CompanyBranches.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyBranchCountArgs} args - Arguments to filter CompanyBranches to count.
+     * @example
+     * // Count the number of CompanyBranches
+     * const count = await prisma.companyBranch.count({
+     *   where: {
+     *     // ... the filter for the CompanyBranches we want to count
+     *   }
+     * })
+    **/
+    count<T extends CompanyBranchCountArgs>(
+      args?: Subset<T, CompanyBranchCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CompanyBranchCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CompanyBranch.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyBranchAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CompanyBranchAggregateArgs>(args: Subset<T, CompanyBranchAggregateArgs>): Prisma.PrismaPromise<GetCompanyBranchAggregateType<T>>
+
+    /**
+     * Group by CompanyBranch.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CompanyBranchGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CompanyBranchGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CompanyBranchGroupByArgs['orderBy'] }
+        : { orderBy?: CompanyBranchGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CompanyBranchGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCompanyBranchGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CompanyBranch model
+   */
+  readonly fields: CompanyBranchFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CompanyBranch.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CompanyBranchClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    company<T extends CompanyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CompanyDefaultArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    users<T extends CompanyBranch$usersArgs<ExtArgs> = {}>(args?: Subset<T, CompanyBranch$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    bookings<T extends CompanyBranch$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, CompanyBranch$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CompanyBranch model
+   */
+  interface CompanyBranchFieldRefs {
+    readonly id: FieldRef<"CompanyBranch", 'String'>
+    readonly companyId: FieldRef<"CompanyBranch", 'String'>
+    readonly name: FieldRef<"CompanyBranch", 'String'>
+    readonly address: FieldRef<"CompanyBranch", 'String'>
+    readonly city: FieldRef<"CompanyBranch", 'String'>
+    readonly state: FieldRef<"CompanyBranch", 'String'>
+    readonly postcode: FieldRef<"CompanyBranch", 'String'>
+    readonly country: FieldRef<"CompanyBranch", 'String'>
+    readonly phone: FieldRef<"CompanyBranch", 'String'>
+    readonly isActive: FieldRef<"CompanyBranch", 'Boolean'>
+    readonly createdAt: FieldRef<"CompanyBranch", 'DateTime'>
+    readonly updatedAt: FieldRef<"CompanyBranch", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CompanyBranch findUnique
+   */
+  export type CompanyBranchFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    /**
+     * Filter, which CompanyBranch to fetch.
+     */
+    where: CompanyBranchWhereUniqueInput
+  }
+
+  /**
+   * CompanyBranch findUniqueOrThrow
+   */
+  export type CompanyBranchFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    /**
+     * Filter, which CompanyBranch to fetch.
+     */
+    where: CompanyBranchWhereUniqueInput
+  }
+
+  /**
+   * CompanyBranch findFirst
+   */
+  export type CompanyBranchFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    /**
+     * Filter, which CompanyBranch to fetch.
+     */
+    where?: CompanyBranchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CompanyBranches to fetch.
+     */
+    orderBy?: CompanyBranchOrderByWithRelationInput | CompanyBranchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CompanyBranches.
+     */
+    cursor?: CompanyBranchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CompanyBranches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CompanyBranches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CompanyBranches.
+     */
+    distinct?: CompanyBranchScalarFieldEnum | CompanyBranchScalarFieldEnum[]
+  }
+
+  /**
+   * CompanyBranch findFirstOrThrow
+   */
+  export type CompanyBranchFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    /**
+     * Filter, which CompanyBranch to fetch.
+     */
+    where?: CompanyBranchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CompanyBranches to fetch.
+     */
+    orderBy?: CompanyBranchOrderByWithRelationInput | CompanyBranchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CompanyBranches.
+     */
+    cursor?: CompanyBranchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CompanyBranches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CompanyBranches.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CompanyBranches.
+     */
+    distinct?: CompanyBranchScalarFieldEnum | CompanyBranchScalarFieldEnum[]
+  }
+
+  /**
+   * CompanyBranch findMany
+   */
+  export type CompanyBranchFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    /**
+     * Filter, which CompanyBranches to fetch.
+     */
+    where?: CompanyBranchWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CompanyBranches to fetch.
+     */
+    orderBy?: CompanyBranchOrderByWithRelationInput | CompanyBranchOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CompanyBranches.
+     */
+    cursor?: CompanyBranchWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CompanyBranches from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CompanyBranches.
+     */
+    skip?: number
+    distinct?: CompanyBranchScalarFieldEnum | CompanyBranchScalarFieldEnum[]
+  }
+
+  /**
+   * CompanyBranch create
+   */
+  export type CompanyBranchCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CompanyBranch.
+     */
+    data: XOR<CompanyBranchCreateInput, CompanyBranchUncheckedCreateInput>
+  }
+
+  /**
+   * CompanyBranch createMany
+   */
+  export type CompanyBranchCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CompanyBranches.
+     */
+    data: CompanyBranchCreateManyInput | CompanyBranchCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CompanyBranch createManyAndReturn
+   */
+  export type CompanyBranchCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * The data used to create many CompanyBranches.
+     */
+    data: CompanyBranchCreateManyInput | CompanyBranchCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CompanyBranch update
+   */
+  export type CompanyBranchUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CompanyBranch.
+     */
+    data: XOR<CompanyBranchUpdateInput, CompanyBranchUncheckedUpdateInput>
+    /**
+     * Choose, which CompanyBranch to update.
+     */
+    where: CompanyBranchWhereUniqueInput
+  }
+
+  /**
+   * CompanyBranch updateMany
+   */
+  export type CompanyBranchUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CompanyBranches.
+     */
+    data: XOR<CompanyBranchUpdateManyMutationInput, CompanyBranchUncheckedUpdateManyInput>
+    /**
+     * Filter which CompanyBranches to update
+     */
+    where?: CompanyBranchWhereInput
+    /**
+     * Limit how many CompanyBranches to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CompanyBranch updateManyAndReturn
+   */
+  export type CompanyBranchUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * The data used to update CompanyBranches.
+     */
+    data: XOR<CompanyBranchUpdateManyMutationInput, CompanyBranchUncheckedUpdateManyInput>
+    /**
+     * Filter which CompanyBranches to update
+     */
+    where?: CompanyBranchWhereInput
+    /**
+     * Limit how many CompanyBranches to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CompanyBranch upsert
+   */
+  export type CompanyBranchUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CompanyBranch to update in case it exists.
+     */
+    where: CompanyBranchWhereUniqueInput
+    /**
+     * In case the CompanyBranch found by the `where` argument doesn't exist, create a new CompanyBranch with this data.
+     */
+    create: XOR<CompanyBranchCreateInput, CompanyBranchUncheckedCreateInput>
+    /**
+     * In case the CompanyBranch was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CompanyBranchUpdateInput, CompanyBranchUncheckedUpdateInput>
+  }
+
+  /**
+   * CompanyBranch delete
+   */
+  export type CompanyBranchDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    /**
+     * Filter which CompanyBranch to delete.
+     */
+    where: CompanyBranchWhereUniqueInput
+  }
+
+  /**
+   * CompanyBranch deleteMany
+   */
+  export type CompanyBranchDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CompanyBranches to delete
+     */
+    where?: CompanyBranchWhereInput
+    /**
+     * Limit how many CompanyBranches to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CompanyBranch.users
+   */
+  export type CompanyBranch$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * CompanyBranch.bookings
+   */
+  export type CompanyBranch$bookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookingRequest
+     */
+    select?: BookingRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BookingRequest
+     */
+    omit?: BookingRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookingRequestInclude<ExtArgs> | null
+    where?: BookingRequestWhereInput
+    orderBy?: BookingRequestOrderByWithRelationInput | BookingRequestOrderByWithRelationInput[]
+    cursor?: BookingRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BookingRequestScalarFieldEnum | BookingRequestScalarFieldEnum[]
+  }
+
+  /**
+   * CompanyBranch without action
+   */
+  export type CompanyBranchDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model User
    */
 
@@ -8318,11 +14752,15 @@ export namespace Prisma {
     phone: string | null
     userType: $Enums.user_type_enum | null
     status: $Enums.user_status_enum | null
-    matrixNo: string | null
-    staffId: string | null
-    faculty: string | null
-    department: string | null
-    companyName: string | null
+    academicType: $Enums.academic_type_enum | null
+    userIdentifier: string | null
+    supervisorName: string | null
+    facultyId: string | null
+    departmentId: string | null
+    ikohzaId: string | null
+    companyId: string | null
+    companyBranchId: string | null
+    UTM: $Enums.UTM | null
     address: string | null
     email: string | null
     emailVerifiedAt: Date | null
@@ -8341,11 +14779,15 @@ export namespace Prisma {
     phone: string | null
     userType: $Enums.user_type_enum | null
     status: $Enums.user_status_enum | null
-    matrixNo: string | null
-    staffId: string | null
-    faculty: string | null
-    department: string | null
-    companyName: string | null
+    academicType: $Enums.academic_type_enum | null
+    userIdentifier: string | null
+    supervisorName: string | null
+    facultyId: string | null
+    departmentId: string | null
+    ikohzaId: string | null
+    companyId: string | null
+    companyBranchId: string | null
+    UTM: $Enums.UTM | null
     address: string | null
     email: string | null
     emailVerifiedAt: Date | null
@@ -8364,11 +14806,15 @@ export namespace Prisma {
     phone: number
     userType: number
     status: number
-    matrixNo: number
-    staffId: number
-    faculty: number
-    department: number
-    companyName: number
+    academicType: number
+    userIdentifier: number
+    supervisorName: number
+    facultyId: number
+    departmentId: number
+    ikohzaId: number
+    companyId: number
+    companyBranchId: number
+    UTM: number
     address: number
     email: number
     emailVerifiedAt: number
@@ -8389,11 +14835,15 @@ export namespace Prisma {
     phone?: true
     userType?: true
     status?: true
-    matrixNo?: true
-    staffId?: true
-    faculty?: true
-    department?: true
-    companyName?: true
+    academicType?: true
+    userIdentifier?: true
+    supervisorName?: true
+    facultyId?: true
+    departmentId?: true
+    ikohzaId?: true
+    companyId?: true
+    companyBranchId?: true
+    UTM?: true
     address?: true
     email?: true
     emailVerifiedAt?: true
@@ -8412,11 +14862,15 @@ export namespace Prisma {
     phone?: true
     userType?: true
     status?: true
-    matrixNo?: true
-    staffId?: true
-    faculty?: true
-    department?: true
-    companyName?: true
+    academicType?: true
+    userIdentifier?: true
+    supervisorName?: true
+    facultyId?: true
+    departmentId?: true
+    ikohzaId?: true
+    companyId?: true
+    companyBranchId?: true
+    UTM?: true
     address?: true
     email?: true
     emailVerifiedAt?: true
@@ -8435,11 +14889,15 @@ export namespace Prisma {
     phone?: true
     userType?: true
     status?: true
-    matrixNo?: true
-    staffId?: true
-    faculty?: true
-    department?: true
-    companyName?: true
+    academicType?: true
+    userIdentifier?: true
+    supervisorName?: true
+    facultyId?: true
+    departmentId?: true
+    ikohzaId?: true
+    companyId?: true
+    companyBranchId?: true
+    UTM?: true
     address?: true
     email?: true
     emailVerifiedAt?: true
@@ -8531,11 +14989,15 @@ export namespace Prisma {
     phone: string | null
     userType: $Enums.user_type_enum
     status: $Enums.user_status_enum
-    matrixNo: string | null
-    staffId: string | null
-    faculty: string | null
-    department: string | null
-    companyName: string | null
+    academicType: $Enums.academic_type_enum
+    userIdentifier: string | null
+    supervisorName: string | null
+    facultyId: string | null
+    departmentId: string | null
+    ikohzaId: string | null
+    companyId: string | null
+    companyBranchId: string | null
+    UTM: $Enums.UTM | null
     address: string | null
     email: string
     emailVerifiedAt: Date | null
@@ -8571,11 +15033,15 @@ export namespace Prisma {
     phone?: boolean
     userType?: boolean
     status?: boolean
-    matrixNo?: boolean
-    staffId?: boolean
-    faculty?: boolean
-    department?: boolean
-    companyName?: boolean
+    academicType?: boolean
+    userIdentifier?: boolean
+    supervisorName?: boolean
+    facultyId?: boolean
+    departmentId?: boolean
+    ikohzaId?: boolean
+    companyId?: boolean
+    companyBranchId?: boolean
+    UTM?: boolean
     address?: boolean
     email?: boolean
     emailVerifiedAt?: boolean
@@ -8584,6 +15050,11 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     approvedBy?: boolean
+    facultyRelation?: boolean | User$facultyRelationArgs<ExtArgs>
+    departmentRelation?: boolean | User$departmentRelationArgs<ExtArgs>
+    ikohza?: boolean | User$ikohzaArgs<ExtArgs>
+    companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
     approvedUsers?: boolean | User$approvedUsersArgs<ExtArgs>
     authProviders?: boolean | User$authProvidersArgs<ExtArgs>
@@ -8610,11 +15081,15 @@ export namespace Prisma {
     phone?: boolean
     userType?: boolean
     status?: boolean
-    matrixNo?: boolean
-    staffId?: boolean
-    faculty?: boolean
-    department?: boolean
-    companyName?: boolean
+    academicType?: boolean
+    userIdentifier?: boolean
+    supervisorName?: boolean
+    facultyId?: boolean
+    departmentId?: boolean
+    ikohzaId?: boolean
+    companyId?: boolean
+    companyBranchId?: boolean
+    UTM?: boolean
     address?: boolean
     email?: boolean
     emailVerifiedAt?: boolean
@@ -8623,6 +15098,11 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     approvedBy?: boolean
+    facultyRelation?: boolean | User$facultyRelationArgs<ExtArgs>
+    departmentRelation?: boolean | User$departmentRelationArgs<ExtArgs>
+    ikohza?: boolean | User$ikohzaArgs<ExtArgs>
+    companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -8634,11 +15114,15 @@ export namespace Prisma {
     phone?: boolean
     userType?: boolean
     status?: boolean
-    matrixNo?: boolean
-    staffId?: boolean
-    faculty?: boolean
-    department?: boolean
-    companyName?: boolean
+    academicType?: boolean
+    userIdentifier?: boolean
+    supervisorName?: boolean
+    facultyId?: boolean
+    departmentId?: boolean
+    ikohzaId?: boolean
+    companyId?: boolean
+    companyBranchId?: boolean
+    UTM?: boolean
     address?: boolean
     email?: boolean
     emailVerifiedAt?: boolean
@@ -8647,6 +15131,11 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     approvedBy?: boolean
+    facultyRelation?: boolean | User$facultyRelationArgs<ExtArgs>
+    departmentRelation?: boolean | User$departmentRelationArgs<ExtArgs>
+    ikohza?: boolean | User$ikohzaArgs<ExtArgs>
+    companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -8658,11 +15147,15 @@ export namespace Prisma {
     phone?: boolean
     userType?: boolean
     status?: boolean
-    matrixNo?: boolean
-    staffId?: boolean
-    faculty?: boolean
-    department?: boolean
-    companyName?: boolean
+    academicType?: boolean
+    userIdentifier?: boolean
+    supervisorName?: boolean
+    facultyId?: boolean
+    departmentId?: boolean
+    ikohzaId?: boolean
+    companyId?: boolean
+    companyBranchId?: boolean
+    UTM?: boolean
     address?: boolean
     email?: boolean
     emailVerifiedAt?: boolean
@@ -8673,8 +15166,13 @@ export namespace Prisma {
     approvedBy?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "profileImageUrl" | "phone" | "userType" | "status" | "matrixNo" | "staffId" | "faculty" | "department" | "companyName" | "address" | "email" | "emailVerifiedAt" | "lastLoginAt" | "approvedAt" | "createdAt" | "updatedAt" | "approvedBy", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "profileImageUrl" | "phone" | "userType" | "status" | "academicType" | "userIdentifier" | "supervisorName" | "facultyId" | "departmentId" | "ikohzaId" | "companyId" | "companyBranchId" | "UTM" | "address" | "email" | "emailVerifiedAt" | "lastLoginAt" | "approvedAt" | "createdAt" | "updatedAt" | "approvedBy", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultyRelation?: boolean | User$facultyRelationArgs<ExtArgs>
+    departmentRelation?: boolean | User$departmentRelationArgs<ExtArgs>
+    ikohza?: boolean | User$ikohzaArgs<ExtArgs>
+    companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
     approvedUsers?: boolean | User$approvedUsersArgs<ExtArgs>
     authProviders?: boolean | User$authProvidersArgs<ExtArgs>
@@ -8693,15 +15191,30 @@ export namespace Prisma {
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultyRelation?: boolean | User$facultyRelationArgs<ExtArgs>
+    departmentRelation?: boolean | User$departmentRelationArgs<ExtArgs>
+    ikohza?: boolean | User$ikohzaArgs<ExtArgs>
+    companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
   }
   export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    facultyRelation?: boolean | User$facultyRelationArgs<ExtArgs>
+    departmentRelation?: boolean | User$departmentRelationArgs<ExtArgs>
+    ikohza?: boolean | User$ikohzaArgs<ExtArgs>
+    companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
   }
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      facultyRelation: Prisma.$FacultyPayload<ExtArgs> | null
+      departmentRelation: Prisma.$DepartmentPayload<ExtArgs> | null
+      ikohza: Prisma.$IkohzaPayload<ExtArgs> | null
+      companyRelation: Prisma.$CompanyPayload<ExtArgs> | null
+      companyBranch: Prisma.$CompanyBranchPayload<ExtArgs> | null
       approvedByUser: Prisma.$UserPayload<ExtArgs> | null
       approvedUsers: Prisma.$UserPayload<ExtArgs>[]
       authProviders: Prisma.$AuthProviderPayload<ExtArgs>[]
@@ -8726,11 +15239,15 @@ export namespace Prisma {
       phone: string | null
       userType: $Enums.user_type_enum
       status: $Enums.user_status_enum
-      matrixNo: string | null
-      staffId: string | null
-      faculty: string | null
-      department: string | null
-      companyName: string | null
+      academicType: $Enums.academic_type_enum
+      userIdentifier: string | null
+      supervisorName: string | null
+      facultyId: string | null
+      departmentId: string | null
+      ikohzaId: string | null
+      companyId: string | null
+      companyBranchId: string | null
+      UTM: $Enums.UTM | null
       address: string | null
       email: string
       emailVerifiedAt: Date | null
@@ -9133,6 +15650,11 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    facultyRelation<T extends User$facultyRelationArgs<ExtArgs> = {}>(args?: Subset<T, User$facultyRelationArgs<ExtArgs>>): Prisma__FacultyClient<$Result.GetResult<Prisma.$FacultyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    departmentRelation<T extends User$departmentRelationArgs<ExtArgs> = {}>(args?: Subset<T, User$departmentRelationArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    ikohza<T extends User$ikohzaArgs<ExtArgs> = {}>(args?: Subset<T, User$ikohzaArgs<ExtArgs>>): Prisma__IkohzaClient<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    companyRelation<T extends User$companyRelationArgs<ExtArgs> = {}>(args?: Subset<T, User$companyRelationArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    companyBranch<T extends User$companyBranchArgs<ExtArgs> = {}>(args?: Subset<T, User$companyBranchArgs<ExtArgs>>): Prisma__CompanyBranchClient<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     approvedByUser<T extends User$approvedByUserArgs<ExtArgs> = {}>(args?: Subset<T, User$approvedByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     approvedUsers<T extends User$approvedUsersArgs<ExtArgs> = {}>(args?: Subset<T, User$approvedUsersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     authProviders<T extends User$authProvidersArgs<ExtArgs> = {}>(args?: Subset<T, User$authProvidersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthProviderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -9184,11 +15706,15 @@ export namespace Prisma {
     readonly phone: FieldRef<"User", 'String'>
     readonly userType: FieldRef<"User", 'user_type_enum'>
     readonly status: FieldRef<"User", 'user_status_enum'>
-    readonly matrixNo: FieldRef<"User", 'String'>
-    readonly staffId: FieldRef<"User", 'String'>
-    readonly faculty: FieldRef<"User", 'String'>
-    readonly department: FieldRef<"User", 'String'>
-    readonly companyName: FieldRef<"User", 'String'>
+    readonly academicType: FieldRef<"User", 'academic_type_enum'>
+    readonly userIdentifier: FieldRef<"User", 'String'>
+    readonly supervisorName: FieldRef<"User", 'String'>
+    readonly facultyId: FieldRef<"User", 'String'>
+    readonly departmentId: FieldRef<"User", 'String'>
+    readonly ikohzaId: FieldRef<"User", 'String'>
+    readonly companyId: FieldRef<"User", 'String'>
+    readonly companyBranchId: FieldRef<"User", 'String'>
+    readonly UTM: FieldRef<"User", 'UTM'>
     readonly address: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly emailVerifiedAt: FieldRef<"User", 'DateTime'>
@@ -9590,6 +16116,101 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
+  }
+
+  /**
+   * User.facultyRelation
+   */
+  export type User$facultyRelationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Faculty
+     */
+    select?: FacultySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Faculty
+     */
+    omit?: FacultyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FacultyInclude<ExtArgs> | null
+    where?: FacultyWhereInput
+  }
+
+  /**
+   * User.departmentRelation
+   */
+  export type User$departmentRelationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Department
+     */
+    select?: DepartmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Department
+     */
+    omit?: DepartmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentInclude<ExtArgs> | null
+    where?: DepartmentWhereInput
+  }
+
+  /**
+   * User.ikohza
+   */
+  export type User$ikohzaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Ikohza
+     */
+    select?: IkohzaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Ikohza
+     */
+    omit?: IkohzaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IkohzaInclude<ExtArgs> | null
+    where?: IkohzaWhereInput
+  }
+
+  /**
+   * User.companyRelation
+   */
+  export type User$companyRelationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    where?: CompanyWhereInput
+  }
+
+  /**
+   * User.companyBranch
+   */
+  export type User$companyBranchArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    where?: CompanyBranchWhereInput
   }
 
   /**
@@ -13476,6 +20097,8 @@ export namespace Prisma {
     reviewedAt: Date | null
     reviewedBy: string | null
     reviewNotes: string | null
+    companyId: string | null
+    companyBranchId: string | null
   }
 
   export type BookingRequestMaxAggregateOutputType = {
@@ -13493,6 +20116,8 @@ export namespace Prisma {
     reviewedAt: Date | null
     reviewedBy: string | null
     reviewNotes: string | null
+    companyId: string | null
+    companyBranchId: string | null
   }
 
   export type BookingRequestCountAggregateOutputType = {
@@ -13510,6 +20135,8 @@ export namespace Prisma {
     reviewedAt: number
     reviewedBy: number
     reviewNotes: number
+    companyId: number
+    companyBranchId: number
     _all: number
   }
 
@@ -13537,6 +20164,8 @@ export namespace Prisma {
     reviewedAt?: true
     reviewedBy?: true
     reviewNotes?: true
+    companyId?: true
+    companyBranchId?: true
   }
 
   export type BookingRequestMaxAggregateInputType = {
@@ -13554,6 +20183,8 @@ export namespace Prisma {
     reviewedAt?: true
     reviewedBy?: true
     reviewNotes?: true
+    companyId?: true
+    companyBranchId?: true
   }
 
   export type BookingRequestCountAggregateInputType = {
@@ -13571,6 +20202,8 @@ export namespace Prisma {
     reviewedAt?: true
     reviewedBy?: true
     reviewNotes?: true
+    companyId?: true
+    companyBranchId?: true
     _all?: true
   }
 
@@ -13675,6 +20308,8 @@ export namespace Prisma {
     reviewedAt: Date | null
     reviewedBy: string | null
     reviewNotes: string | null
+    companyId: string | null
+    companyBranchId: string | null
     _count: BookingRequestCountAggregateOutputType | null
     _avg: BookingRequestAvgAggregateOutputType | null
     _sum: BookingRequestSumAggregateOutputType | null
@@ -13711,8 +20346,12 @@ export namespace Prisma {
     reviewedAt?: boolean
     reviewedBy?: boolean
     reviewNotes?: boolean
+    companyId?: boolean
+    companyBranchId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     reviewedByUser?: boolean | BookingRequest$reviewedByUserArgs<ExtArgs>
+    companyRelation?: boolean | BookingRequest$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | BookingRequest$companyBranchArgs<ExtArgs>
     serviceItems?: boolean | BookingRequest$serviceItemsArgs<ExtArgs>
     workspaceBookings?: boolean | BookingRequest$workspaceBookingsArgs<ExtArgs>
     serviceForms?: boolean | BookingRequest$serviceFormsArgs<ExtArgs>
@@ -13734,8 +20373,12 @@ export namespace Prisma {
     reviewedAt?: boolean
     reviewedBy?: boolean
     reviewNotes?: boolean
+    companyId?: boolean
+    companyBranchId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     reviewedByUser?: boolean | BookingRequest$reviewedByUserArgs<ExtArgs>
+    companyRelation?: boolean | BookingRequest$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | BookingRequest$companyBranchArgs<ExtArgs>
   }, ExtArgs["result"]["bookingRequest"]>
 
   export type BookingRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13753,8 +20396,12 @@ export namespace Prisma {
     reviewedAt?: boolean
     reviewedBy?: boolean
     reviewNotes?: boolean
+    companyId?: boolean
+    companyBranchId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     reviewedByUser?: boolean | BookingRequest$reviewedByUserArgs<ExtArgs>
+    companyRelation?: boolean | BookingRequest$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | BookingRequest$companyBranchArgs<ExtArgs>
   }, ExtArgs["result"]["bookingRequest"]>
 
   export type BookingRequestSelectScalar = {
@@ -13772,12 +20419,16 @@ export namespace Prisma {
     reviewedAt?: boolean
     reviewedBy?: boolean
     reviewNotes?: boolean
+    companyId?: boolean
+    companyBranchId?: boolean
   }
 
-  export type BookingRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "referenceNumber" | "projectDescription" | "preferredStartDate" | "preferredEndDate" | "totalAmount" | "status" | "notes" | "createdAt" | "updatedAt" | "reviewedAt" | "reviewedBy" | "reviewNotes", ExtArgs["result"]["bookingRequest"]>
+  export type BookingRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "referenceNumber" | "projectDescription" | "preferredStartDate" | "preferredEndDate" | "totalAmount" | "status" | "notes" | "createdAt" | "updatedAt" | "reviewedAt" | "reviewedBy" | "reviewNotes" | "companyId" | "companyBranchId", ExtArgs["result"]["bookingRequest"]>
   export type BookingRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     reviewedByUser?: boolean | BookingRequest$reviewedByUserArgs<ExtArgs>
+    companyRelation?: boolean | BookingRequest$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | BookingRequest$companyBranchArgs<ExtArgs>
     serviceItems?: boolean | BookingRequest$serviceItemsArgs<ExtArgs>
     workspaceBookings?: boolean | BookingRequest$workspaceBookingsArgs<ExtArgs>
     serviceForms?: boolean | BookingRequest$serviceFormsArgs<ExtArgs>
@@ -13786,10 +20437,14 @@ export namespace Prisma {
   export type BookingRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     reviewedByUser?: boolean | BookingRequest$reviewedByUserArgs<ExtArgs>
+    companyRelation?: boolean | BookingRequest$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | BookingRequest$companyBranchArgs<ExtArgs>
   }
   export type BookingRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     reviewedByUser?: boolean | BookingRequest$reviewedByUserArgs<ExtArgs>
+    companyRelation?: boolean | BookingRequest$companyRelationArgs<ExtArgs>
+    companyBranch?: boolean | BookingRequest$companyBranchArgs<ExtArgs>
   }
 
   export type $BookingRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13797,6 +20452,8 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       reviewedByUser: Prisma.$UserPayload<ExtArgs> | null
+      companyRelation: Prisma.$CompanyPayload<ExtArgs> | null
+      companyBranch: Prisma.$CompanyBranchPayload<ExtArgs> | null
       serviceItems: Prisma.$BookingServiceItemPayload<ExtArgs>[]
       workspaceBookings: Prisma.$WorkspaceBookingPayload<ExtArgs>[]
       serviceForms: Prisma.$ServiceFormPayload<ExtArgs>[]
@@ -13816,6 +20473,8 @@ export namespace Prisma {
       reviewedAt: Date | null
       reviewedBy: string | null
       reviewNotes: string | null
+      companyId: string | null
+      companyBranchId: string | null
     }, ExtArgs["result"]["bookingRequest"]>
     composites: {}
   }
@@ -14212,6 +20871,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     reviewedByUser<T extends BookingRequest$reviewedByUserArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequest$reviewedByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    companyRelation<T extends BookingRequest$companyRelationArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequest$companyRelationArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    companyBranch<T extends BookingRequest$companyBranchArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequest$companyBranchArgs<ExtArgs>>): Prisma__CompanyBranchClient<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     serviceItems<T extends BookingRequest$serviceItemsArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequest$serviceItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingServiceItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     workspaceBookings<T extends BookingRequest$workspaceBookingsArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequest$workspaceBookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkspaceBookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     serviceForms<T extends BookingRequest$serviceFormsArgs<ExtArgs> = {}>(args?: Subset<T, BookingRequest$serviceFormsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceFormPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -14258,6 +20919,8 @@ export namespace Prisma {
     readonly reviewedAt: FieldRef<"BookingRequest", 'DateTime'>
     readonly reviewedBy: FieldRef<"BookingRequest", 'String'>
     readonly reviewNotes: FieldRef<"BookingRequest", 'String'>
+    readonly companyId: FieldRef<"BookingRequest", 'String'>
+    readonly companyBranchId: FieldRef<"BookingRequest", 'String'>
   }
     
 
@@ -14670,6 +21333,44 @@ export namespace Prisma {
      */
     include?: UserInclude<ExtArgs> | null
     where?: UserWhereInput
+  }
+
+  /**
+   * BookingRequest.companyRelation
+   */
+  export type BookingRequest$companyRelationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Company
+     */
+    select?: CompanySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Company
+     */
+    omit?: CompanyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyInclude<ExtArgs> | null
+    where?: CompanyWhereInput
+  }
+
+  /**
+   * BookingRequest.companyBranch
+   */
+  export type BookingRequest$companyBranchArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CompanyBranch
+     */
+    select?: CompanyBranchSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CompanyBranch
+     */
+    omit?: CompanyBranchOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CompanyBranchInclude<ExtArgs> | null
+    where?: CompanyBranchWhereInput
   }
 
   /**
@@ -34104,6 +40805,77 @@ export namespace Prisma {
   export type BetterAuthVerificationScalarFieldEnum = (typeof BetterAuthVerificationScalarFieldEnum)[keyof typeof BetterAuthVerificationScalarFieldEnum]
 
 
+  export const FacultyScalarFieldEnum: {
+    id: 'id',
+    code: 'code',
+    name: 'name',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type FacultyScalarFieldEnum = (typeof FacultyScalarFieldEnum)[keyof typeof FacultyScalarFieldEnum]
+
+
+  export const DepartmentScalarFieldEnum: {
+    id: 'id',
+    facultyId: 'facultyId',
+    code: 'code',
+    name: 'name',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type DepartmentScalarFieldEnum = (typeof DepartmentScalarFieldEnum)[keyof typeof DepartmentScalarFieldEnum]
+
+
+  export const IkohzaScalarFieldEnum: {
+    id: 'id',
+    facultyId: 'facultyId',
+    code: 'code',
+    name: 'name',
+    description: 'description',
+    isActive: 'isActive',
+    leaderName: 'leaderName',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type IkohzaScalarFieldEnum = (typeof IkohzaScalarFieldEnum)[keyof typeof IkohzaScalarFieldEnum]
+
+
+  export const CompanyScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    legalName: 'legalName',
+    regNo: 'regNo',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
+
+
+  export const CompanyBranchScalarFieldEnum: {
+    id: 'id',
+    companyId: 'companyId',
+    name: 'name',
+    address: 'address',
+    city: 'city',
+    state: 'state',
+    postcode: 'postcode',
+    country: 'country',
+    phone: 'phone',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CompanyBranchScalarFieldEnum = (typeof CompanyBranchScalarFieldEnum)[keyof typeof CompanyBranchScalarFieldEnum]
+
+
   export const UserScalarFieldEnum: {
     id: 'id',
     firstName: 'firstName',
@@ -34112,11 +40884,15 @@ export namespace Prisma {
     phone: 'phone',
     userType: 'userType',
     status: 'status',
-    matrixNo: 'matrixNo',
-    staffId: 'staffId',
-    faculty: 'faculty',
-    department: 'department',
-    companyName: 'companyName',
+    academicType: 'academicType',
+    userIdentifier: 'userIdentifier',
+    supervisorName: 'supervisorName',
+    facultyId: 'facultyId',
+    departmentId: 'departmentId',
+    ikohzaId: 'ikohzaId',
+    companyId: 'companyId',
+    companyBranchId: 'companyBranchId',
+    UTM: 'UTM',
     address: 'address',
     email: 'email',
     emailVerifiedAt: 'emailVerifiedAt',
@@ -34190,7 +40966,9 @@ export namespace Prisma {
     updatedAt: 'updatedAt',
     reviewedAt: 'reviewedAt',
     reviewedBy: 'reviewedBy',
-    reviewNotes: 'reviewNotes'
+    reviewNotes: 'reviewNotes',
+    companyId: 'companyId',
+    companyBranchId: 'companyBranchId'
   };
 
   export type BookingRequestScalarFieldEnum = (typeof BookingRequestScalarFieldEnum)[keyof typeof BookingRequestScalarFieldEnum]
@@ -34588,6 +41366,34 @@ export namespace Prisma {
    * Reference to a field of type 'user_status_enum[]'
    */
   export type ListEnumuser_status_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'user_status_enum[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'academic_type_enum'
+   */
+  export type Enumacademic_type_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'academic_type_enum'>
+    
+
+
+  /**
+   * Reference to a field of type 'academic_type_enum[]'
+   */
+  export type ListEnumacademic_type_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'academic_type_enum[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'UTM'
+   */
+  export type EnumUTMFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UTM'>
+    
+
+
+  /**
+   * Reference to a field of type 'UTM[]'
+   */
+  export type ListEnumUTMFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UTM[]'>
     
 
 
@@ -35078,6 +41884,388 @@ export namespace Prisma {
     userId?: UuidNullableWithAggregatesFilter<"BetterAuthVerification"> | string | null
   }
 
+  export type FacultyWhereInput = {
+    AND?: FacultyWhereInput | FacultyWhereInput[]
+    OR?: FacultyWhereInput[]
+    NOT?: FacultyWhereInput | FacultyWhereInput[]
+    id?: UuidFilter<"Faculty"> | string
+    code?: StringFilter<"Faculty"> | string
+    name?: StringFilter<"Faculty"> | string
+    isActive?: BoolFilter<"Faculty"> | boolean
+    createdAt?: DateTimeFilter<"Faculty"> | Date | string
+    updatedAt?: DateTimeFilter<"Faculty"> | Date | string
+    departments?: DepartmentListRelationFilter
+    ikohzas?: IkohzaListRelationFilter
+    users?: UserListRelationFilter
+  }
+
+  export type FacultyOrderByWithRelationInput = {
+    id?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    departments?: DepartmentOrderByRelationAggregateInput
+    ikohzas?: IkohzaOrderByRelationAggregateInput
+    users?: UserOrderByRelationAggregateInput
+  }
+
+  export type FacultyWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    code?: string
+    AND?: FacultyWhereInput | FacultyWhereInput[]
+    OR?: FacultyWhereInput[]
+    NOT?: FacultyWhereInput | FacultyWhereInput[]
+    name?: StringFilter<"Faculty"> | string
+    isActive?: BoolFilter<"Faculty"> | boolean
+    createdAt?: DateTimeFilter<"Faculty"> | Date | string
+    updatedAt?: DateTimeFilter<"Faculty"> | Date | string
+    departments?: DepartmentListRelationFilter
+    ikohzas?: IkohzaListRelationFilter
+    users?: UserListRelationFilter
+  }, "id" | "code">
+
+  export type FacultyOrderByWithAggregationInput = {
+    id?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: FacultyCountOrderByAggregateInput
+    _max?: FacultyMaxOrderByAggregateInput
+    _min?: FacultyMinOrderByAggregateInput
+  }
+
+  export type FacultyScalarWhereWithAggregatesInput = {
+    AND?: FacultyScalarWhereWithAggregatesInput | FacultyScalarWhereWithAggregatesInput[]
+    OR?: FacultyScalarWhereWithAggregatesInput[]
+    NOT?: FacultyScalarWhereWithAggregatesInput | FacultyScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"Faculty"> | string
+    code?: StringWithAggregatesFilter<"Faculty"> | string
+    name?: StringWithAggregatesFilter<"Faculty"> | string
+    isActive?: BoolWithAggregatesFilter<"Faculty"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Faculty"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Faculty"> | Date | string
+  }
+
+  export type DepartmentWhereInput = {
+    AND?: DepartmentWhereInput | DepartmentWhereInput[]
+    OR?: DepartmentWhereInput[]
+    NOT?: DepartmentWhereInput | DepartmentWhereInput[]
+    id?: UuidFilter<"Department"> | string
+    facultyId?: UuidFilter<"Department"> | string
+    code?: StringFilter<"Department"> | string
+    name?: StringFilter<"Department"> | string
+    isActive?: BoolFilter<"Department"> | boolean
+    createdAt?: DateTimeFilter<"Department"> | Date | string
+    updatedAt?: DateTimeFilter<"Department"> | Date | string
+    faculty?: XOR<FacultyScalarRelationFilter, FacultyWhereInput>
+    users?: UserListRelationFilter
+  }
+
+  export type DepartmentOrderByWithRelationInput = {
+    id?: SortOrder
+    facultyId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    faculty?: FacultyOrderByWithRelationInput
+    users?: UserOrderByRelationAggregateInput
+  }
+
+  export type DepartmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    facultyId_code?: DepartmentFacultyIdCodeCompoundUniqueInput
+    AND?: DepartmentWhereInput | DepartmentWhereInput[]
+    OR?: DepartmentWhereInput[]
+    NOT?: DepartmentWhereInput | DepartmentWhereInput[]
+    facultyId?: UuidFilter<"Department"> | string
+    code?: StringFilter<"Department"> | string
+    name?: StringFilter<"Department"> | string
+    isActive?: BoolFilter<"Department"> | boolean
+    createdAt?: DateTimeFilter<"Department"> | Date | string
+    updatedAt?: DateTimeFilter<"Department"> | Date | string
+    faculty?: XOR<FacultyScalarRelationFilter, FacultyWhereInput>
+    users?: UserListRelationFilter
+  }, "id" | "facultyId_code">
+
+  export type DepartmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    facultyId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: DepartmentCountOrderByAggregateInput
+    _max?: DepartmentMaxOrderByAggregateInput
+    _min?: DepartmentMinOrderByAggregateInput
+  }
+
+  export type DepartmentScalarWhereWithAggregatesInput = {
+    AND?: DepartmentScalarWhereWithAggregatesInput | DepartmentScalarWhereWithAggregatesInput[]
+    OR?: DepartmentScalarWhereWithAggregatesInput[]
+    NOT?: DepartmentScalarWhereWithAggregatesInput | DepartmentScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"Department"> | string
+    facultyId?: UuidWithAggregatesFilter<"Department"> | string
+    code?: StringWithAggregatesFilter<"Department"> | string
+    name?: StringWithAggregatesFilter<"Department"> | string
+    isActive?: BoolWithAggregatesFilter<"Department"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Department"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Department"> | Date | string
+  }
+
+  export type IkohzaWhereInput = {
+    AND?: IkohzaWhereInput | IkohzaWhereInput[]
+    OR?: IkohzaWhereInput[]
+    NOT?: IkohzaWhereInput | IkohzaWhereInput[]
+    id?: UuidFilter<"Ikohza"> | string
+    facultyId?: UuidFilter<"Ikohza"> | string
+    code?: StringFilter<"Ikohza"> | string
+    name?: StringFilter<"Ikohza"> | string
+    description?: StringNullableFilter<"Ikohza"> | string | null
+    isActive?: BoolFilter<"Ikohza"> | boolean
+    leaderName?: StringNullableFilter<"Ikohza"> | string | null
+    createdAt?: DateTimeFilter<"Ikohza"> | Date | string
+    updatedAt?: DateTimeFilter<"Ikohza"> | Date | string
+    faculty?: XOR<FacultyScalarRelationFilter, FacultyWhereInput>
+    users?: UserListRelationFilter
+  }
+
+  export type IkohzaOrderByWithRelationInput = {
+    id?: SortOrder
+    facultyId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    leaderName?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    faculty?: FacultyOrderByWithRelationInput
+    users?: UserOrderByRelationAggregateInput
+  }
+
+  export type IkohzaWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    facultyId_code?: IkohzaFacultyIdCodeCompoundUniqueInput
+    AND?: IkohzaWhereInput | IkohzaWhereInput[]
+    OR?: IkohzaWhereInput[]
+    NOT?: IkohzaWhereInput | IkohzaWhereInput[]
+    facultyId?: UuidFilter<"Ikohza"> | string
+    code?: StringFilter<"Ikohza"> | string
+    name?: StringFilter<"Ikohza"> | string
+    description?: StringNullableFilter<"Ikohza"> | string | null
+    isActive?: BoolFilter<"Ikohza"> | boolean
+    leaderName?: StringNullableFilter<"Ikohza"> | string | null
+    createdAt?: DateTimeFilter<"Ikohza"> | Date | string
+    updatedAt?: DateTimeFilter<"Ikohza"> | Date | string
+    faculty?: XOR<FacultyScalarRelationFilter, FacultyWhereInput>
+    users?: UserListRelationFilter
+  }, "id" | "facultyId_code">
+
+  export type IkohzaOrderByWithAggregationInput = {
+    id?: SortOrder
+    facultyId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    leaderName?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: IkohzaCountOrderByAggregateInput
+    _max?: IkohzaMaxOrderByAggregateInput
+    _min?: IkohzaMinOrderByAggregateInput
+  }
+
+  export type IkohzaScalarWhereWithAggregatesInput = {
+    AND?: IkohzaScalarWhereWithAggregatesInput | IkohzaScalarWhereWithAggregatesInput[]
+    OR?: IkohzaScalarWhereWithAggregatesInput[]
+    NOT?: IkohzaScalarWhereWithAggregatesInput | IkohzaScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"Ikohza"> | string
+    facultyId?: UuidWithAggregatesFilter<"Ikohza"> | string
+    code?: StringWithAggregatesFilter<"Ikohza"> | string
+    name?: StringWithAggregatesFilter<"Ikohza"> | string
+    description?: StringNullableWithAggregatesFilter<"Ikohza"> | string | null
+    isActive?: BoolWithAggregatesFilter<"Ikohza"> | boolean
+    leaderName?: StringNullableWithAggregatesFilter<"Ikohza"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Ikohza"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Ikohza"> | Date | string
+  }
+
+  export type CompanyWhereInput = {
+    AND?: CompanyWhereInput | CompanyWhereInput[]
+    OR?: CompanyWhereInput[]
+    NOT?: CompanyWhereInput | CompanyWhereInput[]
+    id?: UuidFilter<"Company"> | string
+    name?: StringFilter<"Company"> | string
+    legalName?: StringNullableFilter<"Company"> | string | null
+    regNo?: StringNullableFilter<"Company"> | string | null
+    isActive?: BoolFilter<"Company"> | boolean
+    createdAt?: DateTimeFilter<"Company"> | Date | string
+    updatedAt?: DateTimeFilter<"Company"> | Date | string
+    branches?: CompanyBranchListRelationFilter
+    users?: UserListRelationFilter
+    bookings?: BookingRequestListRelationFilter
+  }
+
+  export type CompanyOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    legalName?: SortOrderInput | SortOrder
+    regNo?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    branches?: CompanyBranchOrderByRelationAggregateInput
+    users?: UserOrderByRelationAggregateInput
+    bookings?: BookingRequestOrderByRelationAggregateInput
+  }
+
+  export type CompanyWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    regNo?: string
+    AND?: CompanyWhereInput | CompanyWhereInput[]
+    OR?: CompanyWhereInput[]
+    NOT?: CompanyWhereInput | CompanyWhereInput[]
+    name?: StringFilter<"Company"> | string
+    legalName?: StringNullableFilter<"Company"> | string | null
+    isActive?: BoolFilter<"Company"> | boolean
+    createdAt?: DateTimeFilter<"Company"> | Date | string
+    updatedAt?: DateTimeFilter<"Company"> | Date | string
+    branches?: CompanyBranchListRelationFilter
+    users?: UserListRelationFilter
+    bookings?: BookingRequestListRelationFilter
+  }, "id" | "regNo">
+
+  export type CompanyOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    legalName?: SortOrderInput | SortOrder
+    regNo?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CompanyCountOrderByAggregateInput
+    _max?: CompanyMaxOrderByAggregateInput
+    _min?: CompanyMinOrderByAggregateInput
+  }
+
+  export type CompanyScalarWhereWithAggregatesInput = {
+    AND?: CompanyScalarWhereWithAggregatesInput | CompanyScalarWhereWithAggregatesInput[]
+    OR?: CompanyScalarWhereWithAggregatesInput[]
+    NOT?: CompanyScalarWhereWithAggregatesInput | CompanyScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"Company"> | string
+    name?: StringWithAggregatesFilter<"Company"> | string
+    legalName?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    regNo?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    isActive?: BoolWithAggregatesFilter<"Company"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Company"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Company"> | Date | string
+  }
+
+  export type CompanyBranchWhereInput = {
+    AND?: CompanyBranchWhereInput | CompanyBranchWhereInput[]
+    OR?: CompanyBranchWhereInput[]
+    NOT?: CompanyBranchWhereInput | CompanyBranchWhereInput[]
+    id?: UuidFilter<"CompanyBranch"> | string
+    companyId?: UuidFilter<"CompanyBranch"> | string
+    name?: StringFilter<"CompanyBranch"> | string
+    address?: StringNullableFilter<"CompanyBranch"> | string | null
+    city?: StringNullableFilter<"CompanyBranch"> | string | null
+    state?: StringNullableFilter<"CompanyBranch"> | string | null
+    postcode?: StringNullableFilter<"CompanyBranch"> | string | null
+    country?: StringNullableFilter<"CompanyBranch"> | string | null
+    phone?: StringNullableFilter<"CompanyBranch"> | string | null
+    isActive?: BoolFilter<"CompanyBranch"> | boolean
+    createdAt?: DateTimeFilter<"CompanyBranch"> | Date | string
+    updatedAt?: DateTimeFilter<"CompanyBranch"> | Date | string
+    company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
+    users?: UserListRelationFilter
+    bookings?: BookingRequestListRelationFilter
+  }
+
+  export type CompanyBranchOrderByWithRelationInput = {
+    id?: SortOrder
+    companyId?: SortOrder
+    name?: SortOrder
+    address?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    state?: SortOrderInput | SortOrder
+    postcode?: SortOrderInput | SortOrder
+    country?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    company?: CompanyOrderByWithRelationInput
+    users?: UserOrderByRelationAggregateInput
+    bookings?: BookingRequestOrderByRelationAggregateInput
+  }
+
+  export type CompanyBranchWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    companyId_name?: CompanyBranchCompanyIdNameCompoundUniqueInput
+    AND?: CompanyBranchWhereInput | CompanyBranchWhereInput[]
+    OR?: CompanyBranchWhereInput[]
+    NOT?: CompanyBranchWhereInput | CompanyBranchWhereInput[]
+    companyId?: UuidFilter<"CompanyBranch"> | string
+    name?: StringFilter<"CompanyBranch"> | string
+    address?: StringNullableFilter<"CompanyBranch"> | string | null
+    city?: StringNullableFilter<"CompanyBranch"> | string | null
+    state?: StringNullableFilter<"CompanyBranch"> | string | null
+    postcode?: StringNullableFilter<"CompanyBranch"> | string | null
+    country?: StringNullableFilter<"CompanyBranch"> | string | null
+    phone?: StringNullableFilter<"CompanyBranch"> | string | null
+    isActive?: BoolFilter<"CompanyBranch"> | boolean
+    createdAt?: DateTimeFilter<"CompanyBranch"> | Date | string
+    updatedAt?: DateTimeFilter<"CompanyBranch"> | Date | string
+    company?: XOR<CompanyScalarRelationFilter, CompanyWhereInput>
+    users?: UserListRelationFilter
+    bookings?: BookingRequestListRelationFilter
+  }, "id" | "companyId_name">
+
+  export type CompanyBranchOrderByWithAggregationInput = {
+    id?: SortOrder
+    companyId?: SortOrder
+    name?: SortOrder
+    address?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    state?: SortOrderInput | SortOrder
+    postcode?: SortOrderInput | SortOrder
+    country?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CompanyBranchCountOrderByAggregateInput
+    _max?: CompanyBranchMaxOrderByAggregateInput
+    _min?: CompanyBranchMinOrderByAggregateInput
+  }
+
+  export type CompanyBranchScalarWhereWithAggregatesInput = {
+    AND?: CompanyBranchScalarWhereWithAggregatesInput | CompanyBranchScalarWhereWithAggregatesInput[]
+    OR?: CompanyBranchScalarWhereWithAggregatesInput[]
+    NOT?: CompanyBranchScalarWhereWithAggregatesInput | CompanyBranchScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"CompanyBranch"> | string
+    companyId?: UuidWithAggregatesFilter<"CompanyBranch"> | string
+    name?: StringWithAggregatesFilter<"CompanyBranch"> | string
+    address?: StringNullableWithAggregatesFilter<"CompanyBranch"> | string | null
+    city?: StringNullableWithAggregatesFilter<"CompanyBranch"> | string | null
+    state?: StringNullableWithAggregatesFilter<"CompanyBranch"> | string | null
+    postcode?: StringNullableWithAggregatesFilter<"CompanyBranch"> | string | null
+    country?: StringNullableWithAggregatesFilter<"CompanyBranch"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"CompanyBranch"> | string | null
+    isActive?: BoolWithAggregatesFilter<"CompanyBranch"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"CompanyBranch"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CompanyBranch"> | Date | string
+  }
+
   export type UserWhereInput = {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
@@ -35089,11 +42277,15 @@ export namespace Prisma {
     phone?: StringNullableFilter<"User"> | string | null
     userType?: Enumuser_type_enumFilter<"User"> | $Enums.user_type_enum
     status?: Enumuser_status_enumFilter<"User"> | $Enums.user_status_enum
-    matrixNo?: StringNullableFilter<"User"> | string | null
-    staffId?: StringNullableFilter<"User"> | string | null
-    faculty?: StringNullableFilter<"User"> | string | null
-    department?: StringNullableFilter<"User"> | string | null
-    companyName?: StringNullableFilter<"User"> | string | null
+    academicType?: Enumacademic_type_enumFilter<"User"> | $Enums.academic_type_enum
+    userIdentifier?: StringNullableFilter<"User"> | string | null
+    supervisorName?: StringNullableFilter<"User"> | string | null
+    facultyId?: UuidNullableFilter<"User"> | string | null
+    departmentId?: UuidNullableFilter<"User"> | string | null
+    ikohzaId?: UuidNullableFilter<"User"> | string | null
+    companyId?: UuidNullableFilter<"User"> | string | null
+    companyBranchId?: UuidNullableFilter<"User"> | string | null
+    UTM?: EnumUTMNullableFilter<"User"> | $Enums.UTM | null
     address?: StringNullableFilter<"User"> | string | null
     email?: StringFilter<"User"> | string
     emailVerifiedAt?: DateTimeNullableFilter<"User"> | Date | string | null
@@ -35102,6 +42294,11 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     approvedBy?: UuidNullableFilter<"User"> | string | null
+    facultyRelation?: XOR<FacultyNullableScalarRelationFilter, FacultyWhereInput> | null
+    departmentRelation?: XOR<DepartmentNullableScalarRelationFilter, DepartmentWhereInput> | null
+    ikohza?: XOR<IkohzaNullableScalarRelationFilter, IkohzaWhereInput> | null
+    companyRelation?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
+    companyBranch?: XOR<CompanyBranchNullableScalarRelationFilter, CompanyBranchWhereInput> | null
     approvedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     approvedUsers?: UserListRelationFilter
     authProviders?: AuthProviderListRelationFilter
@@ -35127,11 +42324,15 @@ export namespace Prisma {
     phone?: SortOrderInput | SortOrder
     userType?: SortOrder
     status?: SortOrder
-    matrixNo?: SortOrderInput | SortOrder
-    staffId?: SortOrderInput | SortOrder
-    faculty?: SortOrderInput | SortOrder
-    department?: SortOrderInput | SortOrder
-    companyName?: SortOrderInput | SortOrder
+    academicType?: SortOrder
+    userIdentifier?: SortOrderInput | SortOrder
+    supervisorName?: SortOrderInput | SortOrder
+    facultyId?: SortOrderInput | SortOrder
+    departmentId?: SortOrderInput | SortOrder
+    ikohzaId?: SortOrderInput | SortOrder
+    companyId?: SortOrderInput | SortOrder
+    companyBranchId?: SortOrderInput | SortOrder
+    UTM?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
     email?: SortOrder
     emailVerifiedAt?: SortOrderInput | SortOrder
@@ -35140,6 +42341,11 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     approvedBy?: SortOrderInput | SortOrder
+    facultyRelation?: FacultyOrderByWithRelationInput
+    departmentRelation?: DepartmentOrderByWithRelationInput
+    ikohza?: IkohzaOrderByWithRelationInput
+    companyRelation?: CompanyOrderByWithRelationInput
+    companyBranch?: CompanyBranchOrderByWithRelationInput
     approvedByUser?: UserOrderByWithRelationInput
     approvedUsers?: UserOrderByRelationAggregateInput
     authProviders?: AuthProviderOrderByRelationAggregateInput
@@ -35169,11 +42375,15 @@ export namespace Prisma {
     phone?: StringNullableFilter<"User"> | string | null
     userType?: Enumuser_type_enumFilter<"User"> | $Enums.user_type_enum
     status?: Enumuser_status_enumFilter<"User"> | $Enums.user_status_enum
-    matrixNo?: StringNullableFilter<"User"> | string | null
-    staffId?: StringNullableFilter<"User"> | string | null
-    faculty?: StringNullableFilter<"User"> | string | null
-    department?: StringNullableFilter<"User"> | string | null
-    companyName?: StringNullableFilter<"User"> | string | null
+    academicType?: Enumacademic_type_enumFilter<"User"> | $Enums.academic_type_enum
+    userIdentifier?: StringNullableFilter<"User"> | string | null
+    supervisorName?: StringNullableFilter<"User"> | string | null
+    facultyId?: UuidNullableFilter<"User"> | string | null
+    departmentId?: UuidNullableFilter<"User"> | string | null
+    ikohzaId?: UuidNullableFilter<"User"> | string | null
+    companyId?: UuidNullableFilter<"User"> | string | null
+    companyBranchId?: UuidNullableFilter<"User"> | string | null
+    UTM?: EnumUTMNullableFilter<"User"> | $Enums.UTM | null
     address?: StringNullableFilter<"User"> | string | null
     emailVerifiedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
@@ -35181,6 +42391,11 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     approvedBy?: UuidNullableFilter<"User"> | string | null
+    facultyRelation?: XOR<FacultyNullableScalarRelationFilter, FacultyWhereInput> | null
+    departmentRelation?: XOR<DepartmentNullableScalarRelationFilter, DepartmentWhereInput> | null
+    ikohza?: XOR<IkohzaNullableScalarRelationFilter, IkohzaWhereInput> | null
+    companyRelation?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
+    companyBranch?: XOR<CompanyBranchNullableScalarRelationFilter, CompanyBranchWhereInput> | null
     approvedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     approvedUsers?: UserListRelationFilter
     authProviders?: AuthProviderListRelationFilter
@@ -35206,11 +42421,15 @@ export namespace Prisma {
     phone?: SortOrderInput | SortOrder
     userType?: SortOrder
     status?: SortOrder
-    matrixNo?: SortOrderInput | SortOrder
-    staffId?: SortOrderInput | SortOrder
-    faculty?: SortOrderInput | SortOrder
-    department?: SortOrderInput | SortOrder
-    companyName?: SortOrderInput | SortOrder
+    academicType?: SortOrder
+    userIdentifier?: SortOrderInput | SortOrder
+    supervisorName?: SortOrderInput | SortOrder
+    facultyId?: SortOrderInput | SortOrder
+    departmentId?: SortOrderInput | SortOrder
+    ikohzaId?: SortOrderInput | SortOrder
+    companyId?: SortOrderInput | SortOrder
+    companyBranchId?: SortOrderInput | SortOrder
+    UTM?: SortOrderInput | SortOrder
     address?: SortOrderInput | SortOrder
     email?: SortOrder
     emailVerifiedAt?: SortOrderInput | SortOrder
@@ -35235,11 +42454,15 @@ export namespace Prisma {
     phone?: StringNullableWithAggregatesFilter<"User"> | string | null
     userType?: Enumuser_type_enumWithAggregatesFilter<"User"> | $Enums.user_type_enum
     status?: Enumuser_status_enumWithAggregatesFilter<"User"> | $Enums.user_status_enum
-    matrixNo?: StringNullableWithAggregatesFilter<"User"> | string | null
-    staffId?: StringNullableWithAggregatesFilter<"User"> | string | null
-    faculty?: StringNullableWithAggregatesFilter<"User"> | string | null
-    department?: StringNullableWithAggregatesFilter<"User"> | string | null
-    companyName?: StringNullableWithAggregatesFilter<"User"> | string | null
+    academicType?: Enumacademic_type_enumWithAggregatesFilter<"User"> | $Enums.academic_type_enum
+    userIdentifier?: StringNullableWithAggregatesFilter<"User"> | string | null
+    supervisorName?: StringNullableWithAggregatesFilter<"User"> | string | null
+    facultyId?: UuidNullableWithAggregatesFilter<"User"> | string | null
+    departmentId?: UuidNullableWithAggregatesFilter<"User"> | string | null
+    ikohzaId?: UuidNullableWithAggregatesFilter<"User"> | string | null
+    companyId?: UuidNullableWithAggregatesFilter<"User"> | string | null
+    companyBranchId?: UuidNullableWithAggregatesFilter<"User"> | string | null
+    UTM?: EnumUTMNullableWithAggregatesFilter<"User"> | $Enums.UTM | null
     address?: StringNullableWithAggregatesFilter<"User"> | string | null
     email?: StringWithAggregatesFilter<"User"> | string
     emailVerifiedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
@@ -35509,8 +42732,12 @@ export namespace Prisma {
     reviewedAt?: DateTimeNullableFilter<"BookingRequest"> | Date | string | null
     reviewedBy?: UuidNullableFilter<"BookingRequest"> | string | null
     reviewNotes?: StringNullableFilter<"BookingRequest"> | string | null
+    companyId?: UuidNullableFilter<"BookingRequest"> | string | null
+    companyBranchId?: UuidNullableFilter<"BookingRequest"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     reviewedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    companyRelation?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
+    companyBranch?: XOR<CompanyBranchNullableScalarRelationFilter, CompanyBranchWhereInput> | null
     serviceItems?: BookingServiceItemListRelationFilter
     workspaceBookings?: WorkspaceBookingListRelationFilter
     serviceForms?: ServiceFormListRelationFilter
@@ -35531,8 +42758,12 @@ export namespace Prisma {
     reviewedAt?: SortOrderInput | SortOrder
     reviewedBy?: SortOrderInput | SortOrder
     reviewNotes?: SortOrderInput | SortOrder
+    companyId?: SortOrderInput | SortOrder
+    companyBranchId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
     reviewedByUser?: UserOrderByWithRelationInput
+    companyRelation?: CompanyOrderByWithRelationInput
+    companyBranch?: CompanyBranchOrderByWithRelationInput
     serviceItems?: BookingServiceItemOrderByRelationAggregateInput
     workspaceBookings?: WorkspaceBookingOrderByRelationAggregateInput
     serviceForms?: ServiceFormOrderByRelationAggregateInput
@@ -35556,8 +42787,12 @@ export namespace Prisma {
     reviewedAt?: DateTimeNullableFilter<"BookingRequest"> | Date | string | null
     reviewedBy?: UuidNullableFilter<"BookingRequest"> | string | null
     reviewNotes?: StringNullableFilter<"BookingRequest"> | string | null
+    companyId?: UuidNullableFilter<"BookingRequest"> | string | null
+    companyBranchId?: UuidNullableFilter<"BookingRequest"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     reviewedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    companyRelation?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
+    companyBranch?: XOR<CompanyBranchNullableScalarRelationFilter, CompanyBranchWhereInput> | null
     serviceItems?: BookingServiceItemListRelationFilter
     workspaceBookings?: WorkspaceBookingListRelationFilter
     serviceForms?: ServiceFormListRelationFilter
@@ -35578,6 +42813,8 @@ export namespace Prisma {
     reviewedAt?: SortOrderInput | SortOrder
     reviewedBy?: SortOrderInput | SortOrder
     reviewNotes?: SortOrderInput | SortOrder
+    companyId?: SortOrderInput | SortOrder
+    companyBranchId?: SortOrderInput | SortOrder
     _count?: BookingRequestCountOrderByAggregateInput
     _avg?: BookingRequestAvgOrderByAggregateInput
     _max?: BookingRequestMaxOrderByAggregateInput
@@ -35603,6 +42840,8 @@ export namespace Prisma {
     reviewedAt?: DateTimeNullableWithAggregatesFilter<"BookingRequest"> | Date | string | null
     reviewedBy?: UuidNullableWithAggregatesFilter<"BookingRequest"> | string | null
     reviewNotes?: StringNullableWithAggregatesFilter<"BookingRequest"> | string | null
+    companyId?: UuidNullableWithAggregatesFilter<"BookingRequest"> | string | null
+    companyBranchId?: UuidNullableWithAggregatesFilter<"BookingRequest"> | string | null
   }
 
   export type BookingServiceItemWhereInput = {
@@ -37467,6 +44706,435 @@ export namespace Prisma {
     userId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type FacultyCreateInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    departments?: DepartmentCreateNestedManyWithoutFacultyInput
+    ikohzas?: IkohzaCreateNestedManyWithoutFacultyInput
+    users?: UserCreateNestedManyWithoutFacultyRelationInput
+  }
+
+  export type FacultyUncheckedCreateInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    departments?: DepartmentUncheckedCreateNestedManyWithoutFacultyInput
+    ikohzas?: IkohzaUncheckedCreateNestedManyWithoutFacultyInput
+    users?: UserUncheckedCreateNestedManyWithoutFacultyRelationInput
+  }
+
+  export type FacultyUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    departments?: DepartmentUpdateManyWithoutFacultyNestedInput
+    ikohzas?: IkohzaUpdateManyWithoutFacultyNestedInput
+    users?: UserUpdateManyWithoutFacultyRelationNestedInput
+  }
+
+  export type FacultyUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    departments?: DepartmentUncheckedUpdateManyWithoutFacultyNestedInput
+    ikohzas?: IkohzaUncheckedUpdateManyWithoutFacultyNestedInput
+    users?: UserUncheckedUpdateManyWithoutFacultyRelationNestedInput
+  }
+
+  export type FacultyCreateManyInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FacultyUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FacultyUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentCreateInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    faculty: FacultyCreateNestedOneWithoutDepartmentsInput
+    users?: UserCreateNestedManyWithoutDepartmentRelationInput
+  }
+
+  export type DepartmentUncheckedCreateInput = {
+    id?: string
+    facultyId: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutDepartmentRelationInput
+  }
+
+  export type DepartmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    faculty?: FacultyUpdateOneRequiredWithoutDepartmentsNestedInput
+    users?: UserUpdateManyWithoutDepartmentRelationNestedInput
+  }
+
+  export type DepartmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    facultyId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutDepartmentRelationNestedInput
+  }
+
+  export type DepartmentCreateManyInput = {
+    id?: string
+    facultyId: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    facultyId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IkohzaCreateInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    leaderName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    faculty: FacultyCreateNestedOneWithoutIkohzasInput
+    users?: UserCreateNestedManyWithoutIkohzaInput
+  }
+
+  export type IkohzaUncheckedCreateInput = {
+    id?: string
+    facultyId: string
+    code: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    leaderName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutIkohzaInput
+  }
+
+  export type IkohzaUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    leaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    faculty?: FacultyUpdateOneRequiredWithoutIkohzasNestedInput
+    users?: UserUpdateManyWithoutIkohzaNestedInput
+  }
+
+  export type IkohzaUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    facultyId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    leaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutIkohzaNestedInput
+  }
+
+  export type IkohzaCreateManyInput = {
+    id?: string
+    facultyId: string
+    code: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    leaderName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IkohzaUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    leaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IkohzaUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    facultyId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    leaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CompanyCreateInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    regNo?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    branches?: CompanyBranchCreateNestedManyWithoutCompanyInput
+    users?: UserCreateNestedManyWithoutCompanyRelationInput
+    bookings?: BookingRequestCreateNestedManyWithoutCompanyRelationInput
+  }
+
+  export type CompanyUncheckedCreateInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    regNo?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    branches?: CompanyBranchUncheckedCreateNestedManyWithoutCompanyInput
+    users?: UserUncheckedCreateNestedManyWithoutCompanyRelationInput
+    bookings?: BookingRequestUncheckedCreateNestedManyWithoutCompanyRelationInput
+  }
+
+  export type CompanyUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    regNo?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    branches?: CompanyBranchUpdateManyWithoutCompanyNestedInput
+    users?: UserUpdateManyWithoutCompanyRelationNestedInput
+    bookings?: BookingRequestUpdateManyWithoutCompanyRelationNestedInput
+  }
+
+  export type CompanyUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    regNo?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    branches?: CompanyBranchUncheckedUpdateManyWithoutCompanyNestedInput
+    users?: UserUncheckedUpdateManyWithoutCompanyRelationNestedInput
+    bookings?: BookingRequestUncheckedUpdateManyWithoutCompanyRelationNestedInput
+  }
+
+  export type CompanyCreateManyInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    regNo?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CompanyUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    regNo?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CompanyUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    regNo?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CompanyBranchCreateInput = {
+    id?: string
+    name: string
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    postcode?: string | null
+    country?: string | null
+    phone?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company: CompanyCreateNestedOneWithoutBranchesInput
+    users?: UserCreateNestedManyWithoutCompanyBranchInput
+    bookings?: BookingRequestCreateNestedManyWithoutCompanyBranchInput
+  }
+
+  export type CompanyBranchUncheckedCreateInput = {
+    id?: string
+    companyId: string
+    name: string
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    postcode?: string | null
+    country?: string | null
+    phone?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutCompanyBranchInput
+    bookings?: BookingRequestUncheckedCreateNestedManyWithoutCompanyBranchInput
+  }
+
+  export type CompanyBranchUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneRequiredWithoutBranchesNestedInput
+    users?: UserUpdateManyWithoutCompanyBranchNestedInput
+    bookings?: BookingRequestUpdateManyWithoutCompanyBranchNestedInput
+  }
+
+  export type CompanyBranchUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutCompanyBranchNestedInput
+    bookings?: BookingRequestUncheckedUpdateManyWithoutCompanyBranchNestedInput
+  }
+
+  export type CompanyBranchCreateManyInput = {
+    id?: string
+    companyId: string
+    name: string
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    postcode?: string | null
+    country?: string | null
+    phone?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CompanyBranchUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CompanyBranchUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     firstName: string
@@ -37475,11 +45143,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -37487,6 +45154,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -37512,11 +45184,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -37549,11 +45225,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37561,6 +45236,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -37586,11 +45266,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37623,11 +45307,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -37646,11 +45334,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37668,11 +45355,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37967,6 +45658,8 @@ export namespace Prisma {
     reviewNotes?: string | null
     user: UserCreateNestedOneWithoutBookingRequestsInput
     reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
+    companyRelation?: CompanyCreateNestedOneWithoutBookingsInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutBookingsInput
     serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
     workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
@@ -37987,6 +45680,8 @@ export namespace Prisma {
     reviewedAt?: Date | string | null
     reviewedBy?: string | null
     reviewNotes?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
     serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
     workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
@@ -38007,6 +45702,8 @@ export namespace Prisma {
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
     reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
+    companyRelation?: CompanyUpdateOneWithoutBookingsNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutBookingsNestedInput
     serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
     workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
@@ -38027,6 +45724,8 @@ export namespace Prisma {
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
     workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
@@ -38047,6 +45746,8 @@ export namespace Prisma {
     reviewedAt?: Date | string | null
     reviewedBy?: string | null
     reviewNotes?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
   }
 
   export type BookingRequestUpdateManyMutationInput = {
@@ -38079,6 +45780,8 @@ export namespace Prisma {
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BookingServiceItemCreateInput = {
@@ -40145,6 +47848,249 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type DepartmentListRelationFilter = {
+    every?: DepartmentWhereInput
+    some?: DepartmentWhereInput
+    none?: DepartmentWhereInput
+  }
+
+  export type IkohzaListRelationFilter = {
+    every?: IkohzaWhereInput
+    some?: IkohzaWhereInput
+    none?: IkohzaWhereInput
+  }
+
+  export type UserListRelationFilter = {
+    every?: UserWhereInput
+    some?: UserWhereInput
+    none?: UserWhereInput
+  }
+
+  export type DepartmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type IkohzaOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FacultyCountOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FacultyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FacultyMinOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FacultyScalarRelationFilter = {
+    is?: FacultyWhereInput
+    isNot?: FacultyWhereInput
+  }
+
+  export type DepartmentFacultyIdCodeCompoundUniqueInput = {
+    facultyId: string
+    code: string
+  }
+
+  export type DepartmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    facultyId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DepartmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    facultyId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DepartmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    facultyId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type IkohzaFacultyIdCodeCompoundUniqueInput = {
+    facultyId: string
+    code: string
+  }
+
+  export type IkohzaCountOrderByAggregateInput = {
+    id?: SortOrder
+    facultyId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    leaderName?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type IkohzaMaxOrderByAggregateInput = {
+    id?: SortOrder
+    facultyId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    leaderName?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type IkohzaMinOrderByAggregateInput = {
+    id?: SortOrder
+    facultyId?: SortOrder
+    code?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    leaderName?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CompanyBranchListRelationFilter = {
+    every?: CompanyBranchWhereInput
+    some?: CompanyBranchWhereInput
+    none?: CompanyBranchWhereInput
+  }
+
+  export type BookingRequestListRelationFilter = {
+    every?: BookingRequestWhereInput
+    some?: BookingRequestWhereInput
+    none?: BookingRequestWhereInput
+  }
+
+  export type CompanyBranchOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BookingRequestOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CompanyCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    legalName?: SortOrder
+    regNo?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CompanyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    legalName?: SortOrder
+    regNo?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CompanyMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    legalName?: SortOrder
+    regNo?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CompanyScalarRelationFilter = {
+    is?: CompanyWhereInput
+    isNot?: CompanyWhereInput
+  }
+
+  export type CompanyBranchCompanyIdNameCompoundUniqueInput = {
+    companyId: string
+    name: string
+  }
+
+  export type CompanyBranchCountOrderByAggregateInput = {
+    id?: SortOrder
+    companyId?: SortOrder
+    name?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    postcode?: SortOrder
+    country?: SortOrder
+    phone?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CompanyBranchMaxOrderByAggregateInput = {
+    id?: SortOrder
+    companyId?: SortOrder
+    name?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    postcode?: SortOrder
+    country?: SortOrder
+    phone?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CompanyBranchMinOrderByAggregateInput = {
+    id?: SortOrder
+    companyId?: SortOrder
+    name?: SortOrder
+    address?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    postcode?: SortOrder
+    country?: SortOrder
+    phone?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type Enumuser_type_enumFilter<$PrismaModel = never> = {
     equals?: $Enums.user_type_enum | Enumuser_type_enumFieldRefInput<$PrismaModel>
     in?: $Enums.user_type_enum[] | ListEnumuser_type_enumFieldRefInput<$PrismaModel>
@@ -40159,15 +48105,48 @@ export namespace Prisma {
     not?: NestedEnumuser_status_enumFilter<$PrismaModel> | $Enums.user_status_enum
   }
 
+  export type Enumacademic_type_enumFilter<$PrismaModel = never> = {
+    equals?: $Enums.academic_type_enum | Enumacademic_type_enumFieldRefInput<$PrismaModel>
+    in?: $Enums.academic_type_enum[] | ListEnumacademic_type_enumFieldRefInput<$PrismaModel>
+    notIn?: $Enums.academic_type_enum[] | ListEnumacademic_type_enumFieldRefInput<$PrismaModel>
+    not?: NestedEnumacademic_type_enumFilter<$PrismaModel> | $Enums.academic_type_enum
+  }
+
+  export type EnumUTMNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.UTM | EnumUTMFieldRefInput<$PrismaModel> | null
+    in?: $Enums.UTM[] | ListEnumUTMFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.UTM[] | ListEnumUTMFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumUTMNullableFilter<$PrismaModel> | $Enums.UTM | null
+  }
+
+  export type FacultyNullableScalarRelationFilter = {
+    is?: FacultyWhereInput | null
+    isNot?: FacultyWhereInput | null
+  }
+
+  export type DepartmentNullableScalarRelationFilter = {
+    is?: DepartmentWhereInput | null
+    isNot?: DepartmentWhereInput | null
+  }
+
+  export type IkohzaNullableScalarRelationFilter = {
+    is?: IkohzaWhereInput | null
+    isNot?: IkohzaWhereInput | null
+  }
+
+  export type CompanyNullableScalarRelationFilter = {
+    is?: CompanyWhereInput | null
+    isNot?: CompanyWhereInput | null
+  }
+
+  export type CompanyBranchNullableScalarRelationFilter = {
+    is?: CompanyBranchWhereInput | null
+    isNot?: CompanyBranchWhereInput | null
+  }
+
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
-  }
-
-  export type UserListRelationFilter = {
-    every?: UserWhereInput
-    some?: UserWhereInput
-    none?: UserWhereInput
   }
 
   export type AuthProviderListRelationFilter = {
@@ -40180,12 +48159,6 @@ export namespace Prisma {
     every?: AuditLogWhereInput
     some?: AuditLogWhereInput
     none?: AuditLogWhereInput
-  }
-
-  export type BookingRequestListRelationFilter = {
-    every?: BookingRequestWhereInput
-    some?: BookingRequestWhereInput
-    none?: BookingRequestWhereInput
   }
 
   export type ServiceFormListRelationFilter = {
@@ -40230,19 +48203,11 @@ export namespace Prisma {
     none?: SampleModificationWhereInput
   }
 
-  export type UserOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type AuthProviderOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type AuditLogOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type BookingRequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -40282,11 +48247,15 @@ export namespace Prisma {
     phone?: SortOrder
     userType?: SortOrder
     status?: SortOrder
-    matrixNo?: SortOrder
-    staffId?: SortOrder
-    faculty?: SortOrder
-    department?: SortOrder
-    companyName?: SortOrder
+    academicType?: SortOrder
+    userIdentifier?: SortOrder
+    supervisorName?: SortOrder
+    facultyId?: SortOrder
+    departmentId?: SortOrder
+    ikohzaId?: SortOrder
+    companyId?: SortOrder
+    companyBranchId?: SortOrder
+    UTM?: SortOrder
     address?: SortOrder
     email?: SortOrder
     emailVerifiedAt?: SortOrder
@@ -40305,11 +48274,15 @@ export namespace Prisma {
     phone?: SortOrder
     userType?: SortOrder
     status?: SortOrder
-    matrixNo?: SortOrder
-    staffId?: SortOrder
-    faculty?: SortOrder
-    department?: SortOrder
-    companyName?: SortOrder
+    academicType?: SortOrder
+    userIdentifier?: SortOrder
+    supervisorName?: SortOrder
+    facultyId?: SortOrder
+    departmentId?: SortOrder
+    ikohzaId?: SortOrder
+    companyId?: SortOrder
+    companyBranchId?: SortOrder
+    UTM?: SortOrder
     address?: SortOrder
     email?: SortOrder
     emailVerifiedAt?: SortOrder
@@ -40328,11 +48301,15 @@ export namespace Prisma {
     phone?: SortOrder
     userType?: SortOrder
     status?: SortOrder
-    matrixNo?: SortOrder
-    staffId?: SortOrder
-    faculty?: SortOrder
-    department?: SortOrder
-    companyName?: SortOrder
+    academicType?: SortOrder
+    userIdentifier?: SortOrder
+    supervisorName?: SortOrder
+    facultyId?: SortOrder
+    departmentId?: SortOrder
+    ikohzaId?: SortOrder
+    companyId?: SortOrder
+    companyBranchId?: SortOrder
+    UTM?: SortOrder
     address?: SortOrder
     email?: SortOrder
     emailVerifiedAt?: SortOrder
@@ -40361,6 +48338,26 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumuser_status_enumFilter<$PrismaModel>
     _max?: NestedEnumuser_status_enumFilter<$PrismaModel>
+  }
+
+  export type Enumacademic_type_enumWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.academic_type_enum | Enumacademic_type_enumFieldRefInput<$PrismaModel>
+    in?: $Enums.academic_type_enum[] | ListEnumacademic_type_enumFieldRefInput<$PrismaModel>
+    notIn?: $Enums.academic_type_enum[] | ListEnumacademic_type_enumFieldRefInput<$PrismaModel>
+    not?: NestedEnumacademic_type_enumWithAggregatesFilter<$PrismaModel> | $Enums.academic_type_enum
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumacademic_type_enumFilter<$PrismaModel>
+    _max?: NestedEnumacademic_type_enumFilter<$PrismaModel>
+  }
+
+  export type EnumUTMNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UTM | EnumUTMFieldRefInput<$PrismaModel> | null
+    in?: $Enums.UTM[] | ListEnumUTMFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.UTM[] | ListEnumUTMFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumUTMNullableWithAggregatesFilter<$PrismaModel> | $Enums.UTM | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumUTMNullableFilter<$PrismaModel>
+    _max?: NestedEnumUTMNullableFilter<$PrismaModel>
   }
   export type JsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -40685,6 +48682,8 @@ export namespace Prisma {
     reviewedAt?: SortOrder
     reviewedBy?: SortOrder
     reviewNotes?: SortOrder
+    companyId?: SortOrder
+    companyBranchId?: SortOrder
   }
 
   export type BookingRequestAvgOrderByAggregateInput = {
@@ -40706,6 +48705,8 @@ export namespace Prisma {
     reviewedAt?: SortOrder
     reviewedBy?: SortOrder
     reviewNotes?: SortOrder
+    companyId?: SortOrder
+    companyBranchId?: SortOrder
   }
 
   export type BookingRequestMinOrderByAggregateInput = {
@@ -40723,6 +48724,8 @@ export namespace Prisma {
     reviewedAt?: SortOrder
     reviewedBy?: SortOrder
     reviewNotes?: SortOrder
+    companyId?: SortOrder
+    companyBranchId?: SortOrder
   }
 
   export type BookingRequestSumOrderByAggregateInput = {
@@ -41991,6 +49994,498 @@ export namespace Prisma {
     update?: XOR<XOR<BetterAuthUserUpdateToOneWithWhereWithoutVerificationsInput, BetterAuthUserUpdateWithoutVerificationsInput>, BetterAuthUserUncheckedUpdateWithoutVerificationsInput>
   }
 
+  export type DepartmentCreateNestedManyWithoutFacultyInput = {
+    create?: XOR<DepartmentCreateWithoutFacultyInput, DepartmentUncheckedCreateWithoutFacultyInput> | DepartmentCreateWithoutFacultyInput[] | DepartmentUncheckedCreateWithoutFacultyInput[]
+    connectOrCreate?: DepartmentCreateOrConnectWithoutFacultyInput | DepartmentCreateOrConnectWithoutFacultyInput[]
+    createMany?: DepartmentCreateManyFacultyInputEnvelope
+    connect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+  }
+
+  export type IkohzaCreateNestedManyWithoutFacultyInput = {
+    create?: XOR<IkohzaCreateWithoutFacultyInput, IkohzaUncheckedCreateWithoutFacultyInput> | IkohzaCreateWithoutFacultyInput[] | IkohzaUncheckedCreateWithoutFacultyInput[]
+    connectOrCreate?: IkohzaCreateOrConnectWithoutFacultyInput | IkohzaCreateOrConnectWithoutFacultyInput[]
+    createMany?: IkohzaCreateManyFacultyInputEnvelope
+    connect?: IkohzaWhereUniqueInput | IkohzaWhereUniqueInput[]
+  }
+
+  export type UserCreateNestedManyWithoutFacultyRelationInput = {
+    create?: XOR<UserCreateWithoutFacultyRelationInput, UserUncheckedCreateWithoutFacultyRelationInput> | UserCreateWithoutFacultyRelationInput[] | UserUncheckedCreateWithoutFacultyRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFacultyRelationInput | UserCreateOrConnectWithoutFacultyRelationInput[]
+    createMany?: UserCreateManyFacultyRelationInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type DepartmentUncheckedCreateNestedManyWithoutFacultyInput = {
+    create?: XOR<DepartmentCreateWithoutFacultyInput, DepartmentUncheckedCreateWithoutFacultyInput> | DepartmentCreateWithoutFacultyInput[] | DepartmentUncheckedCreateWithoutFacultyInput[]
+    connectOrCreate?: DepartmentCreateOrConnectWithoutFacultyInput | DepartmentCreateOrConnectWithoutFacultyInput[]
+    createMany?: DepartmentCreateManyFacultyInputEnvelope
+    connect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+  }
+
+  export type IkohzaUncheckedCreateNestedManyWithoutFacultyInput = {
+    create?: XOR<IkohzaCreateWithoutFacultyInput, IkohzaUncheckedCreateWithoutFacultyInput> | IkohzaCreateWithoutFacultyInput[] | IkohzaUncheckedCreateWithoutFacultyInput[]
+    connectOrCreate?: IkohzaCreateOrConnectWithoutFacultyInput | IkohzaCreateOrConnectWithoutFacultyInput[]
+    createMany?: IkohzaCreateManyFacultyInputEnvelope
+    connect?: IkohzaWhereUniqueInput | IkohzaWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutFacultyRelationInput = {
+    create?: XOR<UserCreateWithoutFacultyRelationInput, UserUncheckedCreateWithoutFacultyRelationInput> | UserCreateWithoutFacultyRelationInput[] | UserUncheckedCreateWithoutFacultyRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFacultyRelationInput | UserCreateOrConnectWithoutFacultyRelationInput[]
+    createMany?: UserCreateManyFacultyRelationInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type DepartmentUpdateManyWithoutFacultyNestedInput = {
+    create?: XOR<DepartmentCreateWithoutFacultyInput, DepartmentUncheckedCreateWithoutFacultyInput> | DepartmentCreateWithoutFacultyInput[] | DepartmentUncheckedCreateWithoutFacultyInput[]
+    connectOrCreate?: DepartmentCreateOrConnectWithoutFacultyInput | DepartmentCreateOrConnectWithoutFacultyInput[]
+    upsert?: DepartmentUpsertWithWhereUniqueWithoutFacultyInput | DepartmentUpsertWithWhereUniqueWithoutFacultyInput[]
+    createMany?: DepartmentCreateManyFacultyInputEnvelope
+    set?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    disconnect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    delete?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    connect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    update?: DepartmentUpdateWithWhereUniqueWithoutFacultyInput | DepartmentUpdateWithWhereUniqueWithoutFacultyInput[]
+    updateMany?: DepartmentUpdateManyWithWhereWithoutFacultyInput | DepartmentUpdateManyWithWhereWithoutFacultyInput[]
+    deleteMany?: DepartmentScalarWhereInput | DepartmentScalarWhereInput[]
+  }
+
+  export type IkohzaUpdateManyWithoutFacultyNestedInput = {
+    create?: XOR<IkohzaCreateWithoutFacultyInput, IkohzaUncheckedCreateWithoutFacultyInput> | IkohzaCreateWithoutFacultyInput[] | IkohzaUncheckedCreateWithoutFacultyInput[]
+    connectOrCreate?: IkohzaCreateOrConnectWithoutFacultyInput | IkohzaCreateOrConnectWithoutFacultyInput[]
+    upsert?: IkohzaUpsertWithWhereUniqueWithoutFacultyInput | IkohzaUpsertWithWhereUniqueWithoutFacultyInput[]
+    createMany?: IkohzaCreateManyFacultyInputEnvelope
+    set?: IkohzaWhereUniqueInput | IkohzaWhereUniqueInput[]
+    disconnect?: IkohzaWhereUniqueInput | IkohzaWhereUniqueInput[]
+    delete?: IkohzaWhereUniqueInput | IkohzaWhereUniqueInput[]
+    connect?: IkohzaWhereUniqueInput | IkohzaWhereUniqueInput[]
+    update?: IkohzaUpdateWithWhereUniqueWithoutFacultyInput | IkohzaUpdateWithWhereUniqueWithoutFacultyInput[]
+    updateMany?: IkohzaUpdateManyWithWhereWithoutFacultyInput | IkohzaUpdateManyWithWhereWithoutFacultyInput[]
+    deleteMany?: IkohzaScalarWhereInput | IkohzaScalarWhereInput[]
+  }
+
+  export type UserUpdateManyWithoutFacultyRelationNestedInput = {
+    create?: XOR<UserCreateWithoutFacultyRelationInput, UserUncheckedCreateWithoutFacultyRelationInput> | UserCreateWithoutFacultyRelationInput[] | UserUncheckedCreateWithoutFacultyRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFacultyRelationInput | UserCreateOrConnectWithoutFacultyRelationInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutFacultyRelationInput | UserUpsertWithWhereUniqueWithoutFacultyRelationInput[]
+    createMany?: UserCreateManyFacultyRelationInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutFacultyRelationInput | UserUpdateWithWhereUniqueWithoutFacultyRelationInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutFacultyRelationInput | UserUpdateManyWithWhereWithoutFacultyRelationInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type DepartmentUncheckedUpdateManyWithoutFacultyNestedInput = {
+    create?: XOR<DepartmentCreateWithoutFacultyInput, DepartmentUncheckedCreateWithoutFacultyInput> | DepartmentCreateWithoutFacultyInput[] | DepartmentUncheckedCreateWithoutFacultyInput[]
+    connectOrCreate?: DepartmentCreateOrConnectWithoutFacultyInput | DepartmentCreateOrConnectWithoutFacultyInput[]
+    upsert?: DepartmentUpsertWithWhereUniqueWithoutFacultyInput | DepartmentUpsertWithWhereUniqueWithoutFacultyInput[]
+    createMany?: DepartmentCreateManyFacultyInputEnvelope
+    set?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    disconnect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    delete?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    connect?: DepartmentWhereUniqueInput | DepartmentWhereUniqueInput[]
+    update?: DepartmentUpdateWithWhereUniqueWithoutFacultyInput | DepartmentUpdateWithWhereUniqueWithoutFacultyInput[]
+    updateMany?: DepartmentUpdateManyWithWhereWithoutFacultyInput | DepartmentUpdateManyWithWhereWithoutFacultyInput[]
+    deleteMany?: DepartmentScalarWhereInput | DepartmentScalarWhereInput[]
+  }
+
+  export type IkohzaUncheckedUpdateManyWithoutFacultyNestedInput = {
+    create?: XOR<IkohzaCreateWithoutFacultyInput, IkohzaUncheckedCreateWithoutFacultyInput> | IkohzaCreateWithoutFacultyInput[] | IkohzaUncheckedCreateWithoutFacultyInput[]
+    connectOrCreate?: IkohzaCreateOrConnectWithoutFacultyInput | IkohzaCreateOrConnectWithoutFacultyInput[]
+    upsert?: IkohzaUpsertWithWhereUniqueWithoutFacultyInput | IkohzaUpsertWithWhereUniqueWithoutFacultyInput[]
+    createMany?: IkohzaCreateManyFacultyInputEnvelope
+    set?: IkohzaWhereUniqueInput | IkohzaWhereUniqueInput[]
+    disconnect?: IkohzaWhereUniqueInput | IkohzaWhereUniqueInput[]
+    delete?: IkohzaWhereUniqueInput | IkohzaWhereUniqueInput[]
+    connect?: IkohzaWhereUniqueInput | IkohzaWhereUniqueInput[]
+    update?: IkohzaUpdateWithWhereUniqueWithoutFacultyInput | IkohzaUpdateWithWhereUniqueWithoutFacultyInput[]
+    updateMany?: IkohzaUpdateManyWithWhereWithoutFacultyInput | IkohzaUpdateManyWithWhereWithoutFacultyInput[]
+    deleteMany?: IkohzaScalarWhereInput | IkohzaScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutFacultyRelationNestedInput = {
+    create?: XOR<UserCreateWithoutFacultyRelationInput, UserUncheckedCreateWithoutFacultyRelationInput> | UserCreateWithoutFacultyRelationInput[] | UserUncheckedCreateWithoutFacultyRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFacultyRelationInput | UserCreateOrConnectWithoutFacultyRelationInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutFacultyRelationInput | UserUpsertWithWhereUniqueWithoutFacultyRelationInput[]
+    createMany?: UserCreateManyFacultyRelationInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutFacultyRelationInput | UserUpdateWithWhereUniqueWithoutFacultyRelationInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutFacultyRelationInput | UserUpdateManyWithWhereWithoutFacultyRelationInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type FacultyCreateNestedOneWithoutDepartmentsInput = {
+    create?: XOR<FacultyCreateWithoutDepartmentsInput, FacultyUncheckedCreateWithoutDepartmentsInput>
+    connectOrCreate?: FacultyCreateOrConnectWithoutDepartmentsInput
+    connect?: FacultyWhereUniqueInput
+  }
+
+  export type UserCreateNestedManyWithoutDepartmentRelationInput = {
+    create?: XOR<UserCreateWithoutDepartmentRelationInput, UserUncheckedCreateWithoutDepartmentRelationInput> | UserCreateWithoutDepartmentRelationInput[] | UserUncheckedCreateWithoutDepartmentRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutDepartmentRelationInput | UserCreateOrConnectWithoutDepartmentRelationInput[]
+    createMany?: UserCreateManyDepartmentRelationInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutDepartmentRelationInput = {
+    create?: XOR<UserCreateWithoutDepartmentRelationInput, UserUncheckedCreateWithoutDepartmentRelationInput> | UserCreateWithoutDepartmentRelationInput[] | UserUncheckedCreateWithoutDepartmentRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutDepartmentRelationInput | UserCreateOrConnectWithoutDepartmentRelationInput[]
+    createMany?: UserCreateManyDepartmentRelationInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type FacultyUpdateOneRequiredWithoutDepartmentsNestedInput = {
+    create?: XOR<FacultyCreateWithoutDepartmentsInput, FacultyUncheckedCreateWithoutDepartmentsInput>
+    connectOrCreate?: FacultyCreateOrConnectWithoutDepartmentsInput
+    upsert?: FacultyUpsertWithoutDepartmentsInput
+    connect?: FacultyWhereUniqueInput
+    update?: XOR<XOR<FacultyUpdateToOneWithWhereWithoutDepartmentsInput, FacultyUpdateWithoutDepartmentsInput>, FacultyUncheckedUpdateWithoutDepartmentsInput>
+  }
+
+  export type UserUpdateManyWithoutDepartmentRelationNestedInput = {
+    create?: XOR<UserCreateWithoutDepartmentRelationInput, UserUncheckedCreateWithoutDepartmentRelationInput> | UserCreateWithoutDepartmentRelationInput[] | UserUncheckedCreateWithoutDepartmentRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutDepartmentRelationInput | UserCreateOrConnectWithoutDepartmentRelationInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutDepartmentRelationInput | UserUpsertWithWhereUniqueWithoutDepartmentRelationInput[]
+    createMany?: UserCreateManyDepartmentRelationInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutDepartmentRelationInput | UserUpdateWithWhereUniqueWithoutDepartmentRelationInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutDepartmentRelationInput | UserUpdateManyWithWhereWithoutDepartmentRelationInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutDepartmentRelationNestedInput = {
+    create?: XOR<UserCreateWithoutDepartmentRelationInput, UserUncheckedCreateWithoutDepartmentRelationInput> | UserCreateWithoutDepartmentRelationInput[] | UserUncheckedCreateWithoutDepartmentRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutDepartmentRelationInput | UserCreateOrConnectWithoutDepartmentRelationInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutDepartmentRelationInput | UserUpsertWithWhereUniqueWithoutDepartmentRelationInput[]
+    createMany?: UserCreateManyDepartmentRelationInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutDepartmentRelationInput | UserUpdateWithWhereUniqueWithoutDepartmentRelationInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutDepartmentRelationInput | UserUpdateManyWithWhereWithoutDepartmentRelationInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type FacultyCreateNestedOneWithoutIkohzasInput = {
+    create?: XOR<FacultyCreateWithoutIkohzasInput, FacultyUncheckedCreateWithoutIkohzasInput>
+    connectOrCreate?: FacultyCreateOrConnectWithoutIkohzasInput
+    connect?: FacultyWhereUniqueInput
+  }
+
+  export type UserCreateNestedManyWithoutIkohzaInput = {
+    create?: XOR<UserCreateWithoutIkohzaInput, UserUncheckedCreateWithoutIkohzaInput> | UserCreateWithoutIkohzaInput[] | UserUncheckedCreateWithoutIkohzaInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutIkohzaInput | UserCreateOrConnectWithoutIkohzaInput[]
+    createMany?: UserCreateManyIkohzaInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutIkohzaInput = {
+    create?: XOR<UserCreateWithoutIkohzaInput, UserUncheckedCreateWithoutIkohzaInput> | UserCreateWithoutIkohzaInput[] | UserUncheckedCreateWithoutIkohzaInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutIkohzaInput | UserCreateOrConnectWithoutIkohzaInput[]
+    createMany?: UserCreateManyIkohzaInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type FacultyUpdateOneRequiredWithoutIkohzasNestedInput = {
+    create?: XOR<FacultyCreateWithoutIkohzasInput, FacultyUncheckedCreateWithoutIkohzasInput>
+    connectOrCreate?: FacultyCreateOrConnectWithoutIkohzasInput
+    upsert?: FacultyUpsertWithoutIkohzasInput
+    connect?: FacultyWhereUniqueInput
+    update?: XOR<XOR<FacultyUpdateToOneWithWhereWithoutIkohzasInput, FacultyUpdateWithoutIkohzasInput>, FacultyUncheckedUpdateWithoutIkohzasInput>
+  }
+
+  export type UserUpdateManyWithoutIkohzaNestedInput = {
+    create?: XOR<UserCreateWithoutIkohzaInput, UserUncheckedCreateWithoutIkohzaInput> | UserCreateWithoutIkohzaInput[] | UserUncheckedCreateWithoutIkohzaInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutIkohzaInput | UserCreateOrConnectWithoutIkohzaInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutIkohzaInput | UserUpsertWithWhereUniqueWithoutIkohzaInput[]
+    createMany?: UserCreateManyIkohzaInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutIkohzaInput | UserUpdateWithWhereUniqueWithoutIkohzaInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutIkohzaInput | UserUpdateManyWithWhereWithoutIkohzaInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutIkohzaNestedInput = {
+    create?: XOR<UserCreateWithoutIkohzaInput, UserUncheckedCreateWithoutIkohzaInput> | UserCreateWithoutIkohzaInput[] | UserUncheckedCreateWithoutIkohzaInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutIkohzaInput | UserCreateOrConnectWithoutIkohzaInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutIkohzaInput | UserUpsertWithWhereUniqueWithoutIkohzaInput[]
+    createMany?: UserCreateManyIkohzaInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutIkohzaInput | UserUpdateWithWhereUniqueWithoutIkohzaInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutIkohzaInput | UserUpdateManyWithWhereWithoutIkohzaInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type CompanyBranchCreateNestedManyWithoutCompanyInput = {
+    create?: XOR<CompanyBranchCreateWithoutCompanyInput, CompanyBranchUncheckedCreateWithoutCompanyInput> | CompanyBranchCreateWithoutCompanyInput[] | CompanyBranchUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: CompanyBranchCreateOrConnectWithoutCompanyInput | CompanyBranchCreateOrConnectWithoutCompanyInput[]
+    createMany?: CompanyBranchCreateManyCompanyInputEnvelope
+    connect?: CompanyBranchWhereUniqueInput | CompanyBranchWhereUniqueInput[]
+  }
+
+  export type UserCreateNestedManyWithoutCompanyRelationInput = {
+    create?: XOR<UserCreateWithoutCompanyRelationInput, UserUncheckedCreateWithoutCompanyRelationInput> | UserCreateWithoutCompanyRelationInput[] | UserUncheckedCreateWithoutCompanyRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutCompanyRelationInput | UserCreateOrConnectWithoutCompanyRelationInput[]
+    createMany?: UserCreateManyCompanyRelationInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type BookingRequestCreateNestedManyWithoutCompanyRelationInput = {
+    create?: XOR<BookingRequestCreateWithoutCompanyRelationInput, BookingRequestUncheckedCreateWithoutCompanyRelationInput> | BookingRequestCreateWithoutCompanyRelationInput[] | BookingRequestUncheckedCreateWithoutCompanyRelationInput[]
+    connectOrCreate?: BookingRequestCreateOrConnectWithoutCompanyRelationInput | BookingRequestCreateOrConnectWithoutCompanyRelationInput[]
+    createMany?: BookingRequestCreateManyCompanyRelationInputEnvelope
+    connect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+  }
+
+  export type CompanyBranchUncheckedCreateNestedManyWithoutCompanyInput = {
+    create?: XOR<CompanyBranchCreateWithoutCompanyInput, CompanyBranchUncheckedCreateWithoutCompanyInput> | CompanyBranchCreateWithoutCompanyInput[] | CompanyBranchUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: CompanyBranchCreateOrConnectWithoutCompanyInput | CompanyBranchCreateOrConnectWithoutCompanyInput[]
+    createMany?: CompanyBranchCreateManyCompanyInputEnvelope
+    connect?: CompanyBranchWhereUniqueInput | CompanyBranchWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutCompanyRelationInput = {
+    create?: XOR<UserCreateWithoutCompanyRelationInput, UserUncheckedCreateWithoutCompanyRelationInput> | UserCreateWithoutCompanyRelationInput[] | UserUncheckedCreateWithoutCompanyRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutCompanyRelationInput | UserCreateOrConnectWithoutCompanyRelationInput[]
+    createMany?: UserCreateManyCompanyRelationInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type BookingRequestUncheckedCreateNestedManyWithoutCompanyRelationInput = {
+    create?: XOR<BookingRequestCreateWithoutCompanyRelationInput, BookingRequestUncheckedCreateWithoutCompanyRelationInput> | BookingRequestCreateWithoutCompanyRelationInput[] | BookingRequestUncheckedCreateWithoutCompanyRelationInput[]
+    connectOrCreate?: BookingRequestCreateOrConnectWithoutCompanyRelationInput | BookingRequestCreateOrConnectWithoutCompanyRelationInput[]
+    createMany?: BookingRequestCreateManyCompanyRelationInputEnvelope
+    connect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+  }
+
+  export type CompanyBranchUpdateManyWithoutCompanyNestedInput = {
+    create?: XOR<CompanyBranchCreateWithoutCompanyInput, CompanyBranchUncheckedCreateWithoutCompanyInput> | CompanyBranchCreateWithoutCompanyInput[] | CompanyBranchUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: CompanyBranchCreateOrConnectWithoutCompanyInput | CompanyBranchCreateOrConnectWithoutCompanyInput[]
+    upsert?: CompanyBranchUpsertWithWhereUniqueWithoutCompanyInput | CompanyBranchUpsertWithWhereUniqueWithoutCompanyInput[]
+    createMany?: CompanyBranchCreateManyCompanyInputEnvelope
+    set?: CompanyBranchWhereUniqueInput | CompanyBranchWhereUniqueInput[]
+    disconnect?: CompanyBranchWhereUniqueInput | CompanyBranchWhereUniqueInput[]
+    delete?: CompanyBranchWhereUniqueInput | CompanyBranchWhereUniqueInput[]
+    connect?: CompanyBranchWhereUniqueInput | CompanyBranchWhereUniqueInput[]
+    update?: CompanyBranchUpdateWithWhereUniqueWithoutCompanyInput | CompanyBranchUpdateWithWhereUniqueWithoutCompanyInput[]
+    updateMany?: CompanyBranchUpdateManyWithWhereWithoutCompanyInput | CompanyBranchUpdateManyWithWhereWithoutCompanyInput[]
+    deleteMany?: CompanyBranchScalarWhereInput | CompanyBranchScalarWhereInput[]
+  }
+
+  export type UserUpdateManyWithoutCompanyRelationNestedInput = {
+    create?: XOR<UserCreateWithoutCompanyRelationInput, UserUncheckedCreateWithoutCompanyRelationInput> | UserCreateWithoutCompanyRelationInput[] | UserUncheckedCreateWithoutCompanyRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutCompanyRelationInput | UserCreateOrConnectWithoutCompanyRelationInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutCompanyRelationInput | UserUpsertWithWhereUniqueWithoutCompanyRelationInput[]
+    createMany?: UserCreateManyCompanyRelationInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutCompanyRelationInput | UserUpdateWithWhereUniqueWithoutCompanyRelationInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutCompanyRelationInput | UserUpdateManyWithWhereWithoutCompanyRelationInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type BookingRequestUpdateManyWithoutCompanyRelationNestedInput = {
+    create?: XOR<BookingRequestCreateWithoutCompanyRelationInput, BookingRequestUncheckedCreateWithoutCompanyRelationInput> | BookingRequestCreateWithoutCompanyRelationInput[] | BookingRequestUncheckedCreateWithoutCompanyRelationInput[]
+    connectOrCreate?: BookingRequestCreateOrConnectWithoutCompanyRelationInput | BookingRequestCreateOrConnectWithoutCompanyRelationInput[]
+    upsert?: BookingRequestUpsertWithWhereUniqueWithoutCompanyRelationInput | BookingRequestUpsertWithWhereUniqueWithoutCompanyRelationInput[]
+    createMany?: BookingRequestCreateManyCompanyRelationInputEnvelope
+    set?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    disconnect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    delete?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    connect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    update?: BookingRequestUpdateWithWhereUniqueWithoutCompanyRelationInput | BookingRequestUpdateWithWhereUniqueWithoutCompanyRelationInput[]
+    updateMany?: BookingRequestUpdateManyWithWhereWithoutCompanyRelationInput | BookingRequestUpdateManyWithWhereWithoutCompanyRelationInput[]
+    deleteMany?: BookingRequestScalarWhereInput | BookingRequestScalarWhereInput[]
+  }
+
+  export type CompanyBranchUncheckedUpdateManyWithoutCompanyNestedInput = {
+    create?: XOR<CompanyBranchCreateWithoutCompanyInput, CompanyBranchUncheckedCreateWithoutCompanyInput> | CompanyBranchCreateWithoutCompanyInput[] | CompanyBranchUncheckedCreateWithoutCompanyInput[]
+    connectOrCreate?: CompanyBranchCreateOrConnectWithoutCompanyInput | CompanyBranchCreateOrConnectWithoutCompanyInput[]
+    upsert?: CompanyBranchUpsertWithWhereUniqueWithoutCompanyInput | CompanyBranchUpsertWithWhereUniqueWithoutCompanyInput[]
+    createMany?: CompanyBranchCreateManyCompanyInputEnvelope
+    set?: CompanyBranchWhereUniqueInput | CompanyBranchWhereUniqueInput[]
+    disconnect?: CompanyBranchWhereUniqueInput | CompanyBranchWhereUniqueInput[]
+    delete?: CompanyBranchWhereUniqueInput | CompanyBranchWhereUniqueInput[]
+    connect?: CompanyBranchWhereUniqueInput | CompanyBranchWhereUniqueInput[]
+    update?: CompanyBranchUpdateWithWhereUniqueWithoutCompanyInput | CompanyBranchUpdateWithWhereUniqueWithoutCompanyInput[]
+    updateMany?: CompanyBranchUpdateManyWithWhereWithoutCompanyInput | CompanyBranchUpdateManyWithWhereWithoutCompanyInput[]
+    deleteMany?: CompanyBranchScalarWhereInput | CompanyBranchScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutCompanyRelationNestedInput = {
+    create?: XOR<UserCreateWithoutCompanyRelationInput, UserUncheckedCreateWithoutCompanyRelationInput> | UserCreateWithoutCompanyRelationInput[] | UserUncheckedCreateWithoutCompanyRelationInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutCompanyRelationInput | UserCreateOrConnectWithoutCompanyRelationInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutCompanyRelationInput | UserUpsertWithWhereUniqueWithoutCompanyRelationInput[]
+    createMany?: UserCreateManyCompanyRelationInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutCompanyRelationInput | UserUpdateWithWhereUniqueWithoutCompanyRelationInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutCompanyRelationInput | UserUpdateManyWithWhereWithoutCompanyRelationInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type BookingRequestUncheckedUpdateManyWithoutCompanyRelationNestedInput = {
+    create?: XOR<BookingRequestCreateWithoutCompanyRelationInput, BookingRequestUncheckedCreateWithoutCompanyRelationInput> | BookingRequestCreateWithoutCompanyRelationInput[] | BookingRequestUncheckedCreateWithoutCompanyRelationInput[]
+    connectOrCreate?: BookingRequestCreateOrConnectWithoutCompanyRelationInput | BookingRequestCreateOrConnectWithoutCompanyRelationInput[]
+    upsert?: BookingRequestUpsertWithWhereUniqueWithoutCompanyRelationInput | BookingRequestUpsertWithWhereUniqueWithoutCompanyRelationInput[]
+    createMany?: BookingRequestCreateManyCompanyRelationInputEnvelope
+    set?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    disconnect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    delete?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    connect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    update?: BookingRequestUpdateWithWhereUniqueWithoutCompanyRelationInput | BookingRequestUpdateWithWhereUniqueWithoutCompanyRelationInput[]
+    updateMany?: BookingRequestUpdateManyWithWhereWithoutCompanyRelationInput | BookingRequestUpdateManyWithWhereWithoutCompanyRelationInput[]
+    deleteMany?: BookingRequestScalarWhereInput | BookingRequestScalarWhereInput[]
+  }
+
+  export type CompanyCreateNestedOneWithoutBranchesInput = {
+    create?: XOR<CompanyCreateWithoutBranchesInput, CompanyUncheckedCreateWithoutBranchesInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutBranchesInput
+    connect?: CompanyWhereUniqueInput
+  }
+
+  export type UserCreateNestedManyWithoutCompanyBranchInput = {
+    create?: XOR<UserCreateWithoutCompanyBranchInput, UserUncheckedCreateWithoutCompanyBranchInput> | UserCreateWithoutCompanyBranchInput[] | UserUncheckedCreateWithoutCompanyBranchInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutCompanyBranchInput | UserCreateOrConnectWithoutCompanyBranchInput[]
+    createMany?: UserCreateManyCompanyBranchInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type BookingRequestCreateNestedManyWithoutCompanyBranchInput = {
+    create?: XOR<BookingRequestCreateWithoutCompanyBranchInput, BookingRequestUncheckedCreateWithoutCompanyBranchInput> | BookingRequestCreateWithoutCompanyBranchInput[] | BookingRequestUncheckedCreateWithoutCompanyBranchInput[]
+    connectOrCreate?: BookingRequestCreateOrConnectWithoutCompanyBranchInput | BookingRequestCreateOrConnectWithoutCompanyBranchInput[]
+    createMany?: BookingRequestCreateManyCompanyBranchInputEnvelope
+    connect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutCompanyBranchInput = {
+    create?: XOR<UserCreateWithoutCompanyBranchInput, UserUncheckedCreateWithoutCompanyBranchInput> | UserCreateWithoutCompanyBranchInput[] | UserUncheckedCreateWithoutCompanyBranchInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutCompanyBranchInput | UserCreateOrConnectWithoutCompanyBranchInput[]
+    createMany?: UserCreateManyCompanyBranchInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type BookingRequestUncheckedCreateNestedManyWithoutCompanyBranchInput = {
+    create?: XOR<BookingRequestCreateWithoutCompanyBranchInput, BookingRequestUncheckedCreateWithoutCompanyBranchInput> | BookingRequestCreateWithoutCompanyBranchInput[] | BookingRequestUncheckedCreateWithoutCompanyBranchInput[]
+    connectOrCreate?: BookingRequestCreateOrConnectWithoutCompanyBranchInput | BookingRequestCreateOrConnectWithoutCompanyBranchInput[]
+    createMany?: BookingRequestCreateManyCompanyBranchInputEnvelope
+    connect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+  }
+
+  export type CompanyUpdateOneRequiredWithoutBranchesNestedInput = {
+    create?: XOR<CompanyCreateWithoutBranchesInput, CompanyUncheckedCreateWithoutBranchesInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutBranchesInput
+    upsert?: CompanyUpsertWithoutBranchesInput
+    connect?: CompanyWhereUniqueInput
+    update?: XOR<XOR<CompanyUpdateToOneWithWhereWithoutBranchesInput, CompanyUpdateWithoutBranchesInput>, CompanyUncheckedUpdateWithoutBranchesInput>
+  }
+
+  export type UserUpdateManyWithoutCompanyBranchNestedInput = {
+    create?: XOR<UserCreateWithoutCompanyBranchInput, UserUncheckedCreateWithoutCompanyBranchInput> | UserCreateWithoutCompanyBranchInput[] | UserUncheckedCreateWithoutCompanyBranchInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutCompanyBranchInput | UserCreateOrConnectWithoutCompanyBranchInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutCompanyBranchInput | UserUpsertWithWhereUniqueWithoutCompanyBranchInput[]
+    createMany?: UserCreateManyCompanyBranchInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutCompanyBranchInput | UserUpdateWithWhereUniqueWithoutCompanyBranchInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutCompanyBranchInput | UserUpdateManyWithWhereWithoutCompanyBranchInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type BookingRequestUpdateManyWithoutCompanyBranchNestedInput = {
+    create?: XOR<BookingRequestCreateWithoutCompanyBranchInput, BookingRequestUncheckedCreateWithoutCompanyBranchInput> | BookingRequestCreateWithoutCompanyBranchInput[] | BookingRequestUncheckedCreateWithoutCompanyBranchInput[]
+    connectOrCreate?: BookingRequestCreateOrConnectWithoutCompanyBranchInput | BookingRequestCreateOrConnectWithoutCompanyBranchInput[]
+    upsert?: BookingRequestUpsertWithWhereUniqueWithoutCompanyBranchInput | BookingRequestUpsertWithWhereUniqueWithoutCompanyBranchInput[]
+    createMany?: BookingRequestCreateManyCompanyBranchInputEnvelope
+    set?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    disconnect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    delete?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    connect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    update?: BookingRequestUpdateWithWhereUniqueWithoutCompanyBranchInput | BookingRequestUpdateWithWhereUniqueWithoutCompanyBranchInput[]
+    updateMany?: BookingRequestUpdateManyWithWhereWithoutCompanyBranchInput | BookingRequestUpdateManyWithWhereWithoutCompanyBranchInput[]
+    deleteMany?: BookingRequestScalarWhereInput | BookingRequestScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutCompanyBranchNestedInput = {
+    create?: XOR<UserCreateWithoutCompanyBranchInput, UserUncheckedCreateWithoutCompanyBranchInput> | UserCreateWithoutCompanyBranchInput[] | UserUncheckedCreateWithoutCompanyBranchInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutCompanyBranchInput | UserCreateOrConnectWithoutCompanyBranchInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutCompanyBranchInput | UserUpsertWithWhereUniqueWithoutCompanyBranchInput[]
+    createMany?: UserCreateManyCompanyBranchInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutCompanyBranchInput | UserUpdateWithWhereUniqueWithoutCompanyBranchInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutCompanyBranchInput | UserUpdateManyWithWhereWithoutCompanyBranchInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type BookingRequestUncheckedUpdateManyWithoutCompanyBranchNestedInput = {
+    create?: XOR<BookingRequestCreateWithoutCompanyBranchInput, BookingRequestUncheckedCreateWithoutCompanyBranchInput> | BookingRequestCreateWithoutCompanyBranchInput[] | BookingRequestUncheckedCreateWithoutCompanyBranchInput[]
+    connectOrCreate?: BookingRequestCreateOrConnectWithoutCompanyBranchInput | BookingRequestCreateOrConnectWithoutCompanyBranchInput[]
+    upsert?: BookingRequestUpsertWithWhereUniqueWithoutCompanyBranchInput | BookingRequestUpsertWithWhereUniqueWithoutCompanyBranchInput[]
+    createMany?: BookingRequestCreateManyCompanyBranchInputEnvelope
+    set?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    disconnect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    delete?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    connect?: BookingRequestWhereUniqueInput | BookingRequestWhereUniqueInput[]
+    update?: BookingRequestUpdateWithWhereUniqueWithoutCompanyBranchInput | BookingRequestUpdateWithWhereUniqueWithoutCompanyBranchInput[]
+    updateMany?: BookingRequestUpdateManyWithWhereWithoutCompanyBranchInput | BookingRequestUpdateManyWithWhereWithoutCompanyBranchInput[]
+    deleteMany?: BookingRequestScalarWhereInput | BookingRequestScalarWhereInput[]
+  }
+
+  export type FacultyCreateNestedOneWithoutUsersInput = {
+    create?: XOR<FacultyCreateWithoutUsersInput, FacultyUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: FacultyCreateOrConnectWithoutUsersInput
+    connect?: FacultyWhereUniqueInput
+  }
+
+  export type DepartmentCreateNestedOneWithoutUsersInput = {
+    create?: XOR<DepartmentCreateWithoutUsersInput, DepartmentUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: DepartmentCreateOrConnectWithoutUsersInput
+    connect?: DepartmentWhereUniqueInput
+  }
+
+  export type IkohzaCreateNestedOneWithoutUsersInput = {
+    create?: XOR<IkohzaCreateWithoutUsersInput, IkohzaUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: IkohzaCreateOrConnectWithoutUsersInput
+    connect?: IkohzaWhereUniqueInput
+  }
+
+  export type CompanyCreateNestedOneWithoutUsersInput = {
+    create?: XOR<CompanyCreateWithoutUsersInput, CompanyUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutUsersInput
+    connect?: CompanyWhereUniqueInput
+  }
+
+  export type CompanyBranchCreateNestedOneWithoutUsersInput = {
+    create?: XOR<CompanyBranchCreateWithoutUsersInput, CompanyBranchUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: CompanyBranchCreateOrConnectWithoutUsersInput
+    connect?: CompanyBranchWhereUniqueInput
+  }
+
   export type UserCreateNestedOneWithoutApprovedUsersInput = {
     create?: XOR<UserCreateWithoutApprovedUsersInput, UserUncheckedCreateWithoutApprovedUsersInput>
     connectOrCreate?: UserCreateOrConnectWithoutApprovedUsersInput
@@ -42199,6 +50694,64 @@ export namespace Prisma {
 
   export type Enumuser_status_enumFieldUpdateOperationsInput = {
     set?: $Enums.user_status_enum
+  }
+
+  export type Enumacademic_type_enumFieldUpdateOperationsInput = {
+    set?: $Enums.academic_type_enum
+  }
+
+  export type NullableEnumUTMFieldUpdateOperationsInput = {
+    set?: $Enums.UTM | null
+  }
+
+  export type FacultyUpdateOneWithoutUsersNestedInput = {
+    create?: XOR<FacultyCreateWithoutUsersInput, FacultyUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: FacultyCreateOrConnectWithoutUsersInput
+    upsert?: FacultyUpsertWithoutUsersInput
+    disconnect?: FacultyWhereInput | boolean
+    delete?: FacultyWhereInput | boolean
+    connect?: FacultyWhereUniqueInput
+    update?: XOR<XOR<FacultyUpdateToOneWithWhereWithoutUsersInput, FacultyUpdateWithoutUsersInput>, FacultyUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type DepartmentUpdateOneWithoutUsersNestedInput = {
+    create?: XOR<DepartmentCreateWithoutUsersInput, DepartmentUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: DepartmentCreateOrConnectWithoutUsersInput
+    upsert?: DepartmentUpsertWithoutUsersInput
+    disconnect?: DepartmentWhereInput | boolean
+    delete?: DepartmentWhereInput | boolean
+    connect?: DepartmentWhereUniqueInput
+    update?: XOR<XOR<DepartmentUpdateToOneWithWhereWithoutUsersInput, DepartmentUpdateWithoutUsersInput>, DepartmentUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type IkohzaUpdateOneWithoutUsersNestedInput = {
+    create?: XOR<IkohzaCreateWithoutUsersInput, IkohzaUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: IkohzaCreateOrConnectWithoutUsersInput
+    upsert?: IkohzaUpsertWithoutUsersInput
+    disconnect?: IkohzaWhereInput | boolean
+    delete?: IkohzaWhereInput | boolean
+    connect?: IkohzaWhereUniqueInput
+    update?: XOR<XOR<IkohzaUpdateToOneWithWhereWithoutUsersInput, IkohzaUpdateWithoutUsersInput>, IkohzaUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type CompanyUpdateOneWithoutUsersNestedInput = {
+    create?: XOR<CompanyCreateWithoutUsersInput, CompanyUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutUsersInput
+    upsert?: CompanyUpsertWithoutUsersInput
+    disconnect?: CompanyWhereInput | boolean
+    delete?: CompanyWhereInput | boolean
+    connect?: CompanyWhereUniqueInput
+    update?: XOR<XOR<CompanyUpdateToOneWithWhereWithoutUsersInput, CompanyUpdateWithoutUsersInput>, CompanyUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type CompanyBranchUpdateOneWithoutUsersNestedInput = {
+    create?: XOR<CompanyBranchCreateWithoutUsersInput, CompanyBranchUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: CompanyBranchCreateOrConnectWithoutUsersInput
+    upsert?: CompanyBranchUpsertWithoutUsersInput
+    disconnect?: CompanyBranchWhereInput | boolean
+    delete?: CompanyBranchWhereInput | boolean
+    connect?: CompanyBranchWhereUniqueInput
+    update?: XOR<XOR<CompanyBranchUpdateToOneWithWhereWithoutUsersInput, CompanyBranchUpdateWithoutUsersInput>, CompanyBranchUncheckedUpdateWithoutUsersInput>
   }
 
   export type UserUpdateOneWithoutApprovedUsersNestedInput = {
@@ -42789,6 +51342,18 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type CompanyCreateNestedOneWithoutBookingsInput = {
+    create?: XOR<CompanyCreateWithoutBookingsInput, CompanyUncheckedCreateWithoutBookingsInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutBookingsInput
+    connect?: CompanyWhereUniqueInput
+  }
+
+  export type CompanyBranchCreateNestedOneWithoutBookingsInput = {
+    create?: XOR<CompanyBranchCreateWithoutBookingsInput, CompanyBranchUncheckedCreateWithoutBookingsInput>
+    connectOrCreate?: CompanyBranchCreateOrConnectWithoutBookingsInput
+    connect?: CompanyBranchWhereUniqueInput
+  }
+
   export type BookingServiceItemCreateNestedManyWithoutBookingRequestInput = {
     create?: XOR<BookingServiceItemCreateWithoutBookingRequestInput, BookingServiceItemUncheckedCreateWithoutBookingRequestInput> | BookingServiceItemCreateWithoutBookingRequestInput[] | BookingServiceItemUncheckedCreateWithoutBookingRequestInput[]
     connectOrCreate?: BookingServiceItemCreateOrConnectWithoutBookingRequestInput | BookingServiceItemCreateOrConnectWithoutBookingRequestInput[]
@@ -42851,6 +51416,26 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutApprovedBookingsInput, UserUpdateWithoutApprovedBookingsInput>, UserUncheckedUpdateWithoutApprovedBookingsInput>
+  }
+
+  export type CompanyUpdateOneWithoutBookingsNestedInput = {
+    create?: XOR<CompanyCreateWithoutBookingsInput, CompanyUncheckedCreateWithoutBookingsInput>
+    connectOrCreate?: CompanyCreateOrConnectWithoutBookingsInput
+    upsert?: CompanyUpsertWithoutBookingsInput
+    disconnect?: CompanyWhereInput | boolean
+    delete?: CompanyWhereInput | boolean
+    connect?: CompanyWhereUniqueInput
+    update?: XOR<XOR<CompanyUpdateToOneWithWhereWithoutBookingsInput, CompanyUpdateWithoutBookingsInput>, CompanyUncheckedUpdateWithoutBookingsInput>
+  }
+
+  export type CompanyBranchUpdateOneWithoutBookingsNestedInput = {
+    create?: XOR<CompanyBranchCreateWithoutBookingsInput, CompanyBranchUncheckedCreateWithoutBookingsInput>
+    connectOrCreate?: CompanyBranchCreateOrConnectWithoutBookingsInput
+    upsert?: CompanyBranchUpsertWithoutBookingsInput
+    disconnect?: CompanyBranchWhereInput | boolean
+    delete?: CompanyBranchWhereInput | boolean
+    connect?: CompanyBranchWhereUniqueInput
+    update?: XOR<XOR<CompanyBranchUpdateToOneWithWhereWithoutBookingsInput, CompanyBranchUpdateWithoutBookingsInput>, CompanyBranchUncheckedUpdateWithoutBookingsInput>
   }
 
   export type BookingServiceItemUpdateManyWithoutBookingRequestNestedInput = {
@@ -44142,6 +52727,20 @@ export namespace Prisma {
     not?: NestedEnumuser_status_enumFilter<$PrismaModel> | $Enums.user_status_enum
   }
 
+  export type NestedEnumacademic_type_enumFilter<$PrismaModel = never> = {
+    equals?: $Enums.academic_type_enum | Enumacademic_type_enumFieldRefInput<$PrismaModel>
+    in?: $Enums.academic_type_enum[] | ListEnumacademic_type_enumFieldRefInput<$PrismaModel>
+    notIn?: $Enums.academic_type_enum[] | ListEnumacademic_type_enumFieldRefInput<$PrismaModel>
+    not?: NestedEnumacademic_type_enumFilter<$PrismaModel> | $Enums.academic_type_enum
+  }
+
+  export type NestedEnumUTMNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.UTM | EnumUTMFieldRefInput<$PrismaModel> | null
+    in?: $Enums.UTM[] | ListEnumUTMFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.UTM[] | ListEnumUTMFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumUTMNullableFilter<$PrismaModel> | $Enums.UTM | null
+  }
+
   export type NestedEnumuser_type_enumWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.user_type_enum | Enumuser_type_enumFieldRefInput<$PrismaModel>
     in?: $Enums.user_type_enum[] | ListEnumuser_type_enumFieldRefInput<$PrismaModel>
@@ -44160,6 +52759,26 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumuser_status_enumFilter<$PrismaModel>
     _max?: NestedEnumuser_status_enumFilter<$PrismaModel>
+  }
+
+  export type NestedEnumacademic_type_enumWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.academic_type_enum | Enumacademic_type_enumFieldRefInput<$PrismaModel>
+    in?: $Enums.academic_type_enum[] | ListEnumacademic_type_enumFieldRefInput<$PrismaModel>
+    notIn?: $Enums.academic_type_enum[] | ListEnumacademic_type_enumFieldRefInput<$PrismaModel>
+    not?: NestedEnumacademic_type_enumWithAggregatesFilter<$PrismaModel> | $Enums.academic_type_enum
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumacademic_type_enumFilter<$PrismaModel>
+    _max?: NestedEnumacademic_type_enumFilter<$PrismaModel>
+  }
+
+  export type NestedEnumUTMNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UTM | EnumUTMFieldRefInput<$PrismaModel> | null
+    in?: $Enums.UTM[] | ListEnumUTMFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.UTM[] | ListEnumUTMFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumUTMNullableWithAggregatesFilter<$PrismaModel> | $Enums.UTM | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumUTMNullableFilter<$PrismaModel>
+    _max?: NestedEnumUTMNullableFilter<$PrismaModel>
   }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -44830,6 +53449,1255 @@ export namespace Prisma {
     accounts?: BetterAuthAccountUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type DepartmentCreateWithoutFacultyInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserCreateNestedManyWithoutDepartmentRelationInput
+  }
+
+  export type DepartmentUncheckedCreateWithoutFacultyInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutDepartmentRelationInput
+  }
+
+  export type DepartmentCreateOrConnectWithoutFacultyInput = {
+    where: DepartmentWhereUniqueInput
+    create: XOR<DepartmentCreateWithoutFacultyInput, DepartmentUncheckedCreateWithoutFacultyInput>
+  }
+
+  export type DepartmentCreateManyFacultyInputEnvelope = {
+    data: DepartmentCreateManyFacultyInput | DepartmentCreateManyFacultyInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type IkohzaCreateWithoutFacultyInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    leaderName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserCreateNestedManyWithoutIkohzaInput
+  }
+
+  export type IkohzaUncheckedCreateWithoutFacultyInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    leaderName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutIkohzaInput
+  }
+
+  export type IkohzaCreateOrConnectWithoutFacultyInput = {
+    where: IkohzaWhereUniqueInput
+    create: XOR<IkohzaCreateWithoutFacultyInput, IkohzaUncheckedCreateWithoutFacultyInput>
+  }
+
+  export type IkohzaCreateManyFacultyInputEnvelope = {
+    data: IkohzaCreateManyFacultyInput | IkohzaCreateManyFacultyInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserCreateWithoutFacultyRelationInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
+    approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserUncheckedCreateWithoutFacultyRelationInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+    approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestUncheckedCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestUncheckedCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceUncheckedCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultUncheckedCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationUncheckedCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationUncheckedCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentUncheckedCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserCreateOrConnectWithoutFacultyRelationInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFacultyRelationInput, UserUncheckedCreateWithoutFacultyRelationInput>
+  }
+
+  export type UserCreateManyFacultyRelationInputEnvelope = {
+    data: UserCreateManyFacultyRelationInput | UserCreateManyFacultyRelationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DepartmentUpsertWithWhereUniqueWithoutFacultyInput = {
+    where: DepartmentWhereUniqueInput
+    update: XOR<DepartmentUpdateWithoutFacultyInput, DepartmentUncheckedUpdateWithoutFacultyInput>
+    create: XOR<DepartmentCreateWithoutFacultyInput, DepartmentUncheckedCreateWithoutFacultyInput>
+  }
+
+  export type DepartmentUpdateWithWhereUniqueWithoutFacultyInput = {
+    where: DepartmentWhereUniqueInput
+    data: XOR<DepartmentUpdateWithoutFacultyInput, DepartmentUncheckedUpdateWithoutFacultyInput>
+  }
+
+  export type DepartmentUpdateManyWithWhereWithoutFacultyInput = {
+    where: DepartmentScalarWhereInput
+    data: XOR<DepartmentUpdateManyMutationInput, DepartmentUncheckedUpdateManyWithoutFacultyInput>
+  }
+
+  export type DepartmentScalarWhereInput = {
+    AND?: DepartmentScalarWhereInput | DepartmentScalarWhereInput[]
+    OR?: DepartmentScalarWhereInput[]
+    NOT?: DepartmentScalarWhereInput | DepartmentScalarWhereInput[]
+    id?: UuidFilter<"Department"> | string
+    facultyId?: UuidFilter<"Department"> | string
+    code?: StringFilter<"Department"> | string
+    name?: StringFilter<"Department"> | string
+    isActive?: BoolFilter<"Department"> | boolean
+    createdAt?: DateTimeFilter<"Department"> | Date | string
+    updatedAt?: DateTimeFilter<"Department"> | Date | string
+  }
+
+  export type IkohzaUpsertWithWhereUniqueWithoutFacultyInput = {
+    where: IkohzaWhereUniqueInput
+    update: XOR<IkohzaUpdateWithoutFacultyInput, IkohzaUncheckedUpdateWithoutFacultyInput>
+    create: XOR<IkohzaCreateWithoutFacultyInput, IkohzaUncheckedCreateWithoutFacultyInput>
+  }
+
+  export type IkohzaUpdateWithWhereUniqueWithoutFacultyInput = {
+    where: IkohzaWhereUniqueInput
+    data: XOR<IkohzaUpdateWithoutFacultyInput, IkohzaUncheckedUpdateWithoutFacultyInput>
+  }
+
+  export type IkohzaUpdateManyWithWhereWithoutFacultyInput = {
+    where: IkohzaScalarWhereInput
+    data: XOR<IkohzaUpdateManyMutationInput, IkohzaUncheckedUpdateManyWithoutFacultyInput>
+  }
+
+  export type IkohzaScalarWhereInput = {
+    AND?: IkohzaScalarWhereInput | IkohzaScalarWhereInput[]
+    OR?: IkohzaScalarWhereInput[]
+    NOT?: IkohzaScalarWhereInput | IkohzaScalarWhereInput[]
+    id?: UuidFilter<"Ikohza"> | string
+    facultyId?: UuidFilter<"Ikohza"> | string
+    code?: StringFilter<"Ikohza"> | string
+    name?: StringFilter<"Ikohza"> | string
+    description?: StringNullableFilter<"Ikohza"> | string | null
+    isActive?: BoolFilter<"Ikohza"> | boolean
+    leaderName?: StringNullableFilter<"Ikohza"> | string | null
+    createdAt?: DateTimeFilter<"Ikohza"> | Date | string
+    updatedAt?: DateTimeFilter<"Ikohza"> | Date | string
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutFacultyRelationInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutFacultyRelationInput, UserUncheckedUpdateWithoutFacultyRelationInput>
+    create: XOR<UserCreateWithoutFacultyRelationInput, UserUncheckedCreateWithoutFacultyRelationInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutFacultyRelationInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutFacultyRelationInput, UserUncheckedUpdateWithoutFacultyRelationInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutFacultyRelationInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutFacultyRelationInput>
+  }
+
+  export type UserScalarWhereInput = {
+    AND?: UserScalarWhereInput | UserScalarWhereInput[]
+    OR?: UserScalarWhereInput[]
+    NOT?: UserScalarWhereInput | UserScalarWhereInput[]
+    id?: UuidFilter<"User"> | string
+    firstName?: StringFilter<"User"> | string
+    lastName?: StringFilter<"User"> | string
+    profileImageUrl?: StringNullableFilter<"User"> | string | null
+    phone?: StringNullableFilter<"User"> | string | null
+    userType?: Enumuser_type_enumFilter<"User"> | $Enums.user_type_enum
+    status?: Enumuser_status_enumFilter<"User"> | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFilter<"User"> | $Enums.academic_type_enum
+    userIdentifier?: StringNullableFilter<"User"> | string | null
+    supervisorName?: StringNullableFilter<"User"> | string | null
+    facultyId?: UuidNullableFilter<"User"> | string | null
+    departmentId?: UuidNullableFilter<"User"> | string | null
+    ikohzaId?: UuidNullableFilter<"User"> | string | null
+    companyId?: UuidNullableFilter<"User"> | string | null
+    companyBranchId?: UuidNullableFilter<"User"> | string | null
+    UTM?: EnumUTMNullableFilter<"User"> | $Enums.UTM | null
+    address?: StringNullableFilter<"User"> | string | null
+    email?: StringFilter<"User"> | string
+    emailVerifiedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    approvedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    createdAt?: DateTimeFilter<"User"> | Date | string
+    updatedAt?: DateTimeFilter<"User"> | Date | string
+    approvedBy?: UuidNullableFilter<"User"> | string | null
+  }
+
+  export type FacultyCreateWithoutDepartmentsInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ikohzas?: IkohzaCreateNestedManyWithoutFacultyInput
+    users?: UserCreateNestedManyWithoutFacultyRelationInput
+  }
+
+  export type FacultyUncheckedCreateWithoutDepartmentsInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ikohzas?: IkohzaUncheckedCreateNestedManyWithoutFacultyInput
+    users?: UserUncheckedCreateNestedManyWithoutFacultyRelationInput
+  }
+
+  export type FacultyCreateOrConnectWithoutDepartmentsInput = {
+    where: FacultyWhereUniqueInput
+    create: XOR<FacultyCreateWithoutDepartmentsInput, FacultyUncheckedCreateWithoutDepartmentsInput>
+  }
+
+  export type UserCreateWithoutDepartmentRelationInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
+    approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserUncheckedCreateWithoutDepartmentRelationInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+    approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestUncheckedCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestUncheckedCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceUncheckedCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultUncheckedCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationUncheckedCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationUncheckedCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentUncheckedCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserCreateOrConnectWithoutDepartmentRelationInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutDepartmentRelationInput, UserUncheckedCreateWithoutDepartmentRelationInput>
+  }
+
+  export type UserCreateManyDepartmentRelationInputEnvelope = {
+    data: UserCreateManyDepartmentRelationInput | UserCreateManyDepartmentRelationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FacultyUpsertWithoutDepartmentsInput = {
+    update: XOR<FacultyUpdateWithoutDepartmentsInput, FacultyUncheckedUpdateWithoutDepartmentsInput>
+    create: XOR<FacultyCreateWithoutDepartmentsInput, FacultyUncheckedCreateWithoutDepartmentsInput>
+    where?: FacultyWhereInput
+  }
+
+  export type FacultyUpdateToOneWithWhereWithoutDepartmentsInput = {
+    where?: FacultyWhereInput
+    data: XOR<FacultyUpdateWithoutDepartmentsInput, FacultyUncheckedUpdateWithoutDepartmentsInput>
+  }
+
+  export type FacultyUpdateWithoutDepartmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ikohzas?: IkohzaUpdateManyWithoutFacultyNestedInput
+    users?: UserUpdateManyWithoutFacultyRelationNestedInput
+  }
+
+  export type FacultyUncheckedUpdateWithoutDepartmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ikohzas?: IkohzaUncheckedUpdateManyWithoutFacultyNestedInput
+    users?: UserUncheckedUpdateManyWithoutFacultyRelationNestedInput
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutDepartmentRelationInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutDepartmentRelationInput, UserUncheckedUpdateWithoutDepartmentRelationInput>
+    create: XOR<UserCreateWithoutDepartmentRelationInput, UserUncheckedCreateWithoutDepartmentRelationInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutDepartmentRelationInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutDepartmentRelationInput, UserUncheckedUpdateWithoutDepartmentRelationInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutDepartmentRelationInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutDepartmentRelationInput>
+  }
+
+  export type FacultyCreateWithoutIkohzasInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    departments?: DepartmentCreateNestedManyWithoutFacultyInput
+    users?: UserCreateNestedManyWithoutFacultyRelationInput
+  }
+
+  export type FacultyUncheckedCreateWithoutIkohzasInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    departments?: DepartmentUncheckedCreateNestedManyWithoutFacultyInput
+    users?: UserUncheckedCreateNestedManyWithoutFacultyRelationInput
+  }
+
+  export type FacultyCreateOrConnectWithoutIkohzasInput = {
+    where: FacultyWhereUniqueInput
+    create: XOR<FacultyCreateWithoutIkohzasInput, FacultyUncheckedCreateWithoutIkohzasInput>
+  }
+
+  export type UserCreateWithoutIkohzaInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
+    approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserUncheckedCreateWithoutIkohzaInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+    approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestUncheckedCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestUncheckedCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceUncheckedCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultUncheckedCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationUncheckedCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationUncheckedCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentUncheckedCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserCreateOrConnectWithoutIkohzaInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutIkohzaInput, UserUncheckedCreateWithoutIkohzaInput>
+  }
+
+  export type UserCreateManyIkohzaInputEnvelope = {
+    data: UserCreateManyIkohzaInput | UserCreateManyIkohzaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FacultyUpsertWithoutIkohzasInput = {
+    update: XOR<FacultyUpdateWithoutIkohzasInput, FacultyUncheckedUpdateWithoutIkohzasInput>
+    create: XOR<FacultyCreateWithoutIkohzasInput, FacultyUncheckedCreateWithoutIkohzasInput>
+    where?: FacultyWhereInput
+  }
+
+  export type FacultyUpdateToOneWithWhereWithoutIkohzasInput = {
+    where?: FacultyWhereInput
+    data: XOR<FacultyUpdateWithoutIkohzasInput, FacultyUncheckedUpdateWithoutIkohzasInput>
+  }
+
+  export type FacultyUpdateWithoutIkohzasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    departments?: DepartmentUpdateManyWithoutFacultyNestedInput
+    users?: UserUpdateManyWithoutFacultyRelationNestedInput
+  }
+
+  export type FacultyUncheckedUpdateWithoutIkohzasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    departments?: DepartmentUncheckedUpdateManyWithoutFacultyNestedInput
+    users?: UserUncheckedUpdateManyWithoutFacultyRelationNestedInput
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutIkohzaInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutIkohzaInput, UserUncheckedUpdateWithoutIkohzaInput>
+    create: XOR<UserCreateWithoutIkohzaInput, UserUncheckedCreateWithoutIkohzaInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutIkohzaInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutIkohzaInput, UserUncheckedUpdateWithoutIkohzaInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutIkohzaInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutIkohzaInput>
+  }
+
+  export type CompanyBranchCreateWithoutCompanyInput = {
+    id?: string
+    name: string
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    postcode?: string | null
+    country?: string | null
+    phone?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserCreateNestedManyWithoutCompanyBranchInput
+    bookings?: BookingRequestCreateNestedManyWithoutCompanyBranchInput
+  }
+
+  export type CompanyBranchUncheckedCreateWithoutCompanyInput = {
+    id?: string
+    name: string
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    postcode?: string | null
+    country?: string | null
+    phone?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutCompanyBranchInput
+    bookings?: BookingRequestUncheckedCreateNestedManyWithoutCompanyBranchInput
+  }
+
+  export type CompanyBranchCreateOrConnectWithoutCompanyInput = {
+    where: CompanyBranchWhereUniqueInput
+    create: XOR<CompanyBranchCreateWithoutCompanyInput, CompanyBranchUncheckedCreateWithoutCompanyInput>
+  }
+
+  export type CompanyBranchCreateManyCompanyInputEnvelope = {
+    data: CompanyBranchCreateManyCompanyInput | CompanyBranchCreateManyCompanyInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserCreateWithoutCompanyRelationInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
+    approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCompanyRelationInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+    approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestUncheckedCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestUncheckedCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceUncheckedCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultUncheckedCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationUncheckedCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationUncheckedCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentUncheckedCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCompanyRelationInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCompanyRelationInput, UserUncheckedCreateWithoutCompanyRelationInput>
+  }
+
+  export type UserCreateManyCompanyRelationInputEnvelope = {
+    data: UserCreateManyCompanyRelationInput | UserCreateManyCompanyRelationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BookingRequestCreateWithoutCompanyRelationInput = {
+    id?: string
+    referenceNumber: string
+    projectDescription?: string | null
+    preferredStartDate?: Date | string | null
+    preferredEndDate?: Date | string | null
+    totalAmount?: Decimal | DecimalJsLike | number | string
+    status?: $Enums.booking_status_enum
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewNotes?: string | null
+    user: UserCreateNestedOneWithoutBookingRequestsInput
+    reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutBookingsInput
+    serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
+    serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
+  }
+
+  export type BookingRequestUncheckedCreateWithoutCompanyRelationInput = {
+    id?: string
+    userId: string
+    referenceNumber: string
+    projectDescription?: string | null
+    preferredStartDate?: Date | string | null
+    preferredEndDate?: Date | string | null
+    totalAmount?: Decimal | DecimalJsLike | number | string
+    status?: $Enums.booking_status_enum
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNotes?: string | null
+    companyBranchId?: string | null
+    serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
+    serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
+  }
+
+  export type BookingRequestCreateOrConnectWithoutCompanyRelationInput = {
+    where: BookingRequestWhereUniqueInput
+    create: XOR<BookingRequestCreateWithoutCompanyRelationInput, BookingRequestUncheckedCreateWithoutCompanyRelationInput>
+  }
+
+  export type BookingRequestCreateManyCompanyRelationInputEnvelope = {
+    data: BookingRequestCreateManyCompanyRelationInput | BookingRequestCreateManyCompanyRelationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CompanyBranchUpsertWithWhereUniqueWithoutCompanyInput = {
+    where: CompanyBranchWhereUniqueInput
+    update: XOR<CompanyBranchUpdateWithoutCompanyInput, CompanyBranchUncheckedUpdateWithoutCompanyInput>
+    create: XOR<CompanyBranchCreateWithoutCompanyInput, CompanyBranchUncheckedCreateWithoutCompanyInput>
+  }
+
+  export type CompanyBranchUpdateWithWhereUniqueWithoutCompanyInput = {
+    where: CompanyBranchWhereUniqueInput
+    data: XOR<CompanyBranchUpdateWithoutCompanyInput, CompanyBranchUncheckedUpdateWithoutCompanyInput>
+  }
+
+  export type CompanyBranchUpdateManyWithWhereWithoutCompanyInput = {
+    where: CompanyBranchScalarWhereInput
+    data: XOR<CompanyBranchUpdateManyMutationInput, CompanyBranchUncheckedUpdateManyWithoutCompanyInput>
+  }
+
+  export type CompanyBranchScalarWhereInput = {
+    AND?: CompanyBranchScalarWhereInput | CompanyBranchScalarWhereInput[]
+    OR?: CompanyBranchScalarWhereInput[]
+    NOT?: CompanyBranchScalarWhereInput | CompanyBranchScalarWhereInput[]
+    id?: UuidFilter<"CompanyBranch"> | string
+    companyId?: UuidFilter<"CompanyBranch"> | string
+    name?: StringFilter<"CompanyBranch"> | string
+    address?: StringNullableFilter<"CompanyBranch"> | string | null
+    city?: StringNullableFilter<"CompanyBranch"> | string | null
+    state?: StringNullableFilter<"CompanyBranch"> | string | null
+    postcode?: StringNullableFilter<"CompanyBranch"> | string | null
+    country?: StringNullableFilter<"CompanyBranch"> | string | null
+    phone?: StringNullableFilter<"CompanyBranch"> | string | null
+    isActive?: BoolFilter<"CompanyBranch"> | boolean
+    createdAt?: DateTimeFilter<"CompanyBranch"> | Date | string
+    updatedAt?: DateTimeFilter<"CompanyBranch"> | Date | string
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutCompanyRelationInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutCompanyRelationInput, UserUncheckedUpdateWithoutCompanyRelationInput>
+    create: XOR<UserCreateWithoutCompanyRelationInput, UserUncheckedCreateWithoutCompanyRelationInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutCompanyRelationInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutCompanyRelationInput, UserUncheckedUpdateWithoutCompanyRelationInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutCompanyRelationInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutCompanyRelationInput>
+  }
+
+  export type BookingRequestUpsertWithWhereUniqueWithoutCompanyRelationInput = {
+    where: BookingRequestWhereUniqueInput
+    update: XOR<BookingRequestUpdateWithoutCompanyRelationInput, BookingRequestUncheckedUpdateWithoutCompanyRelationInput>
+    create: XOR<BookingRequestCreateWithoutCompanyRelationInput, BookingRequestUncheckedCreateWithoutCompanyRelationInput>
+  }
+
+  export type BookingRequestUpdateWithWhereUniqueWithoutCompanyRelationInput = {
+    where: BookingRequestWhereUniqueInput
+    data: XOR<BookingRequestUpdateWithoutCompanyRelationInput, BookingRequestUncheckedUpdateWithoutCompanyRelationInput>
+  }
+
+  export type BookingRequestUpdateManyWithWhereWithoutCompanyRelationInput = {
+    where: BookingRequestScalarWhereInput
+    data: XOR<BookingRequestUpdateManyMutationInput, BookingRequestUncheckedUpdateManyWithoutCompanyRelationInput>
+  }
+
+  export type BookingRequestScalarWhereInput = {
+    AND?: BookingRequestScalarWhereInput | BookingRequestScalarWhereInput[]
+    OR?: BookingRequestScalarWhereInput[]
+    NOT?: BookingRequestScalarWhereInput | BookingRequestScalarWhereInput[]
+    id?: UuidFilter<"BookingRequest"> | string
+    userId?: UuidFilter<"BookingRequest"> | string
+    referenceNumber?: StringFilter<"BookingRequest"> | string
+    projectDescription?: StringNullableFilter<"BookingRequest"> | string | null
+    preferredStartDate?: DateTimeNullableFilter<"BookingRequest"> | Date | string | null
+    preferredEndDate?: DateTimeNullableFilter<"BookingRequest"> | Date | string | null
+    totalAmount?: DecimalFilter<"BookingRequest"> | Decimal | DecimalJsLike | number | string
+    status?: Enumbooking_status_enumFilter<"BookingRequest"> | $Enums.booking_status_enum
+    notes?: StringNullableFilter<"BookingRequest"> | string | null
+    createdAt?: DateTimeFilter<"BookingRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"BookingRequest"> | Date | string
+    reviewedAt?: DateTimeNullableFilter<"BookingRequest"> | Date | string | null
+    reviewedBy?: UuidNullableFilter<"BookingRequest"> | string | null
+    reviewNotes?: StringNullableFilter<"BookingRequest"> | string | null
+    companyId?: UuidNullableFilter<"BookingRequest"> | string | null
+    companyBranchId?: UuidNullableFilter<"BookingRequest"> | string | null
+  }
+
+  export type CompanyCreateWithoutBranchesInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    regNo?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserCreateNestedManyWithoutCompanyRelationInput
+    bookings?: BookingRequestCreateNestedManyWithoutCompanyRelationInput
+  }
+
+  export type CompanyUncheckedCreateWithoutBranchesInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    regNo?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutCompanyRelationInput
+    bookings?: BookingRequestUncheckedCreateNestedManyWithoutCompanyRelationInput
+  }
+
+  export type CompanyCreateOrConnectWithoutBranchesInput = {
+    where: CompanyWhereUniqueInput
+    create: XOR<CompanyCreateWithoutBranchesInput, CompanyUncheckedCreateWithoutBranchesInput>
+  }
+
+  export type UserCreateWithoutCompanyBranchInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
+    approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCompanyBranchInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+    approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestUncheckedCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestUncheckedCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceUncheckedCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultUncheckedCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationUncheckedCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationUncheckedCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentUncheckedCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCompanyBranchInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCompanyBranchInput, UserUncheckedCreateWithoutCompanyBranchInput>
+  }
+
+  export type UserCreateManyCompanyBranchInputEnvelope = {
+    data: UserCreateManyCompanyBranchInput | UserCreateManyCompanyBranchInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BookingRequestCreateWithoutCompanyBranchInput = {
+    id?: string
+    referenceNumber: string
+    projectDescription?: string | null
+    preferredStartDate?: Date | string | null
+    preferredEndDate?: Date | string | null
+    totalAmount?: Decimal | DecimalJsLike | number | string
+    status?: $Enums.booking_status_enum
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewNotes?: string | null
+    user: UserCreateNestedOneWithoutBookingRequestsInput
+    reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
+    companyRelation?: CompanyCreateNestedOneWithoutBookingsInput
+    serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
+    serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
+  }
+
+  export type BookingRequestUncheckedCreateWithoutCompanyBranchInput = {
+    id?: string
+    userId: string
+    referenceNumber: string
+    projectDescription?: string | null
+    preferredStartDate?: Date | string | null
+    preferredEndDate?: Date | string | null
+    totalAmount?: Decimal | DecimalJsLike | number | string
+    status?: $Enums.booking_status_enum
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNotes?: string | null
+    companyId?: string | null
+    serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
+    workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
+    serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
+  }
+
+  export type BookingRequestCreateOrConnectWithoutCompanyBranchInput = {
+    where: BookingRequestWhereUniqueInput
+    create: XOR<BookingRequestCreateWithoutCompanyBranchInput, BookingRequestUncheckedCreateWithoutCompanyBranchInput>
+  }
+
+  export type BookingRequestCreateManyCompanyBranchInputEnvelope = {
+    data: BookingRequestCreateManyCompanyBranchInput | BookingRequestCreateManyCompanyBranchInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CompanyUpsertWithoutBranchesInput = {
+    update: XOR<CompanyUpdateWithoutBranchesInput, CompanyUncheckedUpdateWithoutBranchesInput>
+    create: XOR<CompanyCreateWithoutBranchesInput, CompanyUncheckedCreateWithoutBranchesInput>
+    where?: CompanyWhereInput
+  }
+
+  export type CompanyUpdateToOneWithWhereWithoutBranchesInput = {
+    where?: CompanyWhereInput
+    data: XOR<CompanyUpdateWithoutBranchesInput, CompanyUncheckedUpdateWithoutBranchesInput>
+  }
+
+  export type CompanyUpdateWithoutBranchesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    regNo?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutCompanyRelationNestedInput
+    bookings?: BookingRequestUpdateManyWithoutCompanyRelationNestedInput
+  }
+
+  export type CompanyUncheckedUpdateWithoutBranchesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    regNo?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutCompanyRelationNestedInput
+    bookings?: BookingRequestUncheckedUpdateManyWithoutCompanyRelationNestedInput
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutCompanyBranchInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutCompanyBranchInput, UserUncheckedUpdateWithoutCompanyBranchInput>
+    create: XOR<UserCreateWithoutCompanyBranchInput, UserUncheckedCreateWithoutCompanyBranchInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutCompanyBranchInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutCompanyBranchInput, UserUncheckedUpdateWithoutCompanyBranchInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutCompanyBranchInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutCompanyBranchInput>
+  }
+
+  export type BookingRequestUpsertWithWhereUniqueWithoutCompanyBranchInput = {
+    where: BookingRequestWhereUniqueInput
+    update: XOR<BookingRequestUpdateWithoutCompanyBranchInput, BookingRequestUncheckedUpdateWithoutCompanyBranchInput>
+    create: XOR<BookingRequestCreateWithoutCompanyBranchInput, BookingRequestUncheckedCreateWithoutCompanyBranchInput>
+  }
+
+  export type BookingRequestUpdateWithWhereUniqueWithoutCompanyBranchInput = {
+    where: BookingRequestWhereUniqueInput
+    data: XOR<BookingRequestUpdateWithoutCompanyBranchInput, BookingRequestUncheckedUpdateWithoutCompanyBranchInput>
+  }
+
+  export type BookingRequestUpdateManyWithWhereWithoutCompanyBranchInput = {
+    where: BookingRequestScalarWhereInput
+    data: XOR<BookingRequestUpdateManyMutationInput, BookingRequestUncheckedUpdateManyWithoutCompanyBranchInput>
+  }
+
+  export type FacultyCreateWithoutUsersInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    departments?: DepartmentCreateNestedManyWithoutFacultyInput
+    ikohzas?: IkohzaCreateNestedManyWithoutFacultyInput
+  }
+
+  export type FacultyUncheckedCreateWithoutUsersInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    departments?: DepartmentUncheckedCreateNestedManyWithoutFacultyInput
+    ikohzas?: IkohzaUncheckedCreateNestedManyWithoutFacultyInput
+  }
+
+  export type FacultyCreateOrConnectWithoutUsersInput = {
+    where: FacultyWhereUniqueInput
+    create: XOR<FacultyCreateWithoutUsersInput, FacultyUncheckedCreateWithoutUsersInput>
+  }
+
+  export type DepartmentCreateWithoutUsersInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    faculty: FacultyCreateNestedOneWithoutDepartmentsInput
+  }
+
+  export type DepartmentUncheckedCreateWithoutUsersInput = {
+    id?: string
+    facultyId: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentCreateOrConnectWithoutUsersInput = {
+    where: DepartmentWhereUniqueInput
+    create: XOR<DepartmentCreateWithoutUsersInput, DepartmentUncheckedCreateWithoutUsersInput>
+  }
+
+  export type IkohzaCreateWithoutUsersInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    leaderName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    faculty: FacultyCreateNestedOneWithoutIkohzasInput
+  }
+
+  export type IkohzaUncheckedCreateWithoutUsersInput = {
+    id?: string
+    facultyId: string
+    code: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    leaderName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IkohzaCreateOrConnectWithoutUsersInput = {
+    where: IkohzaWhereUniqueInput
+    create: XOR<IkohzaCreateWithoutUsersInput, IkohzaUncheckedCreateWithoutUsersInput>
+  }
+
+  export type CompanyCreateWithoutUsersInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    regNo?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    branches?: CompanyBranchCreateNestedManyWithoutCompanyInput
+    bookings?: BookingRequestCreateNestedManyWithoutCompanyRelationInput
+  }
+
+  export type CompanyUncheckedCreateWithoutUsersInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    regNo?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    branches?: CompanyBranchUncheckedCreateNestedManyWithoutCompanyInput
+    bookings?: BookingRequestUncheckedCreateNestedManyWithoutCompanyRelationInput
+  }
+
+  export type CompanyCreateOrConnectWithoutUsersInput = {
+    where: CompanyWhereUniqueInput
+    create: XOR<CompanyCreateWithoutUsersInput, CompanyUncheckedCreateWithoutUsersInput>
+  }
+
+  export type CompanyBranchCreateWithoutUsersInput = {
+    id?: string
+    name: string
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    postcode?: string | null
+    country?: string | null
+    phone?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company: CompanyCreateNestedOneWithoutBranchesInput
+    bookings?: BookingRequestCreateNestedManyWithoutCompanyBranchInput
+  }
+
+  export type CompanyBranchUncheckedCreateWithoutUsersInput = {
+    id?: string
+    companyId: string
+    name: string
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    postcode?: string | null
+    country?: string | null
+    phone?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookings?: BookingRequestUncheckedCreateNestedManyWithoutCompanyBranchInput
+  }
+
+  export type CompanyBranchCreateOrConnectWithoutUsersInput = {
+    where: CompanyBranchWhereUniqueInput
+    create: XOR<CompanyBranchCreateWithoutUsersInput, CompanyBranchUncheckedCreateWithoutUsersInput>
+  }
+
   export type UserCreateWithoutApprovedUsersInput = {
     id?: string
     firstName: string
@@ -44838,11 +54706,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -44850,6 +54717,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
@@ -44874,11 +54746,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -44915,11 +54791,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -44927,6 +54802,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
@@ -44951,11 +54831,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -45061,6 +54945,8 @@ export namespace Prisma {
     reviewedAt?: Date | string | null
     reviewNotes?: string | null
     reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
+    companyRelation?: CompanyCreateNestedOneWithoutBookingsInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutBookingsInput
     serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
     workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
@@ -45080,6 +54966,8 @@ export namespace Prisma {
     reviewedAt?: Date | string | null
     reviewedBy?: string | null
     reviewNotes?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
     serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
     workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
@@ -45109,6 +54997,8 @@ export namespace Prisma {
     reviewedAt?: Date | string | null
     reviewNotes?: string | null
     user: UserCreateNestedOneWithoutBookingRequestsInput
+    companyRelation?: CompanyCreateNestedOneWithoutBookingsInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutBookingsInput
     serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
     workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
@@ -45128,6 +55018,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     reviewedAt?: Date | string | null
     reviewNotes?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
     serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
     workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
@@ -45535,6 +55427,183 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type FacultyUpsertWithoutUsersInput = {
+    update: XOR<FacultyUpdateWithoutUsersInput, FacultyUncheckedUpdateWithoutUsersInput>
+    create: XOR<FacultyCreateWithoutUsersInput, FacultyUncheckedCreateWithoutUsersInput>
+    where?: FacultyWhereInput
+  }
+
+  export type FacultyUpdateToOneWithWhereWithoutUsersInput = {
+    where?: FacultyWhereInput
+    data: XOR<FacultyUpdateWithoutUsersInput, FacultyUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type FacultyUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    departments?: DepartmentUpdateManyWithoutFacultyNestedInput
+    ikohzas?: IkohzaUpdateManyWithoutFacultyNestedInput
+  }
+
+  export type FacultyUncheckedUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    departments?: DepartmentUncheckedUpdateManyWithoutFacultyNestedInput
+    ikohzas?: IkohzaUncheckedUpdateManyWithoutFacultyNestedInput
+  }
+
+  export type DepartmentUpsertWithoutUsersInput = {
+    update: XOR<DepartmentUpdateWithoutUsersInput, DepartmentUncheckedUpdateWithoutUsersInput>
+    create: XOR<DepartmentCreateWithoutUsersInput, DepartmentUncheckedCreateWithoutUsersInput>
+    where?: DepartmentWhereInput
+  }
+
+  export type DepartmentUpdateToOneWithWhereWithoutUsersInput = {
+    where?: DepartmentWhereInput
+    data: XOR<DepartmentUpdateWithoutUsersInput, DepartmentUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type DepartmentUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    faculty?: FacultyUpdateOneRequiredWithoutDepartmentsNestedInput
+  }
+
+  export type DepartmentUncheckedUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    facultyId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IkohzaUpsertWithoutUsersInput = {
+    update: XOR<IkohzaUpdateWithoutUsersInput, IkohzaUncheckedUpdateWithoutUsersInput>
+    create: XOR<IkohzaCreateWithoutUsersInput, IkohzaUncheckedCreateWithoutUsersInput>
+    where?: IkohzaWhereInput
+  }
+
+  export type IkohzaUpdateToOneWithWhereWithoutUsersInput = {
+    where?: IkohzaWhereInput
+    data: XOR<IkohzaUpdateWithoutUsersInput, IkohzaUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type IkohzaUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    leaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    faculty?: FacultyUpdateOneRequiredWithoutIkohzasNestedInput
+  }
+
+  export type IkohzaUncheckedUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    facultyId?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    leaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CompanyUpsertWithoutUsersInput = {
+    update: XOR<CompanyUpdateWithoutUsersInput, CompanyUncheckedUpdateWithoutUsersInput>
+    create: XOR<CompanyCreateWithoutUsersInput, CompanyUncheckedCreateWithoutUsersInput>
+    where?: CompanyWhereInput
+  }
+
+  export type CompanyUpdateToOneWithWhereWithoutUsersInput = {
+    where?: CompanyWhereInput
+    data: XOR<CompanyUpdateWithoutUsersInput, CompanyUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type CompanyUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    regNo?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    branches?: CompanyBranchUpdateManyWithoutCompanyNestedInput
+    bookings?: BookingRequestUpdateManyWithoutCompanyRelationNestedInput
+  }
+
+  export type CompanyUncheckedUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    regNo?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    branches?: CompanyBranchUncheckedUpdateManyWithoutCompanyNestedInput
+    bookings?: BookingRequestUncheckedUpdateManyWithoutCompanyRelationNestedInput
+  }
+
+  export type CompanyBranchUpsertWithoutUsersInput = {
+    update: XOR<CompanyBranchUpdateWithoutUsersInput, CompanyBranchUncheckedUpdateWithoutUsersInput>
+    create: XOR<CompanyBranchCreateWithoutUsersInput, CompanyBranchUncheckedCreateWithoutUsersInput>
+    where?: CompanyBranchWhereInput
+  }
+
+  export type CompanyBranchUpdateToOneWithWhereWithoutUsersInput = {
+    where?: CompanyBranchWhereInput
+    data: XOR<CompanyBranchUpdateWithoutUsersInput, CompanyBranchUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type CompanyBranchUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneRequiredWithoutBranchesNestedInput
+    bookings?: BookingRequestUpdateManyWithoutCompanyBranchNestedInput
+  }
+
+  export type CompanyBranchUncheckedUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookings?: BookingRequestUncheckedUpdateManyWithoutCompanyBranchNestedInput
+  }
+
   export type UserUpsertWithoutApprovedUsersInput = {
     update: XOR<UserUpdateWithoutApprovedUsersInput, UserUncheckedUpdateWithoutApprovedUsersInput>
     create: XOR<UserCreateWithoutApprovedUsersInput, UserUncheckedCreateWithoutApprovedUsersInput>
@@ -45554,11 +55623,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -45566,6 +55634,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
@@ -45590,11 +55663,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -45632,32 +55709,6 @@ export namespace Prisma {
   export type UserUpdateManyWithWhereWithoutApprovedByUserInput = {
     where: UserScalarWhereInput
     data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutApprovedByUserInput>
-  }
-
-  export type UserScalarWhereInput = {
-    AND?: UserScalarWhereInput | UserScalarWhereInput[]
-    OR?: UserScalarWhereInput[]
-    NOT?: UserScalarWhereInput | UserScalarWhereInput[]
-    id?: UuidFilter<"User"> | string
-    firstName?: StringFilter<"User"> | string
-    lastName?: StringFilter<"User"> | string
-    profileImageUrl?: StringNullableFilter<"User"> | string | null
-    phone?: StringNullableFilter<"User"> | string | null
-    userType?: Enumuser_type_enumFilter<"User"> | $Enums.user_type_enum
-    status?: Enumuser_status_enumFilter<"User"> | $Enums.user_status_enum
-    matrixNo?: StringNullableFilter<"User"> | string | null
-    staffId?: StringNullableFilter<"User"> | string | null
-    faculty?: StringNullableFilter<"User"> | string | null
-    department?: StringNullableFilter<"User"> | string | null
-    companyName?: StringNullableFilter<"User"> | string | null
-    address?: StringNullableFilter<"User"> | string | null
-    email?: StringFilter<"User"> | string
-    emailVerifiedAt?: DateTimeNullableFilter<"User"> | Date | string | null
-    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
-    approvedAt?: DateTimeNullableFilter<"User"> | Date | string | null
-    createdAt?: DateTimeFilter<"User"> | Date | string
-    updatedAt?: DateTimeFilter<"User"> | Date | string
-    approvedBy?: UuidNullableFilter<"User"> | string | null
   }
 
   export type AuthProviderUpsertWithWhereUniqueWithoutUserInput = {
@@ -45733,26 +55784,6 @@ export namespace Prisma {
   export type BookingRequestUpdateManyWithWhereWithoutUserInput = {
     where: BookingRequestScalarWhereInput
     data: XOR<BookingRequestUpdateManyMutationInput, BookingRequestUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type BookingRequestScalarWhereInput = {
-    AND?: BookingRequestScalarWhereInput | BookingRequestScalarWhereInput[]
-    OR?: BookingRequestScalarWhereInput[]
-    NOT?: BookingRequestScalarWhereInput | BookingRequestScalarWhereInput[]
-    id?: UuidFilter<"BookingRequest"> | string
-    userId?: UuidFilter<"BookingRequest"> | string
-    referenceNumber?: StringFilter<"BookingRequest"> | string
-    projectDescription?: StringNullableFilter<"BookingRequest"> | string | null
-    preferredStartDate?: DateTimeNullableFilter<"BookingRequest"> | Date | string | null
-    preferredEndDate?: DateTimeNullableFilter<"BookingRequest"> | Date | string | null
-    totalAmount?: DecimalFilter<"BookingRequest"> | Decimal | DecimalJsLike | number | string
-    status?: Enumbooking_status_enumFilter<"BookingRequest"> | $Enums.booking_status_enum
-    notes?: StringNullableFilter<"BookingRequest"> | string | null
-    createdAt?: DateTimeFilter<"BookingRequest"> | Date | string
-    updatedAt?: DateTimeFilter<"BookingRequest"> | Date | string
-    reviewedAt?: DateTimeNullableFilter<"BookingRequest"> | Date | string | null
-    reviewedBy?: UuidNullableFilter<"BookingRequest"> | string | null
-    reviewNotes?: StringNullableFilter<"BookingRequest"> | string | null
   }
 
   export type BookingRequestUpsertWithWhereUniqueWithoutReviewedByUserInput = {
@@ -46066,11 +56097,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -46078,6 +56108,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
@@ -46102,11 +56137,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -46154,11 +56193,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -46166,6 +56204,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
@@ -46190,11 +56233,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -46566,11 +56613,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -46578,6 +56624,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -46602,11 +56653,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -46643,11 +56698,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -46655,6 +56709,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -46679,11 +56738,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -46710,6 +56773,72 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutApprovedBookingsInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutApprovedBookingsInput, UserUncheckedCreateWithoutApprovedBookingsInput>
+  }
+
+  export type CompanyCreateWithoutBookingsInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    regNo?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    branches?: CompanyBranchCreateNestedManyWithoutCompanyInput
+    users?: UserCreateNestedManyWithoutCompanyRelationInput
+  }
+
+  export type CompanyUncheckedCreateWithoutBookingsInput = {
+    id?: string
+    name: string
+    legalName?: string | null
+    regNo?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    branches?: CompanyBranchUncheckedCreateNestedManyWithoutCompanyInput
+    users?: UserUncheckedCreateNestedManyWithoutCompanyRelationInput
+  }
+
+  export type CompanyCreateOrConnectWithoutBookingsInput = {
+    where: CompanyWhereUniqueInput
+    create: XOR<CompanyCreateWithoutBookingsInput, CompanyUncheckedCreateWithoutBookingsInput>
+  }
+
+  export type CompanyBranchCreateWithoutBookingsInput = {
+    id?: string
+    name: string
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    postcode?: string | null
+    country?: string | null
+    phone?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company: CompanyCreateNestedOneWithoutBranchesInput
+    users?: UserCreateNestedManyWithoutCompanyBranchInput
+  }
+
+  export type CompanyBranchUncheckedCreateWithoutBookingsInput = {
+    id?: string
+    companyId: string
+    name: string
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    postcode?: string | null
+    country?: string | null
+    phone?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutCompanyBranchInput
+  }
+
+  export type CompanyBranchCreateOrConnectWithoutBookingsInput = {
+    where: CompanyBranchWhereUniqueInput
+    create: XOR<CompanyBranchCreateWithoutBookingsInput, CompanyBranchUncheckedCreateWithoutBookingsInput>
   }
 
   export type BookingServiceItemCreateWithoutBookingRequestInput = {
@@ -46921,11 +57050,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -46933,6 +57061,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -46957,11 +57090,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -47004,11 +57141,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -47016,6 +57152,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -47040,11 +57181,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -47066,6 +57211,84 @@ export namespace Prisma {
     createdModifications?: SampleModificationUncheckedUpdateManyWithoutCreatedByUserNestedInput
     approvedModifications?: SampleModificationUncheckedUpdateManyWithoutApprovedByUserNestedInput
     uploadedPayments?: PaymentUncheckedUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type CompanyUpsertWithoutBookingsInput = {
+    update: XOR<CompanyUpdateWithoutBookingsInput, CompanyUncheckedUpdateWithoutBookingsInput>
+    create: XOR<CompanyCreateWithoutBookingsInput, CompanyUncheckedCreateWithoutBookingsInput>
+    where?: CompanyWhereInput
+  }
+
+  export type CompanyUpdateToOneWithWhereWithoutBookingsInput = {
+    where?: CompanyWhereInput
+    data: XOR<CompanyUpdateWithoutBookingsInput, CompanyUncheckedUpdateWithoutBookingsInput>
+  }
+
+  export type CompanyUpdateWithoutBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    regNo?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    branches?: CompanyBranchUpdateManyWithoutCompanyNestedInput
+    users?: UserUpdateManyWithoutCompanyRelationNestedInput
+  }
+
+  export type CompanyUncheckedUpdateWithoutBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    regNo?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    branches?: CompanyBranchUncheckedUpdateManyWithoutCompanyNestedInput
+    users?: UserUncheckedUpdateManyWithoutCompanyRelationNestedInput
+  }
+
+  export type CompanyBranchUpsertWithoutBookingsInput = {
+    update: XOR<CompanyBranchUpdateWithoutBookingsInput, CompanyBranchUncheckedUpdateWithoutBookingsInput>
+    create: XOR<CompanyBranchCreateWithoutBookingsInput, CompanyBranchUncheckedCreateWithoutBookingsInput>
+    where?: CompanyBranchWhereInput
+  }
+
+  export type CompanyBranchUpdateToOneWithWhereWithoutBookingsInput = {
+    where?: CompanyBranchWhereInput
+    data: XOR<CompanyBranchUpdateWithoutBookingsInput, CompanyBranchUncheckedUpdateWithoutBookingsInput>
+  }
+
+  export type CompanyBranchUpdateWithoutBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneRequiredWithoutBranchesNestedInput
+    users?: UserUpdateManyWithoutCompanyBranchNestedInput
+  }
+
+  export type CompanyBranchUncheckedUpdateWithoutBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    companyId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutCompanyBranchNestedInput
   }
 
   export type BookingServiceItemUpsertWithWhereUniqueWithoutBookingRequestInput = {
@@ -47147,6 +57370,8 @@ export namespace Prisma {
     reviewNotes?: string | null
     user: UserCreateNestedOneWithoutBookingRequestsInput
     reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
+    companyRelation?: CompanyCreateNestedOneWithoutBookingsInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutBookingsInput
     workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
   }
@@ -47166,6 +57391,8 @@ export namespace Prisma {
     reviewedAt?: Date | string | null
     reviewedBy?: string | null
     reviewNotes?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
     workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
   }
@@ -47376,6 +57603,8 @@ export namespace Prisma {
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
     reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
+    companyRelation?: CompanyUpdateOneWithoutBookingsNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutBookingsNestedInput
     workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
   }
@@ -47395,6 +57624,8 @@ export namespace Prisma {
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
     workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
   }
@@ -47622,11 +57853,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -47634,6 +57864,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -47658,11 +57893,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -47699,11 +57938,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -47711,6 +57949,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -47735,11 +57978,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -47876,11 +58123,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -47888,6 +58134,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -47912,11 +58163,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -47959,11 +58214,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -47971,6 +58225,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -47995,11 +58254,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -48038,6 +58301,8 @@ export namespace Prisma {
     reviewNotes?: string | null
     user: UserCreateNestedOneWithoutBookingRequestsInput
     reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
+    companyRelation?: CompanyCreateNestedOneWithoutBookingsInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutBookingsInput
     serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
     workspaceBookings?: WorkspaceBookingCreateNestedManyWithoutBookingRequestInput
   }
@@ -48057,6 +58322,8 @@ export namespace Prisma {
     reviewedAt?: Date | string | null
     reviewedBy?: string | null
     reviewNotes?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
     serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
     workspaceBookings?: WorkspaceBookingUncheckedCreateNestedManyWithoutBookingRequestInput
   }
@@ -48074,11 +58341,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -48086,6 +58352,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -48110,11 +58381,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -48209,6 +58484,8 @@ export namespace Prisma {
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
     reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
+    companyRelation?: CompanyUpdateOneWithoutBookingsNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutBookingsNestedInput
     serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
     workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
   }
@@ -48228,6 +58505,8 @@ export namespace Prisma {
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
     workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
   }
@@ -48251,11 +58530,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -48263,6 +58541,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -48287,11 +58570,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -48398,11 +58685,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -48410,6 +58696,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -48434,11 +58725,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -48595,11 +58890,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -48607,6 +58901,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -48631,11 +58930,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -48718,11 +59021,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -48730,6 +59032,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -48754,11 +59061,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -48795,11 +59106,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -48807,6 +59117,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -48831,11 +59146,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -48924,11 +59243,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -48936,6 +59254,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -48960,11 +59283,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -49007,11 +59334,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -49019,6 +59345,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -49043,11 +59374,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -49162,11 +59497,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -49174,6 +59508,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -49198,11 +59537,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -49375,11 +59718,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -49387,6 +59729,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -49411,11 +59758,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -49470,6 +59821,8 @@ export namespace Prisma {
     reviewNotes?: string | null
     user: UserCreateNestedOneWithoutBookingRequestsInput
     reviewedByUser?: UserCreateNestedOneWithoutApprovedBookingsInput
+    companyRelation?: CompanyCreateNestedOneWithoutBookingsInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutBookingsInput
     serviceItems?: BookingServiceItemCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormCreateNestedManyWithoutBookingRequestInput
   }
@@ -49489,6 +59842,8 @@ export namespace Prisma {
     reviewedAt?: Date | string | null
     reviewedBy?: string | null
     reviewNotes?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
     serviceItems?: BookingServiceItemUncheckedCreateNestedManyWithoutBookingRequestInput
     serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutBookingRequestInput
   }
@@ -49578,6 +59933,8 @@ export namespace Prisma {
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
     reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
+    companyRelation?: CompanyUpdateOneWithoutBookingsNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutBookingsNestedInput
     serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
   }
@@ -49597,6 +59954,8 @@ export namespace Prisma {
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
   }
@@ -50136,11 +60495,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -50148,6 +60506,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -50172,11 +60535,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -50267,11 +60634,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -50279,6 +60645,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -50303,11 +60674,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -50339,11 +60714,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -50351,6 +60725,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -50375,11 +60754,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -50427,11 +60810,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -50439,6 +60821,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -50463,11 +60850,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -50499,11 +60890,10 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -50511,6 +60901,11 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -50535,11 +60930,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -50587,11 +60986,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -50599,6 +60997,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -50623,11 +61026,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -51329,6 +61736,966 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DepartmentCreateManyFacultyInput = {
+    id?: string
+    code: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IkohzaCreateManyFacultyInput = {
+    id?: string
+    code: string
+    name: string
+    description?: string | null
+    isActive?: boolean
+    leaderName?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserCreateManyFacultyRelationInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+  }
+
+  export type DepartmentUpdateWithoutFacultyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutDepartmentRelationNestedInput
+  }
+
+  export type DepartmentUncheckedUpdateWithoutFacultyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutDepartmentRelationNestedInput
+  }
+
+  export type DepartmentUncheckedUpdateManyWithoutFacultyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IkohzaUpdateWithoutFacultyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    leaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutIkohzaNestedInput
+  }
+
+  export type IkohzaUncheckedUpdateWithoutFacultyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    leaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutIkohzaNestedInput
+  }
+
+  export type IkohzaUncheckedUpdateManyWithoutFacultyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    leaderName?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpdateWithoutFacultyRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
+    approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFacultyRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUncheckedUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUncheckedUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUncheckedUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUncheckedUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUncheckedUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutFacultyRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type UserCreateManyDepartmentRelationInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+  }
+
+  export type UserUpdateWithoutDepartmentRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
+    approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutDepartmentRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUncheckedUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUncheckedUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUncheckedUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUncheckedUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUncheckedUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutDepartmentRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type UserCreateManyIkohzaInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+  }
+
+  export type UserUpdateWithoutIkohzaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
+    approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutIkohzaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUncheckedUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUncheckedUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUncheckedUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUncheckedUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUncheckedUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutIkohzaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CompanyBranchCreateManyCompanyInput = {
+    id?: string
+    name: string
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    postcode?: string | null
+    country?: string | null
+    phone?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserCreateManyCompanyRelationInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+  }
+
+  export type BookingRequestCreateManyCompanyRelationInput = {
+    id?: string
+    userId: string
+    referenceNumber: string
+    projectDescription?: string | null
+    preferredStartDate?: Date | string | null
+    preferredEndDate?: Date | string | null
+    totalAmount?: Decimal | DecimalJsLike | number | string
+    status?: $Enums.booking_status_enum
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNotes?: string | null
+    companyBranchId?: string | null
+  }
+
+  export type CompanyBranchUpdateWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutCompanyBranchNestedInput
+    bookings?: BookingRequestUpdateManyWithoutCompanyBranchNestedInput
+  }
+
+  export type CompanyBranchUncheckedUpdateWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutCompanyBranchNestedInput
+    bookings?: BookingRequestUncheckedUpdateManyWithoutCompanyBranchNestedInput
+  }
+
+  export type CompanyBranchUncheckedUpdateManyWithoutCompanyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    postcode?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpdateWithoutCompanyRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
+    approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCompanyRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUncheckedUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUncheckedUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUncheckedUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUncheckedUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUncheckedUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutCompanyRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BookingRequestUpdateWithoutCompanyRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    projectDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferredEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumbooking_status_enumFieldUpdateOperationsInput | $Enums.booking_status_enum
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
+    reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutBookingsNestedInput
+    serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
+    serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
+  }
+
+  export type BookingRequestUncheckedUpdateWithoutCompanyRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    projectDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferredEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumbooking_status_enumFieldUpdateOperationsInput | $Enums.booking_status_enum
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
+    serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
+  }
+
+  export type BookingRequestUncheckedUpdateManyWithoutCompanyRelationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    projectDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferredEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumbooking_status_enumFieldUpdateOperationsInput | $Enums.booking_status_enum
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type UserCreateManyCompanyBranchInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+  }
+
+  export type BookingRequestCreateManyCompanyBranchInput = {
+    id?: string
+    userId: string
+    referenceNumber: string
+    projectDescription?: string | null
+    preferredStartDate?: Date | string | null
+    preferredEndDate?: Date | string | null
+    totalAmount?: Decimal | DecimalJsLike | number | string
+    status?: $Enums.booking_status_enum
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reviewedAt?: Date | string | null
+    reviewedBy?: string | null
+    reviewNotes?: string | null
+    companyId?: string | null
+  }
+
+  export type UserUpdateWithoutCompanyBranchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
+    approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCompanyBranchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUncheckedUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUncheckedUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUncheckedUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUncheckedUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUncheckedUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutCompanyBranchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BookingRequestUpdateWithoutCompanyBranchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    projectDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferredEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumbooking_status_enumFieldUpdateOperationsInput | $Enums.booking_status_enum
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
+    reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
+    companyRelation?: CompanyUpdateOneWithoutBookingsNestedInput
+    serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
+    serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
+  }
+
+  export type BookingRequestUncheckedUpdateWithoutCompanyBranchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    projectDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferredEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumbooking_status_enumFieldUpdateOperationsInput | $Enums.booking_status_enum
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
+    workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
+    serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
+  }
+
+  export type BookingRequestUncheckedUpdateManyWithoutCompanyBranchInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    referenceNumber?: StringFieldUpdateOperationsInput | string
+    projectDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    preferredStartDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferredEndDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumbooking_status_enumFieldUpdateOperationsInput | $Enums.booking_status_enum
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type UserCreateManyApprovedByUserInput = {
     id?: string
     firstName: string
@@ -51337,11 +62704,15 @@ export namespace Prisma {
     phone?: string | null
     userType: $Enums.user_type_enum
     status?: $Enums.user_status_enum
-    matrixNo?: string | null
-    staffId?: string | null
-    faculty?: string | null
-    department?: string | null
-    companyName?: string | null
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
     address?: string | null
     email: string
     emailVerifiedAt?: Date | string | null
@@ -51384,6 +62755,8 @@ export namespace Prisma {
     reviewedAt?: Date | string | null
     reviewedBy?: string | null
     reviewNotes?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
   }
 
   export type BookingRequestCreateManyReviewedByUserInput = {
@@ -51400,6 +62773,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     reviewedAt?: Date | string | null
     reviewNotes?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
   }
 
   export type ServiceFormCreateManyGeneratedByUserInput = {
@@ -51558,11 +62933,10 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -51570,6 +62944,11 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
@@ -51594,11 +62973,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -51630,11 +63013,15 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
     status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
-    matrixNo?: NullableStringFieldUpdateOperationsInput | string | null
-    staffId?: NullableStringFieldUpdateOperationsInput | string | null
-    faculty?: NullableStringFieldUpdateOperationsInput | string | null
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
     address?: NullableStringFieldUpdateOperationsInput | string | null
     email?: StringFieldUpdateOperationsInput | string
     emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -51715,6 +63102,8 @@ export namespace Prisma {
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewedByUser?: UserUpdateOneWithoutApprovedBookingsNestedInput
+    companyRelation?: CompanyUpdateOneWithoutBookingsNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutBookingsNestedInput
     serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
     workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
@@ -51734,6 +63123,8 @@ export namespace Prisma {
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
     workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
@@ -51753,6 +63144,8 @@ export namespace Prisma {
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type BookingRequestUpdateWithoutReviewedByUserInput = {
@@ -51769,6 +63162,8 @@ export namespace Prisma {
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutBookingRequestsNestedInput
+    companyRelation?: CompanyUpdateOneWithoutBookingsNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutBookingsNestedInput
     serviceItems?: BookingServiceItemUpdateManyWithoutBookingRequestNestedInput
     workspaceBookings?: WorkspaceBookingUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUpdateManyWithoutBookingRequestNestedInput
@@ -51788,6 +63183,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
     serviceItems?: BookingServiceItemUncheckedUpdateManyWithoutBookingRequestNestedInput
     workspaceBookings?: WorkspaceBookingUncheckedUpdateManyWithoutBookingRequestNestedInput
     serviceForms?: ServiceFormUncheckedUpdateManyWithoutBookingRequestNestedInput
@@ -51807,6 +63204,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ServiceFormUpdateWithoutGeneratedByUserInput = {

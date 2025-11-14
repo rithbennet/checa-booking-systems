@@ -1,28 +1,20 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Plus, Save } from "lucide-react";
-import type {
-	BookingServiceItem,
-	BookingStep,
-	LabEquipment,
-} from "@/entities/booking";
+import { ChevronLeft, ChevronRight, Save } from "lucide-react";
+import type { BookingServiceItem, LabEquipment } from "@/entities/booking";
 import type { Service } from "@/entities/service";
 import {
+	type BookingProfile,
 	BookingProgress,
-	ServiceGroupForm,
 	ServiceSelectionDialog,
 } from "@/features/booking-form";
 import { useBookingForm } from "@/features/booking-form/lib/use-booking-form";
+import { useBookingStore } from "@/features/booking-form/model/use-booking-store";
+import { PayerInfoStep } from "@/features/booking-form/ui/steps/PayerInfoStep";
+import { ProjectInfoStep } from "@/features/booking-form/ui/steps/ProjectInfoStep";
+import { ReviewStep } from "@/features/booking-form/ui/steps/ReviewStep";
+import { ServicesStep } from "@/features/booking-form/ui/steps/ServicesStep";
 import { Button } from "@/shared/ui/shadcn/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/shared/ui/shadcn/card";
-import { Label } from "@/shared/ui/shadcn/label";
-import { Textarea } from "@/shared/ui/shadcn/textarea";
 
 interface BookingPageProps {
 	userType?: "mjiit_member" | "utm_member" | "external_member";
@@ -30,6 +22,7 @@ interface BookingPageProps {
 	initialServices?: Array<{ service: Service; item: BookingServiceItem }>;
 	services?: Service[];
 	equipment?: LabEquipment[];
+	profile: BookingProfile;
 }
 
 export function BookingPage({
@@ -38,6 +31,7 @@ export function BookingPage({
 	initialServices = [],
 	services = [],
 	equipment = [],
+	profile,
 }: BookingPageProps) {
 	const bookingForm = useBookingForm({
 		userType,
@@ -46,11 +40,13 @@ export function BookingPage({
 	});
 
 	const availableEquipment = equipment ?? [];
+	const { commitStepDraft } = useBookingStore();
 
 	const {
 		form,
 		fields,
 		isBlocked,
+		currentStep,
 		isServiceDialogOpen,
 		selectedServiceIds,
 		handleAddService,
@@ -66,12 +62,58 @@ export function BookingPage({
 		isSubmitting,
 	} = bookingForm;
 
-	const steps: BookingStep[] = [
-		{ number: 1, title: "Select Services", status: "completed" },
-		{ number: 2, title: "Service Details", status: "current" },
-		{ number: 3, title: "Project Information", status: "upcoming" },
-		{ number: 4, title: "Review & Submit", status: "upcoming" },
+	const steps = [
+		{
+			number: 1,
+			title: "Services",
+			status:
+				currentStep === 1
+					? ("current" as const)
+					: currentStep > 1
+						? ("completed" as const)
+						: ("upcoming" as const),
+		},
+		{
+			number: 2,
+			title: "Project Information",
+			status:
+				currentStep === 2
+					? ("current" as const)
+					: currentStep > 2
+						? ("completed" as const)
+						: ("upcoming" as const),
+		},
+		{
+			number: 3,
+			title: "Billing & Payer",
+			status:
+				currentStep === 3
+					? ("current" as const)
+					: currentStep > 3
+						? ("completed" as const)
+						: ("upcoming" as const),
+		},
+		{
+			number: 4,
+			title: "Review & Submit",
+			status: currentStep === 4 ? ("current" as const) : ("upcoming" as const),
+		},
 	];
+
+	const canProceedFromStep1 = fields.length > 0;
+
+	const handleNext = () => {
+		if (currentStep === 1 && !canProceedFromStep1) {
+			return;
+		}
+		commitStepDraft(form.getValues());
+		setCurrentStep(Math.min(currentStep + 1, 4));
+	};
+
+	const handlePrevious = () => {
+		commitStepDraft(form.getValues());
+		setCurrentStep(Math.max(currentStep - 1, 1));
+	};
 
 	return (
 		<div className="min-h-screen bg-gray-50">
@@ -86,138 +128,84 @@ export function BookingPage({
 				<BookingProgress steps={steps} />
 
 				{/* Form Content */}
-				<form onSubmit={bookingForm.form.handleSubmit(onSubmit)}>
-					<Card>
-						<CardHeader>
-							<CardTitle className="text-xl">Service Details</CardTitle>
-							<CardDescription>
-								Provide detailed information for each selected service
-							</CardDescription>
-						</CardHeader>
-						<CardContent className="space-y-8">
-							{/* Selected Services */}
-							<div>
-								<h3 className="mb-4 font-semibold text-lg">
-									Selected Services
-								</h3>
+				<form onSubmit={form.handleSubmit(onSubmit)}>
+					{currentStep === 1 && (
+						<ServicesStep
+							availableEquipment={availableEquipment}
+							fields={fields}
+							getServiceForField={getServiceForField}
+							handleAddSample={handleAddSample}
+							handleRemoveService={handleRemoveService}
+							handleRemoveServiceGroup={handleRemoveServiceGroup}
+							handleServiceUpdate={handleServiceUpdate}
+							setServiceDialogOpen={setServiceDialogOpen}
+						/>
+					)}
 
-								{fields.length === 0 ? (
-									<div className="rounded-lg border-2 border-gray-300 border-dashed p-8 text-center">
-										<p className="text-gray-500">
-											No services selected. Click "Add Another Service" to get
-											started.
-										</p>
-									</div>
-								) : (
-									(() => {
-										// Group service items by serviceId
-										type GroupedItems = Array<{
-											index: number;
-											item: (typeof fields)[0];
-										}>;
-										const grouped = fields.reduce(
-											(acc, field, index) => {
-												const serviceId = field.serviceId;
-												if (!acc[serviceId]) {
-													acc[serviceId] = [];
-												}
-												acc[serviceId].push({ index, item: field });
-												return acc;
-											},
-											{} as Record<string, GroupedItems>,
-										);
+					{currentStep === 2 && <ProjectInfoStep form={form} />}
 
-										return (
-											Object.entries(grouped) as [string, GroupedItems][]
-										).map(([serviceId, serviceItems]) => {
-											const service = getServiceForField(serviceId);
-											if (!service) {
-												return null;
-											}
+					{currentStep === 3 && (
+						<PayerInfoStep form={form} profile={profile} userType={userType} />
+					)}
 
-											return (
-												<ServiceGroupForm
-													availableEquipment={availableEquipment}
-													key={serviceId}
-													onAddSample={handleAddSample}
-													onRemove={handleRemoveService}
-													onRemoveGroup={handleRemoveServiceGroup}
-													onUpdate={handleServiceUpdate}
-													service={service}
-													serviceItems={serviceItems}
-												/>
-											);
-										});
-									})()
-								)}
+					{currentStep === 4 && (
+						<ReviewStep
+							fields={fields}
+							form={form}
+							getServiceForField={getServiceForField}
+							userType={userType}
+						/>
+					)}
 
+					{/* Navigation Buttons */}
+					<div className="mt-6 flex items-center justify-between">
+						{currentStep > 1 && (
+							<Button
+								className="border-gray-300 text-gray-700 hover:bg-gray-50"
+								onClick={handlePrevious}
+								type="button"
+								variant="outline"
+							>
+								<ChevronLeft className="mr-2 h-4 w-4" />
+								Previous
+							</Button>
+						)}
+
+						<div className="ml-auto flex items-center space-x-4">
+							<Button
+								className="text-gray-600 hover:text-gray-800"
+								disabled={isBlocked}
+								onClick={handleSaveDraft}
+								type="button"
+								variant="ghost"
+							>
+								<Save className="mr-2 h-4 w-4" />
+								Save as Draft
+							</Button>
+
+							{currentStep < 4 ? (
 								<Button
-									className="w-full border-2 border-gray-300 border-dashed py-4 text-gray-600 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600"
-									onClick={() => setServiceDialogOpen(true)}
+									className="bg-blue-600 px-6 text-white hover:bg-blue-700"
+									disabled={
+										isBlocked || (currentStep === 1 && !canProceedFromStep1)
+									}
+									onClick={handleNext}
 									type="button"
-									variant="outline"
 								>
-									<Plus className="mr-2 h-4 w-4" />
-									Add Another Service
+									Next
+									<ChevronRight className="ml-2 h-4 w-4" />
 								</Button>
-							</div>
-
-							{/* Additional Notes */}
-							<div className="space-y-3 border-gray-200 border-t pt-6">
-								<Label
-									className="font-medium text-gray-700 text-sm"
-									htmlFor="additional-notes"
-								>
-									Additional Notes/Instructions (Optional)
-								</Label>
-								<Textarea
-									className="border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500"
-									id="additional-notes"
-									{...form.register("additionalNotes")}
-									placeholder="Any additional information, special instructions, or requirements not covered above..."
-									rows={4}
-								/>
-								<p className="text-gray-500 text-xs">
-									Please include any specific requirements, safety
-									considerations, or special arrangements needed for your
-									services.
-								</p>
-							</div>
-
-							{/* Navigation Buttons */}
-							<div className="flex items-center justify-between border-gray-200 border-t pt-6">
+							) : (
 								<Button
-									className="border-gray-300 text-gray-700 hover:bg-gray-50"
-									onClick={() => setCurrentStep(1)}
-									type="button"
-									variant="outline"
+									className="bg-green-600 px-6 text-white hover:bg-green-700"
+									disabled={isBlocked || isSubmitting}
+									type="submit"
 								>
-									<ChevronLeft className="mr-2 h-4 w-4" />
-									Previous: Select Services
+									{isSubmitting ? "Submitting..." : "Submit Booking"}
 								</Button>
-								<div className="flex items-center space-x-4">
-									<Button
-										className="text-gray-600 hover:text-gray-800"
-										disabled={isBlocked}
-										onClick={handleSaveDraft}
-										type="button"
-										variant="ghost"
-									>
-										<Save className="mr-2 h-4 w-4" />
-										Save as Draft
-									</Button>
-									<Button
-										className="bg-blue-600 px-6 text-white hover:bg-blue-700"
-										disabled={isBlocked || isSubmitting}
-										type="submit"
-									>
-										{isSubmitting ? "Submitting..." : "Submit Booking"}
-										<ChevronRight className="ml-2 h-4 w-4" />
-									</Button>
-								</div>
-							</div>
-						</CardContent>
-					</Card>
+							)}
+						</div>
+					</div>
 				</form>
 			</div>
 

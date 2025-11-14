@@ -88,6 +88,108 @@ model BetterAuthVerification {
 // Application Models
 // ============================================
 
+// ============================================
+// Academic Organization Models
+// ============================================
+
+model Faculty {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code        String       @unique @db.VarChar(50)
+  name        String       @db.VarChar(200)
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime     @updatedAt @db.Timestamp(6)
+
+  departments Department[]
+  ikohzas     Ikohza[]     // Only MJIIT faculty will have ikohzas
+  users       User[]       @relation("UsersByFaculty")
+
+  @@map("faculty")
+}
+
+model Department {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  facultyId String    @db.Uuid
+  faculty   Faculty   @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  code      String    @db.VarChar(50)
+  name      String    @db.VarChar(200)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt @db.Timestamp(6)
+
+  users     User[]    @relation("UsersByDepartment")
+
+  @@unique([facultyId, code])
+  @@index([facultyId])
+  @@map("department")
+}
+
+model Ikohza {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  facultyId    String      @db.Uuid
+  faculty      Faculty     @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  code         String      @db.VarChar(50)
+  name         String      @db.VarChar(200)
+  description  String?     @db.Text
+  isActive     Boolean     @default(true)
+  // Leaders are stored as plain names because many leaders won't have
+  // a user account in the system.
+  leaderName   String?     @db.VarChar(200)
+  createdAt    DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime    @updatedAt @db.Timestamp(6)
+
+  users        User[]      @relation("UsersByIkohza")
+
+  @@unique([facultyId, code])
+  @@index([facultyId])
+  
+  @@map("ikohza")
+}
+
+// ============================================
+// External Organization Models
+// ============================================
+
+model Company {
+  id        String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String          @db.VarChar(200)
+  legalName String?         @db.VarChar(300)
+  regNo     String?         @unique @db.VarChar(100)
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt DateTime        @updatedAt @db.Timestamp(6)
+
+  branches  CompanyBranch[]
+  users     User[]          @relation("UsersByCompany")
+  bookings  BookingRequest[]
+
+  @@index([name])
+  @@map("company")
+}
+
+model CompanyBranch {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId  String   @db.Uuid
+  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name       String   @db.VarChar(200)
+  address    String?  @db.Text
+  city       String?  @db.VarChar(100)
+  state      String?  @db.VarChar(100)
+  postcode   String?  @db.VarChar(20)
+  country    String?  @db.VarChar(100)
+  phone      String?  @db.VarChar(20)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime @updatedAt @db.Timestamp(6)
+
+  users      User[]   @relation("UsersByBranch")
+  bookings   BookingRequest[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("company_branch")
+}
+
 enum user_type_enum {
   mjiit_member
   utm_member
@@ -103,6 +205,18 @@ enum user_status_enum {
   suspended
 }
 
+enum academic_type_enum {
+  student
+  staff
+  none
+}
+
+enum UTM {
+  johor_bahru
+  kuala_lumpur
+  none
+}
+
 model User {
   id                String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   firstName         String           @db.VarChar(100)
@@ -111,11 +225,29 @@ model User {
   phone             String?          @db.VarChar(20)
   userType          user_type_enum
   status            user_status_enum  @default(pending)
-  matrixNo          String?          @db.VarChar(50)
-  staffId           String?          @db.VarChar(50)
-  faculty           String?          @db.VarChar(100)
-  department        String?          @db.VarChar(100)
-  companyName       String?          @db.VarChar(200)
+  academicType      academic_type_enum @default(none)
+  userIdentifier  String?           @db.VarChar(50)
+  supervisorName    String?          @db.VarChar(200)
+  
+  // Academic organization (internal members)
+  facultyId         String?          @db.Uuid
+  facultyRelation   Faculty?         @relation("UsersByFaculty", fields: [facultyId], references: [id])
+  departmentId      String?          @db.Uuid
+  departmentRelation Department?     @relation("UsersByDepartment", fields: [departmentId], references: [id])
+  ikohzaId          String?          @db.Uuid
+  ikohza            Ikohza?          @relation("UsersByIkohza", fields: [ikohzaId], references: [id])
+  
+  
+  // External organization (external members)
+  companyId         String?          @db.Uuid
+  companyRelation   Company?         @relation("UsersByCompany", fields: [companyId], references: [id])
+  companyBranchId   String?          @db.Uuid
+  companyBranch     CompanyBranch?   @relation("UsersByBranch", fields: [companyBranchId], references: [id])
+  
+  // NOTE: legacy plain-text org fields removed. Use the relations above
+  // (facultyId, departmentId, companyId, companyBranchId, ikohzaId).
+  
+  UTM               UTM?             @default(none)
   address           String?
   email             String           @unique @db.VarChar(255)
   emailVerifiedAt   DateTime?        @db.Timestamp(6)
@@ -148,6 +280,11 @@ model User {
   @@index([status])
   @@index([email])
   @@index([userType, status])
+  @@index([facultyId])
+  @@index([departmentId])
+  @@index([ikohzaId])
+  @@index([companyId])
+  @@index([companyBranchId])
   @@map("user")
 }
 
@@ -216,6 +353,7 @@ model ServicePricing {
 }
 
 enum booking_status_enum {
+  draft
   pending_user_verification
   pending_approval
   approved
@@ -234,7 +372,7 @@ model BookingRequest {
   preferredStartDate DateTime? @db.Date     // overall project start
   preferredEndDate   DateTime? @db.Date     // overall project end
   totalAmount       Decimal  @default(0) @db.Decimal(10, 2)
-  status            booking_status_enum @default(pending_user_verification)
+  status            booking_status_enum @default(draft)
   notes             String?  @db.Text
   createdAt         DateTime @default(now()) @db.Timestamp(6)
   updatedAt         DateTime @updatedAt @db.Timestamp(6)
@@ -242,6 +380,12 @@ model BookingRequest {
   reviewedBy        String?  @db.Uuid
   reviewedByUser    User?    @relation("BookingApprovals", fields: [reviewedBy], references: [id])
   reviewNotes       String?  @db.Text
+
+  // For external attribution
+  companyId         String?        @db.Uuid
+  companyRelation   Company?       @relation(fields: [companyId], references: [id])
+  companyBranchId   String?        @db.Uuid
+  companyBranch     CompanyBranch? @relation(fields: [companyBranchId], references: [id])
 
   // Relationships
   serviceItems      BookingServiceItem[]
@@ -252,6 +396,8 @@ model BookingRequest {
   @@index([status])
   @@index([referenceNumber])
   @@index([createdAt])
+  @@index([companyId])
+  @@index([companyBranchId])
   @@map("booking_request")
 }
 

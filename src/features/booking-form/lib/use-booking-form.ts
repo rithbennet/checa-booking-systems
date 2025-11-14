@@ -5,406 +5,479 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { type UseFormReturn, useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { toast as sonnerToast } from "sonner";
 import { useCreateBooking } from "@/entities/booking/api/use-bookings";
 import type {
-	CreateBookingInput,
-	WorkspaceBookingInput,
+  BookingServiceItemInput,
+  CreateBookingInput,
+  WorkspaceBookingInput,
 } from "@/entities/booking/model/schemas";
 import { createBookingInputSchema } from "@/entities/booking/model/schemas";
 import type { Service, UserType } from "@/entities/service";
 import { getServicePrice } from "@/entities/service";
 import { useBookingStore } from "../model/use-booking-store";
 
+type ServiceItemField = NonNullable<
+  CreateBookingInput["serviceItems"]
+>[number] & { id: string };
+
+type WorkspaceField = NonNullable<
+  CreateBookingInput["workspaceBookings"]
+>[number] & { id: string };
+
 interface UseBookingFormOptions {
-	userType: UserType;
-	userStatus?: string;
-	initialServices?: Array<{ service: Service; item: any }>;
+  userType: UserType;
+  userStatus?: string;
+  initialServices?: Array<{
+    service: Service;
+    item: Partial<BookingServiceItemInput>;
+  }>;
 }
 
 export function useBookingForm({
-	userType,
-	userStatus,
-	initialServices = [],
-}: UseBookingFormOptions): {
-	form: UseFormReturn<CreateBookingInput>;
-	fields: Array<CreateBookingInput["serviceItems"][0] & { id: string }>;
-	workspaceFields: Array<
-		CreateBookingInput["workspaceBookings"][0] & { id: string }
-	>;
-	isBlocked: boolean;
-	currentStep: number;
-	isServiceDialogOpen: boolean;
-	selectedServiceIds: string[];
-	handleAddService: (service: Service) => void;
-	handleAddSample: (serviceId: string) => void;
-	handleAddWorkspace: () => void;
-	handleRemoveService: (index: number) => void;
-	handleRemoveServiceGroup: (serviceId: string) => void;
-	handleRemoveWorkspace: (index: number) => void;
-	handleServiceUpdate: (
-		index: number,
-		data: Partial<CreateBookingInput["serviceItems"][0]>,
-	) => void;
-	handleWorkspaceUpdate: (
-		index: number,
-		data: Partial<WorkspaceBookingInput>,
-	) => void;
-	handleSaveDraft: () => void;
-	onSubmit: (data: CreateBookingInput) => Promise<void>;
-	getServiceForField: (serviceId: string) => Service | undefined;
-	setServiceDialogOpen: (open: boolean) => void;
-	setCurrentStep: (step: number) => void;
-	isSubmitting: boolean;
-} {
-	const {
-		formData: storeFormData,
-		servicesMap,
-		isServiceDialogOpen,
-		currentStep,
-		setFormData,
-		addService: addServiceToStore,
-		removeService: removeServiceFromStore,
-		updateServiceItem: updateServiceItemInStore,
-		setServiceDialogOpen,
-		setCurrentStep,
-		clearDraft,
-		getService,
-	} = useBookingStore();
+  userType,
+  userStatus,
+  initialServices = [],
+}: UseBookingFormOptions) {
+  const {
+    formData: storeFormData,
+    isServiceDialogOpen,
+    currentStep,
+    setFormData,
+    addService: addServiceToStore,
+    removeService: removeServiceFromStore,
+    updateServiceItem: updateServiceItemInStore,
+    setServiceDialogOpen,
+    setCurrentStep,
+    clearDraft,
+    getService,
+  } = useBookingStore();
 
-	const createBookingMutation = useCreateBooking();
+  const createBookingMutation = useCreateBooking();
 
-	// Initialize services map from initial services
-	useEffect(() => {
-		if (initialServices.length > 0) {
-			const currentMap = useBookingStore.getState().servicesMap;
-			const map = new Map(currentMap);
-			initialServices.forEach(({ service }) => {
-				map.set(service.id, service);
-			});
-			useBookingStore.setState({ servicesMap: map });
-		}
-	}, [initialServices]);
+  // Initialize services map from initial services
+  useEffect(() => {
+    if (initialServices.length > 0) {
+      const currentMap = useBookingStore.getState().servicesMap;
+      const map = new Map(currentMap);
+      initialServices.forEach(({ service }) => {
+        map.set(service.id, service);
+      });
+      useBookingStore.setState({ servicesMap: map });
+    }
+  }, [initialServices]);
 
-	// Initialize form with React Hook Form
-	const form = useForm<CreateBookingInput>({
-		resolver: zodResolver(createBookingInputSchema),
-		defaultValues: {
-			serviceItems:
-				storeFormData.serviceItems && storeFormData.serviceItems.length > 0
-					? storeFormData.serviceItems
-					: initialServices.map(({ item }) => ({
-							serviceId: item.serviceId,
-							quantity: item.quantity ?? 1,
-							durationMonths: item.durationMonths ?? 0,
-							sampleType: item.sampleType,
-							sampleDetails: item.sampleDetails,
-							testingMethod: item.testingMethod,
-							samplePreparation: item.samplePreparation,
-							temperatureControlled: item.temperatureControlled ?? false,
-							lightSensitive: item.lightSensitive ?? false,
-							hazardousMaterial: item.hazardousMaterial ?? false,
-							inertAtmosphere: item.inertAtmosphere ?? false,
-							equipmentIds: item.equipmentIds ?? [],
-							otherEquipmentRequests: item.otherEquipmentRequests ?? [],
-							addOnIds: item.addOnIds ?? [],
-						})),
-			workspaceBookings: storeFormData.workspaceBookings || [],
-			projectDescription: storeFormData.projectDescription || "",
-			additionalNotes: storeFormData.additionalNotes || "",
-		},
-	});
+  // Initialize form with React Hook Form
+  const form = useForm<CreateBookingInput>({
+    resolver: zodResolver(createBookingInputSchema),
+    mode: "onChange",
+    defaultValues: {
+      serviceItems:
+        storeFormData.serviceItems && storeFormData.serviceItems.length > 0
+          ? storeFormData.serviceItems.map((item: BookingServiceItemInput) => ({
+              serviceId: item.serviceId ?? "",
+              quantity: item.quantity ?? 1,
+              durationMonths: item.durationMonths ?? 0,
+              sampleType: item.sampleType,
+              sampleDetails: item.sampleDetails,
+              testingMethod: item.testingMethod,
+              samplePreparation: item.samplePreparation,
+              temperatureControlled: item.temperatureControlled ?? false,
+              lightSensitive: item.lightSensitive ?? false,
+              hazardousMaterial: item.hazardousMaterial ?? false,
+              inertAtmosphere: item.inertAtmosphere ?? false,
+              equipmentIds: item.equipmentIds ?? [],
+              otherEquipmentRequests: item.otherEquipmentRequests ?? [],
+              addOnIds: item.addOnIds ?? [],
+              sampleName: item.sampleName,
+              sampleHazard: item.sampleHazard,
+              degasConditions: item.degasConditions,
+              solventSystem: item.solventSystem,
+              solvents: item.solvents,
+              solventComposition: item.solventComposition,
+              columnType: item.columnType,
+              flowRate: item.flowRate,
+              wavelength: item.wavelength,
+              expectedRetentionTime: item.expectedRetentionTime,
+              notes: item.notes,
+              expectedCompletionDate: item.expectedCompletionDate,
+              actualCompletionDate: item.actualCompletionDate,
+              turnaroundEstimate: item.turnaroundEstimate,
+            }))
+          : initialServices.map(({ item, service }) => ({
+              serviceId: item.serviceId ?? service.id ?? "",
+              quantity: item.quantity ?? 1,
+              durationMonths: item.durationMonths ?? 0,
+              sampleType: item.sampleType,
+              sampleDetails: item.sampleDetails,
+              testingMethod: item.testingMethod,
+              samplePreparation: item.samplePreparation,
+              temperatureControlled: item.temperatureControlled ?? false,
+              lightSensitive: item.lightSensitive ?? false,
+              hazardousMaterial: item.hazardousMaterial ?? false,
+              inertAtmosphere: item.inertAtmosphere ?? false,
+              equipmentIds: item.equipmentIds ?? [],
+              otherEquipmentRequests: item.otherEquipmentRequests ?? [],
+              addOnIds: item.addOnIds ?? [],
+              sampleName: item.sampleName,
+              sampleHazard: item.sampleHazard,
+              degasConditions: item.degasConditions,
+              solventSystem: item.solventSystem,
+              solvents: item.solvents,
+              solventComposition: item.solventComposition,
+              columnType: item.columnType,
+              flowRate: item.flowRate,
+              wavelength: item.wavelength,
+              expectedRetentionTime: item.expectedRetentionTime,
+              notes: item.notes,
+            })),
+      workspaceBookings:
+        storeFormData.workspaceBookings?.map((w: WorkspaceBookingInput) => ({
+          startDate: w.startDate ?? new Date(),
+          endDate: w.endDate ?? new Date(),
+          equipmentIds: w.equipmentIds ?? [],
+          specialEquipment: w.specialEquipment,
+          preferredTimeSlot: w.preferredTimeSlot,
+          purpose: w.purpose,
+          notes: w.notes,
+          addOnIds: w.addOnIds ?? [],
+        })) ?? [],
+      projectDescription: storeFormData.projectDescription ?? "",
+      additionalNotes: storeFormData.additionalNotes ?? "",
+      payerType: storeFormData.payerType,
+      billingName: storeFormData.billingName,
+      billingAddressDisplay: storeFormData.billingAddressDisplay,
+      billingPhone: storeFormData.billingPhone,
+      billingEmail: storeFormData.billingEmail,
+      utmCampus: storeFormData.utmCampus,
+    } as Partial<CreateBookingInput>,
+  });
 
-	const { fields, append, remove, update } = useFieldArray({
-		control: form.control,
-		name: "serviceItems",
-	});
+  const {
+    fields,
+    append,
+    remove,
+    update,
+  }: {
+    fields: ServiceItemField[];
+    append: (value: ServiceItemField | ServiceItemField[]) => void;
+    remove: (index: number | number[]) => void;
+    update: (index: number, value: Partial<ServiceItemField>) => void;
+  } = useFieldArray<CreateBookingInput, "serviceItems", "id">({
+    control: form.control,
+    name: "serviceItems",
+    keyName: "id",
+  });
 
-	const {
-		fields: workspaceFields,
-		append: appendWorkspace,
-		remove: removeWorkspace,
-		update: updateWorkspace,
-	} = useFieldArray({
-		control: form.control,
-		name: "workspaceBookings",
-	});
+  const {
+    fields: workspaceFields,
+    append: appendWorkspace,
+    remove: removeWorkspace,
+    update: updateWorkspace,
+  }: {
+    fields: WorkspaceField[];
+    append: (value: WorkspaceField | WorkspaceField[]) => void;
+    remove: (index: number | number[]) => void;
+    update: (index: number, value: Partial<WorkspaceField>) => void;
+  } = useFieldArray<CreateBookingInput, "workspaceBookings", "id">({
+    control: form.control,
+    name: "workspaceBookings",
+    keyName: "id",
+  });
+  // Sync form with store (normalize to ensure required fields exist)
+  useEffect(() => {
+    if (storeFormData.serviceItems && storeFormData.serviceItems.length > 0) {
+      const normalized: CreateBookingInput = {
+        ...storeFormData,
+        serviceItems: storeFormData.serviceItems.map(
+          (it: BookingServiceItemInput) => ({
+            serviceId: it.serviceId ?? "",
+            quantity: it.quantity ?? 1,
+            durationMonths: it.durationMonths ?? 0,
+            temperatureControlled: it.temperatureControlled ?? false,
+            lightSensitive: it.lightSensitive ?? false,
+            hazardousMaterial: it.hazardousMaterial ?? false,
+            inertAtmosphere: it.inertAtmosphere ?? false,
+            equipmentIds: it.equipmentIds ?? [],
+            otherEquipmentRequests: it.otherEquipmentRequests ?? [],
+            addOnIds: it.addOnIds ?? [],
+            sampleName: it.sampleName,
+            sampleType: it.sampleType,
+            sampleDetails: it.sampleDetails,
+            testingMethod: it.testingMethod,
+            samplePreparation: it.samplePreparation,
+            expectedCompletionDate: it.expectedCompletionDate,
+            actualCompletionDate: it.actualCompletionDate,
+            turnaroundEstimate: it.turnaroundEstimate,
+            sampleHazard: it.sampleHazard,
+            degasConditions: it.degasConditions,
+            solventSystem: it.solventSystem,
+            solvents: it.solvents,
+            solventComposition: it.solventComposition,
+            columnType: it.columnType,
+            flowRate: it.flowRate,
+            wavelength: it.wavelength,
+            expectedRetentionTime: it.expectedRetentionTime,
+            notes: it.notes,
+          })
+        ),
+        workspaceBookings:
+          storeFormData.workspaceBookings?.map((w: WorkspaceBookingInput) => ({
+            startDate: w.startDate ?? new Date(),
+            endDate: w.endDate ?? new Date(),
+            equipmentIds: w.equipmentIds ?? [],
+            specialEquipment: w.specialEquipment,
+            preferredTimeSlot: w.preferredTimeSlot,
+            purpose: w.purpose,
+            notes: w.notes,
+            addOnIds: w.addOnIds ?? [],
+          })) ?? [],
+        projectDescription: storeFormData.projectDescription ?? "",
+        additionalNotes: storeFormData.additionalNotes ?? "",
+        payerType: storeFormData.payerType,
+        billingName: storeFormData.billingName,
+        billingAddressDisplay: storeFormData.billingAddressDisplay,
+        billingPhone: storeFormData.billingPhone,
+        billingEmail: storeFormData.billingEmail,
+        utmCampus: storeFormData.utmCampus,
+      };
 
-	// Sync form with store
-	useEffect(() => {
-		if (storeFormData.serviceItems && storeFormData.serviceItems.length > 0) {
-			form.reset({
-				...storeFormData,
-				serviceItems: storeFormData.serviceItems,
-			} as CreateBookingInput);
-		}
-	}, [form.reset, storeFormData]);
+      form.reset(normalized);
+    }
+  }, [form, storeFormData]);
 
-	// Auto-save draft every 30 seconds
-	useEffect(() => {
-		const interval = setInterval(() => {
-			const formData = form.getValues();
-			if (formData.serviceItems && formData.serviceItems.length > 0) {
-				setFormData(formData);
-			}
-		}, 30000); // 30 seconds
+  const isBlocked =
+    userStatus === "pending" ||
+    userStatus === "inactive" ||
+    userStatus === "rejected";
 
-		return () => clearInterval(interval);
-	}, [form, setFormData]);
+  const handleAddService = (service: Service) => {
+    const pricing = getServicePrice(service, userType);
+    if (!pricing) {
+      sonnerToast.error("Error", {
+        description: "Pricing not available for this service.",
+      });
+      return;
+    }
 
-	const isBlocked =
-		userStatus === "pending" ||
-		userStatus === "inactive" ||
-		userStatus === "rejected";
+    // Add to store
+    addServiceToStore(service);
 
-	const handleAddService = (service: Service) => {
-		const pricing = getServicePrice(service, userType);
-		if (!pricing) {
-			sonnerToast.error("Error", {
-				description: "Pricing not available for this service.",
-			});
-			return;
-		}
+    // Each service item represents one sample or one workspace slot
+    const isWorkingSpace = service.category === "working_space";
+    const defaultItem: BookingServiceItemInput = {
+      serviceId: service.id,
+      quantity: isWorkingSpace ? 0 : 1,
+      durationMonths: isWorkingSpace ? 1 : 0,
+      sampleName: undefined,
+      temperatureControlled: false,
+      lightSensitive: false,
+      hazardousMaterial: false,
+      inertAtmosphere: false,
+      equipmentIds: [],
+      otherEquipmentRequests: [],
+      addOnIds: [],
+      ...(isWorkingSpace
+        ? {
+            expectedCompletionDate: new Date(),
+            notes: `START_DATE:${new Date().toISOString()}||END_DATE:${new Date(
+              Date.now() + 30 * 24 * 60 * 60 * 1000
+            ).toISOString()}`,
+          }
+        : {}),
+    };
 
-		// Add to store
-		addServiceToStore(service);
+    append(defaultItem);
+  };
 
-		// Add to form - each service item represents one sample or one workspace slot
-		const isWorkingSpace = service.category === "working_space";
-		const defaultItem: CreateBookingInput["serviceItems"][0] = {
-			serviceId: service.id,
-			quantity: isWorkingSpace ? 0 : 1,
-			durationMonths: isWorkingSpace ? 1 : 0,
-			sampleName: undefined,
-			temperatureControlled: false,
-			lightSensitive: false,
-			hazardousMaterial: false,
-			inertAtmosphere: false,
-			equipmentIds: [],
-			otherEquipmentRequests: [],
-			addOnIds: [],
-			// For workspace: initialize with current date as start, and 1 month later as end
-			...(isWorkingSpace
-				? {
-						expectedCompletionDate: new Date(),
-						notes: `START_DATE:${new Date().toISOString()}||END_DATE:${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()}`,
-					}
-				: {}),
-		};
+  const handleAddSample = (serviceId: string) => {
+    let service = getService(serviceId);
 
-		append(defaultItem);
-		sonnerToast.success("Service added", {
-			description: `${service.name} has been added to your booking.`,
-		});
-	};
+    if (!service && initialServices.length > 0) {
+      const found = initialServices.find(
+        ({ service: s }) => s.id === serviceId
+      );
+      if (found) {
+        service = found.service;
+        addServiceToStore(service);
+      }
+    }
 
-	const handleAddSample = (serviceId: string) => {
-		// Find the service
-		let service = getService(serviceId);
+    if (!service) {
+      sonnerToast.error("Error", {
+        description: "Service not found.",
+      });
+      return;
+    }
 
-		// If service not in map, try to find it from initialServices
-		if (!service && initialServices.length > 0) {
-			const found = initialServices.find(
-				({ service: s }) => s.id === serviceId,
-			);
-			if (found) {
-				service = found.service;
-				// Add to store as a safeguard
-				addServiceToStore(service);
-			}
-		}
+    const pricing = getServicePrice(service, userType);
+    if (!pricing) {
+      sonnerToast.error("Error", {
+        description: "Pricing not available for this service.",
+      });
+      return;
+    }
 
-		if (!service) {
-			sonnerToast.error("Error", {
-				description: "Service not found.",
-			});
-			return;
-		}
+    if (!getService(serviceId)) {
+      addServiceToStore(service);
+    }
 
-		const pricing = getServicePrice(service, userType);
-		if (!pricing) {
-			sonnerToast.error("Error", {
-				description: "Pricing not available for this service.",
-			});
-			return;
-		}
+    const isWorkingSpace = service.category === "working_space";
 
-		// Ensure service is in the map
-		if (!getService(serviceId)) {
-			addServiceToStore(service);
-		}
+    const defaultItem: BookingServiceItemInput = {
+      serviceId: service.id,
+      quantity: isWorkingSpace ? 0 : 1,
+      durationMonths: isWorkingSpace ? 1 : 0,
+      sampleName: undefined,
+      temperatureControlled: false,
+      lightSensitive: false,
+      hazardousMaterial: false,
+      inertAtmosphere: false,
+      equipmentIds: [],
+      otherEquipmentRequests: [],
+      addOnIds: [],
+      ...(isWorkingSpace
+        ? {
+            expectedCompletionDate: new Date(),
+            notes: `START_DATE:${new Date().toISOString()}||END_DATE:${new Date(
+              Date.now() + 30 * 24 * 60 * 60 * 1000
+            ).toISOString()}`,
+          }
+        : {}),
+    };
 
-		const isWorkingSpace = service.category === "working_space";
+    append(defaultItem);
+  };
 
-		// Add a new service item for this sample/slot (same service, different sample/slot)
-		const defaultItem: CreateBookingInput["serviceItems"][0] = {
-			serviceId: service.id,
-			quantity: isWorkingSpace ? 0 : 1,
-			durationMonths: isWorkingSpace ? 1 : 0,
-			sampleName: undefined,
-			temperatureControlled: false,
-			lightSensitive: false,
-			hazardousMaterial: false,
-			inertAtmosphere: false,
-			equipmentIds: [],
-			otherEquipmentRequests: [],
-			addOnIds: [],
-			// For workspace: initialize with current date as start, and 1 month later as end
-			...(isWorkingSpace
-				? {
-						expectedCompletionDate: new Date(),
-						notes: `START_DATE:${new Date().toISOString()}||END_DATE:${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()}`,
-					}
-				: {}),
-		};
+  const handleRemoveService = (index: number) => {
+    const field = fields[index];
+    if (!field) return;
 
-		append(defaultItem);
-		sonnerToast.success(isWorkingSpace ? "Month slot added" : "Sample added", {
-			description: isWorkingSpace
-				? `Another month slot for ${service.name} has been added.`
-				: `Another sample for ${service.name} has been added.`,
-		});
-	};
+    const itemsForService = fields.filter(
+      (f) => f.serviceId === field.serviceId
+    );
+    const isLastItem = itemsForService.length === 1;
 
-	const handleRemoveService = (index: number) => {
-		const field = fields[index];
-		if (!field) return;
+    remove(index);
 
-		// Check if this is the last item for this service
-		const itemsForService = fields.filter(
-			(f) => f.serviceId === field.serviceId,
-		);
-		const isLastItem = itemsForService.length === 1;
+    if (isLastItem) {
+      removeServiceFromStore(field.serviceId);
+    }
+  };
 
-		// Remove from form
-		remove(index);
+  const handleRemoveServiceGroup = (serviceId: string) => {
+    const indicesToRemove = fields
+      .map((field, index) => (field.serviceId === serviceId ? index : -1))
+      .filter((index) => index !== -1)
+      .sort((a, b) => b - a);
 
-		// Only remove from store if it's the last item for this service
-		if (isLastItem) {
-			removeServiceFromStore(field.serviceId);
-		}
-	};
+    indicesToRemove.forEach((index) => {
+      remove(index);
+    });
 
-	const handleRemoveServiceGroup = (serviceId: string) => {
-		// Find all indices for this service
-		const indicesToRemove = fields
-			.map((field, index) => (field.serviceId === serviceId ? index : -1))
-			.filter((index) => index !== -1)
-			.sort((a, b) => b - a); // Sort descending to remove from end first
+    removeServiceFromStore(serviceId);
+  };
 
-		// Remove all items for this service
-		indicesToRemove.forEach((index) => {
-			remove(index);
-		});
+  const handleServiceUpdate = (
+    index: number,
+    data: Partial<BookingServiceItemInput>
+  ) => {
+    const field = fields[index];
+    if (field) {
+      updateServiceItemInStore(field.serviceId, data);
+      const currentValues = form.getValues(`serviceItems.${index}`);
+      update(index, {
+        ...currentValues,
+        ...data,
+      });
+    }
+  };
 
-		// Remove from store
-		removeServiceFromStore(serviceId);
+  const handleSaveDraft = () => {
+    const formData = form.getValues();
+    setFormData(formData);
+    sonnerToast.success("Draft saved", {
+      description: "Your booking has been saved as a draft.",
+    });
+  };
 
-		sonnerToast.success("Service removed", {
-			description: "All samples for this service have been removed.",
-		});
-	};
+  const onSubmit = async (data: CreateBookingInput): Promise<void> => {
+    try {
+      const result = await createBookingMutation.mutateAsync(data);
+      clearDraft();
+      sonnerToast.success("Booking submitted", {
+        description: `Your booking request ${result.referenceNumber} has been submitted successfully.`,
+      });
+      window.location.href = `/bookings/${result.id}`;
+    } catch (error) {
+      sonnerToast.error("Error", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to submit booking. Please try again.",
+      });
+    }
+  };
 
-	const handleServiceUpdate = (
-		index: number,
-		data: Partial<CreateBookingInput["serviceItems"][0]>,
-	) => {
-		const field = fields[index];
-		if (field) {
-			updateServiceItemInStore(field.serviceId, data);
-			update(index, {
-				...form.getValues(`serviceItems.${index}`),
-				...data,
-			});
-		}
-	};
+  const getServiceForField = (serviceId: string): Service | undefined => {
+    return getService(serviceId);
+  };
 
-	const handleSaveDraft = () => {
-		const formData = form.getValues();
-		setFormData(formData);
-		sonnerToast.success("Draft saved", {
-			description: "Your booking has been saved as a draft.",
-		});
-	};
+  const selectedServiceIds = fields.map((field) => field.serviceId);
 
-	const onSubmit = async (data: CreateBookingInput): Promise<void> => {
-		try {
-			const result = await createBookingMutation.mutateAsync(data);
-			clearDraft();
-			sonnerToast.success("Booking submitted", {
-				description: `Your booking request ${result.referenceNumber} has been submitted successfully.`,
-			});
-			// Navigate to success page or booking list
-			window.location.href = `/bookings/${result.id}`;
-		} catch (error) {
-			sonnerToast.error("Error", {
-				description:
-					error instanceof Error
-						? error.message
-						: "Failed to submit booking. Please try again.",
-			});
-		}
-	};
+  const handleAddWorkspace = () => {
+    const defaultWorkspace: WorkspaceBookingInput = {
+      startDate: new Date(),
+      endDate: new Date(),
+      equipmentIds: [],
+      addOnIds: [],
+    };
+    appendWorkspace(defaultWorkspace);
+    sonnerToast.success("Workspace added", {
+      description: "Workspace booking has been added to your booking.",
+    });
+  };
 
-	// Get services for form fields
-	const getServiceForField = (serviceId: string): Service | undefined => {
-		return getService(serviceId);
-	};
+  const handleWorkspaceUpdate = (
+    index: number,
+    data: Partial<WorkspaceBookingInput>
+  ) => {
+    const currentValues = form.getValues(`workspaceBookings.${index}`);
+    updateWorkspace(index, {
+      ...currentValues,
+      ...data,
+    });
+  };
 
-	const selectedServiceIds = fields.map((field) => field.serviceId);
+  const handleRemoveWorkspace = (index: number) => {
+    removeWorkspace(index);
+    sonnerToast.success("Workspace removed", {
+      description: "Workspace booking has been removed.",
+    });
+  };
 
-	const handleAddWorkspace = () => {
-		const defaultWorkspace: WorkspaceBookingInput = {
-			startDate: new Date(),
-			endDate: new Date(),
-			equipmentIds: [],
-			addOnIds: [],
-		};
-		appendWorkspace(defaultWorkspace);
-		sonnerToast.success("Workspace added", {
-			description: "Workspace booking has been added to your booking.",
-		});
-	};
-
-	const handleWorkspaceUpdate = (
-		index: number,
-		data: Partial<WorkspaceBookingInput>,
-	) => {
-		updateWorkspace(index, {
-			...form.getValues(`workspaceBookings.${index}`),
-			...data,
-		});
-	};
-
-	const handleRemoveWorkspace = (index: number) => {
-		removeWorkspace(index);
-		sonnerToast.success("Workspace removed", {
-			description: "Workspace booking has been removed.",
-		});
-	};
-
-	return {
-		form,
-		fields,
-		workspaceFields,
-		isBlocked,
-		currentStep,
-		isServiceDialogOpen,
-		selectedServiceIds,
-		handleAddService,
-		handleAddSample,
-		handleAddWorkspace,
-		handleRemoveService,
-		handleRemoveServiceGroup,
-		handleRemoveWorkspace,
-		handleServiceUpdate,
-		handleWorkspaceUpdate,
-		handleSaveDraft,
-		onSubmit,
-		getServiceForField,
-		setServiceDialogOpen,
-		setCurrentStep,
-		isSubmitting: createBookingMutation.isPending,
-	};
+  return {
+    form,
+    fields,
+    workspaceFields,
+    isBlocked,
+    currentStep,
+    isServiceDialogOpen,
+    selectedServiceIds,
+    handleAddService,
+    handleAddSample,
+    handleAddWorkspace,
+    handleRemoveService,
+    handleRemoveServiceGroup,
+    handleRemoveWorkspace,
+    handleServiceUpdate,
+    handleWorkspaceUpdate,
+    handleSaveDraft,
+    onSubmit,
+    getServiceForField,
+    setServiceDialogOpen,
+    setCurrentStep,
+    isSubmitting: createBookingMutation.isPending,
+  };
 }

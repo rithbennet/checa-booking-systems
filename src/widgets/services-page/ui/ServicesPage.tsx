@@ -55,7 +55,7 @@ export function ServicesPage({
 		if (service?.isActive) {
 			addService(service);
 			// Navigate to booking page - service is already in the store
-			router.push("/booking");
+			router.push("/bookings/new");
 		}
 	};
 

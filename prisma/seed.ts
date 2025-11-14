@@ -1,3 +1,5 @@
+//ts-nocheck
+
 import { PrismaClient } from "../generated/prisma";
 import { auth } from "../src/shared/server/better-auth/config";
 
@@ -14,6 +16,7 @@ async function main() {
   const seedEmails = [
     "admin@checa.utm.my",
     "labadmin@checa.utm.my",
+    "ikohza@checa.utm.my",
     "utm.member@utm.my",
     "external@example.com",
   ];
@@ -42,6 +45,158 @@ async function main() {
     throw error;
   }
 
+  // Seed Academic Organizations
+  console.log("\n🌱 Seeding academic organizations...");
+
+  // Clean up existing academic organizations
+  await db.ikohza.deleteMany({});
+  await db.department.deleteMany({});
+  await db.faculty.deleteMany({});
+
+  // Create MJIIT (Malaysian-Japan Institute of Technology) - Only MJIIT has iKohza
+  const mjiitFaculty = await db.faculty.create({
+    data: {
+      code: "MJIIT",
+      name: "Malaysia-Japan International Institute of Technology",
+      isActive: true,
+    },
+  });
+
+  console.log(`✅ Created faculty: ${mjiitFaculty.name}`);
+
+  // Create Faculty of Engineering (regular UTM faculty)
+  const engineeringFaculty = await db.faculty.create({
+    data: {
+      code: "FKE",
+      name: "Faculty of Engineering",
+      isActive: true,
+    },
+  });
+
+  console.log(`✅ Created faculty: ${engineeringFaculty.name}`);
+
+  // Create Departments under Faculty of Engineering (regular)
+  const chemEngDept = await db.department.create({
+    data: {
+      facultyId: engineeringFaculty.id,
+      code: "JKK",
+      name: "Department of Chemical Engineering",
+      isActive: true,
+    },
+  });
+
+  const mechanicalDept = await db.department.create({
+    data: {
+      facultyId: engineeringFaculty.id,
+      code: "JKM",
+      name: "Department of Mechanical Engineering",
+      isActive: true,
+    },
+  });
+
+  console.log(`✅ Created department: ${chemEngDept.name}`);
+  console.log(`✅ Created department: ${mechanicalDept.name}`);
+
+  // Create Departments under MJIIT
+  const mjiitChemEngDept = await db.department.create({
+    data: {
+      facultyId: mjiitFaculty.id,
+      code: "MJIIT-CHE",
+      name: "MJIIT Chemical Engineering Department",
+      isActive: true,
+    },
+  });
+
+  console.log(`✅ Created department: ${mjiitChemEngDept.name}`);
+
+  // Create iKohza (only under MJIIT faculty)
+  const checaIkohza = await db.ikohza.create({
+    data: {
+      facultyId: mjiitFaculty.id,
+      code: "CHECA",
+      name: "ChECA iKohza",
+      description: "Chemical Engineering Characterization & Analysis",
+      isActive: true,
+    },
+  });
+
+  const materialIkohza = await db.ikohza.create({
+    data: {
+      facultyId: mjiitFaculty.id,
+      code: "MAT",
+      name: "Advanced Materials iKohza",
+      description: "Advanced Materials Research",
+      isActive: true,
+    },
+  });
+
+  console.log(`✅ Created iKohza: ${checaIkohza.name} (MJIIT only)`);
+  console.log(`✅ Created iKohza: ${materialIkohza.name} (MJIIT only)`);
+
+  console.log(`✅ Created iKohza: ${checaIkohza.name}`);
+  console.log(`✅ Created iKohza: ${materialIkohza.name}`);
+
+  // Seed External Organizations
+  console.log("\n🌱 Seeding external organizations...");
+
+  // Clean up existing external organizations
+  await db.companyBranch.deleteMany({});
+  await db.company.deleteMany({});
+
+  // Create Companies
+  const petronas = await db.company.create({
+    data: {
+      name: "PETRONAS Research Sdn Bhd",
+      legalName: "PETRONAS Research Sdn. Bhd.",
+      regNo: "123456-A",
+      isActive: true,
+    },
+  });
+
+  const topGlove = await db.company.create({
+    data: {
+      name: "Top Glove Corporation",
+      legalName: "Top Glove Corporation Bhd",
+      regNo: "199801018294",
+      isActive: true,
+    },
+  });
+
+  console.log(`✅ Created company: ${petronas.name}`);
+  console.log(`✅ Created company: ${topGlove.name}`);
+
+  // Create Company Branches
+  const petronasHQ = await db.companyBranch.create({
+    data: {
+      companyId: petronas.id,
+      name: "Headquarters",
+      address: "Lot 3288 & 3289, Off Jalan Ayer Itam, Kawasan Institusi Bangi",
+      city: "Kajang",
+      state: "Selangor",
+      postcode: "43000",
+      country: "Malaysia",
+      phone: "+60387654321",
+      isActive: true,
+    },
+  });
+
+  const topGloveJohor = await db.companyBranch.create({
+    data: {
+      companyId: topGlove.id,
+      name: "Johor Branch",
+      address: "PTD 167551, Jalan Budi 8, Taman Bukit Mulia",
+      city: "Johor Bahru",
+      state: "Johor",
+      postcode: "81300",
+      country: "Malaysia",
+      phone: "+60123456789",
+      isActive: true,
+    },
+  });
+
+  console.log(`✅ Created branch: ${petronasHQ.name} for ${petronas.name}`);
+  console.log(`✅ Created branch: ${topGloveJohor.name} for ${topGlove.name}`);
+
   const password = "Password123!";
 
   // Create users using Better Auth's API (this will hash passwords correctly)
@@ -55,9 +210,13 @@ async function main() {
         lastName: "User",
         userType: "lab_administrator" as const,
         status: "active" as const,
-        staffId: "ADM001",
-        faculty: "Faculty of Engineering",
-        department: "ChECA Lab",
+        academicType: "staff" as const,
+        userIdentifier: "ADM001",
+        facultyId: mjiitFaculty.id,
+        departmentId: mjiitChemEngDept.id,
+        ikohzaId: checaIkohza.id,
+        // legacy plain-text fields removed; using relational IDs instead
+        UTM: "kuala_lumpur" as const,
         emailVerifiedAt: new Date(),
         approvedAt: new Date(),
         approvedBy: null,
@@ -72,10 +231,34 @@ async function main() {
         lastName: "Administrator",
         userType: "lab_administrator" as const,
         status: "active" as const,
-        staffId: "LAB001",
-        faculty: "Faculty of Engineering",
-        department: "ChECA Lab",
+        academicType: "staff" as const,
+        userIdentifier: "LAB001",
+        facultyId: mjiitFaculty.id,
+        departmentId: mjiitChemEngDept.id,
+        ikohzaId: checaIkohza.id,
+        // legacy plain-text fields removed; using relational IDs instead
+        UTM: "kuala_lumpur" as const,
         phone: "+60123456789",
+        emailVerifiedAt: new Date(),
+        approvedAt: new Date(),
+      },
+    },
+    {
+      email: "ikohza@checa.utm.my",
+      password,
+      name: "ChECA iKohza",
+      userData: {
+        firstName: "ChECA",
+        lastName: "iKohza",
+        userType: "mjiit_member" as const,
+        status: "active" as const,
+        academicType: "staff" as const,
+        userIdentifier: "IKH001",
+        facultyId: mjiitFaculty.id,
+        departmentId: mjiitChemEngDept.id,
+        ikohzaId: checaIkohza.id,
+        // legacy plain-text fields removed; using relational IDs instead
+        UTM: "kuala_lumpur" as const,
         emailVerifiedAt: new Date(),
         approvedAt: new Date(),
       },
@@ -89,9 +272,13 @@ async function main() {
         lastName: "Faiz",
         userType: "utm_member" as const,
         status: "active" as const,
-        matrixNo: "MKE201234",
-        faculty: "Faculty of Engineering",
-        department: "Chemical Engineering",
+        academicType: "student" as const,
+        userIdentifier: "MKE201234",
+        supervisorName: "Dr. Siti Aminah",
+        facultyId: engineeringFaculty.id,
+        departmentId: chemEngDept.id,
+        // legacy plain-text fields removed; using relational IDs instead
+        UTM: "johor_bahru" as const,
         phone: "+60123456789",
         emailVerifiedAt: new Date(),
         approvedAt: new Date(),
@@ -106,7 +293,10 @@ async function main() {
         lastName: "Johnson",
         userType: "external_member" as const,
         status: "active" as const,
-        companyName: "PETRONAS Research Sdn Bhd",
+        academicType: "none" as const,
+        companyId: petronas.id,
+        companyBranchId: petronasHQ.id,
+        // legacy plain-text fields removed; using relational IDs instead
         address:
           "Lot 3288 & 3289, Off Jalan Ayer Itam, Kawasan Institusi Bangi, 43000 Kajang, Selangor",
         phone: "+60387654321",
