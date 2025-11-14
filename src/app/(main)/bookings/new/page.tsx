@@ -9,6 +9,7 @@ import { BookingPage } from "@/widgets/booking-page";
 export default async function BookingRequestForm() {
 	const session = await auth();
 
+	const userId = session?.user?.id ?? "anonymous";
 	const userType = mapRoleToUserType(session?.user?.role ?? null);
 	const userStatus = session?.user?.status ?? undefined;
 
@@ -40,11 +41,17 @@ export default async function BookingRequestForm() {
 		getAvailableEquipment(),
 	]);
 
+	const mode = "new";
+	const bookingKey = `${userId}-${mode}-new`;
+
 	return (
 		<BookingPage
 			equipment={equipment}
+			key={bookingKey}
+			mode={mode}
 			profile={profile}
 			services={services}
+			userId={userId}
 			userStatus={userStatus}
 			userType={userType}
 		/>

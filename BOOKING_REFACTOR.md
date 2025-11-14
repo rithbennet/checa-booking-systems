@@ -2,12 +2,7 @@ Below is a step-by-step Cursor plan you can paste into your agent. It’s organi
 
 Plan: Refactor Booking Form to RHF-First with Zod and Minimal Zustand
 
-Task 0: Create a feature branch
-- Intent: Work in isolation.
-- Steps:
-  - Create branch: feat/booking-rhf-refactor
-- Acceptance:
-  - New branch checked out.
+
 
 Task 1: Stabilize Zod schemas as single source of truth
 - Intent: Ensure all validation/business rules are in Zod.
@@ -174,7 +169,7 @@ Task 11: Unit tests for schema and factories
 Task 12: Performance and UX polish
 - Intent: Smooth rendering and saving.
 - Files:
-  - src/widgets/booking-page/components/*
+  - src/widgets/booking-page/
   - src/entities/booking/hooks/use-booking-form.ts
 - Steps:
   - Use useMemo for servicesMap.

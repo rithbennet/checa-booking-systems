@@ -1,5 +1,16 @@
 /**
+ * DEPRECATED: This store is being phased out in favor of RHF-first architecture
+ *
  * Zustand store for booking form state management
+ *
+ * @deprecated Use useBookingWizardStore for wizard/meta state only.
+ * Form data should live in React Hook Form, not in Zustand.
+ * This store is kept temporarily for backward compatibility with ServicesPage.
+ *
+ * Migration path:
+ * - ServicesPage should be updated to navigate with service ID in URL params
+ * - BookingPage should load service from params and add to RHF directly
+ * - Once ServicesPage is updated, this file can be deleted
  */
 
 import { create } from "zustand";
@@ -98,7 +109,7 @@ export const useBookingStore = create<BookingStore>()(
 
           const serviceItems =
             state.formData.serviceItems?.filter(
-              (item) => item.serviceId !== serviceId
+              (item: ServiceItem) => item.serviceId !== serviceId
             ) || [];
 
           return {
@@ -114,7 +125,7 @@ export const useBookingStore = create<BookingStore>()(
       updateServiceItem: (serviceId, data) => {
         set((state) => {
           const serviceItems =
-            state.formData.serviceItems?.map((item) =>
+            state.formData.serviceItems?.map((item: ServiceItem) =>
               item.serviceId === serviceId ? { ...item, ...data } : item
             ) || [];
 

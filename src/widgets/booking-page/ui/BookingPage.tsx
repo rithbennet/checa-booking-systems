@@ -1,7 +1,10 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Save } from "lucide-react";
+import { useMemo } from "react";
 import type { BookingServiceItem, LabEquipment } from "@/entities/booking";
+import { draftKey, getDraft } from "@/entities/booking/lib/draftService";
+import type { CreateBookingInput } from "@/entities/booking/model/schemas";
 import type { Service } from "@/entities/service";
 import {
 	type BookingProfile,
@@ -9,7 +12,6 @@ import {
 	ServiceSelectionDialog,
 } from "@/features/booking-form";
 import { useBookingForm } from "@/features/booking-form/lib/use-booking-form";
-import { useBookingStore } from "@/features/booking-form/model/use-booking-store";
 import { PayerInfoStep } from "@/features/booking-form/ui/steps/PayerInfoStep";
 import { ProjectInfoStep } from "@/features/booking-form/ui/steps/ProjectInfoStep";
 import { ReviewStep } from "@/features/booking-form/ui/steps/ReviewStep";
@@ -17,30 +19,51 @@ import { ServicesStep } from "@/features/booking-form/ui/steps/ServicesStep";
 import { Button } from "@/shared/ui/shadcn/button";
 
 interface BookingPageProps {
+	userId: string;
 	userType?: "mjiit_member" | "utm_member" | "external_member";
 	userStatus?: string;
 	initialServices?: Array<{ service: Service; item: BookingServiceItem }>;
 	services?: Service[];
 	equipment?: LabEquipment[];
 	profile: BookingProfile;
+	mode?: "new" | "edit";
+	bookingId?: string;
 }
 
 export function BookingPage({
+	userId,
 	userType = "mjiit_member",
 	userStatus,
 	initialServices = [],
 	services = [],
 	equipment = [],
 	profile,
+	mode = "new",
+	bookingId,
 }: BookingPageProps) {
+	// Compute draft key for this booking
+	const currentDraftKey = useMemo(
+		() => draftKey(userId, mode, bookingId),
+		[userId, mode, bookingId],
+	);
+
+	// Load draft on mount
+	const initialDraft = useMemo(
+		() => getDraft<Partial<CreateBookingInput>>(currentDraftKey),
+		[currentDraftKey],
+	);
+
 	const bookingForm = useBookingForm({
 		userType,
 		userStatus,
+		services,
+		profile,
+		initialDraft,
 		initialServices,
+		draftKey: currentDraftKey,
 	});
 
 	const availableEquipment = equipment ?? [];
-	const { commitStepDraft } = useBookingStore();
 
 	const {
 		form,
@@ -106,12 +129,10 @@ export function BookingPage({
 		if (currentStep === 1 && !canProceedFromStep1) {
 			return;
 		}
-		commitStepDraft(form.getValues());
 		setCurrentStep(Math.min(currentStep + 1, 4));
 	};
 
 	const handlePrevious = () => {
-		commitStepDraft(form.getValues());
 		setCurrentStep(Math.max(currentStep - 1, 1));
 	};
 

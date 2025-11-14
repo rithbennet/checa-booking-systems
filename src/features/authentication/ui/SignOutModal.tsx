@@ -3,6 +3,8 @@
 import { Loader2, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { clearAllUserDrafts } from "@/entities/booking/lib/draftService";
+import { useBookingWizardStore } from "@/features/booking-form/model/use-booking-wizard-store";
 import { authClient } from "@/shared/server/better-auth/client";
 import {
 	Dialog,
@@ -20,25 +22,40 @@ interface SignOutModalProps {
 export function SignOutModal({ open, onOpenChange }: SignOutModalProps) {
 	const router = useRouter();
 	const [isSigningOut, setIsSigningOut] = useState(false);
+	const { clearPersistAndRehydrate } = useBookingWizardStore();
 
 	useEffect(() => {
 		if (open && !isSigningOut) {
 			setIsSigningOut(true);
-			authClient
-				.signOut()
-				.then(() => {
-					router.push("/");
-				})
-				.catch(() => {
-					// Even if signout fails, redirect
-					router.push("/");
-				})
-				.finally(() => {
-					setIsSigningOut(false);
-					onOpenChange?.(false);
-				});
+
+			// Get current user session to clear their drafts
+			authClient.getSession().then(async (session) => {
+				const userId = session.data?.user?.id;
+
+				// Clear booking wizard state and drafts
+				await clearPersistAndRehydrate();
+
+				if (userId) {
+					clearAllUserDrafts(userId);
+				}
+
+				// Sign out and redirect
+				authClient
+					.signOut()
+					.then(() => {
+						router.push("/");
+					})
+					.catch(() => {
+						// Even if signout fails, redirect
+						router.push("/");
+					})
+					.finally(() => {
+						setIsSigningOut(false);
+						onOpenChange?.(false);
+					});
+			});
 		}
-	}, [open, router, isSigningOut, onOpenChange]);
+	}, [open, router, isSigningOut, onOpenChange, clearPersistAndRehydrate]);
 
 	return (
 		<Dialog onOpenChange={onOpenChange} open={open}>

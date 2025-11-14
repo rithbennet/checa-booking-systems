@@ -51,55 +51,89 @@ export const labEquipmentSchema = z.object({
 
 export type LabEquipmentInput = z.infer<typeof labEquipmentSchema>;
 
-// BookingServiceItem schema
-export const bookingServiceItemSchema = z.object({
-  serviceId: z.string().uuid(),
-  quantity: z.number().int().positive(),
-  durationMonths: z.number().int().nonnegative(),
-  sampleName: z.string().max(200).optional(),
-  sampleDetails: z.string().optional(),
-  sampleType: sampleTypeEnum.optional(),
-  sampleHazard: z.string().max(100).optional(),
-  testingMethod: z.string().max(200).optional(),
-  degasConditions: z.string().optional(),
-  solventSystem: z.string().optional(),
-  solvents: z.string().optional(),
-  solventComposition: z.string().optional(),
-  columnType: z.string().max(100).optional(),
-  flowRate: z.number().positive().optional(),
-  wavelength: z.number().int().positive().optional(),
-  expectedRetentionTime: z.number().positive().optional(),
-  samplePreparation: z.string().optional(),
-  notes: z.string().optional(),
-  // Timelines
-  expectedCompletionDate: z.date().optional(),
-  actualCompletionDate: z.date().optional(),
-  turnaroundEstimate: z.string().max(100).optional(),
-  // Special handling requirements - required with defaults
-  temperatureControlled: z.boolean().default(false),
-  lightSensitive: z.boolean().default(false),
-  hazardousMaterial: z.boolean().default(false),
-  inertAtmosphere: z.boolean().default(false),
-  // Unified equipment system
-  equipmentIds: z.array(z.string().uuid()).default([]),
-  otherEquipmentRequests: z.array(z.string()).optional(),
-  // Add-ons
-  addOnIds: z.array(z.string().uuid()).optional(),
-});
+// BookingServiceItem schema with category-aware validation
+export const bookingServiceItemSchema = z
+  .object({
+    serviceId: z.string().uuid(),
+    quantity: z.number().int().nonnegative(), // Allow 0 for working_space
+    durationMonths: z.number().int().nonnegative(),
+    sampleName: z.string().max(200).optional(),
+    sampleDetails: z.string().optional(),
+    sampleType: sampleTypeEnum.optional(),
+    sampleHazard: z.string().max(100).optional(),
+    testingMethod: z.string().max(200).optional(),
+    degasConditions: z.string().optional(),
+    solventSystem: z.string().optional(),
+    solvents: z.string().optional(),
+    solventComposition: z.string().optional(),
+    columnType: z.string().max(100).optional(),
+    flowRate: z.number().positive().optional(),
+    wavelength: z.number().int().positive().optional(),
+    expectedRetentionTime: z.number().positive().optional(),
+    samplePreparation: z.string().optional(),
+    notes: z.string().optional(),
+    // Timelines
+    expectedCompletionDate: z.date().optional(),
+    actualCompletionDate: z.date().optional(),
+    turnaroundEstimate: z.string().max(100).optional(),
+    // Special handling requirements - required with defaults
+    temperatureControlled: z.boolean().default(false),
+    lightSensitive: z.boolean().default(false),
+    hazardousMaterial: z.boolean().default(false),
+    inertAtmosphere: z.boolean().default(false),
+    // Unified equipment system
+    equipmentIds: z.array(z.string().uuid()).default([]),
+    otherEquipmentRequests: z.array(z.string()).optional(),
+    // Add-ons
+    addOnIds: z.array(z.string().uuid()).optional(),
+    // Optional category for validation (enriched at submission)
+    category: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    // If category is provided, enforce category-specific rules
+    if (data.category === "working_space") {
+      if (data.durationMonths < 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["durationMonths"],
+          message: "Working space requires at least 1 month duration",
+        });
+      }
+    } else if (data.category && data.category !== "working_space") {
+      // For testing/analysis services
+      if (data.quantity < 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["quantity"],
+          message: "Testing services require at least 1 sample",
+        });
+      }
+    }
+  });
 
 export type BookingServiceItemInput = z.infer<typeof bookingServiceItemSchema>;
 
-// WorkspaceBooking schema
-export const workspaceBookingSchema = z.object({
-  startDate: z.date(),
-  endDate: z.date(),
-  preferredTimeSlot: z.string().max(50).optional(),
-  equipmentIds: z.array(z.string().uuid()).default([]),
-  specialEquipment: z.array(z.string()).optional(),
-  purpose: z.string().optional(),
-  notes: z.string().optional(),
-  addOnIds: z.array(z.string().uuid()).optional(),
-});
+// WorkspaceBooking schema with date validation
+export const workspaceBookingSchema = z
+  .object({
+    startDate: z.date(),
+    endDate: z.date(),
+    preferredTimeSlot: z.string().max(50).optional(),
+    equipmentIds: z.array(z.string().uuid()).default([]),
+    specialEquipment: z.array(z.string()).optional(),
+    purpose: z.string().optional(),
+    notes: z.string().optional(),
+    addOnIds: z.array(z.string().uuid()).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.endDate < data.startDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["endDate"],
+        message: "End date must be after start date",
+      });
+    }
+  });
 
 export type WorkspaceBookingInput = z.infer<typeof workspaceBookingSchema>;
 
@@ -130,7 +164,7 @@ const bookingRequestBaseSchema = z.object({
 
 // 2) Helper to attach final-only validation rules after structural derivations
 const withFinalOnlyRules = <T extends z.ZodTypeAny>(schema: T) =>
-  schema.superRefine((data: any, ctx) => {
+  schema.superRefine((data: z.infer<T>, ctx) => {
     const hasServiceItems = (data.serviceItems?.length ?? 0) > 0;
     const hasWorkspaceBookings = (data.workspaceBookings?.length ?? 0) > 0;
 
