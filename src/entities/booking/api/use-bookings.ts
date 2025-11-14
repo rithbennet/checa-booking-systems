@@ -17,25 +17,101 @@ export const bookingKeys = {
 };
 
 /**
- * Create a new booking request
+ * Create a new draft booking (no data required)
  */
-async function createBookingRequest(
-	input: CreateBookingInput,
-): Promise<{ id: string; referenceNumber: string; status: string }> {
+async function createBookingDraft(): Promise<{
+	id: string;
+	referenceNumber: string;
+	status: string;
+}> {
 	const response = await fetch("/api/bookings", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(input),
 	});
 
 	if (!response.ok) {
 		const error = await response.json();
-		throw new Error(error.message || "Failed to create booking");
+		throw new Error(error.message || "Failed to create booking draft");
 	}
 
 	return response.json();
+}
+
+/**
+ * Save booking draft with partial or full data
+ */
+async function saveBookingDraft(
+	bookingId: string,
+	data: Partial<CreateBookingInput>,
+): Promise<{ lastSavedAt: string }> {
+	const response = await fetch(`/api/bookings/${bookingId}`, {
+		method: "PATCH",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(data),
+	});
+
+	if (!response.ok) {
+		const error = await response.json();
+		throw new Error(error.message || "Failed to save booking draft");
+	}
+
+	return response.json();
+}
+
+/**
+ * Submit booking for approval
+ */
+async function submitBooking(bookingId: string): Promise<{
+	id: string;
+	status: string;
+	message?: string;
+}> {
+	const response = await fetch(`/api/bookings/${bookingId}/submit`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+	if (!response.ok) {
+		const error = await response.json();
+		throw new Error(error.message || "Failed to submit booking");
+	}
+
+	return response.json();
+}
+
+/**
+ * Delete booking draft
+ */
+async function deleteBookingDraft(bookingId: string): Promise<void> {
+	const response = await fetch(`/api/bookings/${bookingId}`, {
+		method: "DELETE",
+	});
+
+	if (!response.ok) {
+		const error = await response.json();
+		throw new Error(error.message || "Failed to delete booking draft");
+	}
+}
+
+/**
+ * Create a new booking request (legacy - for full submission)
+ */
+async function createBookingRequest(
+	input: CreateBookingInput,
+): Promise<{ id: string; referenceNumber: string; status: string }> {
+	const draft = await createBookingDraft();
+	await saveBookingDraft(draft.id, input);
+	const result = await submitBooking(draft.id);
+	return {
+		...result,
+		referenceNumber: draft.referenceNumber,
+	};
 }
 
 /**
@@ -107,6 +183,76 @@ export function useCreateBooking() {
 			// Invalidate bookings list
 			queryClient.invalidateQueries({ queryKey: bookingKeys.lists() });
 			// Clear draft
+			clearDraftFromLocalStorage();
+		},
+	});
+}
+
+/**
+ * Hook to create a booking draft
+ */
+export function useCreateBookingDraft() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: createBookingDraft,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: bookingKeys.lists() });
+		},
+	});
+}
+
+/**
+ * Hook to save booking draft
+ */
+export function useSaveBookingDraft() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({
+			bookingId,
+			data,
+		}: {
+			bookingId: string;
+			data: Partial<CreateBookingInput>;
+		}) => saveBookingDraft(bookingId, data),
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: bookingKeys.detail(variables.bookingId),
+			});
+		},
+	});
+}
+
+/**
+ * Hook to submit booking
+ */
+export function useSubmitBooking() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: submitBooking,
+		onSuccess: (_data, bookingId) => {
+			queryClient.invalidateQueries({ queryKey: bookingKeys.lists() });
+			queryClient.invalidateQueries({
+				queryKey: bookingKeys.detail(bookingId),
+			});
+			clearDraftFromLocalStorage();
+		},
+	});
+}
+
+/**
+ * Hook to delete booking draft
+ */
+export function useDeleteBookingDraft() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: deleteBookingDraft,
+		onSuccess: (_data, bookingId) => {
+			queryClient.invalidateQueries({ queryKey: bookingKeys.lists() });
+			queryClient.removeQueries({ queryKey: bookingKeys.detail(bookingId) });
 			clearDraftFromLocalStorage();
 		},
 	});

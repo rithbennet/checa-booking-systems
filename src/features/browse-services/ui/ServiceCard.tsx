@@ -1,13 +1,6 @@
 "use client";
 
-import {
-	Calendar,
-	Eye,
-	FlaskConical,
-	Microscope,
-	Plus,
-	Zap,
-} from "lucide-react";
+import { Calendar, Eye, FlaskConical, Microscope, Zap } from "lucide-react";
 import { useState } from "react";
 import type { UserType } from "@/entities/service";
 import { formatServiceCategory, getServicePrice } from "@/entities/service";
@@ -38,7 +31,6 @@ export function ServiceCard({
 	service,
 	userType,
 	onViewDetails,
-	onAddToBooking,
 }: ServiceCardProps) {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const IconComponent = iconMap[service.category] || FlaskConical;
@@ -68,7 +60,7 @@ export function ServiceCard({
 			<Card
 				className={cn(
 					"transition-shadow hover:shadow-lg",
-					isUnavailable && "border-dashed opacity-80"
+					isUnavailable && "border-dashed opacity-80",
 				)}
 			>
 				<CardHeader>
@@ -87,7 +79,7 @@ export function ServiceCard({
 						<Badge
 							className={cn(
 								"text-white",
-								service.isActive ? "bg-green-500" : "bg-red-500"
+								service.isActive ? "bg-green-500" : "bg-red-500",
 							)}
 						>
 							{service.isActive ? "Available" : "Unavailable"}
@@ -132,29 +124,16 @@ export function ServiceCard({
 						</p>
 					)}
 
-					<div className="mt-4 flex items-center space-x-2">
-						<Button
-							className="flex-1"
-							onClick={handleViewDetails}
-							variant="outline"
-						>
+					<div className="mt-4 flex items-center">
+						<Button className="flex-1" onClick={handleViewDetails} variant="outline">
 							<Eye className="mr-2 h-4 w-4" />
 							View Details
-						</Button>
-						<Button
-							className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400 disabled:hover:bg-blue-400"
-							disabled={isUnavailable}
-							onClick={() => onAddToBooking(service.id)}
-						>
-							<Plus className="mr-2 h-4 w-4" />
-							Add to Booking
 						</Button>
 					</div>
 				</CardContent>
 			</Card>
 
 			<ServiceDetailsDialog
-				onAddToBooking={onAddToBooking}
 				onOpenChange={setIsDialogOpen}
 				open={isDialogOpen}
 				service={service}

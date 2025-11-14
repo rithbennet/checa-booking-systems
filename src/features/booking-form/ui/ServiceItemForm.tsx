@@ -51,7 +51,7 @@ export function ServiceItemForm({
 	const addOns = allAddOns.filter(
 		(addon) => addon.applicableTo === "sample" || addon.applicableTo === "both",
 	);
-	const selectedAddOnIds = (serviceItem.addOnIds as string[]) || [];
+	const selectedAddOnIds = (serviceItem.addOnCatalogIds as string[]) || [];
 
 	return (
 		<div className="space-y-6">
@@ -521,11 +521,14 @@ export function ServiceItemForm({
 									onCheckedChange={(checked) => {
 										if (checked) {
 											onUpdate({
-												addOnIds: [...selectedAddOnIds, addon.id],
+												addOnCatalogIds: [
+													...selectedAddOnIds,
+													addon.id,
+												],
 											});
 										} else {
 											onUpdate({
-												addOnIds: selectedAddOnIds.filter(
+												addOnCatalogIds: selectedAddOnIds.filter(
 													(id) => id !== addon.id,
 												),
 											});

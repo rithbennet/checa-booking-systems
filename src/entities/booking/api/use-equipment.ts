@@ -4,11 +4,11 @@
  */
 
 export const equipmentKeys = {
-  all: ["equipment"] as const,
+	all: ["equipment"] as const,
 };
 
 export function useAvailableEquipment(): never {
-  throw new Error(
-    "useAvailableEquipment has been removed. Please rely on server-provided equipment props."
-  );
+	throw new Error(
+		"useAvailableEquipment has been removed. Please rely on server-provided equipment props.",
+	);
 }

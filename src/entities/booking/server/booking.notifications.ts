@@ -1,0 +1,198 @@
+import { db } from "@/shared/server/db";
+import type { notification_type_enum } from "../../../../generated/prisma";
+
+/**
+ * Notification adapter for booking events
+ * Currently implements in-app notifications via database
+ * Email/queue integration can be added here without changing service layer signatures
+ */
+
+/**
+ * Enqueue an in-app notification
+ */
+export async function enqueueInApp(params: {
+	userId: string;
+	type: notification_type_enum;
+	relatedEntityType: string;
+	relatedEntityId: string;
+	title: string;
+	message: string;
+}) {
+	return db.notification.create({
+		data: {
+			userId: params.userId,
+			type: params.type,
+			relatedEntityType: params.relatedEntityType,
+			relatedEntityId: params.relatedEntityId,
+			title: params.title,
+			message: params.message,
+			emailSent: false,
+		},
+	});
+}
+
+/**
+ * Enqueue email notification (no-op for now, placeholder for future implementation)
+ */
+export async function enqueueEmail(params: {
+	to: string;
+	template: string;
+	variables: Record<string, unknown>;
+}) {
+	// TODO: Integrate with email service (e.g., SendGrid, AWS SES)
+	// For now, just log
+	console.log("Email queued:", {
+		to: params.to,
+		template: params.template,
+		variables: params.variables,
+	});
+}
+
+/**
+ * Notify user on booking submission
+ */
+export async function notifyUserBookingSubmitted(params: {
+	userId: string;
+	bookingId: string;
+	referenceNumber: string;
+	status: "pending_approval" | "pending_user_verification";
+}) {
+	const statusMessage =
+		params.status === "pending_approval"
+			? "Your booking is now pending admin approval."
+			: "Your booking is pending account verification. Once your account is verified, it will be reviewed by administrators.";
+
+	await enqueueInApp({
+		userId: params.userId,
+		type: "booking_submitted",
+		relatedEntityType: "booking",
+		relatedEntityId: params.bookingId,
+		title: "Booking Submitted",
+		message: `Your booking ${params.referenceNumber} has been submitted. ${statusMessage}`,
+	});
+}
+
+/**
+ * Notify admins of new booking
+ */
+export async function notifyAdminsNewBooking(params: {
+	adminIds: string[];
+	bookingId: string;
+	referenceNumber: string;
+	status: "pending_approval" | "pending_user_verification";
+}) {
+	const type =
+		params.status === "pending_user_verification"
+			? "booking_pending_verification"
+			: "booking_submitted";
+
+	const message =
+		params.status === "pending_user_verification"
+			? `Booking ${params.referenceNumber} is pending user verification.`
+			: `New booking ${params.referenceNumber} is pending your approval.`;
+
+	for (const adminId of params.adminIds) {
+		await enqueueInApp({
+			userId: adminId,
+			type,
+			relatedEntityType: "booking",
+			relatedEntityId: params.bookingId,
+			title: "New Booking Submitted",
+			message,
+		});
+	}
+}
+
+/**
+ * Notify user of booking approval
+ */
+export async function notifyUserBookingApproved(params: {
+	userId: string;
+	bookingId: string;
+	referenceNumber: string;
+}) {
+	await enqueueInApp({
+		userId: params.userId,
+		type: "booking_approved",
+		relatedEntityType: "booking",
+		relatedEntityId: params.bookingId,
+		title: "Booking Approved",
+		message: `Your booking ${params.referenceNumber} has been approved by the administrator.`,
+	});
+}
+
+/**
+ * Notify user of booking rejection
+ */
+export async function notifyUserBookingRejected(params: {
+	userId: string;
+	bookingId: string;
+	referenceNumber: string;
+	note: string;
+}) {
+	await enqueueInApp({
+		userId: params.userId,
+		type: "booking_rejected",
+		relatedEntityType: "booking",
+		relatedEntityId: params.bookingId,
+		title: "Booking Rejected",
+		message: `Your booking ${params.referenceNumber} has been rejected. Admin notes: ${params.note}`,
+	});
+}
+
+/**
+ * Notify user of booking returned for edit
+ */
+export async function notifyUserBookingReturnedForEdit(params: {
+	userId: string;
+	bookingId: string;
+	referenceNumber: string;
+	note: string;
+}) {
+	await enqueueInApp({
+		userId: params.userId,
+		type: "booking_submitted",
+		relatedEntityType: "booking",
+		relatedEntityId: params.bookingId,
+		title: "Booking Returned for Edit",
+		message: `Your booking ${params.referenceNumber} has been returned for editing. Admin notes: ${params.note}`,
+	});
+}
+
+/**
+ * Notify user of account verification
+ */
+export async function notifyUserAccountVerified(params: {
+	userId: string;
+	userEmail: string;
+}) {
+	await enqueueInApp({
+		userId: params.userId,
+		type: "booking_submitted",
+		relatedEntityType: "user",
+		relatedEntityId: params.userId,
+		title: "Account Verified",
+		message: `Your account has been verified. Any pending bookings will now be reviewed by administrators.`,
+	});
+}
+
+/**
+ * Notify admins that user has been verified and bookings moved to pending_approval
+ */
+export async function notifyAdminsUserVerified(params: {
+	adminIds: string[];
+	userId: string;
+	userEmail: string;
+	bookingCount: number;
+}) {
+	for (const adminId of params.adminIds) {
+		await enqueueInApp({
+			userId: adminId,
+			type: "booking_submitted",
+			relatedEntityType: "user",
+			relatedEntityId: params.userId,
+			title: "User Account Verified",
+			message: `User ${params.userEmail} has been verified. ${params.bookingCount} booking(s) moved to pending approval.`,
+		});
+	}
+}

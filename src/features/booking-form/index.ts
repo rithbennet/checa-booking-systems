@@ -5,8 +5,7 @@
 export * from "./lib/service-column-map";
 export * from "./lib/use-booking-form";
 export * from "./model/types";
-export * from "./model/use-booking-store"; // DEPRECATED - kept for backward compatibility
-export * from "./model/use-booking-wizard-store"; // NEW - wizard/meta state only
+export * from "./model/use-booking-wizard-store"; // Wizard/meta state only
 export * from "./ui/BookingProgress";
 export * from "./ui/PayerInfoForm";
 export * from "./ui/ServiceGroupForm";

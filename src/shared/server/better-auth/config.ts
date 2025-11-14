@@ -47,36 +47,34 @@ export const auth = betterAuth({
 		},
 	},
 	plugins: [
+		// in betterAuth config plugins: customSession(...)
 		customSession(async ({ user, session }) => {
-			// Fetch user role and status from our User model
-			// This data will be cached in cookies via cookieCache
+			let appUserId: string | null = null;
 			let userRole: string | null = null;
 			let userStatus: string | null = null;
 
 			try {
-				const dbUser = await db.user.findUnique({
+				const appUser = await db.user.findUnique({
 					where: { email: user.email },
-					select: {
-						userType: true,
-						status: true,
-					},
+					select: { id: true, userType: true, status: true },
 				});
 
-				if (dbUser) {
+				if (appUser) {
+					appUserId = appUser.id;
 					userRole =
-						dbUser.userType === "lab_administrator"
+						appUser.userType === "lab_administrator"
 							? "lab_administrator"
-							: dbUser.userType;
-					userStatus = dbUser.status;
+							: appUser.userType;
+					userStatus = appUser.status;
 				}
 			} catch {
-				// User might not exist in User table yet (e.g., just registered)
-				// Continue without role/status
+				// optional: log
 			}
 
 			return {
 				user: {
 					...user,
+					appUserId, // critical field
 					role: userRole,
 					status: userStatus,
 				},

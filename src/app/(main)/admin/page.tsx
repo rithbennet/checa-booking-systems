@@ -396,7 +396,10 @@ export default function AdminDashboard() {
 									{recentActivity.map((activity) => {
 										const IconComponent = activity.icon;
 										return (
-											<div className="flex items-start space-x-3" key={`${activity.action}-${activity.timestamp}`}>
+											<div
+												className="flex items-start space-x-3"
+												key={`${activity.action}-${activity.timestamp}`}
+											>
 												<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100">
 													<IconComponent className="h-4 w-4 text-gray-600" />
 												</div>

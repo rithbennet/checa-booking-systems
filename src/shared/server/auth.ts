@@ -1,18 +1,22 @@
+// src/shared/server/auth/index.ts
 import { getSession } from "./better-auth/server";
+
 export async function auth() {
 	const session = await getSession();
-	if (!session) {
-		return null;
-	}
+	if (!session) return null;
 
-	// Session already includes role and status from customSession plugin
-	// These are cached in cookies, so no DB query needed!
+	const su = session.user as {
+		appUserId?: string | null;
+		role?: string | null;
+		status?: string | null;
+	};
+
 	return {
 		user: {
 			...session.user,
-			// Role and status are already in session.user from customSession plugin
-			role: (session.user as { role?: string | null }).role ?? null,
-			status: (session.user as { status?: string | null }).status ?? null,
+			appUserId: su.appUserId ?? null,
+			role: su.role ?? null,
+			status: su.status ?? null,
 		},
 		expires: session.session.expiresAt.toISOString(),
 	};

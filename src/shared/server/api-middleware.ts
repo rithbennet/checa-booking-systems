@@ -7,21 +7,25 @@ import { auth } from "./auth";
 
 export interface AuthenticatedRequest {
 	session: NonNullable<Awaited<ReturnType<typeof auth>>>;
-	user: NonNullable<Awaited<ReturnType<typeof auth>>>["user"];
+	user: NonNullable<Awaited<ReturnType<typeof auth>>>["user"] & {
+		appUserId: string | null;
+		role: string | null;
+		status: string | null;
+	};
 }
 
 /**
- * Check if user is authenticated
+ * Check if user is authenticated and has appUserId
  * Returns session and user if authenticated, null otherwise
  */
 export async function requireAuth(): Promise<AuthenticatedRequest | null> {
 	const session = await auth();
-	if (!session || !session.user) {
+	if (!session || !session.user || !session.user.appUserId) {
 		return null;
 	}
 	return {
 		session,
-		user: session.user,
+		user: session.user as AuthenticatedRequest["user"],
 	};
 }
 

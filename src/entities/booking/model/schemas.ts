@@ -84,8 +84,8 @@ export const bookingServiceItemSchema = z
     // Unified equipment system
     equipmentIds: z.array(z.string().uuid()).default([]),
     otherEquipmentRequests: z.array(z.string()).optional(),
-    // Add-ons
-    addOnIds: z.array(z.string().uuid()).optional(),
+    // Add-ons - IDs reference GlobalAddOnCatalog
+    addOnCatalogIds: z.array(z.string().uuid()).optional(),
     // Optional category for validation (enriched at submission)
     category: z.string().optional(),
   })
@@ -123,7 +123,7 @@ export const workspaceBookingSchema = z
     specialEquipment: z.array(z.string()).optional(),
     purpose: z.string().optional(),
     notes: z.string().optional(),
-    addOnIds: z.array(z.string().uuid()).optional(),
+    addOnCatalogIds: z.array(z.string().uuid()).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.endDate < data.startDate) {

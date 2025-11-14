@@ -4,10 +4,15 @@
  */
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast as sonnerToast } from "sonner";
-import { useCreateBooking } from "@/entities/booking/api/use-bookings";
+import {
+  useCreateBookingDraft,
+  useDeleteBookingDraft,
+  useSaveBookingDraft,
+  useSubmitBooking,
+} from "@/entities/booking/api/use-bookings";
 import {
   clearDraft,
   saveDraft as saveDraftToStorage,
@@ -36,7 +41,12 @@ type WorkspaceField = NonNullable<
   CreateBookingInput["workspaceBookings"]
 >[number] & { id: string };
 
+type BookingMode = "new" | "edit";
+
 interface UseBookingFormOptions {
+  mode?: BookingMode;
+  bookingId?: string;
+  initialData?: CreateBookingInput;
   userType: UserType;
   userStatus?: string;
   services: Service[];
@@ -49,7 +59,18 @@ interface UseBookingFormOptions {
   draftKey: string;
 }
 
+// Step-level validation field mapping
+const STEP_FIELDS: Record<number, Array<keyof CreateBookingInput>> = {
+  1: ["serviceItems"], // Services step
+  2: ["projectDescription", "preferredStartDate", "preferredEndDate"], // Project info
+  3: ["payerType", "billingName", "billingEmail"], // Billing
+  4: [], // Review - full validation
+};
+
 export function useBookingForm({
+  mode = "new",
+  bookingId: bookingIdProp,
+  initialData,
   userType,
   userStatus,
   services,
@@ -58,13 +79,27 @@ export function useBookingForm({
   initialServices = [],
   draftKey,
 }: UseBookingFormOptions) {
+  // Track booking ID for draft mode
+  const [bookingId, _setBookingId] = useState<string | undefined>(
+    bookingIdProp
+  );
+  const [lastSavedAt, setLastSavedAt] = useState<string | undefined>();
+
+  // Track if step 1 has been saved (for exit guard)
+  // In edit mode, we assume step 1 was saved since the draft already exists
+  const hasSavedStep1Ref = useRef(mode === "edit");
+
   // Build services map from props
   const servicesMap = useMemo(
     () => new Map(services.map((s) => [s.id, s] as const)),
     [services]
   );
 
-  const createBookingMutation = useCreateBooking();
+  // Mutations
+  const _createDraftMutation = useCreateBookingDraft();
+  const saveDraftMutation = useSaveBookingDraft();
+  const submitMutation = useSubmitBooking();
+  const deleteMutation = useDeleteBookingDraft();
 
   // Wizard store for UI/meta state only
   const {
@@ -76,8 +111,13 @@ export function useBookingForm({
     resetWizard,
   } = useBookingWizardStore();
 
-  // Build default values: base -> draft -> initialServices -> profile
+  // Build default values: base -> initialData (for edit) -> draft -> initialServices -> profile
   const defaultValues = useMemo(() => {
+    // If we have initialData from edit mode, use it as the base
+    if (initialData) {
+      return normalizeBookingInput(initialData);
+    }
+
     const baseDefaults = normalizeBookingInput({});
     const draftDefaults = initialDraft
       ? normalizeBookingInput(initialDraft)
@@ -100,7 +140,7 @@ export function useBookingForm({
       billingName: draftDefaults?.billingName ?? profile?.fullName ?? undefined,
       billingEmail: draftDefaults?.billingEmail ?? profile?.email ?? undefined,
     };
-  }, [initialDraft, initialServices, profile]);
+  }, [initialData, initialDraft, initialServices, profile]);
 
   // Initialize form with React Hook Form
   const form = useForm<CreateBookingInput>({
@@ -145,6 +185,223 @@ export function useBookingForm({
     userStatus === "pending" ||
     userStatus === "inactive" ||
     userStatus === "rejected";
+
+  // Auto-save step 1 every 2 minutes (only if on step 1 and form is dirty)
+  useEffect(() => {
+    if (currentStep !== 1) return;
+    if (!bookingId) return;
+
+    const interval = setInterval(async () => {
+      if (!form.formState.isDirty) return;
+
+      try {
+        const currentValues = form.getValues();
+        await saveDraftMutation.mutateAsync({
+          bookingId,
+          data: currentValues,
+        });
+        // Reset dirty state after successful save
+        form.reset(currentValues, { keepDirty: false });
+        hasSavedStep1Ref.current = true;
+        setLastSavedAt(new Date().toISOString());
+        // Silent save - no toast to avoid noise
+      } catch (error) {
+        // Silent fail for autosave
+        console.error("Autosave failed:", error);
+      }
+    }, 120_000); // 2 minutes
+
+    return () => clearInterval(interval);
+  }, [bookingId, currentStep, form, saveDraftMutation]);
+
+  // Exit guard: warn if leaving step 1 without saving
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (
+        currentStep === 1 &&
+        !hasSavedStep1Ref.current &&
+        form.formState.isDirty
+      ) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [currentStep, form.formState.isDirty]);
+
+  // Step validation and navigation
+  const handleNext = async () => {
+    const stepFields = STEP_FIELDS[currentStep];
+    if (stepFields && stepFields.length > 0) {
+      const valid = await form.trigger(stepFields as never);
+      if (!valid) {
+        sonnerToast.error("Validation error", {
+          description: "Please fix the errors before continuing.",
+        });
+        return;
+      }
+    }
+
+    // Save draft on next
+    if (bookingId) {
+      try {
+        await saveDraftMutation.mutateAsync({
+          bookingId,
+          data: form.getValues(),
+        });
+        // Mark step 1 as saved if we're on step 1
+        if (currentStep === 1) {
+          hasSavedStep1Ref.current = true;
+        }
+        setLastSavedAt(new Date().toISOString());
+        sonnerToast.success("Draft saved", {
+          description: "Your changes have been saved.",
+        });
+      } catch (error) {
+        sonnerToast.error("Save failed", {
+          description: error instanceof Error ? error.message : "Unknown error",
+        });
+        return;
+      }
+    }
+
+    setCurrentStep(Math.min(currentStep + 1, 4));
+  };
+
+  const handlePrevious = () => {
+    setCurrentStep(Math.max(currentStep - 1, 1));
+  };
+
+  const handleSaveDraft = async () => {
+    if (!bookingId) {
+      sonnerToast.error("No booking draft", {
+        description: "Please wait for the draft to be created.",
+      });
+      return;
+    }
+
+    try {
+      await saveDraftMutation.mutateAsync({
+        bookingId,
+        data: form.getValues(),
+      });
+      // Mark step 1 as saved if we're on step 1
+      if (currentStep === 1) {
+        hasSavedStep1Ref.current = true;
+      }
+      setLastSavedAt(new Date().toISOString());
+      // Also save to localStorage for quick recovery
+      saveDraftToStorage<CreateBookingInput>(draftKey, form.getValues());
+      markSaved(Date.now());
+      sonnerToast.success("Draft saved", {
+        description: "Your booking has been saved as a draft.",
+      });
+    } catch (error) {
+      sonnerToast.error("Save failed", {
+        description: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  };
+
+  const handleDiscard = async () => {
+    if (!bookingId) {
+      // Just clear local draft and redirect
+      clearDraft(draftKey);
+      resetWizard();
+      window.location.href = "/bookings";
+      return;
+    }
+
+    try {
+      await deleteMutation.mutateAsync(bookingId);
+      clearDraft(draftKey);
+      resetWizard();
+      sonnerToast.success("Draft discarded", {
+        description: "Your booking draft has been deleted.",
+      });
+      window.location.href = "/bookings";
+    } catch (error) {
+      sonnerToast.error("Delete failed", {
+        description: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  };
+
+  // Discard draft if step 1 wasn't saved (for exit guard)
+  const discardDraftIfUnsaved = async () => {
+    if (currentStep === 1 && !hasSavedStep1Ref.current && bookingId) {
+      try {
+        await deleteMutation.mutateAsync(bookingId);
+        clearDraft(draftKey);
+      } catch (error) {
+        console.error("Failed to discard unsaved draft:", error);
+      }
+    }
+  };
+
+  const onSubmit = async (data: CreateBookingInput): Promise<void> => {
+    if (!bookingId) {
+      sonnerToast.error("No booking draft", {
+        description: "Please wait for the draft to be created.",
+      });
+      return;
+    }
+
+    try {
+      // First, validate the full form
+      const valid = await form.trigger();
+      if (!valid) {
+        sonnerToast.error("Validation error", {
+          description: "Please fix all errors before submitting.",
+        });
+        return;
+      }
+
+      // Enrich with category metadata for validation
+      const enriched = attachMetadataForValidation(data, services);
+
+      // Save final data to draft
+      await saveDraftMutation.mutateAsync({
+        bookingId,
+        data: enriched,
+      });
+
+      // Submit for approval
+      const result = await submitMutation.mutateAsync(bookingId);
+
+      // Clear draft and reset wizard
+      clearDraft(draftKey);
+      resetWizard();
+
+      // Show appropriate message based on status
+      if (result.status === "pending_user_verification") {
+        sonnerToast.success("Booking submitted", {
+          description:
+            "Your booking has been submitted. Your account needs verification before approval.",
+        });
+      } else if (result.status === "pending_approval") {
+        sonnerToast.success("Booking submitted", {
+          description:
+            "Your booking has been submitted and is pending admin approval.",
+        });
+      } else {
+        sonnerToast.success("Booking submitted", {
+          description: "Your booking request has been submitted successfully.",
+        });
+      }
+
+      window.location.href = `/bookings/${bookingId}`;
+    } catch (error) {
+      sonnerToast.error("Submission failed", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to submit booking. Please try again.",
+      });
+    }
+  };
 
   const handleAddService = (service: Service) => {
     const pricing = getServicePrice(service, userType);
@@ -205,40 +462,6 @@ export function useBookingForm({
     });
   };
 
-  const handleSaveDraft = () => {
-    const data = form.getValues();
-    saveDraftToStorage<CreateBookingInput>(draftKey, data);
-    markSaved(Date.now());
-    sonnerToast.success("Draft saved", {
-      description: "Your booking has been saved as a draft.",
-    });
-  };
-
-  const onSubmit = async (data: CreateBookingInput): Promise<void> => {
-    try {
-      // Enrich with category metadata for validation
-      const enriched = attachMetadataForValidation(data, services);
-
-      const result = await createBookingMutation.mutateAsync(enriched);
-
-      // Clear draft and reset wizard
-      clearDraft(draftKey);
-      resetWizard();
-
-      sonnerToast.success("Booking submitted", {
-        description: `Your booking request ${result.referenceNumber} has been submitted successfully.`,
-      });
-      window.location.href = `/bookings/${result.id}`;
-    } catch (error) {
-      sonnerToast.error("Error", {
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to submit booking. Please try again.",
-      });
-    }
-  };
-
   const getServiceForField = (serviceId: string): Service | undefined => {
     return servicesMap.get(serviceId);
   };
@@ -250,7 +473,7 @@ export function useBookingForm({
       startDate: new Date(),
       endDate: new Date(),
       equipmentIds: [],
-      addOnIds: [],
+      addOnCatalogIds: [],
     };
     appendWorkspace(defaultWorkspace);
     sonnerToast.success("Workspace added", {
@@ -292,11 +515,18 @@ export function useBookingForm({
     handleRemoveWorkspace,
     handleServiceUpdate,
     handleWorkspaceUpdate,
+    handleNext,
+    handlePrevious,
     handleSaveDraft,
+    handleDiscard,
+    discardDraftIfUnsaved,
     onSubmit,
     getServiceForField,
     setServiceDialogOpen,
     setCurrentStep,
-    isSubmitting: createBookingMutation.isPending,
+    isSubmitting: submitMutation.isPending,
+    isSaving: saveDraftMutation.isPending,
+    lastSavedAt,
+    hasSavedStep1: hasSavedStep1Ref.current,
   };
 }

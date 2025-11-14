@@ -3,286 +3,286 @@
 import { useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import type {
-    BookingServiceItemInput,
-    CreateBookingInput,
+	BookingServiceItemInput,
+	CreateBookingInput,
 } from "@/entities/booking/model/schemas";
 import {
-    campusLabel,
-    formatInvoicePayerType,
-    generateTempReference,
+	campusLabel,
+	formatInvoicePayerType,
+	generateTempReference,
 } from "@/entities/invoice";
 import type { Service } from "@/entities/service";
 import { getServicePrice } from "@/entities/service";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
 } from "@/shared/ui/shadcn/card";
 import { Checkbox } from "@/shared/ui/shadcn/checkbox";
 import { Label } from "@/shared/ui/shadcn/label";
 import { Separator } from "@/shared/ui/shadcn/separator";
 
 interface ReviewStepProps {
-    form: UseFormReturn<CreateBookingInput>;
-    fields: Array<BookingServiceItemInput & { id: string }>;
-    getServiceForField: (serviceId: string) => Service | undefined;
-    userType: "mjiit_member" | "utm_member" | "external_member";
+	form: UseFormReturn<CreateBookingInput>;
+	fields: Array<BookingServiceItemInput & { id: string }>;
+	getServiceForField: (serviceId: string) => Service | undefined;
+	userType: "mjiit_member" | "utm_member" | "external_member";
 }
 
 export function ReviewStep({
-    form,
-    fields,
-    getServiceForField,
-    userType,
+	form,
+	fields,
+	getServiceForField,
+	userType,
 }: ReviewStepProps) {
-    const [confirmed, setConfirmed] = useState(false);
-    const tempRef = generateTempReference();
+	const [confirmed, setConfirmed] = useState(false);
+	const tempRef = generateTempReference();
 
-    const [
-        projectDescription,
-        additionalNotes,
-        payerType,
-        billingName,
-        billingAddressDisplay,
-        billingPhone,
-        billingEmail,
-        utmCampus,
-    ] = form.watch([
-        "projectDescription",
-        "additionalNotes",
-        "payerType",
-        "billingName",
-        "billingAddressDisplay",
-        "billingPhone",
-        "billingEmail",
-        "utmCampus",
-    ]);
+	const [
+		projectDescription,
+		additionalNotes,
+		payerType,
+		billingName,
+		billingAddressDisplay,
+		billingPhone,
+		billingEmail,
+		utmCampus,
+	] = form.watch([
+		"projectDescription",
+		"additionalNotes",
+		"payerType",
+		"billingName",
+		"billingAddressDisplay",
+		"billingPhone",
+		"billingEmail",
+		"utmCampus",
+	]);
 
-    // Group services
-    type GroupedItems = Array<{
-        index: number;
-        item: (typeof fields)[0];
-    }>;
-    const grouped = fields.reduce(
-        (acc, field, index) => {
-            const serviceId = field.serviceId;
-            if (!acc[serviceId]) {
-                acc[serviceId] = [];
-            }
-            acc[serviceId].push({ index, item: field });
-            return acc;
-        },
-        {} as Record<string, GroupedItems>,
-    );
+	// Group services
+	type GroupedItems = Array<{
+		index: number;
+		item: (typeof fields)[0];
+	}>;
+	const grouped = fields.reduce(
+		(acc, field, index) => {
+			const serviceId = field.serviceId;
+			if (!acc[serviceId]) {
+				acc[serviceId] = [];
+			}
+			acc[serviceId].push({ index, item: field });
+			return acc;
+		},
+		{} as Record<string, GroupedItems>,
+	);
 
-    // Calculate totals
-    let totalAmount = 0;
-    Object.entries(grouped).forEach(([serviceId, items]) => {
-        const service = getServiceForField(serviceId);
-        if (service) {
-            const pricing = getServicePrice(service, userType);
-            if (pricing) {
-                items.forEach((item) => {
-                    const qty = item.item.quantity || 1;
-                    const months = item.item.durationMonths || 0;
-                    totalAmount += pricing.price * qty * (months || 1);
-                });
-            }
-        }
-    });
+	// Calculate totals
+	let totalAmount = 0;
+	Object.entries(grouped).forEach(([serviceId, items]) => {
+		const service = getServiceForField(serviceId);
+		if (service) {
+			const pricing = getServicePrice(service, userType);
+			if (pricing) {
+				items.forEach((item) => {
+					const qty = item.item.quantity || 1;
+					const months = item.item.durationMonths || 0;
+					totalAmount += pricing.price * qty * (months || 1);
+				});
+			}
+		}
+	});
 
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="text-xl">Review & Submit</CardTitle>
-                <CardDescription>
-                    Please review all information before submitting your booking request
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                {/* Preview Reference */}
-                <div className="rounded-lg bg-blue-50 p-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="font-medium text-blue-900 text-sm">
-                                Temporary Reference (Preview)
-                            </p>
-                            <p className="font-mono text-blue-700 text-lg">{tempRef}</p>
-                        </div>
-                        <Badge className="bg-blue-100 text-blue-800">Preview</Badge>
-                    </div>
-                    <p className="mt-2 text-blue-700 text-xs">
-                        This is a preview reference. You'll receive an official reference
-                        number upon successful submission.
-                    </p>
-                </div>
+	return (
+		<Card>
+			<CardHeader>
+				<CardTitle className="text-xl">Review & Submit</CardTitle>
+				<CardDescription>
+					Please review all information before submitting your booking request
+				</CardDescription>
+			</CardHeader>
+			<CardContent className="space-y-6">
+				{/* Preview Reference */}
+				<div className="rounded-lg bg-blue-50 p-4">
+					<div className="flex items-center justify-between">
+						<div>
+							<p className="font-medium text-blue-900 text-sm">
+								Temporary Reference (Preview)
+							</p>
+							<p className="font-mono text-blue-700 text-lg">{tempRef}</p>
+						</div>
+						<Badge className="bg-blue-100 text-blue-800">Preview</Badge>
+					</div>
+					<p className="mt-2 text-blue-700 text-xs">
+						This is a preview reference. You'll receive an official reference
+						number upon successful submission.
+					</p>
+				</div>
 
-                {/* Services Summary */}
-                <div>
-                    <h3 className="mb-3 font-semibold text-gray-900">
-                        Services ({Object.keys(grouped).length})
-                    </h3>
-                    <div className="space-y-3">
-                        {Object.entries(grouped).map(([serviceId, items]) => {
-                            const service = getServiceForField(serviceId);
-                            if (!service) return null;
+				{/* Services Summary */}
+				<div>
+					<h3 className="mb-3 font-semibold text-gray-900">
+						Services ({Object.keys(grouped).length})
+					</h3>
+					<div className="space-y-3">
+						{Object.entries(grouped).map(([serviceId, items]) => {
+							const service = getServiceForField(serviceId);
+							if (!service) return null;
 
-                            const pricing = getServicePrice(service, userType);
-                            const isWorkingSpace = service.category === "working_space";
+							const pricing = getServicePrice(service, userType);
+							const isWorkingSpace = service.category === "working_space";
 
-                            return (
-                                <div className="rounded-lg border bg-white p-4" key={serviceId}>
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex-1">
-                                            <p className="font-medium text-gray-900">
-                                                {service.name}
-                                            </p>
-                                            <p className="text-gray-500 text-sm">{service.code}</p>
-                                        </div>
-                                        <Badge variant="secondary">
-                                            {items.length}{" "}
-                                            {isWorkingSpace
-                                                ? items.length === 1
-                                                    ? "slot"
-                                                    : "slots"
-                                                : items.length === 1
-                                                    ? "sample"
-                                                    : "samples"}
-                                        </Badge>
-                                    </div>
-                                    {pricing && (
-                                        <p className="mt-2 text-gray-600 text-sm">
-                                            {pricing.price.toFixed(2)} {pricing.unit} per{" "}
-                                            {isWorkingSpace ? "month" : "sample"}
-                                        </p>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
+							return (
+								<div className="rounded-lg border bg-white p-4" key={serviceId}>
+									<div className="flex items-start justify-between">
+										<div className="flex-1">
+											<p className="font-medium text-gray-900">
+												{service.name}
+											</p>
+											<p className="text-gray-500 text-sm">{service.code}</p>
+										</div>
+										<Badge variant="secondary">
+											{items.length}{" "}
+											{isWorkingSpace
+												? items.length === 1
+													? "slot"
+													: "slots"
+												: items.length === 1
+													? "sample"
+													: "samples"}
+										</Badge>
+									</div>
+									{pricing && (
+										<p className="mt-2 text-gray-600 text-sm">
+											{pricing.price.toFixed(2)} {pricing.unit} per{" "}
+											{isWorkingSpace ? "month" : "sample"}
+										</p>
+									)}
+								</div>
+							);
+						})}
+					</div>
+				</div>
 
-                <Separator />
+				<Separator />
 
-                {/* Project Info */}
-                {projectDescription && (
-                    <div>
-                        <h3 className="mb-2 font-semibold text-gray-900">
-                            Project Description
-                        </h3>
-                        <p className="text-gray-700 text-sm">{projectDescription}</p>
-                    </div>
-                )}
+				{/* Project Info */}
+				{projectDescription && (
+					<div>
+						<h3 className="mb-2 font-semibold text-gray-900">
+							Project Description
+						</h3>
+						<p className="text-gray-700 text-sm">{projectDescription}</p>
+					</div>
+				)}
 
-                {additionalNotes && (
-                    <div>
-                        <h3 className="mb-2 font-semibold text-gray-900">
-                            Additional Notes
-                        </h3>
-                        <p className="text-gray-700 text-sm">{additionalNotes}</p>
-                    </div>
-                )}
+				{additionalNotes && (
+					<div>
+						<h3 className="mb-2 font-semibold text-gray-900">
+							Additional Notes
+						</h3>
+						<p className="text-gray-700 text-sm">{additionalNotes}</p>
+					</div>
+				)}
 
-                <Separator />
+				<Separator />
 
-                {/* Billing Info */}
-                <div>
-                    <h3 className="mb-3 font-semibold text-gray-900">
-                        Billing Information
-                    </h3>
-                    <div className="space-y-2 rounded-lg bg-gray-50 p-4">
-                        <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Payer Type:</span>
-                            <span className="font-medium text-gray-900">
-                                {formatInvoicePayerType(payerType)}
-                            </span>
-                        </div>
-                        {billingName && (
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Billing Name:</span>
-                                <span className="font-medium text-gray-900">{billingName}</span>
-                            </div>
-                        )}
-                        {billingAddressDisplay && (
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Billing Address:</span>
-                                <span className="text-right font-medium text-gray-900">
-                                    {billingAddressDisplay}
-                                </span>
-                            </div>
-                        )}
-                        {utmCampus && (
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-600">Campus:</span>
-                                <span className="font-medium text-gray-900">
-                                    {campusLabel(utmCampus)}
-                                </span>
-                            </div>
-                        )}
-                        <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Phone:</span>
-                            <span className="font-medium text-gray-900">
-                                {billingPhone || "Not provided"}
-                            </span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Email:</span>
-                            <span className="font-medium text-gray-900">
-                                {billingEmail || "Not provided"}
-                            </span>
-                        </div>
-                    </div>
-                </div>
+				{/* Billing Info */}
+				<div>
+					<h3 className="mb-3 font-semibold text-gray-900">
+						Billing Information
+					</h3>
+					<div className="space-y-2 rounded-lg bg-gray-50 p-4">
+						<div className="flex justify-between text-sm">
+							<span className="text-gray-600">Payer Type:</span>
+							<span className="font-medium text-gray-900">
+								{formatInvoicePayerType(payerType)}
+							</span>
+						</div>
+						{billingName && (
+							<div className="flex justify-between text-sm">
+								<span className="text-gray-600">Billing Name:</span>
+								<span className="font-medium text-gray-900">{billingName}</span>
+							</div>
+						)}
+						{billingAddressDisplay && (
+							<div className="flex justify-between text-sm">
+								<span className="text-gray-600">Billing Address:</span>
+								<span className="text-right font-medium text-gray-900">
+									{billingAddressDisplay}
+								</span>
+							</div>
+						)}
+						{utmCampus && (
+							<div className="flex justify-between text-sm">
+								<span className="text-gray-600">Campus:</span>
+								<span className="font-medium text-gray-900">
+									{campusLabel(utmCampus)}
+								</span>
+							</div>
+						)}
+						<div className="flex justify-between text-sm">
+							<span className="text-gray-600">Phone:</span>
+							<span className="font-medium text-gray-900">
+								{billingPhone || "Not provided"}
+							</span>
+						</div>
+						<div className="flex justify-between text-sm">
+							<span className="text-gray-600">Email:</span>
+							<span className="font-medium text-gray-900">
+								{billingEmail || "Not provided"}
+							</span>
+						</div>
+					</div>
+				</div>
 
-                <Separator />
+				<Separator />
 
-                {/* Estimated Total */}
-                <div className="rounded-lg bg-green-50 p-4">
-                    <div className="flex items-center justify-between">
-                        <span className="font-semibold text-green-900">
-                            Estimated Total
-                        </span>
-                        <span className="font-bold text-green-900 text-xl">
-                            RM {totalAmount.toFixed(2)}
-                        </span>
-                    </div>
-                    <p className="mt-1 text-green-700 text-xs">
-                        This is an estimate. Final amount may vary based on actual usage and
-                        requirements.
-                    </p>
-                </div>
+				{/* Estimated Total */}
+				<div className="rounded-lg bg-green-50 p-4">
+					<div className="flex items-center justify-between">
+						<span className="font-semibold text-green-900">
+							Estimated Total
+						</span>
+						<span className="font-bold text-green-900 text-xl">
+							RM {totalAmount.toFixed(2)}
+						</span>
+					</div>
+					<p className="mt-1 text-green-700 text-xs">
+						This is an estimate. Final amount may vary based on actual usage and
+						requirements.
+					</p>
+				</div>
 
-                {/* Confirmation Checkbox */}
-                <div className="rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
-                    <div className="flex items-start space-x-3">
-                        <Checkbox
-                            checked={confirmed}
-                            id="confirm-booking"
-                            onCheckedChange={(checked) => setConfirmed(checked as boolean)}
-                        />
-                        <div className="flex-1">
-                            <Label
-                                className="cursor-pointer font-medium text-sm leading-relaxed"
-                                htmlFor="confirm-booking"
-                            >
-                                I confirm that all information provided is accurate and I
-                                understand that this booking request will be reviewed by CHECA
-                                staff before approval.
-                            </Label>
-                        </div>
-                    </div>
-                    {!confirmed && (
-                        <p className="mt-2 ml-7 text-red-600 text-xs">
-                            Please confirm before submitting your booking request.
-                        </p>
-                    )}
-                </div>
+				{/* Confirmation Checkbox */}
+				<div className="rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
+					<div className="flex items-start space-x-3">
+						<Checkbox
+							checked={confirmed}
+							id="confirm-booking"
+							onCheckedChange={(checked) => setConfirmed(checked as boolean)}
+						/>
+						<div className="flex-1">
+							<Label
+								className="cursor-pointer font-medium text-sm leading-relaxed"
+								htmlFor="confirm-booking"
+							>
+								I confirm that all information provided is accurate and I
+								understand that this booking request will be reviewed by CHECA
+								staff before approval.
+							</Label>
+						</div>
+					</div>
+					{!confirmed && (
+						<p className="mt-2 ml-7 text-red-600 text-xs">
+							Please confirm before submitting your booking request.
+						</p>
+					)}
+				</div>
 
-                {/* Track confirmation state in parent form */}
-            </CardContent>
-        </Card>
-    );
+				{/* Track confirmation state in parent form */}
+			</CardContent>
+		</Card>
+	);
 }

@@ -1,47 +1,38 @@
 import { NextResponse } from "next/server";
-import { createBooking } from "@/entities/booking/api/create-booking";
-import { createBookingInputSchema } from "@/entities/booking/model/schemas";
-import { badRequestResponse, withAuth } from "@/shared/server/api-middleware";
+import * as bookingService from "@/entities/booking/server/booking.service";
+import { rateLimit } from "@/shared/server/api-middleware";
+import {
+  requireAuth,
+  serverError,
+  unauthorized,
+} from "@/shared/server/policies";
 
-export const POST = withAuth(
-	async (request, auth) => {
-		try {
-			const body = await request.json();
+/**
+ * POST /api/bookings
+ * Create a new draft booking
+ */
+export async function POST(request: Request) {
+  try {
+    // Rate limiting: 10 draft creations per minute
+    const rateLimitResponse = await rateLimit(request, 10, 60_000);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
 
-			// Validate input
-			const validationResult = createBookingInputSchema.safeParse(body);
-			if (!validationResult.success) {
-				return badRequestResponse(
-					`Validation error: ${validationResult.error.errors.map((e) => e.message).join(", ")}`,
-				);
-			}
+    const user = await requireAuth();
 
-			// Get user ID from session
-			const userId = auth.user.id;
+    const result = await bookingService.createDraft({
+      userId: user.userId,
+    });
 
-			// Create booking
-			const result = await createBooking(validationResult.data, userId);
-
-			return NextResponse.json(result, { status: 201 });
-		} catch (error) {
-			console.error("Error creating booking:", error);
-			return NextResponse.json(
-				{
-					error: "Failed to create booking",
-					message:
-						error instanceof Error
-							? error.message
-							: "An unexpected error occurred",
-				},
-				{ status: 500 },
-			);
-		}
-	},
-	{
-		requireActive: true,
-		rateLimit: {
-			maxRequests: 10,
-			windowMs: 60000, // 1 minute
-		},
-	},
-);
+    return NextResponse.json(result, { status: 201 });
+  } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return unauthorized();
+    }
+    console.error("Error creating draft booking:", error);
+    return serverError(
+      error instanceof Error ? error.message : "Failed to create booking"
+    );
+  }
+}

@@ -3,10 +3,7 @@
 import { Search } from "lucide-react";
 import { useState } from "react";
 import type { Service, UserType } from "@/entities/service";
-import {
-	formatServiceCategory,
-	getServicePrice,
-} from "@/entities/service";
+import { formatServiceCategory, getServicePrice } from "@/entities/service";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -48,9 +45,7 @@ export function ServiceSelectionDialog({
 			(searchQuery === "" ||
 				service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
 				service.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				service.description
-					?.toLowerCase()
-					.includes(searchQuery.toLowerCase())),
+				service.description?.toLowerCase().includes(searchQuery.toLowerCase())),
 	);
 
 	const handleSelect = (service: Service) => {

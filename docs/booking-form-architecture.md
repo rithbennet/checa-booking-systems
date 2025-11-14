@@ -194,13 +194,8 @@ This ensures clean remounts when user/mode/bookingId changes.
 - **Old**: Store persisted after logout
 - **New**: Drafts and wizard state cleared on logout
 
-### Backward Compatibility
-The old `useBookingStore` is kept for backward compatibility with `ServicesPage`, which uses `addService()` to pre-populate bookings. It's marked as deprecated.
-
-**Migration Path for ServicesPage**:
-1. Update "Add to Booking" button to navigate with service ID in URL params
-2. Update BookingPage to load service from params and add to RHF directly
-3. Delete `use-booking-store.ts`
+### Migration Complete ✅
+The old `useBookingStore` has been fully removed. ServicesPage now navigates with service ID in URL params (`/bookings/new?serviceId=xxx`), and the booking wizard adds the service to RHF directly on first load.
 
 ## Benefits
 

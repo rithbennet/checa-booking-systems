@@ -1,0 +1,257 @@
+import { Decimal } from "@prisma/client/runtime/library";
+import type { BookingSaveDraftDto, BookingSubmitDto } from "./booking.dto";
+
+/**
+ * Service pricing data structure (fetched from ServicePricing table)
+ */
+export interface ServicePricingData {
+  serviceId: string;
+  userType: string;
+  price: Decimal;
+  unit: string;
+}
+
+/**
+ * Normalized booking service item for DB storage
+ */
+export interface NormalizedServiceItem {
+  id?: string; // Present for updates, absent for creates
+  serviceId: string;
+  quantity: number;
+  durationMonths: number;
+  unitPrice: Decimal;
+  totalPrice: Decimal;
+  sampleName?: string;
+  sampleDetails?: string;
+  sampleType?: string;
+  sampleHazard?: string;
+  testingMethod?: string;
+  degasConditions?: string;
+  solventSystem?: string;
+  solvents?: string;
+  solventComposition?: string;
+  columnType?: string;
+  flowRate?: Decimal;
+  wavelength?: number;
+  expectedRetentionTime?: Decimal;
+  samplePreparation?: string;
+  notes?: string;
+  expectedCompletionDate?: Date;
+  actualCompletionDate?: Date;
+  turnaroundEstimate?: string;
+  temperatureControlled: boolean;
+  lightSensitive: boolean;
+  hazardousMaterial: boolean;
+  inertAtmosphere: boolean;
+  equipmentIds: string[];
+  otherEquipmentRequests?: string[];
+  addOnCatalogIds?: string[];
+}
+
+/**
+ * Normalized workspace booking for DB storage
+ */
+export interface NormalizedWorkspaceBooking {
+  id?: string;
+  startDate: Date;
+  endDate: Date;
+  preferredTimeSlot?: string;
+  equipmentIds: string[];
+  specialEquipment?: string[];
+  purpose?: string;
+  notes?: string;
+  addOnCatalogIds?: string[];
+}
+
+/**
+ * Add-on data for calculations
+ */
+export interface AddOnData {
+  id: string;
+  name: string;
+  amount: Decimal;
+}
+
+/**
+ * Result of mapping DTO to normalized structures
+ */
+export interface MappingResult {
+  serviceItems: NormalizedServiceItem[];
+  workspaceBookings: NormalizedWorkspaceBooking[];
+  totalAmount: Decimal;
+}
+
+/**
+ * Maps DTO input to normalized DB structures with computed prices
+ * @param input - The booking DTO (draft or submit)
+ * @param pricingMap - Map of serviceId to pricing data
+ * @param addOnsMap - Map of addOnId to add-on data
+ * @param userType - User type for pricing lookup
+ * @returns Normalized structures ready for DB insertion
+ */
+export function mapDtoToNormalized(
+  input: BookingSaveDraftDto | BookingSubmitDto,
+  pricingMap: Map<string, ServicePricingData>,
+  addOnsMap: Map<string, AddOnData>,
+  userType: string
+): MappingResult {
+  const serviceItems: NormalizedServiceItem[] = [];
+  const workspaceBookings: NormalizedWorkspaceBooking[] = [];
+
+  // Map service items
+  if (input.serviceItems && Array.isArray(input.serviceItems)) {
+    for (const item of input.serviceItems) {
+      const pricing = pricingMap.get(item.serviceId);
+      if (!pricing) {
+        throw new Error(
+          `Pricing not found for service ${item.serviceId} and user type ${userType}`
+        );
+      }
+
+      const quantity = item.quantity ?? 0;
+      const durationMonths = item.durationMonths ?? 0;
+
+      // Calculate base price
+      // For working_space: durationMonths * unitPrice
+      // For analysis: quantity * unitPrice
+      let basePrice: Decimal;
+      if (durationMonths > 0) {
+        // Working space pricing
+        basePrice = pricing.price.mul(durationMonths);
+      } else {
+        // Analysis/testing pricing
+        basePrice = pricing.price.mul(quantity);
+      }
+
+      // Add add-ons to the price
+      let addOnsTotal = new Decimal(0);
+      if (item.addOnCatalogIds && Array.isArray(item.addOnCatalogIds)) {
+        for (const addOnId of item.addOnCatalogIds) {
+          const addOn = addOnsMap.get(addOnId);
+          if (addOn) {
+            addOnsTotal = addOnsTotal.add(addOn.amount);
+          }
+        }
+      }
+
+      const totalPrice = basePrice.add(addOnsTotal);
+
+      serviceItems.push({
+        id: (item as { id?: string }).id,
+        serviceId: item.serviceId,
+        quantity,
+        durationMonths,
+        unitPrice: pricing.price,
+        totalPrice,
+        sampleName: item.sampleName,
+        sampleDetails: item.sampleDetails,
+        sampleType: item.sampleType,
+        sampleHazard: item.sampleHazard,
+        testingMethod: item.testingMethod,
+        degasConditions: item.degasConditions,
+        solventSystem: item.solventSystem,
+        solvents: item.solvents,
+        solventComposition: item.solventComposition,
+        columnType: item.columnType,
+        flowRate: item.flowRate ? new Decimal(item.flowRate) : undefined,
+        wavelength: item.wavelength,
+        expectedRetentionTime: item.expectedRetentionTime
+          ? new Decimal(item.expectedRetentionTime)
+          : undefined,
+        samplePreparation: item.samplePreparation,
+        notes: item.notes,
+        expectedCompletionDate: item.expectedCompletionDate,
+        actualCompletionDate: item.actualCompletionDate,
+        turnaroundEstimate: item.turnaroundEstimate,
+        temperatureControlled: item.temperatureControlled ?? false,
+        lightSensitive: item.lightSensitive ?? false,
+        hazardousMaterial: item.hazardousMaterial ?? false,
+        inertAtmosphere: item.inertAtmosphere ?? false,
+        equipmentIds: item.equipmentIds ?? [],
+        otherEquipmentRequests: item.otherEquipmentRequests,
+        addOnCatalogIds: item.addOnCatalogIds,
+      });
+    }
+  }
+
+  // Map workspace bookings
+  if (input.workspaceBookings && Array.isArray(input.workspaceBookings)) {
+    for (const workspace of input.workspaceBookings) {
+      workspaceBookings.push({
+        id: (workspace as { id?: string }).id,
+        startDate:
+          workspace.startDate instanceof Date
+            ? workspace.startDate
+            : new Date(workspace.startDate),
+        endDate:
+          workspace.endDate instanceof Date
+            ? workspace.endDate
+            : new Date(workspace.endDate),
+        preferredTimeSlot: workspace.preferredTimeSlot,
+        equipmentIds: workspace.equipmentIds ?? [],
+        specialEquipment: workspace.specialEquipment,
+        purpose: workspace.purpose,
+        notes: workspace.notes,
+        addOnCatalogIds: workspace.addOnCatalogIds,
+      });
+    }
+  }
+
+  const totalAmount = computeTotals(serviceItems, workspaceBookings, addOnsMap);
+
+  return {
+    serviceItems,
+    workspaceBookings,
+    totalAmount,
+  };
+}
+
+/**
+ * Computes total amount from service items and workspace bookings
+ * @param serviceItems - Normalized service items with totalPrice computed
+ * @param workspaceBookings - Normalized workspace bookings
+ * @param addOnsMap - Map of add-on IDs to add-on data
+ * @returns Total amount for the booking
+ */
+export function computeTotals(
+  serviceItems: NormalizedServiceItem[],
+  workspaceBookings: NormalizedWorkspaceBooking[],
+  addOnsMap: Map<string, AddOnData>
+): Decimal {
+  let total = new Decimal(0);
+
+  // Sum service items
+  for (const item of serviceItems) {
+    total = total.add(item.totalPrice);
+  }
+
+  // Sum workspace booking add-ons
+  for (const workspace of workspaceBookings) {
+    if (workspace.addOnCatalogIds && Array.isArray(workspace.addOnCatalogIds)) {
+      for (const addOnId of workspace.addOnCatalogIds) {
+        const addOn = addOnsMap.get(addOnId);
+        if (addOn) {
+          total = total.add(addOn.amount);
+        }
+      }
+    }
+  }
+
+  return total;
+}
+
+/**
+ * Helper to convert Prisma Decimal to number for JSON serialization
+ */
+export function decimalToNumber(decimal: Decimal | null | undefined): number {
+  if (!decimal) return 0;
+  return decimal.toNumber();
+}
+
+/**
+ * Helper to convert number to Prisma Decimal
+ */
+export function numberToDecimal(value: number | null | undefined): Decimal {
+  if (value == null) return new Decimal(0);
+  return new Decimal(value);
+}

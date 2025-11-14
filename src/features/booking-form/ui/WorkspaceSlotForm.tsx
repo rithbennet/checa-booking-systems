@@ -101,7 +101,7 @@ export function WorkspaceSlotForm({
 		(addon) =>
 			addon.applicableTo === "workspace" || addon.applicableTo === "both",
 	);
-	const selectedAddOnIds = (serviceItem.addOnIds as string[]) || [];
+	const selectedAddOnIds = (serviceItem.addOnCatalogIds as string[]) || [];
 
 	// Calculate end date from start date and months
 	const calculatedEndDate = localStartDate
@@ -488,11 +488,11 @@ export function WorkspaceSlotForm({
 												onCheckedChange={(checked) => {
 													if (checked) {
 														onUpdate({
-															addOnIds: [...selectedAddOnIds, addon.id],
+															addOnCatalogIds: [...selectedAddOnIds, addon.id],
 														});
 													} else {
 														onUpdate({
-															addOnIds: selectedAddOnIds.filter(
+															addOnCatalogIds: selectedAddOnIds.filter(
 																(id) => id !== addon.id,
 															),
 														});

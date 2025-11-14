@@ -32,7 +32,7 @@ export function createDefaultServiceItem(
     inertAtmosphere: false,
     equipmentIds: [],
     otherEquipmentRequests: [],
-    addOnIds: [],
+    addOnCatalogIds: [],
     ...(isWorkingSpace
       ? {
           expectedCompletionDate: now,
@@ -56,7 +56,7 @@ export function createDefaultWorkspaceBooking(
     startDate: now,
     endDate: now,
     equipmentIds: [],
-    addOnIds: [],
+    addOnCatalogIds: [],
   };
 }
 
@@ -100,7 +100,7 @@ export function normalizeServiceItem(
     inertAtmosphere: item.inertAtmosphere ?? false,
     equipmentIds: item.equipmentIds ?? [],
     otherEquipmentRequests: item.otherEquipmentRequests ?? [],
-    addOnIds: item.addOnIds ?? [],
+    addOnCatalogIds: item.addOnCatalogIds ?? [],
     category: item.category,
   };
 }
@@ -121,7 +121,7 @@ export function normalizeWorkspaceBooking(
     specialEquipment: workspace.specialEquipment ?? [],
     purpose: workspace.purpose,
     notes: workspace.notes,
-    addOnIds: workspace.addOnIds ?? [],
+    addOnCatalogIds: workspace.addOnCatalogIds ?? [],
   };
 }
 

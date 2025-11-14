@@ -13,11 +13,11 @@ const storage = typeof window !== "undefined" ? window.localStorage : undefined;
  * @returns A unique storage key
  */
 export function draftKey(
-  userId: string,
-  mode: "new" | "edit",
-  bookingId?: string
+	userId: string,
+	mode: "new" | "edit",
+	bookingId?: string,
 ): string {
-  return `booking-draft:${userId}:${mode}:${bookingId ?? "new"}`;
+	return `booking-draft:${userId}:${mode}:${bookingId ?? "new"}`;
 }
 
 /**
@@ -26,23 +26,23 @@ export function draftKey(
  * @returns The parsed draft or null if not found/invalid
  */
 export function getDraft<T>(key: string): T | null {
-  if (!storage) return null;
-  const raw = storage.getItem(key);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw, (_key, value) => {
-      // Revive Date objects
-      if (typeof value === "string") {
-        const datePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
-        if (datePattern.test(value)) {
-          return new Date(value);
-        }
-      }
-      return value;
-    }) as T;
-  } catch {
-    return null;
-  }
+	if (!storage) return null;
+	const raw = storage.getItem(key);
+	if (!raw) return null;
+	try {
+		return JSON.parse(raw, (_key, value) => {
+			// Revive Date objects
+			if (typeof value === "string") {
+				const datePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+				if (datePattern.test(value)) {
+					return new Date(value);
+				}
+			}
+			return value;
+		}) as T;
+	} catch {
+		return null;
+	}
 }
 
 /**
@@ -51,12 +51,12 @@ export function getDraft<T>(key: string): T | null {
  * @param data - The draft data to save
  */
 export function saveDraft<T>(key: string, data: T): void {
-  if (!storage) return;
-  try {
-    storage.setItem(key, JSON.stringify(data));
-  } catch (error) {
-    console.error("Failed to save draft:", error);
-  }
+	if (!storage) return;
+	try {
+		storage.setItem(key, JSON.stringify(data));
+	} catch (error) {
+		console.error("Failed to save draft:", error);
+	}
 }
 
 /**
@@ -64,8 +64,8 @@ export function saveDraft<T>(key: string, data: T): void {
  * @param key - The draft key
  */
 export function clearDraft(key: string): void {
-  if (!storage) return;
-  storage.removeItem(key);
+	if (!storage) return;
+	storage.removeItem(key);
 }
 
 /**
@@ -73,20 +73,20 @@ export function clearDraft(key: string): void {
  * @param userId - The user ID
  */
 export function clearAllUserDrafts(userId: string): void {
-  if (!storage) return;
-  const prefix = `booking-draft:${userId}:`;
-  const keysToRemove: string[] = [];
+	if (!storage) return;
+	const prefix = `booking-draft:${userId}:`;
+	const keysToRemove: string[] = [];
 
-  // Find all keys for this user
-  for (let i = 0; i < storage.length; i++) {
-    const key = storage.key(i);
-    if (key?.startsWith(prefix)) {
-      keysToRemove.push(key);
-    }
-  }
+	// Find all keys for this user
+	for (let i = 0; i < storage.length; i++) {
+		const key = storage.key(i);
+		if (key?.startsWith(prefix)) {
+			keysToRemove.push(key);
+		}
+	}
 
-  // Remove all matching keys
-  for (const key of keysToRemove) {
-    storage.removeItem(key);
-  }
+	// Remove all matching keys
+	for (const key of keysToRemove) {
+		storage.removeItem(key);
+	}
 }

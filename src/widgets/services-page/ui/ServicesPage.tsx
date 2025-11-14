@@ -1,6 +1,6 @@
 "use client";
 
-import { Filter, FlaskConical } from "lucide-react";
+import { Filter, FlaskConical, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type {
@@ -8,7 +8,6 @@ import type {
 	ServiceFilters as ServiceFiltersType,
 	UserType,
 } from "@/entities/service";
-import { useBookingStore } from "@/features/booking-form/model/use-booking-store";
 import {
 	ServiceCard,
 	ServiceFiltersComponent,
@@ -47,17 +46,7 @@ export function ServicesPage({
 		console.log("View details for service:", serviceId);
 	};
 
-	const addService = useBookingStore((state) => state.addService);
-
-	const handleAddToBooking = (serviceId: string) => {
-		// Find the service and add it to the Zustand store
-		const service = allServices.find((s) => s.id === serviceId);
-		if (service?.isActive) {
-			addService(service);
-			// Navigate to booking page - service is already in the store
-			router.push("/bookings/new");
-		}
-	};
+	// Simplified flow: no per-card add; provide a single create booking CTA
 
 	// Client-side filtering, sorting, and searching - instant performance
 	// Since we have <10 services, this is much faster than API calls
@@ -213,6 +202,13 @@ export function ServicesPage({
 										</span>
 									)}
 								</Button>
+								<Button
+									className="bg-blue-600 hover:bg-blue-700"
+									onClick={() => router.push("/bookings/new")}
+								>
+									<Plus className="mr-2 h-4 w-4" />
+									Create Booking
+								</Button>
 							</div>
 						</div>
 
@@ -291,7 +287,6 @@ export function ServicesPage({
 								{filteredAndSortedServices.map((service) => (
 									<ServiceCard
 										key={service.id}
-										onAddToBooking={handleAddToBooking}
 										onViewDetails={handleViewDetails}
 										service={service}
 										userType={userType}
