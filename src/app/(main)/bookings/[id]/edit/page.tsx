@@ -9,8 +9,10 @@ import { mapRoleToUserType } from "@/shared/lib/user-type-mapper";
 import { requireCurrentUser } from "@/shared/server/current-user";
 import { BookingWizardPage } from "@/widgets/booking-wizard";
 
+// Next.js generated PageProps may declare `params` as a Promise or be undefined.
+// Make this optional and a Promise to match the generated type.
 type PageProps = {
-	params: { id: string };
+	params?: Promise<{ id: string }>;
 };
 
 export default async function EditBookingPage({ params }: PageProps) {
@@ -50,7 +52,12 @@ export default async function EditBookingPage({ params }: PageProps) {
 
 
 	// `params` may be a promise in Next.js route handlers — await before accessing
-	const { id: bookingId } = await params as { id: string };
+	const resolvedParams = await params;
+	if (!resolvedParams || !resolvedParams.id) {
+		// Missing params — redirect to bookings list
+		redirect("/bookings");
+	}
+	const bookingId = resolvedParams.id;
 	const booking = await bookingService.getBooking({ userId, bookingId });
 	if (!booking) {
 		// If missing, redirect to bookings list (alternatively render 404)

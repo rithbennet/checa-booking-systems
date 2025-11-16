@@ -68,6 +68,7 @@ export function BookingPage({
 	const {
 		form,
 		fields,
+		workspaceFields,
 		isBlocked,
 		currentStep,
 		isServiceDialogOpen,
@@ -76,6 +77,9 @@ export function BookingPage({
 		handleAddSample,
 		handleRemoveService,
 		handleRemoveServiceGroup,
+		handleAddWorkspace,
+		handleWorkspaceUpdate,
+		handleRemoveWorkspace,
 		handleServiceUpdate,
 		handleSaveDraft,
 		onSubmit,
@@ -156,10 +160,14 @@ export function BookingPage({
 							fields={fields}
 							getServiceForField={getServiceForField}
 							handleAddSample={handleAddSample}
+							handleAddWorkspace={handleAddWorkspace}
 							handleRemoveService={handleRemoveService}
 							handleRemoveServiceGroup={handleRemoveServiceGroup}
+							handleRemoveWorkspace={handleRemoveWorkspace}
 							handleServiceUpdate={handleServiceUpdate}
+							handleWorkspaceUpdate={handleWorkspaceUpdate}
 							setServiceDialogOpen={setServiceDialogOpen}
+							workspaceFields={workspaceFields}
 						/>
 					)}
 
@@ -174,6 +182,7 @@ export function BookingPage({
 							fields={fields}
 							form={form}
 							getServiceForField={getServiceForField}
+							services={services}
 							userType={userType}
 						/>
 					)}

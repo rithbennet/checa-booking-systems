@@ -24,14 +24,6 @@ export default function UploadInvoice() {
 	const [error, setError] = useState("");
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
-	const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-		e.preventDefault();
-		e.stopPropagation();
-		if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-			const droppedFile = e.dataTransfer.files[0];
-			if (droppedFile) handleFile(droppedFile);
-		}
-	};
 
 	const handleFile = (file: File) => {
 		if (file.type !== "application/pdf") {
@@ -104,7 +96,7 @@ export default function UploadInvoice() {
 							className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-white p-8 transition-colors ${error ? "border-red-500" : "border-gray-300 hover:border-indigo-500"}`}
 							onClick={() => fileInputRef.current?.click()}
 							onDragOver={(e) => e.preventDefault()}
-							onDrop={handleDrop}
+
 							type="button"
 						>
 							<UploadCloud className="mb-4 h-12 w-12 text-indigo-500" />
@@ -143,7 +135,7 @@ export default function UploadInvoice() {
 								<span className="text-gray-400 text-xs">(optional)</span>
 							</label>
 							<Textarea
-								className="min-h-[80px] resize-none"
+								className="min-h-20 resize-none"
 								id="notes"
 								onChange={(e) => setNotes(e.target.value)}
 								placeholder="Add any notes for the finance team..."

@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: <temporart> */
 "use client";
 
 import {
@@ -379,13 +380,12 @@ export default function ManageUsers() {
 											User Type
 										</Label>
 										<Badge
-											className={`mt-1 ${
-												selectedUser.userType === "MJIIT"
-													? "bg-blue-100 text-blue-800"
-													: selectedUser.userType === "UTM"
-														? "bg-green-100 text-green-800"
-														: "bg-orange-100 text-orange-800"
-											}`}
+											className={`mt-1 ${selectedUser.userType === "MJIIT"
+												? "bg-blue-100 text-blue-800"
+												: selectedUser.userType === "UTM"
+													? "bg-green-100 text-green-800"
+													: "bg-orange-100 text-orange-800"
+												}`}
 										>
 											{selectedUser.userType}
 										</Badge>

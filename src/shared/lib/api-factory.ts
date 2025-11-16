@@ -17,7 +17,10 @@ export function createProtectedHandler(
   opts?: { requireActive?: boolean }
 ) {
   // Return a route-compatible handler: (req, ctx?) => Response | Promise<Response>
-  return async (req: Request, ctx?: HandlerCtx) => {
+  // Use `ctx?: unknown` for the runtime signature so the returned handler is
+  // assignable to Next's RouteContext-based types. We'll cast to `any` when
+  // reading `params` to preserve the existing behavior.
+  return async (req: Request, ctx?: unknown) => {
     try {
       // Use the repository `auth()` helper which returns the normalized shape.
       const session = await auth();
@@ -37,8 +40,9 @@ export function createProtectedHandler(
       };
 
       let resolvedParams: Record<string, string> | undefined;
-      if (ctx && "params" in ctx) {
-        const maybeParams = (ctx as unknown as { params?: unknown }).params;
+      const ctxObj = ctx as Record<string, unknown> | undefined;
+      if (ctxObj && "params" in ctxObj) {
+        const maybeParams = (ctxObj as { params?: unknown }).params;
 
         const isThenable = (value: unknown): value is Promise<unknown> => {
           return (
