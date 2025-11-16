@@ -108,6 +108,22 @@ export const bookingServiceItemSchema = z
           message: "Testing services require at least 1 sample",
         });
       }
+      // Require sampleName for analysis services
+      if (!data.sampleName || data.sampleName.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["sampleName"],
+          message: "Sample Name is required",
+        });
+      }
+      // Require sampleType for analysis services
+      if (!data.sampleType) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["sampleType"],
+          message: "Sample Type is required",
+        });
+      }
     }
   });
 
@@ -126,11 +142,28 @@ export const workspaceBookingSchema = z
     addOnCatalogIds: z.array(z.string().uuid()).optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.endDate < data.startDate) {
+    // Normalize to start-of-day to avoid timezone/time-of-day off-by-one
+    const start = new Date(data.startDate);
+    const end = new Date(data.endDate);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    if (end < start) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["endDate"],
         message: "End date must be after start date",
+      });
+    }
+    // Minimum 30 days duration
+    const ms = end.getTime() - start.getTime();
+    // Count days inclusively to align with UI/end-date calculation
+    const days = Math.floor(ms / (1000 * 60 * 60 * 24)) + 1;
+    if (days < 30) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["endDate"],
+        message: "Duration must be at least 1 month (30 days)",
       });
     }
   });
@@ -142,7 +175,11 @@ const bookingRequestBaseSchema = z.object({
   id: z.string().uuid().optional(),
   userId: z.string().uuid().optional(), // set by server/session
   referenceNumber: z.string().max(50).optional(), // server generated
-  projectDescription: z.string().optional(),
+  // Project description required by Step 2 in the wizard
+  projectDescription: z
+    .string()
+    .min(1, "Project description is required")
+    .max(500, "Project description must be at most 500 characters"),
   preferredStartDate: z.date().optional(),
   preferredEndDate: z.date().optional(),
   totalAmount: z.number().nonnegative().default(0),

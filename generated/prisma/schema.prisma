@@ -407,7 +407,6 @@ model BookingServiceItem {
   service                 Service                @relation(fields: [serviceId], references: [id])
   // Basic info
   quantity                Int                    @default(1)
-  durationMonths          Int                    @default(0)
   unitPrice               Decimal                @db.Decimal(10, 2)
   totalPrice              Decimal                @db.Decimal(10, 2)
   sampleName              String?                @db.VarChar(200)

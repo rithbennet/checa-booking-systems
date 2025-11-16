@@ -2,8 +2,17 @@
 
 import { Plus, X } from "lucide-react";
 import type { LabEquipment } from "@/entities/booking";
-import type { CreateBookingInput, WorkspaceBookingInput } from "@/entities/booking/model/schemas";
+import type {
+    CreateBookingInput,
+    WorkspaceBookingInput,
+} from "@/entities/booking/model/schemas";
 import type { Service } from "@/entities/service";
+import {
+    calculateWorkspaceMonths,
+    hasOverlappingBooking,
+    isValidWorkspaceStartDate,
+    parseWorkspaceDates,
+} from "@/features/booking-form/lib/workspace-utils";
 import {
     AccordionContentNoAutoClose,
     AccordionItemNoAutoClose,
@@ -51,9 +60,27 @@ export function WorkspaceGroupForm({
     availableEquipment,
     isEquipmentLoading = false,
 }: WorkspaceGroupFormProps) {
-    // A workspace slot is "complete" when its internal form deems it so.
-    // We approximate completeness by checking the notes for parsed dates via WorkspaceSlotForm itself.
-    const allComplete = workspaceItems.length > 0; // Badge is cosmetic; WorkspaceSlotForm shows per-item state
+    // A workspace slot is "complete" when:
+    // - start and end dates are present
+    // - duration is at least 1 month (30 days)
+    // - start date is valid (today or later)
+    // - it does not overlap with another slot
+    const allComplete =
+        workspaceItems.length > 0 &&
+        workspaceItems.every(({ item }, idx) => {
+            const dates = parseWorkspaceDates(item as Partial<ServiceItem>);
+            if (!dates.startDate || !dates.endDate) return false;
+            const months = calculateWorkspaceMonths(dates.startDate, dates.endDate);
+            if (months < 1) return false;
+            if (!isValidWorkspaceStartDate(dates.startDate)) return false;
+            // Build list of existing slot raw items for overlap check
+            const existing = workspaceItems.map(
+                ({ item }) => item as Partial<ServiceItem>,
+            );
+            if (hasOverlappingBooking(dates.startDate, dates.endDate, existing, idx))
+                return false;
+            return true;
+        });
 
     return (
         <Card className="mb-6 border-l-4 border-l-green-500 shadow-sm">

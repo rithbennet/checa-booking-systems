@@ -312,7 +312,6 @@ exports.Prisma.BookingServiceItemScalarFieldEnum = {
   bookingRequestId: 'bookingRequestId',
   serviceId: 'serviceId',
   quantity: 'quantity',
-  durationMonths: 'durationMonths',
   unitPrice: 'unitPrice',
   totalPrice: 'totalPrice',
   sampleName: 'sampleName',

@@ -12,7 +12,10 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { LabEquipment } from "@/entities/booking";
-import type { CreateBookingInput, WorkspaceBookingInput } from "@/entities/booking/model/schemas";
+import type {
+	CreateBookingInput,
+	WorkspaceBookingInput,
+} from "@/entities/booking/model/schemas";
 import type { Service } from "@/entities/service";
 import { cn } from "@/shared/lib/utils";
 import {
@@ -48,6 +51,7 @@ import {
 	getWorkspaceTimeSlot,
 	hasOverlappingBooking,
 	isValidWorkspaceStartDate,
+	normalizeDate,
 	parseWorkspaceDates,
 	updateWorkspaceNotes,
 } from "../../lib/workspace-utils";
@@ -60,7 +64,9 @@ interface WorkspaceSlotFormProps {
 	// support either a service-style item or the dedicated workspace booking shape
 	serviceItem: Partial<ServiceItem> | Partial<WorkspaceBookingInput>;
 	index: number;
-	onUpdate: (data: Partial<ServiceItem> | Partial<WorkspaceBookingInput>) => void;
+	onUpdate: (
+		data: Partial<ServiceItem> | Partial<WorkspaceBookingInput>,
+	) => void;
 	allSlots: Array<Partial<ServiceItem> | Partial<WorkspaceBookingInput>>;
 	excludeIndex: number;
 	onRemove?: (index: number) => void;
@@ -122,10 +128,7 @@ export function WorkspaceSlotForm({
 
 	// Check if form is complete (minimum 1 month = 30 days duration, no overlaps)
 	const isComplete =
-		localStartDate !== undefined &&
-		localMonths >= 1 &&
-		isValidWorkspaceStartDate(localStartDate) &&
-		!hasOverlap;
+		localStartDate !== undefined && localMonths >= 1 && !hasOverlap;
 
 	// Format date range for display
 	const dateRangeDisplay =
@@ -136,16 +139,17 @@ export function WorkspaceSlotForm({
 	const handleStartDateChange = (date: Date | undefined) => {
 		if (!date) return;
 
-		setLocalStartDate(date);
-		const endDate = calculateWorkspaceEndDate(date, localMonths);
+		const normalizedStart = normalizeDate(date);
+		setLocalStartDate(normalizedStart);
+		const endDate = calculateWorkspaceEndDate(normalizedStart, localMonths);
 		// If workspace-shaped, update start/end directly; otherwise keep notes encoding for legacy shape
 		if ("startDate" in serviceItem || "endDate" in serviceItem) {
-			onUpdate({ startDate: date, endDate });
+			onUpdate({ startDate: normalizedStart, endDate });
 		} else {
 			const currentNotes = (serviceItem.notes as string) || "";
 			onUpdate({
 				notes: updateWorkspaceNotes(currentNotes, {
-					startDate: date,
+					startDate: normalizedStart,
 					endDate,
 				}),
 			});
@@ -156,14 +160,15 @@ export function WorkspaceSlotForm({
 		if (!localStartDate) return;
 
 		setLocalMonths(months);
-		const endDate = calculateWorkspaceEndDate(localStartDate, months);
+		const normalizedStart = normalizeDate(localStartDate);
+		const endDate = calculateWorkspaceEndDate(normalizedStart, months);
 		if ("startDate" in serviceItem || "endDate" in serviceItem) {
-			onUpdate({ startDate: localStartDate, endDate });
+			onUpdate({ startDate: normalizedStart, endDate });
 		} else {
 			const currentNotes = (serviceItem.notes as string) || "";
 			onUpdate({
 				notes: updateWorkspaceNotes(currentNotes, {
-					startDate: localStartDate,
+					startDate: normalizedStart,
 					endDate,
 				}),
 			});
@@ -193,16 +198,23 @@ export function WorkspaceSlotForm({
 								)}
 							</span>
 						</div>
-						<Badge
-							className={
-								isComplete
-									? "bg-green-100 text-green-800"
-									: "bg-gray-100 text-gray-600"
-							}
-							variant={isComplete ? "default" : "secondary"}
-						>
-							{isComplete ? "Complete" : "Incomplete"}
-						</Badge>
+						<div className="flex items-center gap-2">
+							{hasOverlap && (
+								<Badge className="bg-red-100 text-red-800" variant="secondary">
+									Overlap
+								</Badge>
+							)}
+							<Badge
+								className={
+									isComplete
+										? "bg-green-100 text-green-800"
+										: "bg-gray-100 text-gray-600"
+								}
+								variant={isComplete ? "default" : "secondary"}
+							>
+								{isComplete ? "Complete" : "Incomplete"}
+							</Badge>
+						</div>
 					</AccordionTriggerNoAutoClose>
 
 					{/* Remove button (outside trigger but inline) */}
@@ -425,8 +437,9 @@ export function WorkspaceSlotForm({
 									}
 								}}
 								value={
-									("startDate" in serviceItem || "endDate" in serviceItem)
-										? ((serviceItem as Partial<WorkspaceBookingInput>).preferredTimeSlot || "")
+									"startDate" in serviceItem || "endDate" in serviceItem
+										? (serviceItem as Partial<WorkspaceBookingInput>)
+											.preferredTimeSlot || ""
 										: getWorkspaceTimeSlot((serviceItem.notes as string) || "")
 								}
 							>
@@ -480,8 +493,9 @@ export function WorkspaceSlotForm({
 								placeholder="Describe the purpose of this workspace booking..."
 								rows={3}
 								value={
-									("startDate" in serviceItem || "endDate" in serviceItem)
-										? ((serviceItem as Partial<WorkspaceBookingInput>).purpose || "")
+									"startDate" in serviceItem || "endDate" in serviceItem
+										? (serviceItem as Partial<WorkspaceBookingInput>).purpose ||
+										""
 										: getWorkspacePurpose((serviceItem.notes as string) || "")
 								}
 							/>
@@ -568,12 +582,16 @@ export function WorkspaceSlotForm({
 								}}
 								otherEquipmentRequests={
 									("otherEquipmentRequests" in serviceItem
-										? (serviceItem as Partial<ServiceItem>).otherEquipmentRequests
-										: (serviceItem as Partial<WorkspaceBookingInput>).specialEquipment) || []
+										? (serviceItem as Partial<ServiceItem>)
+											.otherEquipmentRequests
+										: (serviceItem as Partial<WorkspaceBookingInput>)
+											.specialEquipment) || []
 								}
 								selectedEquipmentIds={
-									((serviceItem as Partial<ServiceItem>).equipmentIds as string[]) ||
-									((serviceItem as Partial<WorkspaceBookingInput>).equipmentIds as string[]) ||
+									((serviceItem as Partial<ServiceItem>)
+										.equipmentIds as string[]) ||
+									((serviceItem as Partial<WorkspaceBookingInput>)
+										.equipmentIds as string[]) ||
 									[]
 								}
 							/>
@@ -608,9 +626,12 @@ export function WorkspaceSlotForm({
 								placeholder="Any additional notes or requirements..."
 								rows={3}
 								value={
-									("startDate" in serviceItem || "endDate" in serviceItem)
-										? ((serviceItem as Partial<WorkspaceBookingInput>).notes || "")
-										: getWorkspaceAdditionalNotes((serviceItem.notes as string) || "")
+									"startDate" in serviceItem || "endDate" in serviceItem
+										? (serviceItem as Partial<WorkspaceBookingInput>).notes ||
+										""
+										: getWorkspaceAdditionalNotes(
+											(serviceItem.notes as string) || "",
+										)
 								}
 							/>
 						</div>

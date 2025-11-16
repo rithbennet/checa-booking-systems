@@ -289,15 +289,11 @@ export async function submit(params: {
         fromNotes(item.notes, "START_DATE") ??
         item.expectedCompletionDate ??
         undefined;
+      // Prefer explicit END_DATE in notes, otherwise use expectedCompletionDate
       const end =
         fromNotes(item.notes, "END_DATE") ??
-        (item.expectedCompletionDate && item.durationMonths
-          ? new Date(
-              item.expectedCompletionDate.getTime() +
-                (item.durationMonths || 1) * 30 * 24 * 60 * 60 * 1000 -
-                24 * 60 * 60 * 1000
-            )
-          : undefined);
+        item.expectedCompletionDate ??
+        undefined;
       if (!start || !end) return undefined; // skip incomplete slots
       const preferredTimeSlot = strFromNotes(item.notes, "TIME_SLOT");
       return {
@@ -333,7 +329,8 @@ export async function submit(params: {
     serviceItems: sampleItems.map((item) => ({
       serviceId: item.serviceId,
       quantity: item.quantity,
-      durationMonths: item.durationMonths,
+      // Sample items do not have a stored duration in the DB; set to 0
+      durationMonths: 0,
       sampleName: item.sampleName ?? undefined,
       sampleDetails: item.sampleDetails ?? undefined,
       sampleType: normalizeSampleType(item.sampleType),

@@ -24,6 +24,7 @@ import { PayerInfoStep } from "@/features/booking-form/ui/steps/PayerInfoStep";
 import { ProjectInfoStep } from "@/features/booking-form/ui/steps/ProjectInfoStep";
 import { ReviewStep } from "@/features/booking-form/ui/steps/ReviewStep";
 import { ServicesStep } from "@/features/booking-form/ui/steps/ServicesStep";
+import { LoadingDialog } from "@/shared/ui/LoadingDialog";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -36,6 +37,7 @@ import {
 	AlertDialogTrigger,
 } from "@/shared/ui/shadcn/alert-dialog";
 import { Button } from "@/shared/ui/shadcn/button";
+import { ServicesValidationDialog } from "./ServicesValidationDialog";
 
 type BookingMode = "new" | "edit";
 
@@ -93,6 +95,8 @@ export function BookingWizardPage({
 		currentStep,
 		isServiceDialogOpen,
 		selectedServiceIds,
+		servicesValidationOpen,
+		servicesValidationData,
 		handleAddService,
 		handleAddSample,
 		handleRemoveService,
@@ -109,11 +113,14 @@ export function BookingWizardPage({
 		onSubmit,
 		getServiceForField,
 		setServiceDialogOpen,
+		setServicesValidationOpen,
 		isSubmitting,
+		isSubmittingDialog,
 		isSaving,
 		lastSavedAt,
 		hasSavedStep1,
 	} = bookingForm;
+
 
 	const steps = [
 		{
@@ -346,6 +353,20 @@ export function BookingWizardPage({
 					selectedServiceIds={selectedServiceIds}
 					services={services}
 					userType={userType}
+				/>
+
+				{/* Validation Dialog for Services Step */}
+				<ServicesValidationDialog
+					data={servicesValidationData}
+					onOpenChange={setServicesValidationOpen}
+					open={servicesValidationOpen}
+				/>
+
+				{/* Global submitting dialog */}
+				<LoadingDialog
+					description="Please wait while we submit your booking and redirect you to the details page."
+					open={isSubmittingDialog || isSubmitting}
+					title="Submitting booking"
 				/>
 			</div>
 		</div>

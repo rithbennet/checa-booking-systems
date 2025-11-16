@@ -14,10 +14,12 @@ import {
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
 
+type LoadedBooking = Awaited<ReturnType<typeof bookingService.getBooking>>;
+
 interface BookingDetailPageProps {
-	params: {
+	params: Promise<{
 		id: string;
-	};
+	}>;
 }
 
 const statusColors = {
@@ -45,13 +47,14 @@ const statusLabels = {
 export default async function BookingDetailPage({
 	params,
 }: BookingDetailPageProps) {
+	const { id } = await params;
 	const me = await requireCurrentUser();
 
-	let booking;
+	let booking: LoadedBooking | null = null;
 	try {
 		booking = await bookingService.getBooking({
 			userId: me.appUserId,
-			bookingId: params.id,
+			bookingId: id,
 		});
 	} catch {
 		notFound();

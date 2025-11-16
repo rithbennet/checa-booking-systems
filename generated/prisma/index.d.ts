@@ -21478,7 +21478,6 @@ export namespace Prisma {
 
   export type BookingServiceItemAvgAggregateOutputType = {
     quantity: number | null
-    durationMonths: number | null
     unitPrice: Decimal | null
     totalPrice: Decimal | null
     flowRate: Decimal | null
@@ -21488,7 +21487,6 @@ export namespace Prisma {
 
   export type BookingServiceItemSumAggregateOutputType = {
     quantity: number | null
-    durationMonths: number | null
     unitPrice: Decimal | null
     totalPrice: Decimal | null
     flowRate: Decimal | null
@@ -21501,7 +21499,6 @@ export namespace Prisma {
     bookingRequestId: string | null
     serviceId: string | null
     quantity: number | null
-    durationMonths: number | null
     unitPrice: Decimal | null
     totalPrice: Decimal | null
     sampleName: string | null
@@ -21536,7 +21533,6 @@ export namespace Prisma {
     bookingRequestId: string | null
     serviceId: string | null
     quantity: number | null
-    durationMonths: number | null
     unitPrice: Decimal | null
     totalPrice: Decimal | null
     sampleName: string | null
@@ -21571,7 +21567,6 @@ export namespace Prisma {
     bookingRequestId: number
     serviceId: number
     quantity: number
-    durationMonths: number
     unitPrice: number
     totalPrice: number
     sampleName: number
@@ -21606,7 +21601,6 @@ export namespace Prisma {
 
   export type BookingServiceItemAvgAggregateInputType = {
     quantity?: true
-    durationMonths?: true
     unitPrice?: true
     totalPrice?: true
     flowRate?: true
@@ -21616,7 +21610,6 @@ export namespace Prisma {
 
   export type BookingServiceItemSumAggregateInputType = {
     quantity?: true
-    durationMonths?: true
     unitPrice?: true
     totalPrice?: true
     flowRate?: true
@@ -21629,7 +21622,6 @@ export namespace Prisma {
     bookingRequestId?: true
     serviceId?: true
     quantity?: true
-    durationMonths?: true
     unitPrice?: true
     totalPrice?: true
     sampleName?: true
@@ -21664,7 +21656,6 @@ export namespace Prisma {
     bookingRequestId?: true
     serviceId?: true
     quantity?: true
-    durationMonths?: true
     unitPrice?: true
     totalPrice?: true
     sampleName?: true
@@ -21699,7 +21690,6 @@ export namespace Prisma {
     bookingRequestId?: true
     serviceId?: true
     quantity?: true
-    durationMonths?: true
     unitPrice?: true
     totalPrice?: true
     sampleName?: true
@@ -21822,7 +21812,6 @@ export namespace Prisma {
     bookingRequestId: string
     serviceId: string
     quantity: number
-    durationMonths: number
     unitPrice: Decimal
     totalPrice: Decimal
     sampleName: string | null
@@ -21877,7 +21866,6 @@ export namespace Prisma {
     bookingRequestId?: boolean
     serviceId?: boolean
     quantity?: boolean
-    durationMonths?: boolean
     unitPrice?: boolean
     totalPrice?: boolean
     sampleName?: boolean
@@ -21920,7 +21908,6 @@ export namespace Prisma {
     bookingRequestId?: boolean
     serviceId?: boolean
     quantity?: boolean
-    durationMonths?: boolean
     unitPrice?: boolean
     totalPrice?: boolean
     sampleName?: boolean
@@ -21958,7 +21945,6 @@ export namespace Prisma {
     bookingRequestId?: boolean
     serviceId?: boolean
     quantity?: boolean
-    durationMonths?: boolean
     unitPrice?: boolean
     totalPrice?: boolean
     sampleName?: boolean
@@ -21996,7 +21982,6 @@ export namespace Prisma {
     bookingRequestId?: boolean
     serviceId?: boolean
     quantity?: boolean
-    durationMonths?: boolean
     unitPrice?: boolean
     totalPrice?: boolean
     sampleName?: boolean
@@ -22027,7 +22012,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type BookingServiceItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bookingRequestId" | "serviceId" | "quantity" | "durationMonths" | "unitPrice" | "totalPrice" | "sampleName" | "sampleDetails" | "sampleType" | "sampleHazard" | "testingMethod" | "degasConditions" | "solventSystem" | "solvents" | "solventComposition" | "columnType" | "flowRate" | "wavelength" | "expectedRetentionTime" | "samplePreparation" | "notes" | "expectedCompletionDate" | "actualCompletionDate" | "turnaroundEstimate" | "hplcPreparationRequired" | "temperatureControlled" | "lightSensitive" | "hazardousMaterial" | "inertAtmosphere" | "otherEquipmentRequests" | "createdAt" | "updatedAt", ExtArgs["result"]["bookingServiceItem"]>
+  export type BookingServiceItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bookingRequestId" | "serviceId" | "quantity" | "unitPrice" | "totalPrice" | "sampleName" | "sampleDetails" | "sampleType" | "sampleHazard" | "testingMethod" | "degasConditions" | "solventSystem" | "solvents" | "solventComposition" | "columnType" | "flowRate" | "wavelength" | "expectedRetentionTime" | "samplePreparation" | "notes" | "expectedCompletionDate" | "actualCompletionDate" | "turnaroundEstimate" | "hplcPreparationRequired" | "temperatureControlled" | "lightSensitive" | "hazardousMaterial" | "inertAtmosphere" | "otherEquipmentRequests" | "createdAt" | "updatedAt", ExtArgs["result"]["bookingServiceItem"]>
   export type BookingServiceItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bookingRequest?: boolean | BookingRequestDefaultArgs<ExtArgs>
     service?: boolean | ServiceDefaultArgs<ExtArgs>
@@ -22061,7 +22046,6 @@ export namespace Prisma {
       bookingRequestId: string
       serviceId: string
       quantity: number
-      durationMonths: number
       unitPrice: Prisma.Decimal
       totalPrice: Prisma.Decimal
       sampleName: string | null
@@ -22523,7 +22507,6 @@ export namespace Prisma {
     readonly bookingRequestId: FieldRef<"BookingServiceItem", 'String'>
     readonly serviceId: FieldRef<"BookingServiceItem", 'String'>
     readonly quantity: FieldRef<"BookingServiceItem", 'Int'>
-    readonly durationMonths: FieldRef<"BookingServiceItem", 'Int'>
     readonly unitPrice: FieldRef<"BookingServiceItem", 'Decimal'>
     readonly totalPrice: FieldRef<"BookingServiceItem", 'Decimal'>
     readonly sampleName: FieldRef<"BookingServiceItem", 'String'>
@@ -40979,7 +40962,6 @@ export namespace Prisma {
     bookingRequestId: 'bookingRequestId',
     serviceId: 'serviceId',
     quantity: 'quantity',
-    durationMonths: 'durationMonths',
     unitPrice: 'unitPrice',
     totalPrice: 'totalPrice',
     sampleName: 'sampleName',
@@ -42852,7 +42834,6 @@ export namespace Prisma {
     bookingRequestId?: UuidFilter<"BookingServiceItem"> | string
     serviceId?: UuidFilter<"BookingServiceItem"> | string
     quantity?: IntFilter<"BookingServiceItem"> | number
-    durationMonths?: IntFilter<"BookingServiceItem"> | number
     unitPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     sampleName?: StringNullableFilter<"BookingServiceItem"> | string | null
@@ -42894,7 +42875,6 @@ export namespace Prisma {
     bookingRequestId?: SortOrder
     serviceId?: SortOrder
     quantity?: SortOrder
-    durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
     sampleName?: SortOrderInput | SortOrder
@@ -42939,7 +42919,6 @@ export namespace Prisma {
     bookingRequestId?: UuidFilter<"BookingServiceItem"> | string
     serviceId?: UuidFilter<"BookingServiceItem"> | string
     quantity?: IntFilter<"BookingServiceItem"> | number
-    durationMonths?: IntFilter<"BookingServiceItem"> | number
     unitPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     sampleName?: StringNullableFilter<"BookingServiceItem"> | string | null
@@ -42981,7 +42960,6 @@ export namespace Prisma {
     bookingRequestId?: SortOrder
     serviceId?: SortOrder
     quantity?: SortOrder
-    durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
     sampleName?: SortOrderInput | SortOrder
@@ -43025,7 +43003,6 @@ export namespace Prisma {
     bookingRequestId?: UuidWithAggregatesFilter<"BookingServiceItem"> | string
     serviceId?: UuidWithAggregatesFilter<"BookingServiceItem"> | string
     quantity?: IntWithAggregatesFilter<"BookingServiceItem"> | number
-    durationMonths?: IntWithAggregatesFilter<"BookingServiceItem"> | number
     unitPrice?: DecimalWithAggregatesFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalWithAggregatesFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     sampleName?: StringNullableWithAggregatesFilter<"BookingServiceItem"> | string | null
@@ -45787,7 +45764,6 @@ export namespace Prisma {
   export type BookingServiceItemCreateInput = {
     id?: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -45829,7 +45805,6 @@ export namespace Prisma {
     bookingRequestId: string
     serviceId: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -45867,7 +45842,6 @@ export namespace Prisma {
   export type BookingServiceItemUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -45909,7 +45883,6 @@ export namespace Prisma {
     bookingRequestId?: StringFieldUpdateOperationsInput | string
     serviceId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -45949,7 +45922,6 @@ export namespace Prisma {
     bookingRequestId: string
     serviceId: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -45983,7 +45955,6 @@ export namespace Prisma {
   export type BookingServiceItemUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -46019,7 +45990,6 @@ export namespace Prisma {
     bookingRequestId?: StringFieldUpdateOperationsInput | string
     serviceId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -48794,7 +48764,6 @@ export namespace Prisma {
     bookingRequestId?: SortOrder
     serviceId?: SortOrder
     quantity?: SortOrder
-    durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
     sampleName?: SortOrder
@@ -48827,7 +48796,6 @@ export namespace Prisma {
 
   export type BookingServiceItemAvgOrderByAggregateInput = {
     quantity?: SortOrder
-    durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
     flowRate?: SortOrder
@@ -48840,7 +48808,6 @@ export namespace Prisma {
     bookingRequestId?: SortOrder
     serviceId?: SortOrder
     quantity?: SortOrder
-    durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
     sampleName?: SortOrder
@@ -48875,7 +48842,6 @@ export namespace Prisma {
     bookingRequestId?: SortOrder
     serviceId?: SortOrder
     quantity?: SortOrder
-    durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
     sampleName?: SortOrder
@@ -48907,7 +48873,6 @@ export namespace Prisma {
 
   export type BookingServiceItemSumOrderByAggregateInput = {
     quantity?: SortOrder
-    durationMonths?: SortOrder
     unitPrice?: SortOrder
     totalPrice?: SortOrder
     flowRate?: SortOrder
@@ -56300,7 +56265,6 @@ export namespace Prisma {
   export type BookingServiceItemCreateWithoutServiceInput = {
     id?: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -56340,7 +56304,6 @@ export namespace Prisma {
     id?: string
     bookingRequestId: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -56466,7 +56429,6 @@ export namespace Prisma {
     bookingRequestId?: UuidFilter<"BookingServiceItem"> | string
     serviceId?: UuidFilter<"BookingServiceItem"> | string
     quantity?: IntFilter<"BookingServiceItem"> | number
-    durationMonths?: IntFilter<"BookingServiceItem"> | number
     unitPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFilter<"BookingServiceItem"> | Decimal | DecimalJsLike | number | string
     sampleName?: StringNullableFilter<"BookingServiceItem"> | string | null
@@ -56844,7 +56806,6 @@ export namespace Prisma {
   export type BookingServiceItemCreateWithoutBookingRequestInput = {
     id?: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -56884,7 +56845,6 @@ export namespace Prisma {
     id?: string
     serviceId: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -57765,7 +57725,6 @@ export namespace Prisma {
   export type BookingServiceItemCreateWithoutModificationsInput = {
     id?: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -57806,7 +57765,6 @@ export namespace Prisma {
     bookingRequestId: string
     serviceId: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -58029,7 +57987,6 @@ export namespace Prisma {
   export type BookingServiceItemUpdateWithoutModificationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -58070,7 +58027,6 @@ export namespace Prisma {
     bookingRequestId?: StringFieldUpdateOperationsInput | string
     serviceId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -59409,7 +59365,6 @@ export namespace Prisma {
   export type BookingServiceItemCreateWithoutSampleTrackingInput = {
     id?: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -59450,7 +59405,6 @@ export namespace Prisma {
     bookingRequestId: string
     serviceId: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -59624,7 +59578,6 @@ export namespace Prisma {
   export type BookingServiceItemUpdateWithoutSampleTrackingInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -59665,7 +59618,6 @@ export namespace Prisma {
     bookingRequestId?: StringFieldUpdateOperationsInput | string
     serviceId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -60217,7 +60169,6 @@ export namespace Prisma {
   export type BookingServiceItemCreateWithoutEquipmentUsagesInput = {
     id?: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -60258,7 +60209,6 @@ export namespace Prisma {
     bookingRequestId: string
     serviceId: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -60340,7 +60290,6 @@ export namespace Prisma {
   export type BookingServiceItemUpdateWithoutEquipmentUsagesInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -60381,7 +60330,6 @@ export namespace Prisma {
     bookingRequestId?: StringFieldUpdateOperationsInput | string
     serviceId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -61295,7 +61243,6 @@ export namespace Prisma {
   export type BookingServiceItemCreateWithoutServiceAddOnsInput = {
     id?: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -61336,7 +61283,6 @@ export namespace Prisma {
     bookingRequestId: string
     serviceId: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -61451,7 +61397,6 @@ export namespace Prisma {
   export type BookingServiceItemUpdateWithoutServiceAddOnsInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -61492,7 +61437,6 @@ export namespace Prisma {
     bookingRequestId?: StringFieldUpdateOperationsInput | string
     serviceId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -63673,7 +63617,6 @@ export namespace Prisma {
     id?: string
     bookingRequestId: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -63748,7 +63691,6 @@ export namespace Prisma {
   export type BookingServiceItemUpdateWithoutServiceInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -63788,7 +63730,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     bookingRequestId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -63827,7 +63768,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     bookingRequestId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -63886,7 +63826,6 @@ export namespace Prisma {
     id?: string
     serviceId: string
     quantity?: number
-    durationMonths?: number
     unitPrice: Decimal | DecimalJsLike | number | string
     totalPrice: Decimal | DecimalJsLike | number | string
     sampleName?: string | null
@@ -63958,7 +63897,6 @@ export namespace Prisma {
   export type BookingServiceItemUpdateWithoutBookingRequestInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -63998,7 +63936,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     serviceId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -64037,7 +63974,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     serviceId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
-    durationMonths?: IntFieldUpdateOperationsInput | number
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     sampleName?: NullableStringFieldUpdateOperationsInput | string | null

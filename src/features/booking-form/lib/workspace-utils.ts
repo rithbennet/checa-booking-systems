@@ -23,6 +23,9 @@ const normalize = (date: Date): Date => {
   return d;
 };
 
+// Exported helper for consumers needing consistent normalization
+export const normalizeDate = (date: Date): Date => normalize(date);
+
 const matchISODate = (text: string, key: string): Date | undefined => {
   const match = text.match(new RegExp(`${key}:([^|]+)`));
   return match?.[1] ? new Date(match[1]) : undefined;
@@ -43,12 +46,18 @@ export function parseWorkspaceDates(
     asWorkspace.startDate instanceof Date &&
     asWorkspace.endDate instanceof Date
   ) {
-    return { startDate: asWorkspace.startDate, endDate: asWorkspace.endDate };
+    return {
+      startDate: normalize(asWorkspace.startDate),
+      endDate: normalize(asWorkspace.endDate),
+    };
   }
 
   const notes = (serviceItem.notes as string) || "";
-  const startDate = matchISODate(notes, "START_DATE");
-  const endDate = matchISODate(notes, "END_DATE");
+  const startDateRaw = matchISODate(notes, "START_DATE");
+  const endDateRaw = matchISODate(notes, "END_DATE");
+
+  const startDate = startDateRaw ? normalize(startDateRaw) : undefined;
+  const endDate = endDateRaw ? normalize(endDateRaw) : undefined;
 
   if (startDate && endDate) return { startDate, endDate };
 
@@ -61,7 +70,7 @@ export function calculateWorkspaceEndDate(
   startDate: Date,
   months: number
 ): Date {
-  return addDays(startDate, months * 30 - 1);
+  return addDays(normalize(startDate), months * 30 - 1);
 }
 
 /** Compute number of 30‑day months between two dates. */
@@ -69,7 +78,9 @@ export function calculateWorkspaceMonths(
   startDate: Date,
   endDate: Date
 ): number {
-  return Math.ceil((differenceInDays(endDate, startDate) + 1) / 30);
+  const s = normalize(startDate);
+  const e = normalize(endDate);
+  return Math.ceil((differenceInDays(e, s) + 1) / 30);
 }
 
 /** A valid start date must be today or later. */

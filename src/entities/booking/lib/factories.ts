@@ -21,6 +21,7 @@ export function createDefaultServiceItem(
 ): BookingServiceItemInput {
   return {
     serviceId: service.id,
+    category: service.category,
     quantity: 1,
     durationMonths: 0,
     temperatureControlled: false,
@@ -29,22 +30,6 @@ export function createDefaultServiceItem(
     inertAtmosphere: false,
     equipmentIds: [],
     otherEquipmentRequests: [],
-    addOnCatalogIds: [],
-  };
-}
-
-/**
- * Creates a default workspace booking
- * @param now - Current timestamp (for testing/consistency)
- * @returns A default WorkspaceBookingInput
- */
-export function createDefaultWorkspaceBooking(
-  now = new Date()
-): WorkspaceBookingInput {
-  return {
-    startDate: now,
-    endDate: now,
-    equipmentIds: [],
     addOnCatalogIds: [],
   };
 }
