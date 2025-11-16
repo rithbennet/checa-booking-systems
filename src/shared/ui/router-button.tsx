@@ -1,7 +1,9 @@
 "use client";
 import { useRouter } from "next/navigation";
 import type { MouseEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { flushSync } from "react-dom";
+import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/shadcn/button";
 
 type RouterButtonProps = React.ComponentProps<typeof Button> & {
@@ -16,13 +18,6 @@ export default function RouterButton({
     const router = useRouter();
 
     const [isNavigating, setIsNavigating] = useState(false);
-    const mountedRef = useRef(true);
-
-    useEffect(() => {
-        return () => {
-            mountedRef.current = false;
-        };
-    }, []);
 
     const handleClick = async (e: MouseEvent<HTMLButtonElement>) => {
         // Forward any provided onClick handler
@@ -33,21 +28,24 @@ export default function RouterButton({
         // If the click handler prevented default, or the button was already disabled, don't navigate
         if (e.defaultPrevented || props.disabled) return;
 
-        setIsNavigating(true);
-        try {
-            // router.push may return a Promise in some Next versions.
-            // Awaiting a non-promise value is a no-op, so cast to Promise<void> to handle both cases.
-            await (router.push(href) as unknown as Promise<void>);
-        } finally {
-            if (mountedRef.current) {
-                setIsNavigating(false);
-            }
-        }
+        // Force React to apply the disabled state before triggering navigation
+        flushSync(() => {
+            setIsNavigating(true);
+        });
+
+        // Trigger navigation (no need to await; this component will likely unmount)
+        router.push(href);
     };
+
+    const { className, ...rest } = props;
 
     return (
         <Button
-            {...props}
+            {...rest}
+            className={cn(
+                className,
+                (isNavigating || props.disabled) && "opacity-60",
+            )}
             disabled={props.disabled || isNavigating}
             onClick={handleClick}
         >
