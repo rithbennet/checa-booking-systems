@@ -4,6 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
+		"preinstall": "corepack prepare pnpm@10.19.0 --activate",
 		"build": "next build",
 		"check": "biome check .",
 		"check:unsafe": "biome check --write --unsafe .",
