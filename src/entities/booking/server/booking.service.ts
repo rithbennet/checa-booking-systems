@@ -262,54 +262,10 @@ export async function submit(params: {
     throw new Error("Booking is not submittable (must be in draft status)");
   }
 
-  // Helper: parse ISO date from notes with key
-  const fromNotes = (notes: string | null | undefined, key: string) => {
-    if (!notes) return undefined;
-    const match = notes.match(new RegExp(`${key}:([^|]+)`));
-    return match?.[1] ? new Date(match[1]) : undefined;
-  };
-  const strFromNotes = (notes: string | null | undefined, key: string) => {
-    if (!notes) return undefined;
-    const match = notes.match(new RegExp(`${key}:([^|]+)`));
-    return match?.[1] ?? undefined;
-  };
-
-  // Partition items: true -> working_space, false -> analysis/sample
-  const wsItems = booking.serviceItems.filter(
-    (si) => si.service.category === "working_space"
-  );
+  // Partition items: exclude working_space from service items mapping
   const sampleItems = booking.serviceItems.filter(
     (si) => si.service.category !== "working_space"
   );
-
-  // Convert working_space items into workspace bookings DTO entries
-  const convertedWorkspace = wsItems
-    .map((item) => {
-      const start =
-        fromNotes(item.notes, "START_DATE") ??
-        item.expectedCompletionDate ??
-        undefined;
-      // Prefer explicit END_DATE in notes, otherwise use expectedCompletionDate
-      const end =
-        fromNotes(item.notes, "END_DATE") ??
-        item.expectedCompletionDate ??
-        undefined;
-      if (!start || !end) return undefined; // skip incomplete slots
-      const preferredTimeSlot = strFromNotes(item.notes, "TIME_SLOT");
-      return {
-        startDate: start,
-        endDate: end,
-        preferredTimeSlot: preferredTimeSlot ?? undefined,
-        equipmentIds: item.equipmentUsages.map((eu) => eu.equipmentId),
-        specialEquipment: normalizeOtherEquipmentRequests(
-          item.otherEquipmentRequests
-        ),
-        purpose: undefined,
-        notes: item.notes ?? undefined,
-        addOnCatalogIds: undefined,
-      };
-    })
-    .filter((x): x is NonNullable<typeof x> => !!x);
 
   // Load full booking and map to DTO for strict validation
   // Build DTO from database
@@ -359,18 +315,15 @@ export async function submit(params: {
         item.otherEquipmentRequests
       ),
     })),
-    workspaceBookings: [
-      ...booking.workspaceBookings.map((ws) => ({
-        startDate: ws.startDate,
-        endDate: ws.endDate,
-        preferredTimeSlot: ws.preferredTimeSlot ?? undefined,
-        equipmentIds: ws.equipmentUsages.map((eu) => eu.equipmentId),
-        specialEquipment: normalizeSpecialEquipment(ws.specialEquipment),
-        purpose: ws.purpose ?? undefined,
-        notes: ws.notes ?? undefined,
-      })),
-      ...convertedWorkspace,
-    ],
+    workspaceBookings: booking.workspaceBookings.map((ws) => ({
+      startDate: ws.startDate,
+      endDate: ws.endDate,
+      preferredTimeSlot: ws.preferredTimeSlot ?? undefined,
+      equipmentIds: ws.equipmentUsages.map((eu) => eu.equipmentId),
+      specialEquipment: normalizeSpecialEquipment(ws.specialEquipment),
+      purpose: ws.purpose ?? undefined,
+      notes: ws.notes ?? undefined,
+    })),
     payerType: inferredPayerType,
     billingName: `${booking.user.firstName} ${booking.user.lastName}`,
     billingEmail: booking.user.email,

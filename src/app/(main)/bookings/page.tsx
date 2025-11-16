@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { requireCurrentUser } from "@/shared/server/current-user";
 import { db } from "@/shared/server/db";
+import RouterButton from "@/shared/ui/router-button";
 import { Badge } from "@/shared/ui/shadcn/badge";
-import { Button } from "@/shared/ui/shadcn/button";
 import {
 	Card,
 	CardContent,
@@ -70,9 +69,7 @@ export default async function BookingsPage() {
 						View and manage your lab service bookings
 					</p>
 				</div>
-				<Button asChild>
-					<Link href="/bookings/new">New Booking</Link>
-				</Button>
+				<RouterButton href="/bookings/new">New Booking</RouterButton>
 			</div>
 
 			<Card>
@@ -86,9 +83,13 @@ export default async function BookingsPage() {
 					{bookings.length === 0 ? (
 						<div className="py-12 text-center">
 							<p className="text-gray-500">No bookings yet</p>
-							<Button asChild className="mt-4" variant="outline">
-								<Link href="/bookings/new">Create your first booking</Link>
-							</Button>
+							<RouterButton
+								className="mt-4"
+								href="/bookings/new"
+								variant="outline"
+							>
+								Create your first booking
+							</RouterButton>
 						</div>
 					) : (
 						<Table>
@@ -121,14 +122,14 @@ export default async function BookingsPage() {
 											<Badge
 												className={
 													statusColors[
-														booking.status as keyof typeof statusColors
+													booking.status as keyof typeof statusColors
 													]
 												}
 												variant="secondary"
 											>
 												{
 													statusLabels[
-														booking.status as keyof typeof statusLabels
+													booking.status as keyof typeof statusLabels
 													]
 												}
 											</Badge>
@@ -141,15 +142,20 @@ export default async function BookingsPage() {
 										</TableCell>
 										<TableCell className="text-right">
 											<div className="flex justify-end gap-2">
-												<Button asChild size="sm" variant="outline">
-													<Link href={`/bookings/${booking.id}`}>View</Link>
-												</Button>
+												<RouterButton
+													href={`/bookings/${booking.id}`}
+													size="sm"
+													variant="outline"
+												>
+													View
+												</RouterButton>
 												{booking.status === "draft" && (
-													<Button asChild size="sm">
-														<Link href={`/bookings/${booking.id}/edit`}>
-															Edit
-														</Link>
-													</Button>
+													<RouterButton
+														href={`/bookings/${booking.id}/edit`}
+														size="sm"
+													>
+														Edit
+													</RouterButton>
 												)}
 											</div>
 										</TableCell>

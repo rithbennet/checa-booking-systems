@@ -25,37 +25,55 @@ export function SignOutModal({ open, onOpenChange }: SignOutModalProps) {
 	const { clearPersistAndRehydrate } = useBookingWizardStore();
 
 	useEffect(() => {
-		if (open && !isSigningOut) {
+		if (!open || isSigningOut) return;
+
+		let isActive = true;
+
+		const run = async () => {
 			setIsSigningOut(true);
 
-			// Get current user session to clear their drafts
-			authClient.getSession().then(async (session) => {
-				const userId = session.data?.user?.id;
+			try {
+				const session = await authClient.getSession();
 
-				// Clear booking wizard state and drafts
-				await clearPersistAndRehydrate();
+				if (isActive) {
+					const userId = session.data?.user?.id;
 
-				if (userId) {
-					clearAllUserDrafts(userId);
+					await clearPersistAndRehydrate();
+
+					if (isActive) {
+						if (userId) {
+							await clearAllUserDrafts(userId);
+						}
+
+						try {
+							await authClient.signOut();
+						} catch (e) {
+							console.error("[SignOutModal] signOut failed, continuing", e);
+						}
+
+						if (isActive) {
+							router.push("/");
+							onOpenChange?.(false);
+						}
+					}
 				}
+			} catch (e) {
+				console.error("[SignOutModal] unexpected sign-out error", e);
+				// Optional: toast here
+			} finally {
+				if (isActive) {
+					setIsSigningOut(false);
+				}
+			}
+		};
 
-				// Sign out and redirect
-				authClient
-					.signOut()
-					.then(() => {
-						router.push("/");
-					})
-					.catch(() => {
-						// Even if signout fails, redirect
-						router.push("/");
-					})
-					.finally(() => {
-						setIsSigningOut(false);
-						onOpenChange?.(false);
-					});
-			});
-		}
-	}, [open, router, isSigningOut, onOpenChange, clearPersistAndRehydrate]);
+		void run();
+
+		return () => {
+			// component closed/unmounted while async work in flight
+			isActive = false;
+		};
+	}, [open, isSigningOut, router, onOpenChange, clearPersistAndRehydrate]);
 
 	return (
 		<Dialog onOpenChange={onOpenChange} open={open}>
