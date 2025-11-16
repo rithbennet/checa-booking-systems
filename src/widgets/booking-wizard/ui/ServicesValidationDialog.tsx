@@ -44,12 +44,14 @@ export function ServicesValidationDialog({
         () => services.map((g) => g.serviceId),
         [services],
     );
-    const samplesByService = useMemo<Record<string, string[]>>(() => {
-        const map: Record<string, string[]> = {};
-        services.forEach((group) => {
-            map[group.serviceId] = group.issuesBySample.map((s) => `${group.serviceId}-${s.sampleIndex}`);
+    const allSampleKeys = useMemo(() => {
+        const keys: string[] = [];
+        services.forEach((g) => {
+            g.issuesBySample.forEach((s) => {
+                keys.push(`${g.serviceId}-${s.sampleIndex}`);
+            });
         });
-        return map;
+        return keys;
     }, [services]);
     const allWorkspaceKeys = useMemo(
         () => workspaces.map((w) => `workspace-${w.slotIndex}`),
@@ -57,16 +59,16 @@ export function ServicesValidationDialog({
     );
 
     const [openServices, setOpenServices] = useState<string[]>([]);
-    const [openSamples, setOpenSamples] = useState<Record<string, string[]>>({});
+    const [openSamples, setOpenSamples] = useState<string[]>([]);
     const [openWorkspaces, setOpenWorkspaces] = useState<string[]>([]);
 
     useEffect(() => {
         if (open) {
             setOpenServices(allServiceIds);
-            setOpenSamples(samplesByService);
+            setOpenSamples(allSampleKeys);
             setOpenWorkspaces(["workspaces", ...allWorkspaceKeys]);
         }
-    }, [open, allServiceIds, allWorkspaceKeys, samplesByService]);
+    }, [open, allServiceIds, allSampleKeys, allWorkspaceKeys]);
 
     return (
         <AlertDialog onOpenChange={onOpenChange} open={open}>
@@ -99,15 +101,10 @@ export function ServicesValidationDialog({
                                         <AccordionNoAutoClose
                                             className="w-full"
                                             onValueChange={(v) =>
-                                                setOpenSamples((prev) => ({
-                                                    ...prev,
-                                                    [group.serviceId]: Array.isArray(v)
-                                                        ? (v as string[])
-                                                        : [],
-                                                }))
+                                                setOpenSamples(Array.isArray(v) ? (v as string[]) : [])
                                             }
                                             type="multiple"
-                                            value={openSamples[group.serviceId] ?? []}
+                                            value={openSamples}
                                         >
                                             {group.issuesBySample.map((s) => (
                                                 <AccordionItemNoAutoClose

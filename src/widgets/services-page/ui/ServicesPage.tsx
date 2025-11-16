@@ -1,7 +1,6 @@
 "use client";
 
 import { Filter, FlaskConical, Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type {
 	Service,
@@ -12,6 +11,7 @@ import {
 	ServiceCard,
 	ServiceFiltersComponent,
 } from "@/features/browse-services";
+import RouterButton from "@/shared/ui/router-button";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import { Card, CardContent, CardHeader } from "@/shared/ui/shadcn/card";
@@ -26,7 +26,7 @@ export function ServicesPage({
 	userType = "mjiit_member",
 	initialServices = [],
 }: ServicesPageProps) {
-	const router = useRouter();
+
 	const [filters, setFilters] = useState<ServiceFiltersType>({
 		category: "all",
 		availability: "all",
@@ -202,13 +202,13 @@ export function ServicesPage({
 										</span>
 									)}
 								</Button>
-								<Button
+								<RouterButton
 									className="bg-blue-600 hover:bg-blue-700"
-									onClick={() => router.push("/bookings/new")}
+									href="/bookings/new"
 								>
 									<Plus className="mr-2 h-4 w-4" />
 									Create Booking
-								</Button>
+								</RouterButton>
 							</div>
 						</div>
 
