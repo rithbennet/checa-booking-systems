@@ -3,48 +3,53 @@ import * as bookingService from "@/entities/booking/server/booking.service";
 import { requireCurrentUserApi } from "@/shared/server/current-user";
 
 /**
- * GET /bookings/new
- * Creates a draft booking immediately and redirects to the edit page
- * This ensures instant draft creation for the Option C flow
- * Supports ?serviceId= query param to pre-select a service
+ * Create a draft booking and redirect to its edit page.
+ * Supports optional ?serviceId= to pre-select a service.
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const me = await requireCurrentUserApi();
 
-    // Create draft booking
+    // Optional ?serviceId= query param
+    const url = new URL(request.url);
+    const serviceId = url.searchParams.get("serviceId") ?? undefined;
+
+    // Create draft booking (forward serviceId when present)
     const result = await bookingService.createDraft({
       userId: me.appUserId,
+      ...(serviceId ? { serviceId } : {}),
     });
 
-    // Build absolute URL for redirect
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      process.env.VERCEL_URL ||
-      "http://localhost:3000";
+    // Build absolute URL for redirect using normalized base
     const absoluteUrl = new URL(
       `/bookings/${result.bookingId}/edit`,
-      baseUrl.startsWith("http") ? baseUrl : `https://${baseUrl}`
+      getBaseUrl()
     );
 
     return NextResponse.redirect(absoluteUrl);
   } catch (error) {
+    // Log and let middleware / global handlers deal with auth errors
     console.error("Error creating draft booking:", error);
 
-    // Handle auth errors
-    if (error instanceof Error && "status" in error && error.status === 401) {
-      const signInUrl = new URL(
-        "/signIn",
-        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-      );
-      return NextResponse.redirect(signInUrl);
+    // If it's an auth error, rethrow so middleware can redirect.
+    const errWithStatus = error as { status?: number };
+    if (errWithStatus.status === 401) {
+      throw error;
     }
 
-    // For other errors, redirect to bookings list with error
-    const bookingsUrl = new URL(
-      "/bookings",
-      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    // For other errors, return a 500 JSON response. Avoid doing
+    // client redirects here because middleware already handles auth flows.
+    return NextResponse.json(
+      { error: "Failed to create draft booking" },
+      { status: 500 }
     );
-    return NextResponse.redirect(bookingsUrl);
   }
+}
+
+function getBaseUrl() {
+  const envUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.VERCEL_URL ||
+    "http://localhost:3000";
+  return envUrl.startsWith("http") ? envUrl : `https://${envUrl}`;
 }

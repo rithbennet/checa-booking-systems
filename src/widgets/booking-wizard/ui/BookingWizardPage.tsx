@@ -88,6 +88,7 @@ export function BookingWizardPage({
 	const {
 		form,
 		fields,
+		workspaceFields,
 		isBlocked,
 		currentStep,
 		isServiceDialogOpen,
@@ -97,6 +98,9 @@ export function BookingWizardPage({
 		handleRemoveService,
 		handleRemoveServiceGroup,
 		handleServiceUpdate,
+		handleAddWorkspace,
+		handleWorkspaceUpdate,
+		handleRemoveWorkspace,
 		handleNext,
 		handlePrevious,
 		handleSaveDraft,
@@ -185,7 +189,16 @@ export function BookingWizardPage({
 				)}
 
 				{/* Progress */}
-				<BookingProgress steps={steps} />
+				<BookingProgress
+					currentStep={currentStep}
+					onStepClick={(n) => {
+						// Only allow navigating to previous steps
+						if (n < currentStep) {
+							bookingForm.setCurrentStep(n);
+						}
+					}}
+					steps={steps}
+				/>
 
 				{/* Form Content */}
 				<form onSubmit={form.handleSubmit(onSubmit)}>
@@ -195,10 +208,17 @@ export function BookingWizardPage({
 							fields={fields}
 							getServiceForField={getServiceForField}
 							handleAddSample={handleAddSample}
+							handleAddWorkspace={handleAddWorkspace}
 							handleRemoveService={handleRemoveService}
 							handleRemoveServiceGroup={handleRemoveServiceGroup}
+							handleRemoveWorkspace={handleRemoveWorkspace}
 							handleServiceUpdate={handleServiceUpdate}
+							handleWorkspaceUpdate={handleWorkspaceUpdate}
 							setServiceDialogOpen={setServiceDialogOpen}
+							workingSpaceService={services.find(
+								(s) => s.category === "working_space",
+							)}
+							workspaceFields={workspaceFields}
 						/>
 					)}
 
@@ -213,6 +233,7 @@ export function BookingWizardPage({
 							fields={fields}
 							form={form}
 							getServiceForField={getServiceForField}
+							services={services}
 							userType={userType}
 						/>
 					)}

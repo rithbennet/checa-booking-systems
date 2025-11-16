@@ -48,8 +48,9 @@ export default async function EditBookingPage({ params }: PageProps) {
 		getAvailableEquipment(),
 	]);
 
-	// Load booking server-side to follow FSD (no app-level server actions)
-	const bookingId = params.id;
+
+	// `params` may be a promise in Next.js route handlers — await before accessing
+	const { id: bookingId } = await params as { id: string };
 	const booking = await bookingService.getBooking({ userId, bookingId });
 	if (!booking) {
 		// If missing, redirect to bookings list (alternatively render 404)

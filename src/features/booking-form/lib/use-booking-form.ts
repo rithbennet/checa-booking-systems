@@ -109,6 +109,9 @@ export function useBookingForm({
     setServiceDialogOpen,
     markSaved,
     resetWizard,
+    clearPersistAndRehydrate,
+    draftId,
+    setDraftId,
   } = useBookingWizardStore();
 
   // Build default values: base -> initialData (for edit) -> draft -> initialServices -> profile
@@ -403,6 +406,36 @@ export function useBookingForm({
     }
   };
 
+  // On mount or when bookingIdProp changes: if it's a different booking draft
+  // than the persisted draftId, clear wizard meta + reset step & form.
+  useEffect(() => {
+    if (!bookingIdProp) return;
+    if (mode === "edit" && draftId !== bookingIdProp) {
+      (async () => {
+        try {
+          await clearPersistAndRehydrate();
+        } catch (_) {
+          // ignore
+        }
+        setDraftId(bookingIdProp);
+        _setBookingId(bookingIdProp);
+        setCurrentStep(1);
+        hasSavedStep1Ref.current = true; // existing draft assumed saved step1
+        // Do NOT wipe existing initialData; only reset if switching away mid-draft
+        // If you want a hard reset of form values, uncomment below:
+        // const cleared = normalizeBookingInput({});
+        // form.reset(cleared, { keepDirty: false });
+      })();
+    }
+  }, [
+    bookingIdProp,
+    draftId,
+    mode,
+    clearPersistAndRehydrate,
+    setDraftId,
+    setCurrentStep,
+  ]);
+
   const handleAddService = (service: Service) => {
     const pricing = getServicePrice(service, userType);
     if (!pricing) {
@@ -476,9 +509,6 @@ export function useBookingForm({
       addOnCatalogIds: [],
     };
     appendWorkspace(defaultWorkspace);
-    sonnerToast.success("Workspace added", {
-      description: "Workspace booking has been added to your booking.",
-    });
   };
 
   const handleWorkspaceUpdate = (

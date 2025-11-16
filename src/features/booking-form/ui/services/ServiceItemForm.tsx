@@ -17,8 +17,8 @@ import { Textarea } from "@/shared/ui/shadcn/textarea";
 import {
 	getFieldsForService,
 	type ServiceCategory,
-} from "../lib/service-column-map";
-import { EquipmentSelector } from "./EquipmentSelector";
+} from "../../lib/service-column-map";
+import { EquipmentSelector } from "../helpers/EquipmentSelector";
 
 type ServiceItem = NonNullable<CreateBookingInput["serviceItems"]>[number];
 
@@ -584,27 +584,7 @@ export function ServiceItemForm({
 				/>
 			</div>
 
-			{/* Notes */}
-			{fields.includes("notes") && (
-				<div className="space-y-2">
-					<Label
-						className="font-medium text-gray-700 text-sm"
-						htmlFor={`notes-${index}`}
-					>
-						Additional Notes
-					</Label>
-					<Textarea
-						className="border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500"
-						id={`notes-${index}`}
-						onChange={(e) => {
-							onUpdate({ notes: e.target.value });
-						}}
-						placeholder="Any additional notes or requirements..."
-						rows={3}
-						value={(serviceItem.notes as string) || ""}
-					/>
-				</div>
-			)}
+			{/* Notes removed: Special Instructions already writes to notes; avoid duplication */}
 		</div>
 	);
 }

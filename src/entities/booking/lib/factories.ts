@@ -17,15 +17,12 @@ import type { Service } from "@/entities/service";
  * @returns A default BookingServiceItemInput
  */
 export function createDefaultServiceItem(
-  service: Service,
-  now = new Date()
+  service: Service
 ): BookingServiceItemInput {
-  const isWorkingSpace = service.category === "working_space";
-
   return {
     serviceId: service.id,
-    quantity: isWorkingSpace ? 0 : 1,
-    durationMonths: isWorkingSpace ? 1 : 0,
+    quantity: 1,
+    durationMonths: 0,
     temperatureControlled: false,
     lightSensitive: false,
     hazardousMaterial: false,
@@ -33,14 +30,6 @@ export function createDefaultServiceItem(
     equipmentIds: [],
     otherEquipmentRequests: [],
     addOnCatalogIds: [],
-    ...(isWorkingSpace
-      ? {
-          expectedCompletionDate: now,
-          notes: `START_DATE:${now.toISOString()}||END_DATE:${new Date(
-            now.getTime() + 30 * 24 * 60 * 60 * 1000
-          ).toISOString()}`,
-        }
-      : {}),
   };
 }
 
@@ -67,15 +56,12 @@ export function createDefaultWorkspaceBooking(
  * @returns Normalized BookingServiceItemInput
  */
 export function normalizeServiceItem(
-  item: Partial<BookingServiceItemInput>,
-  service?: Service
+  item: Partial<BookingServiceItemInput>
 ): BookingServiceItemInput {
-  const isWorkingSpace = service?.category === "working_space";
-
   return {
     serviceId: item.serviceId ?? "",
-    quantity: item.quantity ?? (isWorkingSpace ? 0 : 1),
-    durationMonths: item.durationMonths ?? (isWorkingSpace ? 1 : 0),
+    quantity: item.quantity ?? 1,
+    durationMonths: item.durationMonths ?? 0,
     sampleName: item.sampleName,
     sampleDetails: item.sampleDetails,
     sampleType: item.sampleType,

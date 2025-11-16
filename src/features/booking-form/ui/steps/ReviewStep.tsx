@@ -30,6 +30,7 @@ interface ReviewStepProps {
 	fields: Array<BookingServiceItemInput & { id: string }>;
 	getServiceForField: (serviceId: string) => Service | undefined;
 	userType: "mjiit_member" | "utm_member" | "external_member";
+	services: Service[];
 }
 
 export function ReviewStep({
@@ -37,6 +38,7 @@ export function ReviewStep({
 	fields,
 	getServiceForField,
 	userType,
+	services,
 }: ReviewStepProps) {
 	const [confirmed, setConfirmed] = useState(false);
 	const tempRef = generateTempReference();
@@ -59,6 +61,7 @@ export function ReviewStep({
 		"billingPhone",
 		"billingEmail",
 		"utmCampus",
+		"workspaceBookings",
 	]);
 
 	// Group services
@@ -78,6 +81,17 @@ export function ReviewStep({
 		{} as Record<string, GroupedItems>,
 	);
 
+	// Build add-on lookup per service for pricing display (effective amounts)
+	const addOnPriceMapByService = new Map<string, Map<string, number>>();
+	services.forEach((svc) => {
+		const map = new Map<string, number>();
+		(svc.addOns || []).forEach((a) => {
+			const amount = (a as { effectiveAmount: number }).effectiveAmount;
+			map.set((a as { id: string }).id, amount);
+		});
+		addOnPriceMapByService.set(svc.id, map);
+	});
+
 	// Calculate totals
 	let totalAmount = 0;
 	Object.entries(grouped).forEach(([serviceId, items]) => {
@@ -87,12 +101,47 @@ export function ReviewStep({
 			if (pricing) {
 				items.forEach((item) => {
 					const qty = item.item.quantity || 1;
-					const months = item.item.durationMonths || 0;
-					totalAmount += pricing.price * qty * (months || 1);
+					// For analysis/testing services, months should not apply
+					const base = pricing.price * qty;
+					// Add-ons (added once per item, aligned with server compute)
+					const addOnMap = addOnPriceMapByService.get(service.id);
+					const addOnsSum = (item.item.addOnCatalogIds || []).reduce((acc, id) => {
+						const amt = addOnMap?.get(id) ?? 0;
+						return acc + amt;
+					}, 0);
+					totalAmount += base + addOnsSum;
 				});
 			}
 		}
 	});
+
+	// Add workspace bookings totals (based on monthly rate)
+	const workingSpaceService = services.find(
+		(s) => s.category === "working_space"
+	);
+	const wsPricing = workingSpaceService
+		? getServicePrice(workingSpaceService, userType)
+		: null;
+	const wsBookings = (form.getValues("workspaceBookings") || []) as NonNullable<
+		CreateBookingInput["workspaceBookings"]
+	>;
+	if (wsPricing) {
+		const wsAddOnMap = workingSpaceService ? addOnPriceMapByService.get(workingSpaceService.id) : undefined;
+		wsBookings.forEach((ws: NonNullable<CreateBookingInput["workspaceBookings"]>[number]) => {
+			if (ws.startDate && ws.endDate) {
+				const start = new Date(ws.startDate);
+				const end = new Date(ws.endDate);
+				const days = Math.max(
+					0,
+					Math.ceil((end.getTime() - start.getTime() + 24 * 60 * 60 * 1000) / (24 * 60 * 60 * 1000))
+				);
+				const months = Math.max(1, Math.ceil(days / 30));
+				const base = wsPricing.price * months;
+				const addOnsSum = (ws.addOnCatalogIds || []).reduce((acc: number, id: string) => acc + (wsAddOnMap?.get(id) ?? 0), 0);
+				totalAmount += base + addOnsSum;
+			}
+		});
+	}
 
 	return (
 		<Card>
@@ -155,14 +204,145 @@ export function ReviewStep({
 									</div>
 									{pricing && (
 										<p className="mt-2 text-gray-600 text-sm">
-											{pricing.price.toFixed(2)} {pricing.unit} per{" "}
-											{isWorkingSpace ? "month" : "sample"}
+											RM {pricing.price.toFixed(2)} {pricing.unit}
 										</p>
+									)}
+
+									{/* Per-item breakdown for analysis/testing services */}
+									{!isWorkingSpace && pricing && (
+										<div className="mt-3 divide-y rounded-md border">
+											{items.map(({ item }, idx) => {
+												const qty = item.quantity || 1;
+												const baseLine = qty * pricing.price;
+												const addOnMap = addOnPriceMapByService.get(service.id);
+												const selectedAddOnIds = item.addOnCatalogIds || [];
+												const addOnsSum = selectedAddOnIds.reduce((acc: number, id: string) => acc + (addOnMap?.get(id) ?? 0), 0);
+												const addOnNames = selectedAddOnIds
+													.map((id) => (service.addOns || []).find((a) => a.id === id)?.name)
+													.filter(Boolean) as string[];
+												const lineTotal = baseLine + addOnsSum;
+												return (
+													<div className="flex items-center justify-between px-3 py-2 text-sm" key={`${serviceId}-${item.sampleName ?? "sample"}-${idx}`}>
+														<div className="min-w-0">
+															<p className="truncate font-medium text-gray-900">
+																{item.sampleName?.trim() || `Sample ${idx + 1}`}
+															</p>
+															{item.notes && (
+																<p className="truncate text-gray-500 text-xs">{item.notes}</p>
+															)}
+															{addOnsSum > 0 && (
+																<p className="truncate text-gray-600 text-xs">
+																	Add-ons: {addOnNames.join(", ")} • RM {addOnsSum.toFixed(2)}
+																</p>
+															)}
+														</div>
+														<div className="ml-3 shrink-0 text-right text-gray-700">
+															<div>Qty: {qty}</div>
+															<div className="font-semibold">RM {lineTotal.toFixed(2)}</div>
+														</div>
+													</div>
+												);
+											})}
+											{(() => {
+												const baseSubtotal = items.reduce((acc, { item }) => acc + (item.quantity || 1) * pricing.price, 0);
+												const addOnsSubtotal = items.reduce((acc, { item }) => {
+													const addOnMap = addOnPriceMapByService.get(service.id);
+													return acc + (item.addOnCatalogIds || []).reduce((a: number, id: string) => a + (addOnMap?.get(id) ?? 0), 0);
+												}, 0);
+												const subtotal = baseSubtotal + addOnsSubtotal;
+												return (
+													<div className="bg-gray-50 px-3 py-2 text-sm">
+														<div className="flex items-center justify-between">
+															<span className="font-medium text-gray-900">Subtotal</span>
+															<span className="font-semibold text-gray-900">RM {subtotal.toFixed(2)}</span>
+														</div>
+														{addOnsSubtotal > 0 && (
+															<div className="mt-1 flex items-center justify-between text-gray-600 text-xs">
+																<span>Includes add-ons</span>
+																<span>RM {addOnsSubtotal.toFixed(2)}</span>
+															</div>
+														)}
+													</div>
+												);
+											})()}
+										</div>
 									)}
 								</div>
 							);
 						})}
 					</div>
+				</div>
+
+				{/* Workspace bookings summary */}
+				<div>
+					<h3 className="mb-3 font-semibold text-gray-900">
+						Workspace bookings ({wsBookings.length})
+					</h3>
+					{wsBookings.length === 0 ? (
+						<p className="text-gray-500 text-sm">No workspace bookings.</p>
+					) : (
+						<div className="space-y-3">
+							{wsBookings.map(
+								(
+									ws: NonNullable<CreateBookingInput["workspaceBookings"]>[number],
+									idx: number
+								) => {
+									const start = ws.startDate ? new Date(ws.startDate) : null;
+									const end = ws.endDate ? new Date(ws.endDate) : null;
+									let months: number | null = null;
+									if (start && end) {
+										const days = Math.max(
+											0,
+											Math.ceil(
+												(end.getTime() - start.getTime() + 24 * 60 * 60 * 1000) /
+												(24 * 60 * 60 * 1000)
+											)
+										);
+										months = Math.max(1, Math.ceil(days / 30));
+									}
+									return (
+										<div
+											className="rounded-lg border bg-white p-4"
+											key={`${start?.toISOString() ?? ""}-${end?.toISOString() ?? ""}-${idx}`}
+										>
+											<div className="flex items-center justify-between">
+												<div>
+													<p className="font-medium text-gray-900">
+														{start ? start.toDateString() : "-"} — {end ? end.toDateString() : "-"}
+													</p>
+													{ws.preferredTimeSlot && (
+														<p className="text-gray-500 text-sm">
+															Preferred: {ws.preferredTimeSlot}
+														</p>
+													)}
+												</div>
+												{wsPricing && months !== null && (
+													<div className="text-right">
+														<Badge variant="secondary">
+															{months} {months === 1 ? "month" : "months"} × RM {wsPricing.price.toFixed(2)}
+														</Badge>
+														{(() => {
+															const wsAddOnMap = workingSpaceService ? addOnPriceMapByService.get(workingSpaceService.id) : undefined;
+															const addOnsSum = (ws.addOnCatalogIds || []).reduce((acc: number, id: string) => acc + (wsAddOnMap?.get(id) ?? 0), 0);
+															const total = months * wsPricing.price + addOnsSum;
+															return (
+																<div className="mt-1 text-right text-sm">
+																	{addOnsSum > 0 && (
+																		<div className="text-gray-600">Add-ons: RM {addOnsSum.toFixed(2)}</div>
+																	)}
+																	<div className="font-semibold text-gray-900">RM {total.toFixed(2)}</div>
+																</div>
+															);
+														})()}
+													</div>
+												)}
+											</div>
+										</div>
+									);
+								}
+							)}
+						</div>
+					)}
 				</div>
 
 				<Separator />

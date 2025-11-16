@@ -41,6 +41,7 @@ export function ServiceSelectionDialog({
 	const availableServices = services.filter(
 		(service) =>
 			service.isActive &&
+			service.category !== "working_space" &&
 			!selectedServiceIds.includes(service.id) &&
 			(searchQuery === "" ||
 				service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

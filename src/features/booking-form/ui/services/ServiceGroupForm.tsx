@@ -20,8 +20,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
+import { WorkspaceSlotForm } from "../workspace/WorkspaceSlotForm";
 import { ServiceItemForm } from "./ServiceItemForm";
-import { WorkspaceSlotForm } from "./WorkspaceSlotForm";
 
 type ServiceItem = NonNullable<CreateBookingInput["serviceItems"]>[number];
 

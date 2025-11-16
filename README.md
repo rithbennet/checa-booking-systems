@@ -157,6 +157,21 @@ User roles:
 - `mjiit_member` - MJIIT institutional member
 - `external_member` - External organization member
 
+### Auth & API patterns
+
+- Global middleware is now security-only (headers + CSRF). Auth/ownership/roles are enforced per route using the API factory.
+- See:
+	- `src/shared/lib/api-factory.ts` (Option C – minimal protected handler)
+	- `docs/api-middleware-deprecation.md` (deprecation details and migration plan)
+	- `docs/route-migration-checklist.md` (step-by-step migration with examples)
+
+Optional runtime toggle during migration:
+
+```bash
+# Adds X-Deprecated-Auth-Middleware header and logs one-time warning
+DEPRECATE_API_MIDDLEWARE=true
+```
+
 ## Database Schema
 
 The database schema includes:

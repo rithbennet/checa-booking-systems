@@ -1,8 +1,52 @@
+import type { Decimal } from "@prisma/client/runtime/library";
+import type { ZodIssue } from "zod";
 import type { BookingSaveDraftDto, BookingSubmitDto } from "./booking.dto";
 import { bookingSubmitDto } from "./booking.dto";
 import { mapDtoToNormalized } from "./booking.mapper";
 import * as notifications from "./booking.notifications";
 import * as repo from "./booking.repo";
+
+const VALID_SAMPLE_TYPES = ["liquid", "solid", "powder", "solution"] as const;
+
+function normalizeSampleType(value: unknown) {
+  if (value === null || value === undefined) return undefined;
+  if (
+    typeof value === "string" &&
+    VALID_SAMPLE_TYPES.includes(value as (typeof VALID_SAMPLE_TYPES)[number])
+  ) {
+    return value as (typeof VALID_SAMPLE_TYPES)[number];
+  }
+  return undefined;
+}
+
+function normalizeOtherEquipmentRequests(value: unknown): string[] | undefined {
+  if (Array.isArray(value)) {
+    return value.filter((item): item is string => typeof item === "string");
+  }
+  if (typeof value === "string") {
+    return [value];
+  }
+  if (value && typeof value === "object") {
+    const collected: string[] = [];
+    for (const entry of Object.values(value)) {
+      if (typeof entry === "string") {
+        collected.push(entry);
+      } else if (Array.isArray(entry)) {
+        collected.push(
+          ...entry.filter((item): item is string => typeof item === "string")
+        );
+      }
+    }
+    return collected.length > 0 ? collected : undefined;
+  }
+  return undefined;
+}
+
+// Normalizes "specialEquipment" values that may have been stored as JSON objects
+// into a flat string array, or undefined when empty.
+function normalizeSpecialEquipment(value: unknown): string[] | undefined {
+  return normalizeOtherEquipmentRequests(value);
+}
 
 /**
  * Service layer for booking operations
@@ -112,12 +156,29 @@ export async function saveDraft(params: {
       ])
     );
 
+    // Resolve working_space monthly rate when workspace bookings are present
+    let workspaceMonthlyRate: Decimal | undefined;
+    if ((dto.workspaceBookings?.length ?? 0) > 0) {
+      const wsService = await repo.getWorkingSpaceService();
+      if (wsService) {
+        const wsPricing = await repo.getServicePricing(
+          wsService.id,
+          userType,
+          new Date()
+        );
+        if (wsPricing) {
+          workspaceMonthlyRate = wsPricing.price as unknown as Decimal;
+        }
+      }
+    }
+
     // Map to normalized structures
     const { serviceItems, workspaceBookings, totalAmount } = mapDtoToNormalized(
       dto,
       pricingMap,
       addOnsMap,
-      userType
+      userType,
+      workspaceMonthlyRate
     );
 
     // Upsert service items
@@ -201,25 +262,81 @@ export async function submit(params: {
     throw new Error("Booking is not submittable (must be in draft status)");
   }
 
+  // Helper: parse ISO date from notes with key
+  const fromNotes = (notes: string | null | undefined, key: string) => {
+    if (!notes) return undefined;
+    const match = notes.match(new RegExp(`${key}:([^|]+)`));
+    return match?.[1] ? new Date(match[1]) : undefined;
+  };
+  const strFromNotes = (notes: string | null | undefined, key: string) => {
+    if (!notes) return undefined;
+    const match = notes.match(new RegExp(`${key}:([^|]+)`));
+    return match?.[1] ?? undefined;
+  };
+
+  // Partition items: true -> working_space, false -> analysis/sample
+  const wsItems = booking.serviceItems.filter(
+    (si) => si.service.category === "working_space"
+  );
+  const sampleItems = booking.serviceItems.filter(
+    (si) => si.service.category !== "working_space"
+  );
+
+  // Convert working_space items into workspace bookings DTO entries
+  const convertedWorkspace = wsItems
+    .map((item) => {
+      const start =
+        fromNotes(item.notes, "START_DATE") ??
+        item.expectedCompletionDate ??
+        undefined;
+      const end =
+        fromNotes(item.notes, "END_DATE") ??
+        (item.expectedCompletionDate && item.durationMonths
+          ? new Date(
+              item.expectedCompletionDate.getTime() +
+                (item.durationMonths || 1) * 30 * 24 * 60 * 60 * 1000 -
+                24 * 60 * 60 * 1000
+            )
+          : undefined);
+      if (!start || !end) return undefined; // skip incomplete slots
+      const preferredTimeSlot = strFromNotes(item.notes, "TIME_SLOT");
+      return {
+        startDate: start,
+        endDate: end,
+        preferredTimeSlot: preferredTimeSlot ?? undefined,
+        equipmentIds: item.equipmentUsages.map((eu) => eu.equipmentId),
+        specialEquipment: normalizeOtherEquipmentRequests(
+          item.otherEquipmentRequests
+        ),
+        purpose: undefined,
+        notes: item.notes ?? undefined,
+        addOnCatalogIds: undefined,
+      };
+    })
+    .filter((x): x is NonNullable<typeof x> => !!x);
+
   // Load full booking and map to DTO for strict validation
   // Build DTO from database
+  // Infer payer type from user profile when not stored in draft
+  const inferredPayerType: BookingSubmitDto["payerType"] =
+    booking.user.userType === "external_member"
+      ? "external"
+      : booking.user.academicType === "staff"
+      ? "staff"
+      : "student-self";
+
   const dto: BookingSubmitDto = {
     projectDescription: booking.projectDescription ?? "",
     preferredStartDate: booking.preferredStartDate ?? undefined,
     preferredEndDate: booking.preferredEndDate ?? undefined,
     notes: booking.notes ?? undefined,
-    serviceItems: booking.serviceItems.map((item) => ({
+    serviceItems: sampleItems.map((item) => ({
       serviceId: item.serviceId,
       quantity: item.quantity,
       durationMonths: item.durationMonths,
       sampleName: item.sampleName ?? undefined,
       sampleDetails: item.sampleDetails ?? undefined,
-      sampleType: item.sampleType as
-        | "liquid"
-        | "solid"
-        | "powder"
-        | "solution"
-        | undefined,
+      sampleType: normalizeSampleType(item.sampleType),
       sampleHazard: item.sampleHazard ?? undefined,
       testingMethod: item.testingMethod ?? undefined,
       degasConditions: item.degasConditions ?? undefined,
@@ -241,22 +358,23 @@ export async function submit(params: {
       hazardousMaterial: item.hazardousMaterial,
       inertAtmosphere: item.inertAtmosphere,
       equipmentIds: item.equipmentUsages.map((eu) => eu.equipmentId),
-      otherEquipmentRequests: item.otherEquipmentRequests
-        ? (item.otherEquipmentRequests as string[])
-        : undefined,
+      otherEquipmentRequests: normalizeOtherEquipmentRequests(
+        item.otherEquipmentRequests
+      ),
     })),
-    workspaceBookings: booking.workspaceBookings.map((ws) => ({
-      startDate: ws.startDate,
-      endDate: ws.endDate,
-      preferredTimeSlot: ws.preferredTimeSlot ?? undefined,
-      equipmentIds: ws.equipmentUsages.map((eu) => eu.equipmentId),
-      specialEquipment: ws.specialEquipment
-        ? (ws.specialEquipment as string[])
-        : undefined,
-      purpose: ws.purpose ?? undefined,
-      notes: ws.notes ?? undefined,
-    })),
-    payerType: "external", // TODO: get from form/booking
+    workspaceBookings: [
+      ...booking.workspaceBookings.map((ws) => ({
+        startDate: ws.startDate,
+        endDate: ws.endDate,
+        preferredTimeSlot: ws.preferredTimeSlot ?? undefined,
+        equipmentIds: ws.equipmentUsages.map((eu) => eu.equipmentId),
+        specialEquipment: normalizeSpecialEquipment(ws.specialEquipment),
+        purpose: ws.purpose ?? undefined,
+        notes: ws.notes ?? undefined,
+      })),
+      ...convertedWorkspace,
+    ],
+    payerType: inferredPayerType,
     billingName: `${booking.user.firstName} ${booking.user.lastName}`,
     billingEmail: booking.user.email,
   };
@@ -264,11 +382,7 @@ export async function submit(params: {
   // Validate with strict schema
   const validationResult = bookingSubmitDto.safeParse(dto);
   if (!validationResult.success) {
-    throw new Error(
-      `Booking validation failed: ${JSON.stringify(
-        validationResult.error.issues
-      )}`
-    );
+    throw new BookingValidationError(validationResult.error.issues);
   }
 
   // Determine new status based on user verification state
@@ -307,6 +421,12 @@ export async function submit(params: {
     bookingId,
     status: newStatus,
   };
+}
+
+export class BookingValidationError extends Error {
+  constructor(public issues: ZodIssue[]) {
+    super("Booking validation failed");
+  }
 }
 
 /**

@@ -1,29 +1,20 @@
 import { NextResponse } from "next/server";
 import * as bookingService from "@/entities/booking/server/booking.service";
-import { rateLimit } from "@/shared/server/api-middleware";
 import {
-  requireAuth,
+  createProtectedHandler,
   serverError,
   unauthorized,
-} from "@/shared/server/policies";
+} from "@/shared/lib/api-factory";
+import { rateLimit } from "@/shared/server/api-middleware";
 
-/**
- * POST /api/bookings
- * Create a new draft booking
- */
-export async function POST(request: Request) {
+/** POST /api/bookings — create a new draft booking */
+export const POST = createProtectedHandler(async (request: Request, user) => {
   try {
     // Rate limiting: 10 draft creations per minute
     const rateLimitResponse = await rateLimit(request, 10, 60_000);
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
+    if (rateLimitResponse) return rateLimitResponse;
 
-    const user = await requireAuth();
-
-    const result = await bookingService.createDraft({
-      userId: user.userId,
-    });
+    const result = await bookingService.createDraft({ userId: user.id });
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
@@ -35,4 +26,4 @@ export async function POST(request: Request) {
       error instanceof Error ? error.message : "Failed to create booking"
     );
   }
-}
+});

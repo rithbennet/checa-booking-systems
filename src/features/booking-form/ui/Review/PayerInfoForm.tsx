@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/shared/ui/shadcn/alert";
 import { Input } from "@/shared/ui/shadcn/input";
 import { Label } from "@/shared/ui/shadcn/label";
 import { Textarea } from "@/shared/ui/shadcn/textarea";
-import type { BookingProfile } from "../model/types";
+import type { BookingProfile } from "../../model/types";
 
 interface PayerInfoFormProps {
 	form: UseFormReturn<CreateBookingInput>;

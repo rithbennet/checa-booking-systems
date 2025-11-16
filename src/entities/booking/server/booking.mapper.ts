@@ -93,7 +93,8 @@ export function mapDtoToNormalized(
   input: BookingSaveDraftDto | BookingSubmitDto,
   pricingMap: Map<string, ServicePricingData>,
   addOnsMap: Map<string, AddOnData>,
-  userType: string
+  userType: string,
+  workspaceMonthlyRate?: Decimal
 ): MappingResult {
   const serviceItems: NormalizedServiceItem[] = [];
   const workspaceBookings: NormalizedWorkspaceBooking[] = [];
@@ -197,7 +198,12 @@ export function mapDtoToNormalized(
     }
   }
 
-  const totalAmount = computeTotals(serviceItems, workspaceBookings, addOnsMap);
+  const totalAmount = computeTotals(
+    serviceItems,
+    workspaceBookings,
+    addOnsMap,
+    workspaceMonthlyRate
+  );
 
   return {
     serviceItems,
@@ -216,13 +222,26 @@ export function mapDtoToNormalized(
 export function computeTotals(
   serviceItems: NormalizedServiceItem[],
   workspaceBookings: NormalizedWorkspaceBooking[],
-  addOnsMap: Map<string, AddOnData>
+  addOnsMap: Map<string, AddOnData>,
+  workspaceMonthlyRate?: Decimal
 ): Decimal {
   let total = new Decimal(0);
 
   // Sum service items
   for (const item of serviceItems) {
     total = total.add(item.totalPrice);
+  }
+
+  // Sum workspace base price (per 30-day month) if a rate is provided
+  if (workspaceMonthlyRate) {
+    for (const workspace of workspaceBookings) {
+      const ms =
+        new Date(workspace.endDate).getTime() -
+        new Date(workspace.startDate).getTime();
+      const days = Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)) + 1); // inclusive
+      const months = Math.max(1, Math.ceil(days / 30));
+      total = total.add(workspaceMonthlyRate.mul(months));
+    }
   }
 
   // Sum workspace booking add-ons

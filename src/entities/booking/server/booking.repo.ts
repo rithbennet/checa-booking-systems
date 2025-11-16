@@ -53,6 +53,7 @@ export async function findBookingById(bookingId: string) {
           lastName: true,
           userType: true,
           status: true,
+          academicType: true,
         },
       },
       companyRelation: true,
@@ -640,6 +641,16 @@ export async function getAddOnsByIds(addOnIds: string[]) {
   });
 
   return new Map(addOns.map((a) => [a.id, a]));
+}
+
+/**
+ * Find the Working Space service (category = "working_space")
+ */
+export async function getWorkingSpaceService() {
+  return db.service.findFirst({
+    where: { category: "working_space" },
+    select: { id: true },
+  });
 }
 
 /**

@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { LabEquipment } from "@/entities/booking";
-import type { CreateBookingInput } from "@/entities/booking/model/schemas";
+import type { CreateBookingInput, WorkspaceBookingInput } from "@/entities/booking/model/schemas";
 import type { Service } from "@/entities/service";
 import { cn } from "@/shared/lib/utils";
 import {
@@ -50,17 +50,18 @@ import {
 	isValidWorkspaceStartDate,
 	parseWorkspaceDates,
 	updateWorkspaceNotes,
-} from "../lib/workspace-utils";
-import { EquipmentSelector } from "./EquipmentSelector";
+} from "../../lib/workspace-utils";
+import { EquipmentSelector } from "../helpers/EquipmentSelector";
 
 type ServiceItem = NonNullable<CreateBookingInput["serviceItems"]>[number];
 
 interface WorkspaceSlotFormProps {
 	service: Service;
-	serviceItem: Partial<ServiceItem>;
+	// support either a service-style item or the dedicated workspace booking shape
+	serviceItem: Partial<ServiceItem> | Partial<WorkspaceBookingInput>;
 	index: number;
-	onUpdate: (data: Partial<ServiceItem>) => void;
-	allSlots: Array<Partial<ServiceItem>>;
+	onUpdate: (data: Partial<ServiceItem> | Partial<WorkspaceBookingInput>) => void;
+	allSlots: Array<Partial<ServiceItem> | Partial<WorkspaceBookingInput>>;
 	excludeIndex: number;
 	onRemove?: (index: number) => void;
 	totalSlots?: number;
@@ -137,16 +138,18 @@ export function WorkspaceSlotForm({
 
 		setLocalStartDate(date);
 		const endDate = calculateWorkspaceEndDate(date, localMonths);
-		const currentNotes = (serviceItem.notes as string) || "";
-
-		onUpdate({
-			notes: updateWorkspaceNotes(currentNotes, {
-				startDate: date,
-				endDate,
-			}),
-			expectedCompletionDate: date,
-			durationMonths: localMonths,
-		});
+		// If workspace-shaped, update start/end directly; otherwise keep notes encoding for legacy shape
+		if ("startDate" in serviceItem || "endDate" in serviceItem) {
+			onUpdate({ startDate: date, endDate });
+		} else {
+			const currentNotes = (serviceItem.notes as string) || "";
+			onUpdate({
+				notes: updateWorkspaceNotes(currentNotes, {
+					startDate: date,
+					endDate,
+				}),
+			});
+		}
 	};
 
 	const handleMonthsChange = (months: number) => {
@@ -154,16 +157,17 @@ export function WorkspaceSlotForm({
 
 		setLocalMonths(months);
 		const endDate = calculateWorkspaceEndDate(localStartDate, months);
-		const currentNotes = (serviceItem.notes as string) || "";
-
-		onUpdate({
-			notes: updateWorkspaceNotes(currentNotes, {
-				startDate: localStartDate,
-				endDate,
-			}),
-			expectedCompletionDate: localStartDate,
-			durationMonths: months,
-		});
+		if ("startDate" in serviceItem || "endDate" in serviceItem) {
+			onUpdate({ startDate: localStartDate, endDate });
+		} else {
+			const currentNotes = (serviceItem.notes as string) || "";
+			onUpdate({
+				notes: updateWorkspaceNotes(currentNotes, {
+					startDate: localStartDate,
+					endDate,
+				}),
+			});
+		}
 	};
 
 	return (
@@ -406,19 +410,25 @@ export function WorkspaceSlotForm({
 							</Label>
 							<Select
 								onValueChange={(value) => {
-									const currentNotes = (serviceItem.notes as string) || "";
-									const dates = parseWorkspaceDates(serviceItem);
-									if (dates.startDate && dates.endDate) {
-										onUpdate({
-											notes: updateWorkspaceNotes(currentNotes, {
-												timeSlot: value,
-											}),
-										});
+									if ("startDate" in serviceItem || "endDate" in serviceItem) {
+										onUpdate({ preferredTimeSlot: value });
+									} else {
+										const currentNotes = (serviceItem.notes as string) || "";
+										const dates = parseWorkspaceDates(serviceItem);
+										if (dates.startDate && dates.endDate) {
+											onUpdate({
+												notes: updateWorkspaceNotes(currentNotes, {
+													timeSlot: value,
+												}),
+											});
+										}
 									}
 								}}
-								value={getWorkspaceTimeSlot(
-									(serviceItem.notes as string) || "",
-								)}
+								value={
+									("startDate" in serviceItem || "endDate" in serviceItem)
+										? ((serviceItem as Partial<WorkspaceBookingInput>).preferredTimeSlot || "")
+										: getWorkspaceTimeSlot((serviceItem.notes as string) || "")
+								}
 							>
 								<SelectTrigger
 									className="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -453,19 +463,27 @@ export function WorkspaceSlotForm({
 								className="border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500"
 								id={`workspace-purpose-${index}`}
 								onChange={(e) => {
-									const currentNotes = (serviceItem.notes as string) || "";
-									const dates = parseWorkspaceDates(serviceItem);
-									if (dates.startDate && dates.endDate) {
-										onUpdate({
-											notes: updateWorkspaceNotes(currentNotes, {
-												purpose: e.target.value,
-											}),
-										});
+									if ("startDate" in serviceItem || "endDate" in serviceItem) {
+										onUpdate({ purpose: e.target.value });
+									} else {
+										const currentNotes = (serviceItem.notes as string) || "";
+										const dates = parseWorkspaceDates(serviceItem);
+										if (dates.startDate && dates.endDate) {
+											onUpdate({
+												notes: updateWorkspaceNotes(currentNotes, {
+													purpose: e.target.value,
+												}),
+											});
+										}
 									}
 								}}
 								placeholder="Describe the purpose of this workspace booking..."
 								rows={3}
-								value={getWorkspacePurpose((serviceItem.notes as string) || "")}
+								value={
+									("startDate" in serviceItem || "endDate" in serviceItem)
+										? ((serviceItem as Partial<WorkspaceBookingInput>).purpose || "")
+										: getWorkspacePurpose((serviceItem.notes as string) || "")
+								}
 							/>
 						</div>
 
@@ -541,13 +559,22 @@ export function WorkspaceSlotForm({
 									onUpdate({ equipmentIds });
 								}}
 								onOtherEquipmentChange={(equipment) => {
-									onUpdate({ otherEquipmentRequests: equipment });
+									// If this form was given a workspace-shaped item, map to workspace field
+									if ("startDate" in serviceItem || "endDate" in serviceItem) {
+										onUpdate({ specialEquipment: equipment });
+									} else {
+										onUpdate({ otherEquipmentRequests: equipment });
+									}
 								}}
 								otherEquipmentRequests={
-									(serviceItem.otherEquipmentRequests as string[]) || []
+									("otherEquipmentRequests" in serviceItem
+										? (serviceItem as Partial<ServiceItem>).otherEquipmentRequests
+										: (serviceItem as Partial<WorkspaceBookingInput>).specialEquipment) || []
 								}
 								selectedEquipmentIds={
-									(serviceItem.equipmentIds as string[]) || []
+									((serviceItem as Partial<ServiceItem>).equipmentIds as string[]) ||
+									((serviceItem as Partial<WorkspaceBookingInput>).equipmentIds as string[]) ||
+									[]
 								}
 							/>
 						</div>
@@ -564,21 +591,27 @@ export function WorkspaceSlotForm({
 								className="border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500"
 								id={`workspace-notes-${index}`}
 								onChange={(e) => {
-									const currentNotes = (serviceItem.notes as string) || "";
-									const dates = parseWorkspaceDates(serviceItem);
-									if (dates.startDate && dates.endDate) {
-										onUpdate({
-											notes: updateWorkspaceNotes(currentNotes, {
-												additionalNotes: e.target.value,
-											}),
-										});
+									if ("startDate" in serviceItem || "endDate" in serviceItem) {
+										onUpdate({ notes: e.target.value });
+									} else {
+										const currentNotes = (serviceItem.notes as string) || "";
+										const dates = parseWorkspaceDates(serviceItem);
+										if (dates.startDate && dates.endDate) {
+											onUpdate({
+												notes: updateWorkspaceNotes(currentNotes, {
+													additionalNotes: e.target.value,
+												}),
+											});
+										}
 									}
 								}}
 								placeholder="Any additional notes or requirements..."
 								rows={3}
-								value={getWorkspaceAdditionalNotes(
-									(serviceItem.notes as string) || "",
-								)}
+								value={
+									("startDate" in serviceItem || "endDate" in serviceItem)
+										? ((serviceItem as Partial<WorkspaceBookingInput>).notes || "")
+										: getWorkspaceAdditionalNotes((serviceItem.notes as string) || "")
+								}
 							/>
 						</div>
 					</div>

@@ -10,7 +10,7 @@ import {
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
 import type { BookingProfile } from "../../model/types";
-import { PayerInfoForm } from "../PayerInfoForm";
+import { PayerInfoForm } from "../Review/PayerInfoForm";
 
 interface PayerInfoStepProps {
 	form: UseFormReturn<CreateBookingInput>;
