@@ -150,9 +150,6 @@ async function main() {
 	console.log(`✅ Created iKohza: ${checaIkohza.name} (MJIIT only)`);
 	console.log(`✅ Created iKohza: ${materialIkohza.name} (MJIIT only)`);
 
-	console.log(`✅ Created iKohza: ${checaIkohza.name}`);
-	console.log(`✅ Created iKohza: ${materialIkohza.name}`);
-
 	// Seed External Organizations
 	console.log("\n🌱 Seeding external organizations...");
 

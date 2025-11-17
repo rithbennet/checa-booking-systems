@@ -14,7 +14,26 @@ export function useBulkAction() {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(args),
 			});
-			if (!res.ok) throw new Error("Bulk action failed");
+			if (!res.ok) {
+				let errorMessage = `Bulk action failed (${res.status})`;
+				try {
+					const text = await res.text();
+					if (text) {
+						try {
+							const json = JSON.parse(text);
+							const message = json.error || json.message || text;
+							errorMessage = `${message} (${res.status})`;
+						} catch {
+							errorMessage = `${text} (${res.status})`;
+						}
+					} else {
+						errorMessage = `${res.statusText || "Bulk action failed"} (${res.status})`;
+					}
+				} catch {
+					errorMessage = `${res.statusText || "Bulk action failed"} (${res.status})`;
+				}
+				throw new Error(errorMessage);
+			}
 			return res.json();
 		},
 		onSuccess: () => {

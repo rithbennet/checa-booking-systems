@@ -10,7 +10,26 @@ function useAction(action: "approve" | "reject" | "request_revision") {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ action, comment: args.comment }),
 			});
-			if (!res.ok) throw new Error("Action failed");
+			if (!res.ok) {
+				let errorMessage = `Action failed (${res.status})`;
+				try {
+					const text = await res.text();
+					if (text) {
+						try {
+							const json = JSON.parse(text);
+							const message = json.error || json.message || text;
+							errorMessage = `${message} (${res.status})`;
+						} catch {
+							errorMessage = `${text} (${res.status})`;
+						}
+					} else {
+						errorMessage = `${res.statusText || "Action failed"} (${res.status})`;
+					}
+				} catch {
+					errorMessage = `${res.statusText || "Action failed"} (${res.status})`;
+				}
+				throw new Error(errorMessage);
+			}
 			return res.json();
 		},
 		onSuccess: (_data, variables) => {

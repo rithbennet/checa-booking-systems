@@ -1,10 +1,13 @@
 import { mapToBookingDetailVM } from "@/entities/booking/model/mappers";
 import { repoAdminDetail } from "@/entities/booking/review/server/repository";
 import {
+  badRequest,
   createProtectedHandler,
   forbidden,
+  notFound,
   serverError,
 } from "@/shared/lib/api-factory";
+import { Prisma } from "generated/prisma";
 
 export const GET = createProtectedHandler(
   async (
@@ -14,7 +17,12 @@ export const GET = createProtectedHandler(
   ) => {
     try {
       if (user.role !== "lab_administrator") return forbidden();
-      const id = params?.id as string;
+      
+      // Validate params.id
+      if (!params?.id || typeof params.id !== "string" || params.id.trim() === "") {
+        return badRequest("Invalid booking ID");
+      }
+      const id = params.id;
 
       const booking = await repoAdminDetail(id);
       const vm = mapToBookingDetailVM(booking);
@@ -22,9 +30,16 @@ export const GET = createProtectedHandler(
       return vm;
     } catch (error) {
       console.error("[admin/bookings/[id] GET]", error);
-      return serverError(
-        error instanceof Error ? error.message : "Internal server error"
-      );
+      
+      // Handle Prisma not found error (P2025 from findUniqueOrThrow)
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2025"
+      ) {
+        return notFound();
+      }
+      
+      return serverError("Internal server error");
     }
   }
 );

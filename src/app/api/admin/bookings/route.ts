@@ -13,12 +13,26 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status")?.split(",").filter(Boolean);
     const query = searchParams.get("query") ?? undefined;
-    const page = Number.parseInt(searchParams.get("page") ?? "1");
-    const pageSize = Number.parseInt(searchParams.get("pageSize") ?? "25");
+    
+    // Parse and sanitize page
+    const pageRaw = Number.parseInt(searchParams.get("page") ?? "1");
+    const page = isNaN(pageRaw) || pageRaw < 1 ? 1 : pageRaw;
+    
+    // Parse and sanitize pageSize
+    const pageSizeRaw = Number.parseInt(searchParams.get("pageSize") ?? "25");
+    const pageSize = isNaN(pageSizeRaw) || pageSizeRaw < 1 
+      ? 25 
+      : pageSizeRaw > 100 
+      ? 100 
+      : pageSizeRaw;
+    
     const sortField = searchParams.get("sortField") ?? "updatedAt";
-    const sortDirection = (searchParams.get("sortDirection") ?? "desc") as
-      | "asc"
-      | "desc";
+    
+    // Coerce sortDirection to only "asc" or "desc"
+    const sortDirectionRaw = searchParams.get("sortDirection") ?? "desc";
+    const sortDirection = (sortDirectionRaw === "asc" || sortDirectionRaw === "desc")
+      ? sortDirectionRaw
+      : "desc";
 
     const result = await repoAdminList({
       status,
@@ -40,8 +54,6 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
     };
   } catch (error) {
     console.error("[admin/bookings GET]", error);
-    return serverError(
-      error instanceof Error ? error.message : "Internal server error"
-    );
+    return serverError("Internal server error");
   }
 });

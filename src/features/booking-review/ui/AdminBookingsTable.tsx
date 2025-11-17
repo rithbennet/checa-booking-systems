@@ -267,7 +267,7 @@ export function AdminBookingsTable({
 
                                 {/* Amount */}
                                 <TableCell className="text-right">
-                                    {formatAmount(booking.totalAmount)}
+                                    {formatAmount(Number(booking.totalAmount))}
                                 </TableCell>
 
                                 {/* Created */}

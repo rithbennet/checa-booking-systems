@@ -39,15 +39,13 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 		const failed = results.filter((r) => r.status === "rejected").length;
 
 		return NextResponse.json({
-			success: true,
+			success: successful > 0,
 			deleted: successful,
 			failed,
 			total: bookingIds.length,
 		});
 	} catch (error) {
 		console.error("Error bulk deleting bookings:", error);
-		return serverError(
-			error instanceof Error ? error.message : "Failed to delete bookings",
-		);
+		return serverError("Failed to delete bookings");
 	}
 });

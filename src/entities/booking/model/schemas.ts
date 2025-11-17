@@ -5,6 +5,8 @@ export const bookingStatusEnum = z.enum([
 	"draft",
 	"pending_user_verification",
 	"pending_approval",
+	"revision_requested",
+	"revision_submitted",
 	"approved",
 	"rejected",
 	"in_progress",

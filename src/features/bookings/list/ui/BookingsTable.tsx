@@ -22,7 +22,9 @@ import {
 	getStatusBadgeClassName,
 	getStatusColors,
 	getStatusLabel,
-} from "../lib/statusUtils";
+	STATUS_COLORS,
+	STATUS_LABELS,
+} from "@/shared/lib/status-utils";
 import { BookingListTableSkeleton } from "./BookingListTableSkeleton";
 
 export interface BookingRow {
