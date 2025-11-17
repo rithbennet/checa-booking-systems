@@ -18,12 +18,12 @@ import {
 	type BookingProfile,
 	BookingProgress,
 	ServiceSelectionDialog,
-} from "@/features/booking-form";
-import { useBookingForm } from "@/features/booking-form/lib/use-booking-form";
-import { PayerInfoStep } from "@/features/booking-form/ui/steps/PayerInfoStep";
-import { ProjectInfoStep } from "@/features/booking-form/ui/steps/ProjectInfoStep";
-import { ReviewStep } from "@/features/booking-form/ui/steps/ReviewStep";
-import { ServicesStep } from "@/features/booking-form/ui/steps/ServicesStep";
+} from "@/features/bookings/form";
+import { useBookingForm } from "@/features/bookings/form/lib/use-booking-form";
+import { PayerInfoStep } from "@/features/bookings/form/ui/steps/PayerInfoStep";
+import { ProjectInfoStep } from "@/features/bookings/form/ui/steps/ProjectInfoStep";
+import { ReviewStep } from "@/features/bookings/form/ui/steps/ReviewStep";
+import { ServicesStep } from "@/features/bookings/form/ui/steps/ServicesStep";
 import { LoadingDialog } from "@/shared/ui/LoadingDialog";
 import {
 	AlertDialog,

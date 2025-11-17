@@ -4,7 +4,7 @@ import { getAvailableEquipment } from "@/entities/booking/api/get-available-equi
 import * as bookingService from "@/entities/booking/server/booking.service";
 import { getInvoicePayerProfile } from "@/entities/invoice/api/get-invoice-payer-profile";
 import { getServices } from "@/entities/service/api/get-services";
-import type { BookingProfile } from "@/features/booking-form";
+import type { BookingProfile } from "@/features/bookings/form";
 import { mapRoleToUserType } from "@/shared/lib/user-type-mapper";
 import { requireCurrentUser } from "@/shared/server/current-user";
 import { BookingWizardPage } from "@/widgets/booking-wizard";
