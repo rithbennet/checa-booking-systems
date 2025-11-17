@@ -16,7 +16,7 @@ import { AdminActionBar } from "./AdminActionBar";
 import { AdminBookingActionDialog } from "./AdminBookingActionDialog";
 import { AdminBookingsTable } from "./AdminBookingsTable";
 import { AdminBulkActionsToolbar } from "./AdminBulkActionsToolbar";
-import { AdminQuickViewDialog } from "./AdminQuickViewDialog";
+import { AdminQuickViewDialog } from "./admin-quick-view";
 import { AdminStatusChips } from "./AdminStatusChips";
 import { AdminTypeFilter } from "./AdminTypeFilter";
 

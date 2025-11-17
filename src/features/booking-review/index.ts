@@ -28,5 +28,5 @@ export { AdminBookingActionDialog } from "./ui/AdminBookingActionDialog";
 export { AdminBookingListPage } from "./ui/AdminBookingListPage.client";
 export { AdminBookingsTable } from "./ui/AdminBookingsTable";
 export { AdminBulkActionsToolbar } from "./ui/AdminBulkActionsToolbar";
-export { AdminQuickViewDialog } from "./ui/AdminQuickViewDialog";
+export { AdminQuickViewDialog } from "./ui/admin-quick-view";
 export { AdminStatusChips } from "./ui/AdminStatusChips";
