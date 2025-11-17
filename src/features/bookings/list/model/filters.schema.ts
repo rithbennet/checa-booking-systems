@@ -10,11 +10,13 @@ export const SortKeyEnum = z.enum([
   "amount:asc",
 ]);
 
+export const PageSizeEnum = z.enum(["10", "15", "25"]).transform(Number);
+
 export const TypeEnum = z.enum(["all", "analysis_only", "working_space"]);
 
 export const FiltersSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  pageSize: z.coerce.number().int().min(1).max(100).default(25),
+  pageSize: PageSizeEnum.default("25"),
   sort: SortKeyEnum.default("updated_at:desc"),
   q: z.string().optional().default(""),
   status: z.array(z.string()).optional().default([]),

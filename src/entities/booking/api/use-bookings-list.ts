@@ -93,6 +93,7 @@ function stableSerialize(obj: Record<string, unknown>): string {
 
 export const bookingsListKeys = {
   root: ["bookings-list"] as const,
+  countsRoot: ["bookings-counts"] as const,
   list: (p: UseBookingsListParams) =>
     [
       "bookings-list",
@@ -134,7 +135,10 @@ export function useBookingStatusCounts(
   return useQuery({
     queryKey: bookingsListKeys.counts(params),
     queryFn: () => fetchStatusCounts(params),
-    staleTime: 60_000,
+    staleTime: 5 * 60_000, // 5 minutes - longer cache
+    cacheTime: 10 * 60_000, // 10 minutes - keep in cache even when unused
     refetchOnWindowFocus: false,
+    refetchOnMount: false, // Don't refetch if data exists
+    keepPreviousData: true, // Prevent flash of empty state
   });
 }

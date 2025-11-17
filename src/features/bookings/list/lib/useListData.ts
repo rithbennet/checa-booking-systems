@@ -3,11 +3,11 @@
 import {
   useBookingStatusCounts,
   useBookingsList,
-} from "@/entities/booking/api/use-bookings-list";
+} from "@/entities/booking/api";
 import type { FiltersState } from "../model/filters.schema";
 
 export function useListData(params: FiltersState) {
-  const { data, isLoading, isError } = useBookingsList({
+  const { data, isLoading, isError, isFetching } = useBookingsList({
     page: params.page,
     pageSize: params.pageSize,
     sort: params.sort,
@@ -33,6 +33,7 @@ export function useListData(params: FiltersState) {
     total,
     isLoading,
     isError,
+    isFetching,
     counts: countsQuery.data,
     isCountsLoading: countsQuery.isLoading,
   };

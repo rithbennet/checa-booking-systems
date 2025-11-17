@@ -21,12 +21,10 @@ export function useListParams() {
   const debouncedQInput = useDebounce(qInput, 350);
 
   // Sync local input when URL changes externally (e.g., back/forward navigation)
+  // Only sync when URL param changes, not when local input changes
   useEffect(() => {
-    const currentUrlQ = parsed.q ?? "";
-    if (currentUrlQ !== qInput) {
-      setQInput(currentUrlQ);
-    }
-  }, [parsed.q, qInput]);
+    setQInput(parsed.q ?? "");
+  }, [parsed.q]);
 
   const setParams = useCallback(
     (next: Partial<FiltersState>, opts?: { preservePage?: boolean }) => {
@@ -50,7 +48,8 @@ export function useListParams() {
   useEffect(() => {
     const currentUrlQ = parsed.q ?? "";
     if (debouncedQInput !== currentUrlQ) {
-      setParams({ q: debouncedQInput }, { preservePage: false });
+      // Only set q if it's not empty, or explicitly set to undefined to clear it
+      setParams({ q: debouncedQInput || undefined }, { preservePage: false });
     }
   }, [debouncedQInput, parsed.q, setParams]);
 

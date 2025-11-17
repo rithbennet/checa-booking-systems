@@ -19,7 +19,7 @@ export default async function mainLayout({
 				</main>
 				<Footer />
 			</SidebarInset>
-			<Toaster />
+			<Toaster position="top-right" richColors />
 		</SidebarProvider>
 	);
 }
