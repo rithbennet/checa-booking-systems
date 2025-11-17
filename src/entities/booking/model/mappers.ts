@@ -87,6 +87,8 @@ export function mapToBookingDetailVM(
   return {
     ...listItem,
     projectDescription: booking.projectDescription ?? undefined,
+    preferredStartDate: booking.preferredStartDate?.toISOString(),
+    preferredEndDate: booking.preferredEndDate?.toISOString(),
     serviceItems: booking.serviceItems.map((item) => ({
       id: item.id,
       service: {

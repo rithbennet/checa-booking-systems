@@ -48,6 +48,8 @@ export type BookingListItemVM = {
 
 export type BookingDetailVM = BookingListItemVM & {
   projectDescription?: string;
+  preferredStartDate?: string;
+  preferredEndDate?: string;
   serviceItems: Array<{
     id: string;
     service: Pick<Service, "id" | "name" | "category">;
