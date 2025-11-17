@@ -121,7 +121,6 @@ export function BookingWizardPage({
 		hasSavedStep1,
 	} = bookingForm;
 
-
 	const steps = [
 		{
 			number: 1,
@@ -305,9 +304,9 @@ export function BookingWizardPage({
 												onClick={
 													currentStep === 1 && !hasSavedStep1
 														? async () => {
-															await discardDraftIfUnsaved();
-															window.location.href = "/bookings";
-														}
+																await discardDraftIfUnsaved();
+																window.location.href = "/bookings";
+															}
 														: handleDiscard
 												}
 											>

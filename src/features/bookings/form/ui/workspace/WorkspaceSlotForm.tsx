@@ -119,11 +119,11 @@ export function WorkspaceSlotForm({
 	const hasOverlap =
 		localStartDate && calculatedEndDate
 			? hasOverlappingBooking(
-				localStartDate,
-				calculatedEndDate,
-				allSlots,
-				excludeIndex,
-			)
+					localStartDate,
+					calculatedEndDate,
+					allSlots,
+					excludeIndex,
+				)
 			: false;
 
 	// Check if form is complete (minimum 1 month = 30 days duration, no overlaps)
@@ -439,7 +439,7 @@ export function WorkspaceSlotForm({
 								value={
 									"startDate" in serviceItem || "endDate" in serviceItem
 										? (serviceItem as Partial<WorkspaceBookingInput>)
-											.preferredTimeSlot || ""
+												.preferredTimeSlot || ""
 										: getWorkspaceTimeSlot((serviceItem.notes as string) || "")
 								}
 							>
@@ -495,7 +495,7 @@ export function WorkspaceSlotForm({
 								value={
 									"startDate" in serviceItem || "endDate" in serviceItem
 										? (serviceItem as Partial<WorkspaceBookingInput>).purpose ||
-										""
+											""
 										: getWorkspacePurpose((serviceItem.notes as string) || "")
 								}
 							/>
@@ -583,9 +583,9 @@ export function WorkspaceSlotForm({
 								otherEquipmentRequests={
 									("otherEquipmentRequests" in serviceItem
 										? (serviceItem as Partial<ServiceItem>)
-											.otherEquipmentRequests
+												.otherEquipmentRequests
 										: (serviceItem as Partial<WorkspaceBookingInput>)
-											.specialEquipment) || []
+												.specialEquipment) || []
 								}
 								selectedEquipmentIds={
 									((serviceItem as Partial<ServiceItem>)
@@ -628,10 +628,10 @@ export function WorkspaceSlotForm({
 								value={
 									"startDate" in serviceItem || "endDate" in serviceItem
 										? (serviceItem as Partial<WorkspaceBookingInput>).notes ||
-										""
+											""
 										: getWorkspaceAdditionalNotes(
-											(serviceItem.notes as string) || "",
-										)
+												(serviceItem.notes as string) || "",
+											)
 								}
 							/>
 						</div>

@@ -92,7 +92,6 @@ export function ProjectInfoStep({ form }: ProjectInfoStepProps) {
 								<Calendar
 									disabled={startDisabled}
 									mode="single"
-
 									onSelect={(date) => {
 										// date may be null when clearing via calendar; keep optional
 										const next = date ?? undefined;

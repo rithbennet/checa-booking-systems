@@ -24,7 +24,6 @@ export default function UploadInvoice() {
 	const [error, setError] = useState("");
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
-
 	const handleFile = (file: File) => {
 		if (file.type !== "application/pdf") {
 			setError("Only PDF files are accepted.");
@@ -96,7 +95,6 @@ export default function UploadInvoice() {
 							className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-white p-8 transition-colors ${error ? "border-red-500" : "border-gray-300 hover:border-indigo-500"}`}
 							onClick={() => fileInputRef.current?.click()}
 							onDragOver={(e) => e.preventDefault()}
-
 							type="button"
 						>
 							<UploadCloud className="mb-4 h-12 w-12 text-indigo-500" />

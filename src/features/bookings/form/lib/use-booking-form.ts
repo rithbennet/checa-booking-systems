@@ -34,7 +34,7 @@ import {
   calculateWorkspaceEndDate,
   doDateRangesOverlap,
   normalizeDate as normalizeWorkspaceDate,
-} from "@/features/booking-form/lib/workspace-utils";
+} from "@/features/bookings/form/lib/workspace-utils";
 import type { BookingProfile } from "../model/types";
 import { useBookingWizardStore } from "../model/use-booking-wizard-store";
 
@@ -363,8 +363,6 @@ export function useBookingForm({
           if (err?.sampleType?.message)
             msgs.push(String(err.sampleType.message));
           if (err?.quantity?.message) msgs.push(String(err.quantity.message));
-          if (err?.durationMonths?.message)
-            msgs.push(String(err.durationMonths.message));
           if (msgs.length > 0) {
             const sId = field.serviceId;
             const sName = servicesMap.get(sId)?.name ?? "Service";

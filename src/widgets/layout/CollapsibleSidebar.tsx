@@ -22,6 +22,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { SignOutModal } from "@/features/authentication/ui/SignOutModal";
 import { cn } from "@/shared/lib/utils";
+import type { CurrentUser } from "@/shared/server/current-user";
 import {
 	Sidebar,
 	SidebarContent,
@@ -36,14 +37,6 @@ import {
 	useSidebar,
 } from "@/shared/ui/shadcn/sidebar";
 
-type Session = {
-	user: {
-		name?: string | null;
-		email?: string | null;
-		role?: string | null;
-	};
-};
-
 interface NavItem {
 	icon: LucideIcon;
 	label: string;
@@ -54,13 +47,13 @@ interface NavItem {
 export default function CollapsibleSidebar({
 	session,
 }: {
-	session: Session | null;
+	session: CurrentUser | null;
 }) {
 	const pathname = usePathname();
 	const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
 	const { toggleSidebar } = useSidebar();
 
-	const role = session?.user?.role;
+	const role = session?.role;
 	const isAdmin = role === "lab_administrator";
 
 	const isActive = (href: string) => pathname?.startsWith(href);
@@ -198,7 +191,7 @@ export default function CollapsibleSidebar({
 					</SidebarMenuItem>
 				</SidebarMenu>
 
-				{session?.user && (
+				{session && (
 					<div className="border-t px-2 py-2">
 						<div className="flex items-center gap-2 rounded-md px-2 py-1.5">
 							<div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
@@ -206,10 +199,10 @@ export default function CollapsibleSidebar({
 							</div>
 							<div className="flex min-w-0 flex-1 flex-col">
 								<p className="truncate font-medium text-gray-900 text-sm">
-									{session.user?.name ?? session.user?.email}
+									{session.name ?? session.email}
 								</p>
 								<p className="truncate text-gray-600 text-xs">
-									{session.user?.role
+									{session.role
 										?.replace(/_/g, " ")
 										.replace(/\b\w/g, (c: string) => c.toUpperCase())}
 								</p>

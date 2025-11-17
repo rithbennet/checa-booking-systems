@@ -50,7 +50,6 @@ export default async function EditBookingPage({ params }: PageProps) {
 		getAvailableEquipment(),
 	]);
 
-
 	// `params` may be a promise in Next.js route handlers — await before accessing
 	const resolvedParams = await params;
 	if (!resolvedParams || !resolvedParams.id) {

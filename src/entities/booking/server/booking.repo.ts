@@ -1,6 +1,6 @@
 import { Decimal } from "@prisma/client/runtime/library";
 import { db } from "@/shared/server/db";
-import { Prisma } from "../../../../generated/prisma";
+import { type $Enums, Prisma } from "../../../../generated/prisma";
 
 /**
  * Repository for booking-related database operations
@@ -138,7 +138,6 @@ export async function upsertServiceItems(params: {
     id?: string;
     serviceId: string;
     quantity: number;
-    durationMonths: number;
     unitPrice: Decimal;
     totalPrice: Decimal;
     sampleName?: string;
@@ -676,4 +675,235 @@ export async function updateUserStatus(
     where: { id: userId },
     data: { status },
   });
+}
+
+/* -------------------------------------------------------------------------- */
+/* User bookings listing with pagination and filters                          */
+/* -------------------------------------------------------------------------- */
+
+export type ListUserBookingsParams = {
+  userId: string;
+  page: number;
+  pageSize: number;
+  q?: string;
+  sort?:
+    | "updated_at:desc"
+    | "updated_at:asc"
+    | "created_at:desc"
+    | "created_at:asc"
+    | "status:asc"
+    | "amount:desc"
+    | "amount:asc";
+  status?: string[];
+  createdFrom?: Date;
+  createdTo?: Date;
+  type?: "all" | "analysis_only" | "working_space";
+};
+
+export async function listUserBookings(params: ListUserBookingsParams) {
+  const {
+    userId,
+    page,
+    pageSize,
+    q,
+    sort = "updated_at:desc",
+    status,
+    createdFrom,
+    createdTo,
+    type = "all",
+  } = params;
+
+  const where: Prisma.BookingRequestWhereInput = {
+    userId,
+    ...(q
+      ? {
+          OR: [
+            { referenceNumber: { contains: q, mode: "insensitive" } },
+            { projectDescription: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+    ...(status && status.length > 0
+      ? { status: { in: status as unknown as $Enums.booking_status_enum[] } }
+      : {}),
+    ...(createdFrom || createdTo
+      ? {
+          createdAt: {
+            ...(createdFrom ? { gte: createdFrom } : {}),
+            ...(createdTo ? { lte: createdTo } : {}),
+          },
+        }
+      : {}),
+    ...(type === "working_space"
+      ? {
+          OR: [
+            { workspaceBookings: { some: {} } },
+            // Fallback: if workspace bookings weren't created yet, detect via service category
+            {
+              serviceItems: {
+                some: {
+                  service: { category: "working_space" },
+                },
+              },
+            },
+          ],
+        }
+      : {}),
+    ...(type === "analysis_only"
+      ? {
+          AND: [
+            // Must have at least one analysis service item
+            { serviceItems: { some: {} } },
+            // And no workspace bookings
+            { workspaceBookings: { none: {} } },
+          ],
+        }
+      : {}),
+  };
+
+  const orderBy: Prisma.BookingRequestOrderByWithRelationInput =
+    sort === "updated_at:asc"
+      ? { updatedAt: "asc" }
+      : sort === "updated_at:desc"
+      ? { updatedAt: "desc" }
+      : sort === "created_at:asc"
+      ? { createdAt: "asc" }
+      : sort === "created_at:desc"
+      ? { createdAt: "desc" }
+      : sort === "status:asc"
+      ? { status: "asc" }
+      : sort === "amount:asc"
+      ? { totalAmount: "asc" }
+      : { totalAmount: "desc" };
+
+  const [rows, total] = await Promise.all([
+    db.bookingRequest.findMany({
+      where,
+      orderBy,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      select: {
+        id: true,
+        referenceNumber: true,
+        projectDescription: true,
+        status: true,
+        totalAmount: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: { workspaceBookings: true },
+        },
+      },
+    }),
+    db.bookingRequest.count({ where }),
+  ]);
+
+  const items = rows.map((r) => ({
+    id: r.id,
+    reference: r.referenceNumber,
+    projectTitle: r.projectDescription ?? "",
+    status: r.status,
+    totalAmount: (r.totalAmount as unknown as Decimal).toNumber?.()
+      ? (r.totalAmount as unknown as Decimal).toNumber()
+      : // in case Prisma returns number already
+        (r.totalAmount as unknown as number),
+    currency: "MYR",
+    createdAt: r.createdAt,
+    updatedAt: r.updatedAt,
+    flags: {
+      hasWorkingSpace: r._count.workspaceBookings > 0,
+      hasUnread: false,
+      hasOverdueInvoice: false,
+    },
+    nextRequiredAction:
+      r.status === "draft"
+        ? "complete_draft"
+        : r.status === "pending_user_verification"
+        ? "complete_verification"
+        : undefined,
+  }));
+
+  return { items, total };
+}
+
+export async function countUserBookingsByStatus(params: {
+  userId: string;
+  status?: string[];
+  createdFrom?: Date;
+  createdTo?: Date;
+  type?: "all" | "analysis_only" | "working_space";
+}) {
+  const { userId, status, createdFrom, createdTo, type = "all" } = params;
+
+  const where: Prisma.BookingRequestWhereInput = {
+    userId,
+    ...(status && status.length > 0
+      ? { status: { in: status as unknown as $Enums.booking_status_enum[] } }
+      : {}),
+    ...(createdFrom || createdTo
+      ? {
+          createdAt: {
+            ...(createdFrom ? { gte: createdFrom } : {}),
+            ...(createdTo ? { lte: createdTo } : {}),
+          },
+        }
+      : {}),
+    ...(type === "working_space"
+      ? {
+          OR: [
+            { workspaceBookings: { some: {} } },
+            {
+              serviceItems: {
+                some: { service: { category: "working_space" } },
+              },
+            },
+          ],
+        }
+      : {}),
+    ...(type === "analysis_only"
+      ? {
+          AND: [
+            { serviceItems: { some: {} } },
+            { workspaceBookings: { none: {} } },
+          ],
+        }
+      : {}),
+  };
+
+  // Single grouped query; no OFFSET/LIMIT applied
+  const grouped = await db.bookingRequest.groupBy({
+    by: ["status"],
+    where,
+    _count: { _all: true },
+  });
+
+  const initial: Record<$Enums.booking_status_enum, number> = {
+    draft: 0,
+    pending_user_verification: 0,
+    pending_approval: 0,
+    approved: 0,
+    rejected: 0,
+    in_progress: 0,
+    completed: 0,
+    cancelled: 0,
+  };
+
+  for (const row of grouped) {
+    const key = row.status as keyof typeof initial;
+    initial[key] = row._count._all;
+  }
+
+  const all = Object.values(initial).reduce((a, b) => a + b, 0);
+
+  return {
+    all,
+    draft: initial.draft,
+    pending_user_verification: initial.pending_user_verification,
+    pending_approval: initial.pending_approval,
+    approved: initial.approved,
+    rejected: initial.rejected,
+    in_progress: initial.in_progress,
+    completed: initial.completed,
+    cancelled: initial.cancelled,
+  };
 }

@@ -521,10 +521,7 @@ export function ServiceItemForm({
 									onCheckedChange={(checked) => {
 										if (checked) {
 											onUpdate({
-												addOnCatalogIds: [
-													...selectedAddOnIds,
-													addon.id,
-												],
+												addOnCatalogIds: [...selectedAddOnIds, addon.id],
 											});
 										} else {
 											onUpdate({

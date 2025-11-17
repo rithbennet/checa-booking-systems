@@ -57,7 +57,10 @@ export function ServicesStep({
 	availableEquipment,
 }: ServicesStepProps) {
 	// Workspace bookings are passed through directly to the workspace group form
-	const workspaceItemsForGroup = workspaceFields.map((item, index) => ({ index, item }));
+	const workspaceItemsForGroup = workspaceFields.map((item, index) => ({
+		index,
+		item,
+	}));
 
 	return (
 		<Card>

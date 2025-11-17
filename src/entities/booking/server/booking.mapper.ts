@@ -18,7 +18,6 @@ export interface NormalizedServiceItem {
   id?: string; // Present for updates, absent for creates
   serviceId: string;
   quantity: number;
-  durationMonths: number;
   unitPrice: Decimal;
   totalPrice: Decimal;
   sampleName?: string;
@@ -110,19 +109,11 @@ export function mapDtoToNormalized(
       }
 
       const quantity = item.quantity ?? 0;
-      const durationMonths = item.durationMonths ?? 0;
 
       // Calculate base price
-      // For working_space: durationMonths * unitPrice
       // For analysis: quantity * unitPrice
-      let basePrice: Decimal;
-      if (durationMonths > 0) {
-        // Working space pricing
-        basePrice = pricing.price.mul(durationMonths);
-      } else {
-        // Analysis/testing pricing
-        basePrice = pricing.price.mul(quantity);
-      }
+
+      const basePrice = pricing.price.mul(quantity);
 
       // Add add-ons to the price
       let addOnsTotal = new Decimal(0);
@@ -141,7 +132,6 @@ export function mapDtoToNormalized(
         id: (item as { id?: string }).id,
         serviceId: item.serviceId,
         quantity,
-        durationMonths,
         unitPrice: pricing.price,
         totalPrice,
         sampleName: item.sampleName,

@@ -49,34 +49,18 @@ export function ServiceGroupForm({
 	availableEquipment,
 	isEquipmentLoading = false,
 }: ServiceGroupFormProps) {
-	const isWorkingSpace = service.category === "working_space";
-	const isAnalysisService = !isWorkingSpace;
+
 
 	// Check if all samples/slots are complete
 	// No memoization needed - small dataset, simple checks, component re-renders when serviceItems changes
 	const allComplete = serviceItems.every(({ item }) => {
-		if (isAnalysisService) {
-			return (
-				!!item.sampleName &&
-				item.sampleName.trim() !== "" &&
-				!!item.sampleType &&
-				!!item.quantity &&
-				item.quantity > 0
-			);
-		} else {
-			// Workspace slots: must have start and end dates with minimum 30 days duration
-			const notes = (item.notes as string) || "";
-			const startMatch = notes.match(/START_DATE:([^|]+)/);
-			const endMatch = notes.match(/END_DATE:([^|]+)/);
-			if (startMatch && endMatch && startMatch[1] && endMatch[1]) {
-				const start = new Date(startMatch[1]);
-				const end = new Date(endMatch[1]);
-				const days = differenceInDays(end, start) + 1;
-				return days >= 30 && end >= start;
-			}
-			// Backward compatibility
-			return !!item.expectedCompletionDate && (item.durationMonths || 0) >= 1;
-		}
+		return (
+			!!item.sampleName &&
+			item.sampleName.trim() !== "" &&
+			!!item.sampleType &&
+			!!item.quantity &&
+			item.quantity > 0
+		);
 	});
 
 	const handleAddSample = () => {
@@ -95,17 +79,12 @@ export function ServiceGroupForm({
 						</CardTitle>
 						<CardDescription className="mt-1 text-gray-600 text-sm">
 							{service.code}
-							{isAnalysisService ? (
-								<span className="ml-2">
-									• {serviceItems.length}{" "}
-									{serviceItems.length === 1 ? "sample" : "samples"}
-								</span>
-							) : (
-								<span className="ml-2">
-									• {serviceItems.length}{" "}
-									{serviceItems.length === 1 ? "month slot" : "month slots"}
-								</span>
-							)}
+
+							<span className="ml-2">
+								• {serviceItems.length}{" "}
+								{serviceItems.length === 1 ? "sample" : "samples"}
+							</span>
+
 						</CardDescription>
 					</div>
 					<div className="flex items-center gap-2">
@@ -132,125 +111,93 @@ export function ServiceGroupForm({
 			</CardHeader>
 			<CardContent className="p-0">
 				<div className="px-6 pb-6">
-					{isAnalysisService ? (
-						<div className="space-y-4">
-							<AccordionNoAutoClose className="w-full" type="multiple">
-								{serviceItems.map(({ index, item }) => {
-									const isComplete =
-										!!item.sampleName &&
-										item.sampleName.trim() !== "" &&
-										!!item.sampleType &&
-										!!item.quantity &&
-										item.quantity > 0;
 
-									const sampleName =
-										(item.sampleName as string)?.trim() || "New Sample";
+					<div className="space-y-4">
+						<AccordionNoAutoClose className="w-full" type="multiple">
+							{serviceItems.map(({ index, item }) => {
+								const isComplete =
+									!!item.sampleName &&
+									item.sampleName.trim() !== "" &&
+									!!item.sampleType &&
+									!!item.quantity &&
+									item.quantity > 0;
 
-									return (
-										<AccordionItemNoAutoClose
-											className="border-0"
-											key={`sample-${index}`}
-											value={`sample-${index}`}
-										>
-											<div className="flex items-center justify-between px-4 py-3">
-												{/* Accordion clickable area */}
-												<AccordionTriggerNoAutoClose className="flex flex-1 items-center justify-between hover:no-underline focus:outline-none">
-													<div className="flex items-center gap-3">
-														{isComplete ? (
-															<CheckCircle2 className="h-5 w-5 text-green-600" />
-														) : (
-															<Circle className="h-5 w-5 text-gray-400" />
-														)}
-														<span className="font-medium text-gray-900">
-															{sampleName}
-														</span>
-													</div>
+								const sampleName =
+									(item.sampleName as string)?.trim() || "New Sample";
 
-													<Badge
-														className={
-															isComplete
-																? "bg-green-100 text-green-800"
-																: "bg-gray-100 text-gray-600"
-														}
-														variant={isComplete ? "default" : "secondary"}
-													>
-														{isComplete ? "Complete" : "Incomplete"}
-													</Badge>
-												</AccordionTriggerNoAutoClose>
+								return (
+									<AccordionItemNoAutoClose
+										className="border-0"
+										key={`sample-${index}`}
+										value={`sample-${index}`}
+									>
+										<div className="flex items-center justify-between px-4 py-3">
+											{/* Accordion clickable area */}
+											<AccordionTriggerNoAutoClose className="flex flex-1 items-center justify-between hover:no-underline focus:outline-none">
+												<div className="flex items-center gap-3">
+													{isComplete ? (
+														<CheckCircle2 className="h-5 w-5 text-green-600" />
+													) : (
+														<Circle className="h-5 w-5 text-gray-400" />
+													)}
+													<span className="font-medium text-gray-900">
+														{sampleName}
+													</span>
+												</div>
 
-												{/* Remove button (outside trigger but inline) */}
-												{serviceItems.length > 1 && (
-													<Button
-														className="ml-2 h-8 w-8 shrink-0 rounded-md text-gray-500 hover:bg-red-50 hover:text-red-600"
-														onClick={() => onRemove(index)}
-														size="icon"
-														title="Remove sample"
-														variant="ghost"
-													>
-														<X className="h-4 w-4" />
-													</Button>
-												)}
-											</div>
-											<AccordionContentNoAutoClose className="px-4 pb-4">
-												<ServiceItemForm
-													availableEquipment={availableEquipment}
-													index={index}
-													isEquipmentLoading={isEquipmentLoading}
-													onUpdate={(data) => onUpdate(index, data)}
-													service={service}
-													serviceItem={item}
-												/>
-											</AccordionContentNoAutoClose>
-										</AccordionItemNoAutoClose>
-									);
-								})}
-							</AccordionNoAutoClose>
+												<Badge
+													className={
+														isComplete
+															? "bg-green-100 text-green-800"
+															: "bg-gray-100 text-gray-600"
+													}
+													variant={isComplete ? "default" : "secondary"}
+												>
+													{isComplete ? "Complete" : "Incomplete"}
+												</Badge>
+											</AccordionTriggerNoAutoClose>
 
-							{onAddSample && (
-								<Button
-									className="w-full border-2 border-gray-300 border-dashed py-4 text-gray-600 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600"
-									onClick={handleAddSample}
-									type="button"
-									variant="outline"
-								>
-									<Plus className="mr-2 h-4 w-4" />
-									Add Another Sample
-								</Button>
-							)}
-						</div>
-					) : (
-						<div className="space-y-4">
-							<AccordionNoAutoClose className="w-full" type="multiple">
-								{serviceItems.map(({ index, item }) => (
-									<WorkspaceSlotForm
-										allSlots={serviceItems.map(({ item }) => item)}
-										availableEquipment={availableEquipment}
-										excludeIndex={index}
-										index={index}
-										isEquipmentLoading={isEquipmentLoading}
-										key={index}
-										onRemove={onRemove}
-										onUpdate={(data) => onUpdate(index, data)}
-										service={service}
-										serviceItem={item}
-										totalSlots={serviceItems.length}
-									/>
-								))}
-							</AccordionNoAutoClose>
+											{/* Remove button (outside trigger but inline) */}
+											{serviceItems.length > 1 && (
+												<Button
+													className="ml-2 h-8 w-8 shrink-0 rounded-md text-gray-500 hover:bg-red-50 hover:text-red-600"
+													onClick={() => onRemove(index)}
+													size="icon"
+													title="Remove sample"
+													variant="ghost"
+												>
+													<X className="h-4 w-4" />
+												</Button>
+											)}
+										</div>
+										<AccordionContentNoAutoClose className="px-4 pb-4">
+											<ServiceItemForm
+												availableEquipment={availableEquipment}
+												index={index}
+												isEquipmentLoading={isEquipmentLoading}
+												onUpdate={(data) => onUpdate(index, data)}
+												service={service}
+												serviceItem={item}
+											/>
+										</AccordionContentNoAutoClose>
+									</AccordionItemNoAutoClose>
+								);
+							})}
+						</AccordionNoAutoClose>
 
-							{onAddSample && (
-								<Button
-									className="w-full border-2 border-gray-300 border-dashed py-4 text-gray-600 transition-colors hover:border-green-400 hover:bg-green-50 hover:text-green-600"
-									onClick={handleAddSample}
-									type="button"
-									variant="outline"
-								>
-									<Plus className="mr-2 h-4 w-4" />
-									Add Another Month Slot
-								</Button>
-							)}
-						</div>
-					)}
+						{onAddSample && (
+							<Button
+								className="w-full border-2 border-gray-300 border-dashed py-4 text-gray-600 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600"
+								onClick={handleAddSample}
+								type="button"
+								variant="outline"
+							>
+								<Plus className="mr-2 h-4 w-4" />
+								Add Another Sample
+							</Button>
+						)}
+					</div>
+
 				</div>
 			</CardContent>
 		</Card>

@@ -26,12 +26,13 @@ export function BookingProgress({
 									!!onStepClick;
 								const circle = (
 									<div
-										className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${step.status === "completed"
-											? "border-green-500 bg-green-500 text-white"
-											: step.status === "current"
-												? "border-blue-500 bg-blue-500 text-white"
-												: "border-gray-300 bg-white text-gray-500"
-											}`}
+										className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
+											step.status === "completed"
+												? "border-green-500 bg-green-500 text-white"
+												: step.status === "current"
+													? "border-blue-500 bg-blue-500 text-white"
+													: "border-gray-300 bg-white text-gray-500"
+										}`}
 									>
 										{step.status === "completed" ? "✓" : step.number}
 									</div>

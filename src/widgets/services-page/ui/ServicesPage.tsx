@@ -7,10 +7,7 @@ import type {
 	ServiceFilters as ServiceFiltersType,
 	UserType,
 } from "@/entities/service";
-import {
-	ServiceCard,
-	ServiceFiltersComponent,
-} from "@/features/browse-services";
+import { ServiceCard, ServiceFiltersComponent } from "@/features/services";
 import RouterButton from "@/shared/ui/router-button";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
@@ -26,7 +23,6 @@ export function ServicesPage({
 	userType = "mjiit_member",
 	initialServices = [],
 }: ServicesPageProps) {
-
 	const [filters, setFilters] = useState<ServiceFiltersType>({
 		category: "all",
 		availability: "all",

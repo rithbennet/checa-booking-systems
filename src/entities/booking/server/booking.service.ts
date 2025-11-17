@@ -285,8 +285,7 @@ export async function submit(params: {
     serviceItems: sampleItems.map((item) => ({
       serviceId: item.serviceId,
       quantity: item.quantity,
-      // Sample items do not have a stored duration in the DB; set to 0
-      durationMonths: 0,
+      // Sample items do not have a stored duration in the DB; set to
       sampleName: item.sampleName ?? undefined,
       sampleDetails: item.sampleDetails ?? undefined,
       sampleType: normalizeSampleType(item.sampleType),

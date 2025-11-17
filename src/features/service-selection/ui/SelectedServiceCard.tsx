@@ -22,7 +22,7 @@ export function SelectedServiceCard({
 }: SelectedServiceCardProps) {
 	const totalPrice = service.selectedPricing
 		? service.selectedPricing.price *
-			(service.quantity || service.durationMonths || 1)
+		(service.quantity || service.durationMonths || 1)
 		: 0;
 
 	return (
@@ -53,13 +53,6 @@ export function SelectedServiceCard({
 						{service.quantity && (
 							<div className="mt-2">
 								<Badge variant="outline">Quantity: {service.quantity}</Badge>
-							</div>
-						)}
-						{service.durationMonths && (
-							<div className="mt-2">
-								<Badge variant="outline">
-									Duration: {service.durationMonths} month(s)
-								</Badge>
 							</div>
 						)}
 						{totalPrice > 0 && (

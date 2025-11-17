@@ -4,7 +4,7 @@ import { Loader2, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { clearAllUserDrafts } from "@/entities/booking/lib/draftService";
-import { useBookingWizardStore } from "@/features/booking-form/model/use-booking-wizard-store";
+import { useBookingWizardStore } from "@/features/bookings/form/model/use-booking-wizard-store";
 import { authClient } from "@/shared/server/better-auth/client";
 import {
 	Dialog,

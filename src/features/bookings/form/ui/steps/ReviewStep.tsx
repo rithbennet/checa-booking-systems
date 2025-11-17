@@ -105,10 +105,13 @@ export function ReviewStep({
 					const base = pricing.price * qty;
 					// Add-ons (added once per item, aligned with server compute)
 					const addOnMap = addOnPriceMapByService.get(service.id);
-					const addOnsSum = (item.item.addOnCatalogIds || []).reduce((acc, id) => {
-						const amt = addOnMap?.get(id) ?? 0;
-						return acc + amt;
-					}, 0);
+					const addOnsSum = (item.item.addOnCatalogIds || []).reduce(
+						(acc, id) => {
+							const amt = addOnMap?.get(id) ?? 0;
+							return acc + amt;
+						},
+						0,
+					);
 					totalAmount += base + addOnsSum;
 				});
 			}
@@ -117,7 +120,7 @@ export function ReviewStep({
 
 	// Add workspace bookings totals (based on monthly rate)
 	const workingSpaceService = services.find(
-		(s) => s.category === "working_space"
+		(s) => s.category === "working_space",
 	);
 	const wsPricing = workingSpaceService
 		? getServicePrice(workingSpaceService, userType)
@@ -126,21 +129,31 @@ export function ReviewStep({
 		CreateBookingInput["workspaceBookings"]
 	>;
 	if (wsPricing) {
-		const wsAddOnMap = workingSpaceService ? addOnPriceMapByService.get(workingSpaceService.id) : undefined;
-		wsBookings.forEach((ws: NonNullable<CreateBookingInput["workspaceBookings"]>[number]) => {
-			if (ws.startDate && ws.endDate) {
-				const start = new Date(ws.startDate);
-				const end = new Date(ws.endDate);
-				const days = Math.max(
-					0,
-					Math.ceil((end.getTime() - start.getTime() + 24 * 60 * 60 * 1000) / (24 * 60 * 60 * 1000))
-				);
-				const months = Math.max(1, Math.ceil(days / 30));
-				const base = wsPricing.price * months;
-				const addOnsSum = (ws.addOnCatalogIds || []).reduce((acc: number, id: string) => acc + (wsAddOnMap?.get(id) ?? 0), 0);
-				totalAmount += base + addOnsSum;
-			}
-		});
+		const wsAddOnMap = workingSpaceService
+			? addOnPriceMapByService.get(workingSpaceService.id)
+			: undefined;
+		wsBookings.forEach(
+			(ws: NonNullable<CreateBookingInput["workspaceBookings"]>[number]) => {
+				if (ws.startDate && ws.endDate) {
+					const start = new Date(ws.startDate);
+					const end = new Date(ws.endDate);
+					const days = Math.max(
+						0,
+						Math.ceil(
+							(end.getTime() - start.getTime() + 24 * 60 * 60 * 1000) /
+								(24 * 60 * 60 * 1000),
+						),
+					);
+					const months = Math.max(1, Math.ceil(days / 30));
+					const base = wsPricing.price * months;
+					const addOnsSum = (ws.addOnCatalogIds || []).reduce(
+						(acc: number, id: string) => acc + (wsAddOnMap?.get(id) ?? 0),
+						0,
+					);
+					totalAmount += base + addOnsSum;
+				}
+			},
+		);
 	}
 
 	return (
@@ -216,45 +229,78 @@ export function ReviewStep({
 												const baseLine = qty * pricing.price;
 												const addOnMap = addOnPriceMapByService.get(service.id);
 												const selectedAddOnIds = item.addOnCatalogIds || [];
-												const addOnsSum = selectedAddOnIds.reduce((acc: number, id: string) => acc + (addOnMap?.get(id) ?? 0), 0);
+												const addOnsSum = selectedAddOnIds.reduce(
+													(acc: number, id: string) =>
+														acc + (addOnMap?.get(id) ?? 0),
+													0,
+												);
 												const addOnNames = selectedAddOnIds
-													.map((id) => (service.addOns || []).find((a) => a.id === id)?.name)
+													.map(
+														(id) =>
+															(service.addOns || []).find((a) => a.id === id)
+																?.name,
+													)
 													.filter(Boolean) as string[];
 												const lineTotal = baseLine + addOnsSum;
 												return (
-													<div className="flex items-center justify-between px-3 py-2 text-sm" key={`${serviceId}-${item.sampleName ?? "sample"}-${idx}`}>
+													<div
+														className="flex items-center justify-between px-3 py-2 text-sm"
+														key={`${serviceId}-${item.sampleName ?? "sample"}-${idx}`}
+													>
 														<div className="min-w-0">
 															<p className="truncate font-medium text-gray-900">
 																{item.sampleName?.trim() || `Sample ${idx + 1}`}
 															</p>
 															{item.notes && (
-																<p className="truncate text-gray-500 text-xs">{item.notes}</p>
+																<p className="truncate text-gray-500 text-xs">
+																	{item.notes}
+																</p>
 															)}
 															{addOnsSum > 0 && (
 																<p className="truncate text-gray-600 text-xs">
-																	Add-ons: {addOnNames.join(", ")} • RM {addOnsSum.toFixed(2)}
+																	Add-ons: {addOnNames.join(", ")} • RM{" "}
+																	{addOnsSum.toFixed(2)}
 																</p>
 															)}
 														</div>
 														<div className="ml-3 shrink-0 text-right text-gray-700">
 															<div>Qty: {qty}</div>
-															<div className="font-semibold">RM {lineTotal.toFixed(2)}</div>
+															<div className="font-semibold">
+																RM {lineTotal.toFixed(2)}
+															</div>
 														</div>
 													</div>
 												);
 											})}
 											{(() => {
-												const baseSubtotal = items.reduce((acc, { item }) => acc + (item.quantity || 1) * pricing.price, 0);
+												const baseSubtotal = items.reduce(
+													(acc, { item }) =>
+														acc + (item.quantity || 1) * pricing.price,
+													0,
+												);
 												const addOnsSubtotal = items.reduce((acc, { item }) => {
-													const addOnMap = addOnPriceMapByService.get(service.id);
-													return acc + (item.addOnCatalogIds || []).reduce((a: number, id: string) => a + (addOnMap?.get(id) ?? 0), 0);
+													const addOnMap = addOnPriceMapByService.get(
+														service.id,
+													);
+													return (
+														acc +
+														(item.addOnCatalogIds || []).reduce(
+															(a: number, id: string) =>
+																a + (addOnMap?.get(id) ?? 0),
+															0,
+														)
+													);
 												}, 0);
 												const subtotal = baseSubtotal + addOnsSubtotal;
 												return (
 													<div className="bg-gray-50 px-3 py-2 text-sm">
 														<div className="flex items-center justify-between">
-															<span className="font-medium text-gray-900">Subtotal</span>
-															<span className="font-semibold text-gray-900">RM {subtotal.toFixed(2)}</span>
+															<span className="font-medium text-gray-900">
+																Subtotal
+															</span>
+															<span className="font-semibold text-gray-900">
+																RM {subtotal.toFixed(2)}
+															</span>
 														</div>
 														{addOnsSubtotal > 0 && (
 															<div className="mt-1 flex items-center justify-between text-gray-600 text-xs">
@@ -284,8 +330,10 @@ export function ReviewStep({
 						<div className="space-y-3">
 							{wsBookings.map(
 								(
-									ws: NonNullable<CreateBookingInput["workspaceBookings"]>[number],
-									idx: number
+									ws: NonNullable<
+										CreateBookingInput["workspaceBookings"]
+									>[number],
+									idx: number,
 								) => {
 									const start = ws.startDate ? new Date(ws.startDate) : null;
 									const end = ws.endDate ? new Date(ws.endDate) : null;
@@ -294,9 +342,11 @@ export function ReviewStep({
 										const days = Math.max(
 											0,
 											Math.ceil(
-												(end.getTime() - start.getTime() + 24 * 60 * 60 * 1000) /
-												(24 * 60 * 60 * 1000)
-											)
+												(end.getTime() -
+													start.getTime() +
+													24 * 60 * 60 * 1000) /
+													(24 * 60 * 60 * 1000),
+											),
 										);
 										months = Math.max(1, Math.ceil(days / 30));
 									}
@@ -308,7 +358,8 @@ export function ReviewStep({
 											<div className="flex items-center justify-between">
 												<div>
 													<p className="font-medium text-gray-900">
-														{start ? start.toDateString() : "-"} — {end ? end.toDateString() : "-"}
+														{start ? start.toDateString() : "-"} —{" "}
+														{end ? end.toDateString() : "-"}
 													</p>
 													{ws.preferredTimeSlot && (
 														<p className="text-gray-500 text-sm">
@@ -319,18 +370,34 @@ export function ReviewStep({
 												{wsPricing && months !== null && (
 													<div className="text-right">
 														<Badge variant="secondary">
-															{months} {months === 1 ? "month" : "months"} × RM {wsPricing.price.toFixed(2)}
+															{months} {months === 1 ? "month" : "months"} × RM{" "}
+															{wsPricing.price.toFixed(2)}
 														</Badge>
 														{(() => {
-															const wsAddOnMap = workingSpaceService ? addOnPriceMapByService.get(workingSpaceService.id) : undefined;
-															const addOnsSum = (ws.addOnCatalogIds || []).reduce((acc: number, id: string) => acc + (wsAddOnMap?.get(id) ?? 0), 0);
-															const total = months * wsPricing.price + addOnsSum;
+															const wsAddOnMap = workingSpaceService
+																? addOnPriceMapByService.get(
+																		workingSpaceService.id,
+																	)
+																: undefined;
+															const addOnsSum = (
+																ws.addOnCatalogIds || []
+															).reduce(
+																(acc: number, id: string) =>
+																	acc + (wsAddOnMap?.get(id) ?? 0),
+																0,
+															);
+															const total =
+																months * wsPricing.price + addOnsSum;
 															return (
 																<div className="mt-1 text-right text-sm">
 																	{addOnsSum > 0 && (
-																		<div className="text-gray-600">Add-ons: RM {addOnsSum.toFixed(2)}</div>
+																		<div className="text-gray-600">
+																			Add-ons: RM {addOnsSum.toFixed(2)}
+																		</div>
 																	)}
-																	<div className="font-semibold text-gray-900">RM {total.toFixed(2)}</div>
+																	<div className="font-semibold text-gray-900">
+																		RM {total.toFixed(2)}
+																	</div>
 																</div>
 															);
 														})()}
@@ -339,7 +406,7 @@ export function ReviewStep({
 											</div>
 										</div>
 									);
-								}
+								},
 							)}
 						</div>
 					)}

@@ -56,7 +56,6 @@ export const bookingServiceItemSchema = z
   .object({
     serviceId: z.string().uuid(),
     quantity: z.number().int().nonnegative(), // Allow 0 for working_space
-    durationMonths: z.number().int().nonnegative(),
     sampleName: z.string().max(200).optional(),
     sampleDetails: z.string().optional(),
     sampleType: sampleTypeEnum.optional(),
@@ -91,15 +90,7 @@ export const bookingServiceItemSchema = z
   })
   .superRefine((data, ctx) => {
     // If category is provided, enforce category-specific rules
-    if (data.category === "working_space") {
-      if (data.durationMonths < 1) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["durationMonths"],
-          message: "Working space requires at least 1 month duration",
-        });
-      }
-    } else if (data.category && data.category !== "working_space") {
+    if (data.category && data.category !== "working_space") {
       // For testing/analysis services
       if (data.quantity < 1) {
         ctx.addIssue({

@@ -125,7 +125,11 @@ export function ServiceCard({
 					)}
 
 					<div className="mt-4 flex items-center">
-						<Button className="flex-1" onClick={handleViewDetails} variant="outline">
+						<Button
+							className="flex-1"
+							onClick={handleViewDetails}
+							variant="outline"
+						>
 							<Eye className="mr-2 h-4 w-4" />
 							View Details
 						</Button>

@@ -164,19 +164,21 @@ export function ServiceDetailsDialog({
 							<div className="space-y-3">
 								{pricingEntries.map(([userTypeKey, pricing]) => (
 									<div
-										className={`rounded-lg border-2 p-4 ${userTypeKey === userType
+										className={`rounded-lg border-2 p-4 ${
+											userTypeKey === userType
 												? "border-blue-500 bg-blue-50"
 												: "border-gray-200 bg-gray-50"
-											}`}
+										}`}
 										key={userTypeKey}
 									>
 										<div className="flex items-center justify-between">
 											<div>
 												<span
-													className={`font-medium text-sm ${userTypeKey === userType
+													className={`font-medium text-sm ${
+														userTypeKey === userType
 															? "text-blue-800"
 															: "text-gray-700"
-														}`}
+													}`}
 												>
 													{getUserTypeLabel(userTypeKey)}
 													{userTypeKey === userType && (
@@ -188,18 +190,20 @@ export function ServiceDetailsDialog({
 											</div>
 											<div className="text-right">
 												<span
-													className={`font-bold text-lg ${userTypeKey === userType
+													className={`font-bold text-lg ${
+														userTypeKey === userType
 															? "text-blue-900"
 															: "text-gray-900"
-														}`}
+													}`}
 												>
 													RM {Number(pricing.price)}
 												</span>
 												<span
-													className={`block text-sm ${userTypeKey === userType
+													className={`block text-sm ${
+														userTypeKey === userType
 															? "text-blue-700"
 															: "text-gray-600"
-														}`}
+													}`}
 												>
 													per {pricing.unit}
 												</span>

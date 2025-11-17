@@ -4,9 +4,9 @@
  */
 
 import type {
-  BookingServiceItemInput,
-  CreateBookingInput,
-  WorkspaceBookingInput,
+	BookingServiceItemInput,
+	CreateBookingInput,
+	WorkspaceBookingInput,
 } from "@/entities/booking/model/schemas";
 import type { Service } from "@/entities/service";
 
@@ -17,21 +17,21 @@ import type { Service } from "@/entities/service";
  * @returns A default BookingServiceItemInput
  */
 export function createDefaultServiceItem(
-  service: Service
+	service: Service,
 ): BookingServiceItemInput {
-  return {
-    serviceId: service.id,
-    category: service.category,
-    quantity: 1,
-    durationMonths: 0,
-    temperatureControlled: false,
-    lightSensitive: false,
-    hazardousMaterial: false,
-    inertAtmosphere: false,
-    equipmentIds: [],
-    otherEquipmentRequests: [],
-    addOnCatalogIds: [],
-  };
+	return {
+		serviceId: service.id,
+		category: service.category,
+		quantity: 1,
+		durationMonths: 0,
+		temperatureControlled: false,
+		lightSensitive: false,
+		hazardousMaterial: false,
+		inertAtmosphere: false,
+		equipmentIds: [],
+		otherEquipmentRequests: [],
+		addOnCatalogIds: [],
+	};
 }
 
 /**
@@ -41,39 +41,39 @@ export function createDefaultServiceItem(
  * @returns Normalized BookingServiceItemInput
  */
 export function normalizeServiceItem(
-  item: Partial<BookingServiceItemInput>
+	item: Partial<BookingServiceItemInput>,
 ): BookingServiceItemInput {
-  return {
-    serviceId: item.serviceId ?? "",
-    quantity: item.quantity ?? 1,
-    durationMonths: item.durationMonths ?? 0,
-    sampleName: item.sampleName,
-    sampleDetails: item.sampleDetails,
-    sampleType: item.sampleType,
-    sampleHazard: item.sampleHazard,
-    testingMethod: item.testingMethod,
-    degasConditions: item.degasConditions,
-    solventSystem: item.solventSystem,
-    solvents: item.solvents,
-    solventComposition: item.solventComposition,
-    columnType: item.columnType,
-    flowRate: item.flowRate,
-    wavelength: item.wavelength,
-    expectedRetentionTime: item.expectedRetentionTime,
-    samplePreparation: item.samplePreparation,
-    notes: item.notes,
-    expectedCompletionDate: item.expectedCompletionDate,
-    actualCompletionDate: item.actualCompletionDate,
-    turnaroundEstimate: item.turnaroundEstimate,
-    temperatureControlled: item.temperatureControlled ?? false,
-    lightSensitive: item.lightSensitive ?? false,
-    hazardousMaterial: item.hazardousMaterial ?? false,
-    inertAtmosphere: item.inertAtmosphere ?? false,
-    equipmentIds: item.equipmentIds ?? [],
-    otherEquipmentRequests: item.otherEquipmentRequests ?? [],
-    addOnCatalogIds: item.addOnCatalogIds ?? [],
-    category: item.category,
-  };
+	return {
+		serviceId: item.serviceId ?? "",
+		quantity: item.quantity ?? 1,
+		durationMonths: item.durationMonths ?? 0,
+		sampleName: item.sampleName,
+		sampleDetails: item.sampleDetails,
+		sampleType: item.sampleType,
+		sampleHazard: item.sampleHazard,
+		testingMethod: item.testingMethod,
+		degasConditions: item.degasConditions,
+		solventSystem: item.solventSystem,
+		solvents: item.solvents,
+		solventComposition: item.solventComposition,
+		columnType: item.columnType,
+		flowRate: item.flowRate,
+		wavelength: item.wavelength,
+		expectedRetentionTime: item.expectedRetentionTime,
+		samplePreparation: item.samplePreparation,
+		notes: item.notes,
+		expectedCompletionDate: item.expectedCompletionDate,
+		actualCompletionDate: item.actualCompletionDate,
+		turnaroundEstimate: item.turnaroundEstimate,
+		temperatureControlled: item.temperatureControlled ?? false,
+		lightSensitive: item.lightSensitive ?? false,
+		hazardousMaterial: item.hazardousMaterial ?? false,
+		inertAtmosphere: item.inertAtmosphere ?? false,
+		equipmentIds: item.equipmentIds ?? [],
+		otherEquipmentRequests: item.otherEquipmentRequests ?? [],
+		addOnCatalogIds: item.addOnCatalogIds ?? [],
+		category: item.category,
+	};
 }
 
 /**
@@ -82,18 +82,18 @@ export function normalizeServiceItem(
  * @returns Normalized WorkspaceBookingInput
  */
 export function normalizeWorkspaceBooking(
-  workspace: Partial<WorkspaceBookingInput>
+	workspace: Partial<WorkspaceBookingInput>,
 ): WorkspaceBookingInput {
-  return {
-    startDate: workspace.startDate ?? new Date(),
-    endDate: workspace.endDate ?? new Date(),
-    preferredTimeSlot: workspace.preferredTimeSlot,
-    equipmentIds: workspace.equipmentIds ?? [],
-    specialEquipment: workspace.specialEquipment ?? [],
-    purpose: workspace.purpose,
-    notes: workspace.notes,
-    addOnCatalogIds: workspace.addOnCatalogIds ?? [],
-  };
+	return {
+		startDate: workspace.startDate ?? new Date(),
+		endDate: workspace.endDate ?? new Date(),
+		preferredTimeSlot: workspace.preferredTimeSlot,
+		equipmentIds: workspace.equipmentIds ?? [],
+		specialEquipment: workspace.specialEquipment ?? [],
+		purpose: workspace.purpose,
+		notes: workspace.notes,
+		addOnCatalogIds: workspace.addOnCatalogIds ?? [],
+	};
 }
 
 /**
@@ -102,28 +102,28 @@ export function normalizeWorkspaceBooking(
  * @returns Normalized CreateBookingInput
  */
 export function normalizeBookingInput(
-  input: Partial<CreateBookingInput>
+	input: Partial<CreateBookingInput>,
 ): CreateBookingInput {
-  return {
-    serviceItems: (input.serviceItems ?? []).map(
-      (i: Partial<BookingServiceItemInput>) => normalizeServiceItem(i)
-    ),
-    workspaceBookings: (input.workspaceBookings ?? []).map(
-      (w: Partial<WorkspaceBookingInput>) => normalizeWorkspaceBooking(w)
-    ),
-    projectDescription: input.projectDescription ?? "",
-    additionalNotes: input.additionalNotes ?? "",
-    payerType: input.payerType,
-    billingName: input.billingName,
-    billingAddressDisplay: input.billingAddressDisplay,
-    billingPhone: input.billingPhone,
-    billingEmail: input.billingEmail,
-    utmCampus: input.utmCampus,
-    preferredStartDate: input.preferredStartDate,
-    preferredEndDate: input.preferredEndDate,
-    notes: input.notes,
-    status: input.status ?? "draft",
-  };
+	return {
+		serviceItems: (input.serviceItems ?? []).map(
+			(i: Partial<BookingServiceItemInput>) => normalizeServiceItem(i),
+		),
+		workspaceBookings: (input.workspaceBookings ?? []).map(
+			(w: Partial<WorkspaceBookingInput>) => normalizeWorkspaceBooking(w),
+		),
+		projectDescription: input.projectDescription ?? "",
+		additionalNotes: input.additionalNotes ?? "",
+		payerType: input.payerType,
+		billingName: input.billingName,
+		billingAddressDisplay: input.billingAddressDisplay,
+		billingPhone: input.billingPhone,
+		billingEmail: input.billingEmail,
+		utmCampus: input.utmCampus,
+		preferredStartDate: input.preferredStartDate,
+		preferredEndDate: input.preferredEndDate,
+		notes: input.notes,
+		status: input.status ?? "draft",
+	};
 }
 
 /**
@@ -134,19 +134,19 @@ export function normalizeBookingInput(
  * @returns Enriched CreateBookingInput with category metadata
  */
 export function attachMetadataForValidation(
-  input: CreateBookingInput,
-  services: Service[]
+	input: CreateBookingInput,
+	services: Service[],
 ): CreateBookingInput {
-  const servicesMap = new Map(services.map((s) => [s.id, s]));
+	const servicesMap = new Map(services.map((s) => [s.id, s]));
 
-  return {
-    ...input,
-    serviceItems: input.serviceItems?.map((item: BookingServiceItemInput) => {
-      const service = servicesMap.get(item.serviceId);
-      return {
-        ...item,
-        category: service?.category,
-      };
-    }),
-  };
+	return {
+		...input,
+		serviceItems: input.serviceItems?.map((item: BookingServiceItemInput) => {
+			const service = servicesMap.get(item.serviceId);
+			return {
+				...item,
+				category: service?.category,
+			};
+		}),
+	};
 }
