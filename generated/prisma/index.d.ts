@@ -224,6 +224,8 @@ export const booking_status_enum: {
   draft: 'draft',
   pending_user_verification: 'pending_user_verification',
   pending_approval: 'pending_approval',
+  revision_requested: 'revision_requested',
+  revision_submitted: 'revision_submitted',
   approved: 'approved',
   rejected: 'rejected',
   in_progress: 'in_progress',

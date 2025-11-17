@@ -1,7 +1,6 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
-import { bookingsListKeys } from "@/entities/booking/api";
+// No default prefetch - keep this component generic and simple
 import { Button } from "@/shared/ui/shadcn/button";
 import {
     Select,
@@ -10,7 +9,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/shared/ui/shadcn/select";
-import type { FiltersState } from "../model/filters.schema";
 
 interface PaginationControlsProps {
     currentPage: number;
@@ -20,7 +18,8 @@ interface PaginationControlsProps {
     isLoading: boolean;
     onPageChange: (page: number) => void;
     onPageSizeChange: (pageSize: number) => void;
-    params: FiltersState;
+    params: Record<string, unknown>;
+    pageSizeOptions?: number[];
 }
 
 export function PaginationControls({
@@ -31,9 +30,11 @@ export function PaginationControls({
     isLoading,
     onPageChange,
     onPageSizeChange,
-    params,
+    // keep params in signature for callers but not used by default
+    params: _params,
+    pageSizeOptions = [10, 15, 25],
 }: PaginationControlsProps) {
-    const queryClient = useQueryClient();
+    // keep it simple: no prefetch built into shared control
     const totalPages = Math.ceil(total / pageSize) || 1;
 
     const handleNextPage = () => {
@@ -44,23 +45,14 @@ export function PaginationControls({
         onPageChange(Math.max(1, currentPage - 1));
     };
 
-    const prefetchNextPage = () => {
-        const nextParams = { ...params, page: currentPage + 1 };
-        queryClient.prefetchQuery({
-            queryKey: bookingsListKeys.list(nextParams),
-            queryFn: () =>
-                fetch(
-                    `/api/bookings?page=${nextParams.page}&pageSize=${nextParams.pageSize}&sort=${nextParams.sort}&type=${nextParams.type || "all"}`,
-                ).then((r) => r.json()),
-        });
-    };
+    // prefetch removed to keep the component generic; callers may prefetch themselves if desired
 
     return (
         <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
             {/* Left: Total count */}
             <div className="flex items-center gap-4 text-muted-foreground text-sm">
                 <span>
-                    Showing{" "}
+                    Showing {" "}
                     <span className="font-medium text-foreground">
                         {Math.min((currentPage - 1) * pageSize + 1, total)}
                     </span>
@@ -93,7 +85,6 @@ export function PaginationControls({
                 <Button
                     disabled={rowsCount < pageSize || isLoading}
                     onClick={handleNextPage}
-                    onMouseEnter={prefetchNextPage}
                     size="sm"
                     variant="outline"
                 >
@@ -112,12 +103,16 @@ export function PaginationControls({
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="15">15</SelectItem>
-                        <SelectItem value="25">25</SelectItem>
+                        {pageSizeOptions.map((opt) => (
+                            <SelectItem key={opt} value={String(opt)}>
+                                {opt}
+                            </SelectItem>
+                        ))}
                     </SelectContent>
                 </Select>
             </div>
         </div>
     );
 }
+
+export default PaginationControls;

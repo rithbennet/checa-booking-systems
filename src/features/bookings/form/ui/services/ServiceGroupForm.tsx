@@ -46,8 +46,6 @@ export function ServiceGroupForm({
 	availableEquipment,
 	isEquipmentLoading = false,
 }: ServiceGroupFormProps) {
-
-
 	// Check if all samples/slots are complete
 	// No memoization needed - small dataset, simple checks, component re-renders when serviceItems changes
 	const allComplete = serviceItems.every(({ item }) => {
@@ -81,7 +79,6 @@ export function ServiceGroupForm({
 								• {serviceItems.length}{" "}
 								{serviceItems.length === 1 ? "sample" : "samples"}
 							</span>
-
 						</CardDescription>
 					</div>
 					<div className="flex items-center gap-2">
@@ -108,7 +105,6 @@ export function ServiceGroupForm({
 			</CardHeader>
 			<CardContent className="p-0">
 				<div className="px-6 pb-6">
-
 					<div className="space-y-4">
 						<AccordionNoAutoClose className="w-full" type="multiple">
 							{serviceItems.map(({ index, item }) => {
@@ -194,7 +190,6 @@ export function ServiceGroupForm({
 							</Button>
 						)}
 					</div>
-
 				</div>
 			</CardContent>
 		</Card>

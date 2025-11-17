@@ -1,0 +1,4 @@
+export type BookingEvent =
+	| "BOOKING_APPROVED"
+	| "BOOKING_REJECTED"
+	| "BOOKING_REVISION_REQUESTED";

@@ -5,11 +5,14 @@
  * Entities represent core business concepts.
  */
 
+import type { booking_status_enum } from "generated/prisma";
 import type { Service } from "@/entities/service";
 
 export type BookingStatus =
   | "pending_user_verification"
   | "pending_approval"
+  | "revision_requested"
+  | "revision_submitted"
   | "approved"
   | "rejected"
   | "in_progress"
@@ -19,6 +22,47 @@ export type BookingStatus =
 export type SampleType = "liquid" | "solid" | "powder" | "solution";
 
 export type PaymentMethod = "eft" | "vote_transfer" | "local_order";
+
+// Admin Review View Models
+export type BookingListItemVM = {
+  id: string;
+  referenceNumber: string;
+  createdAt: string;
+  updatedAt: string;
+  status: booking_status_enum;
+  user: { id: string; name: string; email: string };
+  requesterType: "internal" | "external";
+  organization?: {
+    company?: string;
+    branch?: string;
+    // For internal (university) members
+    ikohza?: string;
+    faculty?: string;
+    department?: string;
+  };
+  totalAmount: string;
+  services: Array<{ id: string; name: string; qty: number }>;
+  projectTitle?: string;
+  hasWorkspace: boolean;
+};
+
+export type BookingDetailVM = BookingListItemVM & {
+  projectDescription?: string;
+  serviceItems: Array<{
+    id: string;
+    service: Pick<Service, "id" | "name" | "category">;
+    quantity: number;
+    unitPrice: string;
+    totalPrice: string;
+    sampleName?: string;
+  }>;
+  workspace?: {
+    startDate?: string;
+    endDate?: string;
+    notes?: string;
+  };
+  reviewNotes?: string | null;
+};
 
 export interface LabEquipment {
   id: string;
