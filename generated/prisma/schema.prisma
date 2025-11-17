@@ -27,6 +27,7 @@ model BetterAuthUser {
   sessions      BetterAuthSession[]
   accounts      BetterAuthAccount[]
   verifications BetterAuthVerification[]
+  users         User[]
 
   @@map("better_auth_user")
 }
@@ -218,6 +219,7 @@ enum UTM {
 
 model User {
   id              String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  authUserId      String             @unique @db.Uuid
   firstName       String             @db.VarChar(100)
   lastName        String             @db.VarChar(100)
   profileImageUrl String?            @db.VarChar(500)
@@ -244,6 +246,8 @@ model User {
 
   // NOTE: legacy plain-text org fields removed. Use the relations above
   // (facultyId, departmentId, companyId, companyBranchId, ikohzaId).
+
+  authUser BetterAuthUser @relation(fields: [authUserId], references: [id])
 
   UTM             UTM?      @default(none)
   address         String?

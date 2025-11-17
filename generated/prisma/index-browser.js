@@ -226,6 +226,7 @@ exports.Prisma.CompanyBranchScalarFieldEnum = {
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
+  authUserId: 'authUserId',
   firstName: 'firstName',
   lastName: 'lastName',
   profileImageUrl: 'profileImageUrl',

@@ -1,6 +1,4 @@
 "use client";
-
-import { differenceInDays } from "date-fns";
 import { CheckCircle2, Circle, Plus, X } from "lucide-react";
 import type { LabEquipment } from "@/entities/booking";
 import type { CreateBookingInput } from "@/entities/booking/model/schemas";
@@ -20,7 +18,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
-import { WorkspaceSlotForm } from "../workspace/WorkspaceSlotForm";
 import { ServiceItemForm } from "./ServiceItemForm";
 
 type ServiceItem = NonNullable<CreateBookingInput["serviceItems"]>[number];

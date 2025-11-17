@@ -22,7 +22,7 @@ export function SelectedServiceCard({
 }: SelectedServiceCardProps) {
 	const totalPrice = service.selectedPricing
 		? service.selectedPricing.price *
-		(service.quantity || service.durationMonths || 1)
+		(service.quantity || 1)
 		: 0;
 
 	return (

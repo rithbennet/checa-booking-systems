@@ -2,87 +2,97 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { customSession } from "better-auth/plugins";
+import NodeCache from "node-cache";
 
 import { env } from "@/env";
 import { db } from "@/shared/server/db";
 
+// Create a tiny in-memory cache for session extensions
+const userCache = new NodeCache({ stdTTL: 300 }); // 5 minutes
+
 export const auth = betterAuth({
-	database: prismaAdapter(db, {
-		provider: "postgresql",
-	}),
-	baseURL: env.BETTER_AUTH_URL,
-	secret: env.BETTER_AUTH_SECRET,
-	user: {
-		modelName: "BetterAuthUser",
-	},
-	session: {
-		modelName: "BetterAuthSession",
-		// Enable cookie cache to store session data (including custom fields) in cookies
-		// This avoids database queries on every request
-		cookieCache: {
-			enabled: true,
-			maxAge: 5 * 60, // 5 minutes - refresh cache every 5 minutes
-		},
-	},
-	account: {
-		modelName: "BetterAuthAccount",
-	},
-	verification: {
-		modelName: "BetterAuthVerification",
-	},
-	advanced: {
-		database: {
-			// Disable ID generation - let PostgreSQL generate UUIDs via gen_random_uuid()
-			generateId: false,
-		},
-	},
-	emailAndPassword: {
-		enabled: true,
-		autoSignIn: true,
-	},
-	socialProviders: {
-		google: {
-			clientId: env.BETTER_AUTH_GOOGLE_CLIENT_ID ?? "",
-			clientSecret: env.BETTER_AUTH_GOOGLE_CLIENT_SECRET ?? "",
-		},
-	},
-	plugins: [
-		// in betterAuth config plugins: customSession(...)
-		customSession(async ({ user, session }) => {
-			let appUserId: string | null = null;
-			let userRole: string | null = null;
-			let userStatus: string | null = null;
+  database: prismaAdapter(db, {
+    provider: "postgresql",
+  }),
+  baseURL: env.BETTER_AUTH_URL,
+  secret: env.BETTER_AUTH_SECRET,
 
-			try {
-				const appUser = await db.user.findUnique({
-					where: { email: user.email },
-					select: { id: true, userType: true, status: true },
-				});
+  user: {
+    modelName: "BetterAuthUser",
+  },
+  session: {
+    modelName: "BetterAuthSession",
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // built-in cache, 5 min
+    },
+  },
+  account: {
+    modelName: "BetterAuthAccount",
+  },
+  verification: {
+    modelName: "BetterAuthVerification",
+  },
+  advanced: {
+    database: {
+      generateId: false, // use PG gen_random_uuid()
+    },
+  },
+  emailAndPassword: {
+    enabled: true,
+    autoSignIn: true,
+  },
 
-				if (appUser) {
-					appUserId = appUser.id;
-					userRole =
-						appUser.userType === "lab_administrator"
-							? "lab_administrator"
-							: appUser.userType;
-					userStatus = appUser.status;
-				}
-			} catch {
-				// optional: log
-			}
+  // ✅ Conditional social provider registration (prevents warnings)
+  socialProviders: {
+    ...(env.BETTER_AUTH_GOOGLE_CLIENT_ID &&
+      env.BETTER_AUTH_GOOGLE_CLIENT_SECRET && {
+        google: {
+          clientId: env.BETTER_AUTH_GOOGLE_CLIENT_ID,
+          clientSecret: env.BETTER_AUTH_GOOGLE_CLIENT_SECRET,
+        },
+      }),
+  },
 
-			return {
-				user: {
-					...user,
-					appUserId, // critical field
-					role: userRole,
-					status: userStatus,
-				},
-				session,
-			};
-		}),
-		nextCookies(), // Must be last plugin - automatically sets cookies in server actions
-	],
+  plugins: [
+    // ✅ Cache user details to avoid DB hits every request
+    customSession(async ({ user, session }) => {
+      const cacheKey = `user_session_${user.id}`;
+
+      const cached = userCache.get(cacheKey);
+      if (cached) {
+        return { user: { ...user, ...cached }, session };
+      }
+
+      const appUser = await db.user.findUnique({
+        where: { authUserId: user.id },
+        select: { id: true, userType: true, status: true },
+      });
+
+      if (!appUser) {
+        return { user, session };
+      }
+
+      const extra = {
+        appUserId: appUser.id,
+        role:
+          appUser.userType === "lab_administrator"
+            ? "lab_administrator"
+            : appUser.userType,
+        status: appUser.status,
+      };
+
+      // Cache to avoid repetitive lookups
+      userCache.set(cacheKey, extra);
+
+      console.log("[auth-session]", "hydrating from DB for user", user.id);
+
+      return { user: { ...user, ...extra }, session, persist: true };
+    }),
+
+    // 🍪 Must always be last for proper cookie handling
+    nextCookies(),
+  ],
 });
 
 export type Session = typeof auth.$Infer.Session;

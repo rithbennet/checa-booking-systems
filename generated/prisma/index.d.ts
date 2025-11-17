@@ -3706,12 +3706,14 @@ export namespace Prisma {
     sessions: number
     accounts: number
     verifications: number
+    users: number
   }
 
   export type BetterAuthUserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sessions?: boolean | BetterAuthUserCountOutputTypeCountSessionsArgs
     accounts?: boolean | BetterAuthUserCountOutputTypeCountAccountsArgs
     verifications?: boolean | BetterAuthUserCountOutputTypeCountVerificationsArgs
+    users?: boolean | BetterAuthUserCountOutputTypeCountUsersArgs
   }
 
   // Custom InputTypes
@@ -3744,6 +3746,13 @@ export namespace Prisma {
    */
   export type BetterAuthUserCountOutputTypeCountVerificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BetterAuthVerificationWhereInput
+  }
+
+  /**
+   * BetterAuthUserCountOutputType without action
+   */
+  export type BetterAuthUserCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
   }
 
 
@@ -4651,6 +4660,7 @@ export namespace Prisma {
     sessions?: boolean | BetterAuthUser$sessionsArgs<ExtArgs>
     accounts?: boolean | BetterAuthUser$accountsArgs<ExtArgs>
     verifications?: boolean | BetterAuthUser$verificationsArgs<ExtArgs>
+    users?: boolean | BetterAuthUser$usersArgs<ExtArgs>
     _count?: boolean | BetterAuthUserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["betterAuthUser"]>
 
@@ -4689,6 +4699,7 @@ export namespace Prisma {
     sessions?: boolean | BetterAuthUser$sessionsArgs<ExtArgs>
     accounts?: boolean | BetterAuthUser$accountsArgs<ExtArgs>
     verifications?: boolean | BetterAuthUser$verificationsArgs<ExtArgs>
+    users?: boolean | BetterAuthUser$usersArgs<ExtArgs>
     _count?: boolean | BetterAuthUserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BetterAuthUserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4700,6 +4711,7 @@ export namespace Prisma {
       sessions: Prisma.$BetterAuthSessionPayload<ExtArgs>[]
       accounts: Prisma.$BetterAuthAccountPayload<ExtArgs>[]
       verifications: Prisma.$BetterAuthVerificationPayload<ExtArgs>[]
+      users: Prisma.$UserPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5106,6 +5118,7 @@ export namespace Prisma {
     sessions<T extends BetterAuthUser$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, BetterAuthUser$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BetterAuthSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accounts<T extends BetterAuthUser$accountsArgs<ExtArgs> = {}>(args?: Subset<T, BetterAuthUser$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BetterAuthAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     verifications<T extends BetterAuthUser$verificationsArgs<ExtArgs> = {}>(args?: Subset<T, BetterAuthUser$verificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BetterAuthVerificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    users<T extends BetterAuthUser$usersArgs<ExtArgs> = {}>(args?: Subset<T, BetterAuthUser$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5599,6 +5612,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: BetterAuthVerificationScalarFieldEnum | BetterAuthVerificationScalarFieldEnum[]
+  }
+
+  /**
+   * BetterAuthUser.users
+   */
+  export type BetterAuthUser$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
   }
 
   /**
@@ -14746,6 +14783,7 @@ export namespace Prisma {
 
   export type UserMinAggregateOutputType = {
     id: string | null
+    authUserId: string | null
     firstName: string | null
     lastName: string | null
     profileImageUrl: string | null
@@ -14773,6 +14811,7 @@ export namespace Prisma {
 
   export type UserMaxAggregateOutputType = {
     id: string | null
+    authUserId: string | null
     firstName: string | null
     lastName: string | null
     profileImageUrl: string | null
@@ -14800,6 +14839,7 @@ export namespace Prisma {
 
   export type UserCountAggregateOutputType = {
     id: number
+    authUserId: number
     firstName: number
     lastName: number
     profileImageUrl: number
@@ -14829,6 +14869,7 @@ export namespace Prisma {
 
   export type UserMinAggregateInputType = {
     id?: true
+    authUserId?: true
     firstName?: true
     lastName?: true
     profileImageUrl?: true
@@ -14856,6 +14897,7 @@ export namespace Prisma {
 
   export type UserMaxAggregateInputType = {
     id?: true
+    authUserId?: true
     firstName?: true
     lastName?: true
     profileImageUrl?: true
@@ -14883,6 +14925,7 @@ export namespace Prisma {
 
   export type UserCountAggregateInputType = {
     id?: true
+    authUserId?: true
     firstName?: true
     lastName?: true
     profileImageUrl?: true
@@ -14983,6 +15026,7 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl: string | null
@@ -15027,6 +15071,7 @@ export namespace Prisma {
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    authUserId?: boolean
     firstName?: boolean
     lastName?: boolean
     profileImageUrl?: boolean
@@ -15055,6 +15100,7 @@ export namespace Prisma {
     ikohza?: boolean | User$ikohzaArgs<ExtArgs>
     companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
     companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
+    authUser?: boolean | BetterAuthUserDefaultArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
     approvedUsers?: boolean | User$approvedUsersArgs<ExtArgs>
     authProviders?: boolean | User$authProvidersArgs<ExtArgs>
@@ -15075,6 +15121,7 @@ export namespace Prisma {
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    authUserId?: boolean
     firstName?: boolean
     lastName?: boolean
     profileImageUrl?: boolean
@@ -15103,11 +15150,13 @@ export namespace Prisma {
     ikohza?: boolean | User$ikohzaArgs<ExtArgs>
     companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
     companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
+    authUser?: boolean | BetterAuthUserDefaultArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    authUserId?: boolean
     firstName?: boolean
     lastName?: boolean
     profileImageUrl?: boolean
@@ -15136,11 +15185,13 @@ export namespace Prisma {
     ikohza?: boolean | User$ikohzaArgs<ExtArgs>
     companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
     companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
+    authUser?: boolean | BetterAuthUserDefaultArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
+    authUserId?: boolean
     firstName?: boolean
     lastName?: boolean
     profileImageUrl?: boolean
@@ -15166,13 +15217,14 @@ export namespace Prisma {
     approvedBy?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "profileImageUrl" | "phone" | "userType" | "status" | "academicType" | "userIdentifier" | "supervisorName" | "facultyId" | "departmentId" | "ikohzaId" | "companyId" | "companyBranchId" | "UTM" | "address" | "email" | "emailVerifiedAt" | "lastLoginAt" | "approvedAt" | "createdAt" | "updatedAt" | "approvedBy", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "authUserId" | "firstName" | "lastName" | "profileImageUrl" | "phone" | "userType" | "status" | "academicType" | "userIdentifier" | "supervisorName" | "facultyId" | "departmentId" | "ikohzaId" | "companyId" | "companyBranchId" | "UTM" | "address" | "email" | "emailVerifiedAt" | "lastLoginAt" | "approvedAt" | "createdAt" | "updatedAt" | "approvedBy", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     facultyRelation?: boolean | User$facultyRelationArgs<ExtArgs>
     departmentRelation?: boolean | User$departmentRelationArgs<ExtArgs>
     ikohza?: boolean | User$ikohzaArgs<ExtArgs>
     companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
     companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
+    authUser?: boolean | BetterAuthUserDefaultArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
     approvedUsers?: boolean | User$approvedUsersArgs<ExtArgs>
     authProviders?: boolean | User$authProvidersArgs<ExtArgs>
@@ -15196,6 +15248,7 @@ export namespace Prisma {
     ikohza?: boolean | User$ikohzaArgs<ExtArgs>
     companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
     companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
+    authUser?: boolean | BetterAuthUserDefaultArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
   }
   export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15204,6 +15257,7 @@ export namespace Prisma {
     ikohza?: boolean | User$ikohzaArgs<ExtArgs>
     companyRelation?: boolean | User$companyRelationArgs<ExtArgs>
     companyBranch?: boolean | User$companyBranchArgs<ExtArgs>
+    authUser?: boolean | BetterAuthUserDefaultArgs<ExtArgs>
     approvedByUser?: boolean | User$approvedByUserArgs<ExtArgs>
   }
 
@@ -15215,6 +15269,7 @@ export namespace Prisma {
       ikohza: Prisma.$IkohzaPayload<ExtArgs> | null
       companyRelation: Prisma.$CompanyPayload<ExtArgs> | null
       companyBranch: Prisma.$CompanyBranchPayload<ExtArgs> | null
+      authUser: Prisma.$BetterAuthUserPayload<ExtArgs>
       approvedByUser: Prisma.$UserPayload<ExtArgs> | null
       approvedUsers: Prisma.$UserPayload<ExtArgs>[]
       authProviders: Prisma.$AuthProviderPayload<ExtArgs>[]
@@ -15233,6 +15288,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      authUserId: string
       firstName: string
       lastName: string
       profileImageUrl: string | null
@@ -15655,6 +15711,7 @@ export namespace Prisma {
     ikohza<T extends User$ikohzaArgs<ExtArgs> = {}>(args?: Subset<T, User$ikohzaArgs<ExtArgs>>): Prisma__IkohzaClient<$Result.GetResult<Prisma.$IkohzaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     companyRelation<T extends User$companyRelationArgs<ExtArgs> = {}>(args?: Subset<T, User$companyRelationArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     companyBranch<T extends User$companyBranchArgs<ExtArgs> = {}>(args?: Subset<T, User$companyBranchArgs<ExtArgs>>): Prisma__CompanyBranchClient<$Result.GetResult<Prisma.$CompanyBranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    authUser<T extends BetterAuthUserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BetterAuthUserDefaultArgs<ExtArgs>>): Prisma__BetterAuthUserClient<$Result.GetResult<Prisma.$BetterAuthUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     approvedByUser<T extends User$approvedByUserArgs<ExtArgs> = {}>(args?: Subset<T, User$approvedByUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     approvedUsers<T extends User$approvedUsersArgs<ExtArgs> = {}>(args?: Subset<T, User$approvedUsersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     authProviders<T extends User$authProvidersArgs<ExtArgs> = {}>(args?: Subset<T, User$authProvidersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthProviderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -15700,6 +15757,7 @@ export namespace Prisma {
    */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
+    readonly authUserId: FieldRef<"User", 'String'>
     readonly firstName: FieldRef<"User", 'String'>
     readonly lastName: FieldRef<"User", 'String'>
     readonly profileImageUrl: FieldRef<"User", 'String'>
@@ -40861,6 +40919,7 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
+    authUserId: 'authUserId',
     firstName: 'firstName',
     lastName: 'lastName',
     profileImageUrl: 'profileImageUrl',
@@ -41578,6 +41637,7 @@ export namespace Prisma {
     sessions?: BetterAuthSessionListRelationFilter
     accounts?: BetterAuthAccountListRelationFilter
     verifications?: BetterAuthVerificationListRelationFilter
+    users?: UserListRelationFilter
   }
 
   export type BetterAuthUserOrderByWithRelationInput = {
@@ -41591,6 +41651,7 @@ export namespace Prisma {
     sessions?: BetterAuthSessionOrderByRelationAggregateInput
     accounts?: BetterAuthAccountOrderByRelationAggregateInput
     verifications?: BetterAuthVerificationOrderByRelationAggregateInput
+    users?: UserOrderByRelationAggregateInput
   }
 
   export type BetterAuthUserWhereUniqueInput = Prisma.AtLeast<{
@@ -41607,6 +41668,7 @@ export namespace Prisma {
     sessions?: BetterAuthSessionListRelationFilter
     accounts?: BetterAuthAccountListRelationFilter
     verifications?: BetterAuthVerificationListRelationFilter
+    users?: UserListRelationFilter
   }, "id" | "email">
 
   export type BetterAuthUserOrderByWithAggregationInput = {
@@ -42253,6 +42315,7 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: UuidFilter<"User"> | string
+    authUserId?: UuidFilter<"User"> | string
     firstName?: StringFilter<"User"> | string
     lastName?: StringFilter<"User"> | string
     profileImageUrl?: StringNullableFilter<"User"> | string | null
@@ -42281,6 +42344,7 @@ export namespace Prisma {
     ikohza?: XOR<IkohzaNullableScalarRelationFilter, IkohzaWhereInput> | null
     companyRelation?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     companyBranch?: XOR<CompanyBranchNullableScalarRelationFilter, CompanyBranchWhereInput> | null
+    authUser?: XOR<BetterAuthUserScalarRelationFilter, BetterAuthUserWhereInput>
     approvedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     approvedUsers?: UserListRelationFilter
     authProviders?: AuthProviderListRelationFilter
@@ -42300,6 +42364,7 @@ export namespace Prisma {
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
+    authUserId?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     profileImageUrl?: SortOrderInput | SortOrder
@@ -42328,6 +42393,7 @@ export namespace Prisma {
     ikohza?: IkohzaOrderByWithRelationInput
     companyRelation?: CompanyOrderByWithRelationInput
     companyBranch?: CompanyBranchOrderByWithRelationInput
+    authUser?: BetterAuthUserOrderByWithRelationInput
     approvedByUser?: UserOrderByWithRelationInput
     approvedUsers?: UserOrderByRelationAggregateInput
     authProviders?: AuthProviderOrderByRelationAggregateInput
@@ -42347,6 +42413,7 @@ export namespace Prisma {
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    authUserId?: string
     email?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
@@ -42378,6 +42445,7 @@ export namespace Prisma {
     ikohza?: XOR<IkohzaNullableScalarRelationFilter, IkohzaWhereInput> | null
     companyRelation?: XOR<CompanyNullableScalarRelationFilter, CompanyWhereInput> | null
     companyBranch?: XOR<CompanyBranchNullableScalarRelationFilter, CompanyBranchWhereInput> | null
+    authUser?: XOR<BetterAuthUserScalarRelationFilter, BetterAuthUserWhereInput>
     approvedByUser?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     approvedUsers?: UserListRelationFilter
     authProviders?: AuthProviderListRelationFilter
@@ -42393,10 +42461,11 @@ export namespace Prisma {
     createdModifications?: SampleModificationListRelationFilter
     approvedModifications?: SampleModificationListRelationFilter
     uploadedPayments?: PaymentListRelationFilter
-  }, "id" | "email">
+  }, "id" | "authUserId" | "email">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
+    authUserId?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     profileImageUrl?: SortOrderInput | SortOrder
@@ -42430,6 +42499,7 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"User"> | string
+    authUserId?: UuidWithAggregatesFilter<"User"> | string
     firstName?: StringWithAggregatesFilter<"User"> | string
     lastName?: StringWithAggregatesFilter<"User"> | string
     profileImageUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -44356,6 +44426,7 @@ export namespace Prisma {
     sessions?: BetterAuthSessionCreateNestedManyWithoutUserInput
     accounts?: BetterAuthAccountCreateNestedManyWithoutUserInput
     verifications?: BetterAuthVerificationCreateNestedManyWithoutUserInput
+    users?: UserCreateNestedManyWithoutAuthUserInput
   }
 
   export type BetterAuthUserUncheckedCreateInput = {
@@ -44369,6 +44440,7 @@ export namespace Prisma {
     sessions?: BetterAuthSessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: BetterAuthAccountUncheckedCreateNestedManyWithoutUserInput
     verifications?: BetterAuthVerificationUncheckedCreateNestedManyWithoutUserInput
+    users?: UserUncheckedCreateNestedManyWithoutAuthUserInput
   }
 
   export type BetterAuthUserUpdateInput = {
@@ -44382,6 +44454,7 @@ export namespace Prisma {
     sessions?: BetterAuthSessionUpdateManyWithoutUserNestedInput
     accounts?: BetterAuthAccountUpdateManyWithoutUserNestedInput
     verifications?: BetterAuthVerificationUpdateManyWithoutUserNestedInput
+    users?: UserUpdateManyWithoutAuthUserNestedInput
   }
 
   export type BetterAuthUserUncheckedUpdateInput = {
@@ -44395,6 +44468,7 @@ export namespace Prisma {
     sessions?: BetterAuthSessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: BetterAuthAccountUncheckedUpdateManyWithoutUserNestedInput
     verifications?: BetterAuthVerificationUncheckedUpdateManyWithoutUserNestedInput
+    users?: UserUncheckedUpdateManyWithoutAuthUserNestedInput
   }
 
   export type BetterAuthUserCreateManyInput = {
@@ -45136,6 +45210,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -45155,6 +45230,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -45218,6 +45294,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -45237,6 +45314,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -45278,6 +45356,7 @@ export namespace Prisma {
 
   export type UserCreateManyInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -45326,6 +45405,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -47520,6 +47600,12 @@ export namespace Prisma {
     none?: BetterAuthVerificationWhereInput
   }
 
+  export type UserListRelationFilter = {
+    every?: UserWhereInput
+    some?: UserWhereInput
+    none?: UserWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -47534,6 +47620,10 @@ export namespace Prisma {
   }
 
   export type BetterAuthVerificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -47830,21 +47920,11 @@ export namespace Prisma {
     none?: IkohzaWhereInput
   }
 
-  export type UserListRelationFilter = {
-    every?: UserWhereInput
-    some?: UserWhereInput
-    none?: UserWhereInput
-  }
-
   export type DepartmentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type IkohzaOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type UserOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -48211,6 +48291,7 @@ export namespace Prisma {
 
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
+    authUserId?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     profileImageUrl?: SortOrder
@@ -48238,6 +48319,7 @@ export namespace Prisma {
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
+    authUserId?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     profileImageUrl?: SortOrder
@@ -48265,6 +48347,7 @@ export namespace Prisma {
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
+    authUserId?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     profileImageUrl?: SortOrder
@@ -49790,6 +49873,13 @@ export namespace Prisma {
     connect?: BetterAuthVerificationWhereUniqueInput | BetterAuthVerificationWhereUniqueInput[]
   }
 
+  export type UserCreateNestedManyWithoutAuthUserInput = {
+    create?: XOR<UserCreateWithoutAuthUserInput, UserUncheckedCreateWithoutAuthUserInput> | UserCreateWithoutAuthUserInput[] | UserUncheckedCreateWithoutAuthUserInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutAuthUserInput | UserCreateOrConnectWithoutAuthUserInput[]
+    createMany?: UserCreateManyAuthUserInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
   export type BetterAuthSessionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<BetterAuthSessionCreateWithoutUserInput, BetterAuthSessionUncheckedCreateWithoutUserInput> | BetterAuthSessionCreateWithoutUserInput[] | BetterAuthSessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: BetterAuthSessionCreateOrConnectWithoutUserInput | BetterAuthSessionCreateOrConnectWithoutUserInput[]
@@ -49809,6 +49899,13 @@ export namespace Prisma {
     connectOrCreate?: BetterAuthVerificationCreateOrConnectWithoutUserInput | BetterAuthVerificationCreateOrConnectWithoutUserInput[]
     createMany?: BetterAuthVerificationCreateManyUserInputEnvelope
     connect?: BetterAuthVerificationWhereUniqueInput | BetterAuthVerificationWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutAuthUserInput = {
+    create?: XOR<UserCreateWithoutAuthUserInput, UserUncheckedCreateWithoutAuthUserInput> | UserCreateWithoutAuthUserInput[] | UserUncheckedCreateWithoutAuthUserInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutAuthUserInput | UserCreateOrConnectWithoutAuthUserInput[]
+    createMany?: UserCreateManyAuthUserInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -49869,6 +49966,20 @@ export namespace Prisma {
     deleteMany?: BetterAuthVerificationScalarWhereInput | BetterAuthVerificationScalarWhereInput[]
   }
 
+  export type UserUpdateManyWithoutAuthUserNestedInput = {
+    create?: XOR<UserCreateWithoutAuthUserInput, UserUncheckedCreateWithoutAuthUserInput> | UserCreateWithoutAuthUserInput[] | UserUncheckedCreateWithoutAuthUserInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutAuthUserInput | UserCreateOrConnectWithoutAuthUserInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutAuthUserInput | UserUpsertWithWhereUniqueWithoutAuthUserInput[]
+    createMany?: UserCreateManyAuthUserInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutAuthUserInput | UserUpdateWithWhereUniqueWithoutAuthUserInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutAuthUserInput | UserUpdateManyWithWhereWithoutAuthUserInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
   export type BetterAuthSessionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<BetterAuthSessionCreateWithoutUserInput, BetterAuthSessionUncheckedCreateWithoutUserInput> | BetterAuthSessionCreateWithoutUserInput[] | BetterAuthSessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: BetterAuthSessionCreateOrConnectWithoutUserInput | BetterAuthSessionCreateOrConnectWithoutUserInput[]
@@ -49909,6 +50020,20 @@ export namespace Prisma {
     update?: BetterAuthVerificationUpdateWithWhereUniqueWithoutUserInput | BetterAuthVerificationUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: BetterAuthVerificationUpdateManyWithWhereWithoutUserInput | BetterAuthVerificationUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: BetterAuthVerificationScalarWhereInput | BetterAuthVerificationScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutAuthUserNestedInput = {
+    create?: XOR<UserCreateWithoutAuthUserInput, UserUncheckedCreateWithoutAuthUserInput> | UserCreateWithoutAuthUserInput[] | UserUncheckedCreateWithoutAuthUserInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutAuthUserInput | UserCreateOrConnectWithoutAuthUserInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutAuthUserInput | UserUpsertWithWhereUniqueWithoutAuthUserInput[]
+    createMany?: UserCreateManyAuthUserInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutAuthUserInput | UserUpdateWithWhereUniqueWithoutAuthUserInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutAuthUserInput | UserUpdateManyWithWhereWithoutAuthUserInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
   export type BetterAuthUserCreateNestedOneWithoutSessionsInput = {
@@ -50451,6 +50576,12 @@ export namespace Prisma {
     connect?: CompanyBranchWhereUniqueInput
   }
 
+  export type BetterAuthUserCreateNestedOneWithoutUsersInput = {
+    create?: XOR<BetterAuthUserCreateWithoutUsersInput, BetterAuthUserUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: BetterAuthUserCreateOrConnectWithoutUsersInput
+    connect?: BetterAuthUserWhereUniqueInput
+  }
+
   export type UserCreateNestedOneWithoutApprovedUsersInput = {
     create?: XOR<UserCreateWithoutApprovedUsersInput, UserUncheckedCreateWithoutApprovedUsersInput>
     connectOrCreate?: UserCreateOrConnectWithoutApprovedUsersInput
@@ -50717,6 +50848,14 @@ export namespace Prisma {
     delete?: CompanyBranchWhereInput | boolean
     connect?: CompanyBranchWhereUniqueInput
     update?: XOR<XOR<CompanyBranchUpdateToOneWithWhereWithoutUsersInput, CompanyBranchUpdateWithoutUsersInput>, CompanyBranchUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput = {
+    create?: XOR<BetterAuthUserCreateWithoutUsersInput, BetterAuthUserUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: BetterAuthUserCreateOrConnectWithoutUsersInput
+    upsert?: BetterAuthUserUpsertWithoutUsersInput
+    connect?: BetterAuthUserWhereUniqueInput
+    update?: XOR<XOR<BetterAuthUserUpdateToOneWithWhereWithoutUsersInput, BetterAuthUserUpdateWithoutUsersInput>, BetterAuthUserUncheckedUpdateWithoutUsersInput>
   }
 
   export type UserUpdateOneWithoutApprovedUsersNestedInput = {
@@ -53128,6 +53267,98 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserCreateWithoutAuthUserInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    facultyRelation?: FacultyCreateNestedOneWithoutUsersInput
+    departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
+    ikohza?: IkohzaCreateNestedOneWithoutUsersInput
+    companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
+    approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserUncheckedCreateWithoutAuthUserInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+    approvedUsers?: UserUncheckedCreateNestedManyWithoutApprovedByUserInput
+    authProviders?: AuthProviderUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    bookingRequests?: BookingRequestUncheckedCreateNestedManyWithoutUserInput
+    approvedBookings?: BookingRequestUncheckedCreateNestedManyWithoutReviewedByUserInput
+    serviceForms?: ServiceFormUncheckedCreateNestedManyWithoutGeneratedByUserInput
+    uploadedInvoices?: InvoiceUncheckedCreateNestedManyWithoutUploadedByUserInput
+    verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifiedByUserInput
+    uploadedResults?: AnalysisResultUncheckedCreateNestedManyWithoutUploadedByUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    sampleTracking?: SampleTrackingUncheckedCreateNestedManyWithoutUpdatedByUserInput
+    createdModifications?: SampleModificationUncheckedCreateNestedManyWithoutCreatedByUserInput
+    approvedModifications?: SampleModificationUncheckedCreateNestedManyWithoutApprovedByUserInput
+    uploadedPayments?: PaymentUncheckedCreateNestedManyWithoutUploadedByUserInput
+  }
+
+  export type UserCreateOrConnectWithoutAuthUserInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAuthUserInput, UserUncheckedCreateWithoutAuthUserInput>
+  }
+
+  export type UserCreateManyAuthUserInputEnvelope = {
+    data: UserCreateManyAuthUserInput | UserCreateManyAuthUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type BetterAuthSessionUpsertWithWhereUniqueWithoutUserInput = {
     where: BetterAuthSessionWhereUniqueInput
     update: XOR<BetterAuthSessionUpdateWithoutUserInput, BetterAuthSessionUncheckedUpdateWithoutUserInput>
@@ -53222,6 +53453,53 @@ export namespace Prisma {
     userId?: UuidNullableFilter<"BetterAuthVerification"> | string | null
   }
 
+  export type UserUpsertWithWhereUniqueWithoutAuthUserInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutAuthUserInput, UserUncheckedUpdateWithoutAuthUserInput>
+    create: XOR<UserCreateWithoutAuthUserInput, UserUncheckedCreateWithoutAuthUserInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutAuthUserInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutAuthUserInput, UserUncheckedUpdateWithoutAuthUserInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutAuthUserInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutAuthUserInput>
+  }
+
+  export type UserScalarWhereInput = {
+    AND?: UserScalarWhereInput | UserScalarWhereInput[]
+    OR?: UserScalarWhereInput[]
+    NOT?: UserScalarWhereInput | UserScalarWhereInput[]
+    id?: UuidFilter<"User"> | string
+    authUserId?: UuidFilter<"User"> | string
+    firstName?: StringFilter<"User"> | string
+    lastName?: StringFilter<"User"> | string
+    profileImageUrl?: StringNullableFilter<"User"> | string | null
+    phone?: StringNullableFilter<"User"> | string | null
+    userType?: Enumuser_type_enumFilter<"User"> | $Enums.user_type_enum
+    status?: Enumuser_status_enumFilter<"User"> | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFilter<"User"> | $Enums.academic_type_enum
+    userIdentifier?: StringNullableFilter<"User"> | string | null
+    supervisorName?: StringNullableFilter<"User"> | string | null
+    facultyId?: UuidNullableFilter<"User"> | string | null
+    departmentId?: UuidNullableFilter<"User"> | string | null
+    ikohzaId?: UuidNullableFilter<"User"> | string | null
+    companyId?: UuidNullableFilter<"User"> | string | null
+    companyBranchId?: UuidNullableFilter<"User"> | string | null
+    UTM?: EnumUTMNullableFilter<"User"> | $Enums.UTM | null
+    address?: StringNullableFilter<"User"> | string | null
+    email?: StringFilter<"User"> | string
+    emailVerifiedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    approvedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    createdAt?: DateTimeFilter<"User"> | Date | string
+    updatedAt?: DateTimeFilter<"User"> | Date | string
+    approvedBy?: UuidNullableFilter<"User"> | string | null
+  }
+
   export type BetterAuthUserCreateWithoutSessionsInput = {
     id?: string
     name?: string | null
@@ -53232,6 +53510,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: BetterAuthAccountCreateNestedManyWithoutUserInput
     verifications?: BetterAuthVerificationCreateNestedManyWithoutUserInput
+    users?: UserCreateNestedManyWithoutAuthUserInput
   }
 
   export type BetterAuthUserUncheckedCreateWithoutSessionsInput = {
@@ -53244,6 +53523,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     accounts?: BetterAuthAccountUncheckedCreateNestedManyWithoutUserInput
     verifications?: BetterAuthVerificationUncheckedCreateNestedManyWithoutUserInput
+    users?: UserUncheckedCreateNestedManyWithoutAuthUserInput
   }
 
   export type BetterAuthUserCreateOrConnectWithoutSessionsInput = {
@@ -53272,6 +53552,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: BetterAuthAccountUpdateManyWithoutUserNestedInput
     verifications?: BetterAuthVerificationUpdateManyWithoutUserNestedInput
+    users?: UserUpdateManyWithoutAuthUserNestedInput
   }
 
   export type BetterAuthUserUncheckedUpdateWithoutSessionsInput = {
@@ -53284,6 +53565,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: BetterAuthAccountUncheckedUpdateManyWithoutUserNestedInput
     verifications?: BetterAuthVerificationUncheckedUpdateManyWithoutUserNestedInput
+    users?: UserUncheckedUpdateManyWithoutAuthUserNestedInput
   }
 
   export type BetterAuthUserCreateWithoutAccountsInput = {
@@ -53296,6 +53578,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     sessions?: BetterAuthSessionCreateNestedManyWithoutUserInput
     verifications?: BetterAuthVerificationCreateNestedManyWithoutUserInput
+    users?: UserCreateNestedManyWithoutAuthUserInput
   }
 
   export type BetterAuthUserUncheckedCreateWithoutAccountsInput = {
@@ -53308,6 +53591,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     sessions?: BetterAuthSessionUncheckedCreateNestedManyWithoutUserInput
     verifications?: BetterAuthVerificationUncheckedCreateNestedManyWithoutUserInput
+    users?: UserUncheckedCreateNestedManyWithoutAuthUserInput
   }
 
   export type BetterAuthUserCreateOrConnectWithoutAccountsInput = {
@@ -53336,6 +53620,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: BetterAuthSessionUpdateManyWithoutUserNestedInput
     verifications?: BetterAuthVerificationUpdateManyWithoutUserNestedInput
+    users?: UserUpdateManyWithoutAuthUserNestedInput
   }
 
   export type BetterAuthUserUncheckedUpdateWithoutAccountsInput = {
@@ -53348,6 +53633,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: BetterAuthSessionUncheckedUpdateManyWithoutUserNestedInput
     verifications?: BetterAuthVerificationUncheckedUpdateManyWithoutUserNestedInput
+    users?: UserUncheckedUpdateManyWithoutAuthUserNestedInput
   }
 
   export type BetterAuthUserCreateWithoutVerificationsInput = {
@@ -53360,6 +53646,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     sessions?: BetterAuthSessionCreateNestedManyWithoutUserInput
     accounts?: BetterAuthAccountCreateNestedManyWithoutUserInput
+    users?: UserCreateNestedManyWithoutAuthUserInput
   }
 
   export type BetterAuthUserUncheckedCreateWithoutVerificationsInput = {
@@ -53372,6 +53659,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     sessions?: BetterAuthSessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: BetterAuthAccountUncheckedCreateNestedManyWithoutUserInput
+    users?: UserUncheckedCreateNestedManyWithoutAuthUserInput
   }
 
   export type BetterAuthUserCreateOrConnectWithoutVerificationsInput = {
@@ -53400,6 +53688,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: BetterAuthSessionUpdateManyWithoutUserNestedInput
     accounts?: BetterAuthAccountUpdateManyWithoutUserNestedInput
+    users?: UserUpdateManyWithoutAuthUserNestedInput
   }
 
   export type BetterAuthUserUncheckedUpdateWithoutVerificationsInput = {
@@ -53412,6 +53701,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: BetterAuthSessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: BetterAuthAccountUncheckedUpdateManyWithoutUserNestedInput
+    users?: UserUncheckedUpdateManyWithoutAuthUserNestedInput
   }
 
   export type DepartmentCreateWithoutFacultyInput = {
@@ -53501,6 +53791,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -53520,6 +53811,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutFacultyRelationInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -53644,36 +53936,6 @@ export namespace Prisma {
     data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutFacultyRelationInput>
   }
 
-  export type UserScalarWhereInput = {
-    AND?: UserScalarWhereInput | UserScalarWhereInput[]
-    OR?: UserScalarWhereInput[]
-    NOT?: UserScalarWhereInput | UserScalarWhereInput[]
-    id?: UuidFilter<"User"> | string
-    firstName?: StringFilter<"User"> | string
-    lastName?: StringFilter<"User"> | string
-    profileImageUrl?: StringNullableFilter<"User"> | string | null
-    phone?: StringNullableFilter<"User"> | string | null
-    userType?: Enumuser_type_enumFilter<"User"> | $Enums.user_type_enum
-    status?: Enumuser_status_enumFilter<"User"> | $Enums.user_status_enum
-    academicType?: Enumacademic_type_enumFilter<"User"> | $Enums.academic_type_enum
-    userIdentifier?: StringNullableFilter<"User"> | string | null
-    supervisorName?: StringNullableFilter<"User"> | string | null
-    facultyId?: UuidNullableFilter<"User"> | string | null
-    departmentId?: UuidNullableFilter<"User"> | string | null
-    ikohzaId?: UuidNullableFilter<"User"> | string | null
-    companyId?: UuidNullableFilter<"User"> | string | null
-    companyBranchId?: UuidNullableFilter<"User"> | string | null
-    UTM?: EnumUTMNullableFilter<"User"> | $Enums.UTM | null
-    address?: StringNullableFilter<"User"> | string | null
-    email?: StringFilter<"User"> | string
-    emailVerifiedAt?: DateTimeNullableFilter<"User"> | Date | string | null
-    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
-    approvedAt?: DateTimeNullableFilter<"User"> | Date | string | null
-    createdAt?: DateTimeFilter<"User"> | Date | string
-    updatedAt?: DateTimeFilter<"User"> | Date | string
-    approvedBy?: UuidNullableFilter<"User"> | string | null
-  }
-
   export type FacultyCreateWithoutDepartmentsInput = {
     id?: string
     code: string
@@ -53724,6 +53986,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -53743,6 +54006,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutDepartmentRelationInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -53890,6 +54154,7 @@ export namespace Prisma {
     departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -53909,6 +54174,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutIkohzaInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -54071,6 +54337,7 @@ export namespace Prisma {
     departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -54090,6 +54357,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutCompanyRelationInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -54330,6 +54598,7 @@ export namespace Prisma {
     departmentRelation?: DepartmentCreateNestedOneWithoutUsersInput
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -54349,6 +54618,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutCompanyBranchInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -54663,6 +54933,37 @@ export namespace Prisma {
     create: XOR<CompanyBranchCreateWithoutUsersInput, CompanyBranchUncheckedCreateWithoutUsersInput>
   }
 
+  export type BetterAuthUserCreateWithoutUsersInput = {
+    id?: string
+    name?: string | null
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: BetterAuthSessionCreateNestedManyWithoutUserInput
+    accounts?: BetterAuthAccountCreateNestedManyWithoutUserInput
+    verifications?: BetterAuthVerificationCreateNestedManyWithoutUserInput
+  }
+
+  export type BetterAuthUserUncheckedCreateWithoutUsersInput = {
+    id?: string
+    name?: string | null
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: BetterAuthSessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: BetterAuthAccountUncheckedCreateNestedManyWithoutUserInput
+    verifications?: BetterAuthVerificationUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type BetterAuthUserCreateOrConnectWithoutUsersInput = {
+    where: BetterAuthUserWhereUniqueInput
+    create: XOR<BetterAuthUserCreateWithoutUsersInput, BetterAuthUserUncheckedCreateWithoutUsersInput>
+  }
+
   export type UserCreateWithoutApprovedUsersInput = {
     id?: string
     firstName: string
@@ -54687,6 +54988,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
@@ -54705,6 +55007,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutApprovedUsersInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -54772,6 +55075,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
@@ -54790,6 +55094,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutApprovedByUserInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -55569,6 +55874,43 @@ export namespace Prisma {
     bookings?: BookingRequestUncheckedUpdateManyWithoutCompanyBranchNestedInput
   }
 
+  export type BetterAuthUserUpsertWithoutUsersInput = {
+    update: XOR<BetterAuthUserUpdateWithoutUsersInput, BetterAuthUserUncheckedUpdateWithoutUsersInput>
+    create: XOR<BetterAuthUserCreateWithoutUsersInput, BetterAuthUserUncheckedCreateWithoutUsersInput>
+    where?: BetterAuthUserWhereInput
+  }
+
+  export type BetterAuthUserUpdateToOneWithWhereWithoutUsersInput = {
+    where?: BetterAuthUserWhereInput
+    data: XOR<BetterAuthUserUpdateWithoutUsersInput, BetterAuthUserUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type BetterAuthUserUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: BetterAuthSessionUpdateManyWithoutUserNestedInput
+    accounts?: BetterAuthAccountUpdateManyWithoutUserNestedInput
+    verifications?: BetterAuthVerificationUpdateManyWithoutUserNestedInput
+  }
+
+  export type BetterAuthUserUncheckedUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: BetterAuthSessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: BetterAuthAccountUncheckedUpdateManyWithoutUserNestedInput
+    verifications?: BetterAuthVerificationUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserUpsertWithoutApprovedUsersInput = {
     update: XOR<UserUpdateWithoutApprovedUsersInput, UserUncheckedUpdateWithoutApprovedUsersInput>
     create: XOR<UserCreateWithoutApprovedUsersInput, UserUncheckedCreateWithoutApprovedUsersInput>
@@ -55604,6 +55946,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
@@ -55622,6 +55965,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutApprovedUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -56078,6 +56422,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
@@ -56096,6 +56441,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutAuthProvidersInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -56174,6 +56520,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
@@ -56192,6 +56539,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutAuthProvidersInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -56591,6 +56939,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -56609,6 +56958,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutBookingRequestsInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -56676,6 +57026,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -56694,6 +57045,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutApprovedBookingsInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -57026,6 +57378,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -57044,6 +57397,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutBookingRequestsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -57117,6 +57471,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -57135,6 +57490,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutApprovedBookingsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -57827,6 +58183,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -57845,6 +58202,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutCreatedModificationsInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -57912,6 +58270,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -57930,6 +58289,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutApprovedModificationsInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -58095,6 +58455,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -58113,6 +58474,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutCreatedModificationsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -58186,6 +58548,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -58204,6 +58567,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutApprovedModificationsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -58313,6 +58677,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -58331,6 +58696,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutServiceFormsInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -58502,6 +58868,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -58520,6 +58887,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutServiceFormsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -58657,6 +59025,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -58675,6 +59044,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutUploadedInvoicesInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -58862,6 +59232,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -58880,6 +59251,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutUploadedInvoicesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -58993,6 +59365,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -59011,6 +59384,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutUploadedPaymentsInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -59078,6 +59452,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -59096,6 +59471,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutVerifiedPaymentsInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -59215,6 +59591,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -59233,6 +59610,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutUploadedPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -59306,6 +59684,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -59324,6 +59703,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutVerifiedPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -59467,6 +59847,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -59485,6 +59866,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutSampleTrackingInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -59686,6 +60068,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -59704,6 +60087,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutSampleTrackingInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -60459,6 +60843,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -60477,6 +60862,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutUploadedResultsInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -60598,6 +60984,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -60616,6 +61003,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutUploadedResultsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -60678,6 +61066,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -60696,6 +61085,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -60774,6 +61164,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -60792,6 +61183,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -60854,6 +61246,7 @@ export namespace Prisma {
     ikohza?: IkohzaCreateNestedOneWithoutUsersInput
     companyRelation?: CompanyCreateNestedOneWithoutUsersInput
     companyBranch?: CompanyBranchCreateNestedOneWithoutUsersInput
+    authUser: BetterAuthUserCreateNestedOneWithoutUsersInput
     approvedByUser?: UserCreateNestedOneWithoutApprovedUsersInput
     approvedUsers?: UserCreateNestedManyWithoutApprovedByUserInput
     authProviders?: AuthProviderCreateNestedManyWithoutUserInput
@@ -60872,6 +61265,7 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -60950,6 +61344,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -60968,6 +61363,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -61578,6 +61974,33 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type UserCreateManyAuthUserInput = {
+    id?: string
+    firstName: string
+    lastName: string
+    profileImageUrl?: string | null
+    phone?: string | null
+    userType: $Enums.user_type_enum
+    status?: $Enums.user_status_enum
+    academicType?: $Enums.academic_type_enum
+    userIdentifier?: string | null
+    supervisorName?: string | null
+    facultyId?: string | null
+    departmentId?: string | null
+    ikohzaId?: string | null
+    companyId?: string | null
+    companyBranchId?: string | null
+    UTM?: $Enums.UTM | null
+    address?: string | null
+    email: string
+    emailVerifiedAt?: Date | string | null
+    lastLoginAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: string | null
+  }
+
   export type BetterAuthSessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -61680,6 +62103,115 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UserUpdateWithoutAuthUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    facultyRelation?: FacultyUpdateOneWithoutUsersNestedInput
+    departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
+    ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
+    companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
+    approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAuthUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedUsers?: UserUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    authProviders?: AuthProviderUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    bookingRequests?: BookingRequestUncheckedUpdateManyWithoutUserNestedInput
+    approvedBookings?: BookingRequestUncheckedUpdateManyWithoutReviewedByUserNestedInput
+    serviceForms?: ServiceFormUncheckedUpdateManyWithoutGeneratedByUserNestedInput
+    uploadedInvoices?: InvoiceUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifiedByUserNestedInput
+    uploadedResults?: AnalysisResultUncheckedUpdateManyWithoutUploadedByUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    sampleTracking?: SampleTrackingUncheckedUpdateManyWithoutUpdatedByUserNestedInput
+    createdModifications?: SampleModificationUncheckedUpdateManyWithoutCreatedByUserNestedInput
+    approvedModifications?: SampleModificationUncheckedUpdateManyWithoutApprovedByUserNestedInput
+    uploadedPayments?: PaymentUncheckedUpdateManyWithoutUploadedByUserNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutAuthUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    userType?: Enumuser_type_enumFieldUpdateOperationsInput | $Enums.user_type_enum
+    status?: Enumuser_status_enumFieldUpdateOperationsInput | $Enums.user_status_enum
+    academicType?: Enumacademic_type_enumFieldUpdateOperationsInput | $Enums.academic_type_enum
+    userIdentifier?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorName?: NullableStringFieldUpdateOperationsInput | string | null
+    facultyId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    ikohzaId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyId?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBranchId?: NullableStringFieldUpdateOperationsInput | string | null
+    UTM?: NullableEnumUTMFieldUpdateOperationsInput | $Enums.UTM | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type DepartmentCreateManyFacultyInput = {
     id?: string
     code: string
@@ -61702,6 +62234,7 @@ export namespace Prisma {
 
   export type UserCreateManyFacultyRelationInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -61813,6 +62346,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -61832,6 +62366,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutFacultyRelationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -61872,6 +62407,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateManyWithoutFacultyRelationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -61898,6 +62434,7 @@ export namespace Prisma {
 
   export type UserCreateManyDepartmentRelationInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -61945,6 +62482,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -61964,6 +62502,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutDepartmentRelationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62004,6 +62543,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateManyWithoutDepartmentRelationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62030,6 +62570,7 @@ export namespace Prisma {
 
   export type UserCreateManyIkohzaInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -62077,6 +62618,7 @@ export namespace Prisma {
     departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -62096,6 +62638,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutIkohzaInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62136,6 +62679,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateManyWithoutIkohzaInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62176,6 +62720,7 @@ export namespace Prisma {
 
   export type UserCreateManyCompanyRelationInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -62287,6 +62832,7 @@ export namespace Prisma {
     departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -62306,6 +62852,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutCompanyRelationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62346,6 +62893,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateManyWithoutCompanyRelationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62432,6 +62980,7 @@ export namespace Prisma {
 
   export type UserCreateManyCompanyBranchInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -62497,6 +63046,7 @@ export namespace Prisma {
     departmentRelation?: DepartmentUpdateOneWithoutUsersNestedInput
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedByUser?: UserUpdateOneWithoutApprovedUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
@@ -62516,6 +63066,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutCompanyBranchInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62556,6 +63107,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateManyWithoutCompanyBranchInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62642,6 +63194,7 @@ export namespace Prisma {
 
   export type UserCreateManyApprovedByUserInput = {
     id?: string
+    authUserId: string
     firstName: string
     lastName: string
     profileImageUrl?: string | null
@@ -62893,6 +63446,7 @@ export namespace Prisma {
     ikohza?: IkohzaUpdateOneWithoutUsersNestedInput
     companyRelation?: CompanyUpdateOneWithoutUsersNestedInput
     companyBranch?: CompanyBranchUpdateOneWithoutUsersNestedInput
+    authUser?: BetterAuthUserUpdateOneRequiredWithoutUsersNestedInput
     approvedUsers?: UserUpdateManyWithoutApprovedByUserNestedInput
     authProviders?: AuthProviderUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
@@ -62911,6 +63465,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutApprovedByUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62951,6 +63506,7 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateManyWithoutApprovedByUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    authUserId?: StringFieldUpdateOperationsInput | string
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null

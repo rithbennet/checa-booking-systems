@@ -34,6 +34,7 @@ import { useListParams } from "../lib/useListParams";
 import type { SortKey } from "../model/filters.schema";
 import { canSeeAmount } from "../model/list.permissions";
 import { toRow } from "../model/list.selectors";
+import { BookingListTableSkeleton } from "./BookingListTableSkeleton";
 import { StatusChips } from "./StatusChips";
 
 export function BookingListPageClient({
@@ -236,6 +237,7 @@ export function BookingListPageClient({
                                 </TableCell>
                             </TableRow>
                         ))}
+                        {isLoading && rows.length === 0 && <BookingListTableSkeleton />}
                         {!isLoading && rows.length === 0 && (
                             <TableRow>
                                 <TableCell
