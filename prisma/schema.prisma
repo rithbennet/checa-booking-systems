@@ -360,6 +360,8 @@ enum booking_status_enum {
   draft
   pending_user_verification
   pending_approval
+  revision_requested
+  revision_submitted
   approved
   rejected
   in_progress

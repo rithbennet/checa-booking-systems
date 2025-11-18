@@ -21,8 +21,7 @@ export function SelectedServiceCard({
 	onRemove,
 }: SelectedServiceCardProps) {
 	const totalPrice = service.selectedPricing
-		? service.selectedPricing.price *
-		(service.quantity || 1)
+		? service.selectedPricing.price * (service.quantity || 1)
 		: 0;
 
 	return (

@@ -886,6 +886,8 @@ export async function countUserBookingsByStatus(params: {
     in_progress: 0,
     completed: 0,
     cancelled: 0,
+    revision_requested: 0,
+    revision_submitted: 0,
   };
 
   for (const row of grouped) {
