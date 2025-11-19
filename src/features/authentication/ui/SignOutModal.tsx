@@ -93,7 +93,7 @@ export function SignOutModal({ open, onOpenChange }: SignOutModalProps) {
 			// component closed/unmounted while async work in flight
 			isActive = false;
 		};
-	}, [open, router, onOpenChange, clearPersistAndRehydrate]);
+	}, [open, router, onOpenChange, clearPersistAndRehydrate, isSigningOut]);
 
 	return (
 		<Dialog onOpenChange={onOpenChange} open={open}>

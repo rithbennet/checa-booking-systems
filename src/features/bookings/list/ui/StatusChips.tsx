@@ -18,7 +18,7 @@ type Counts = {
 	draft: number;
 	pending_user_verification: number;
 	pending_approval: number;
-	revision_requested: number;
+	revision_requested?: number;
 	approved: number;
 	rejected: number;
 	in_progress: number;
@@ -52,8 +52,8 @@ export function StatusChips({
 
 	const pendingCount = counts
 		? counts.pending_user_verification +
-		counts.pending_approval +
-		(counts.revision_requested || 0)
+			counts.pending_approval +
+			(counts.revision_requested || 0)
 		: undefined;
 
 	const getMoreStatusLabel = () => {
@@ -81,8 +81,9 @@ export function StatusChips({
 			<Badge
 				className={
 					isDraft
-						? `${getStatusBadgeClassName("draft")} ring-2 ${getStatusColors("draft").ring
-						} transition-all`
+						? `${getStatusBadgeClassName("draft")} ring-2 ${
+								getStatusColors("draft").ring
+							} transition-all`
 						: "cursor-pointer rounded-full bg-gray-100 text-gray-700 transition-all hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
 				}
 				onClick={() => onChange(["draft"])}
@@ -93,8 +94,9 @@ export function StatusChips({
 			<Badge
 				className={
 					isPending
-						? `${getStatusBadgeClassName("pending_user_verification")} ring-2 ${getStatusColors("pending_user_verification").ring
-						} transition-all`
+						? `${getStatusBadgeClassName("pending_user_verification")} ring-2 ${
+								getStatusColors("pending_user_verification").ring
+							} transition-all`
 						: "cursor-pointer rounded-full bg-gray-100 text-gray-700 transition-all hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
 				}
 				onClick={() =>
@@ -111,8 +113,9 @@ export function StatusChips({
 			<Badge
 				className={
 					isApproved
-						? `${getStatusBadgeClassName("approved")} ring-2 ${getStatusColors("approved").ring
-						} transition-all`
+						? `${getStatusBadgeClassName("approved")} ring-2 ${
+								getStatusColors("approved").ring
+							} transition-all`
 						: "cursor-pointer rounded-full bg-gray-100 text-gray-700 transition-all hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
 				}
 				onClick={() => onChange(["approved"])}
@@ -130,20 +133,25 @@ export function StatusChips({
 						// statuses is active.
 					}
 					<Badge
-						className={`cursor-pointer ${isInProgress
-							? `${getStatusBadgeClassName("in_progress")} ring-2 ${getStatusColors("in_progress").ring
-							}`
-							: isCompleted
-								? `${getStatusBadgeClassName("completed")} ring-2 ${getStatusColors("completed").ring
-								}`
-								: isRejected
-									? `${getStatusBadgeClassName("rejected")} ring-2 ${getStatusColors("rejected").ring
+						className={`cursor-pointer ${
+							isInProgress
+								? `${getStatusBadgeClassName("in_progress")} ring-2 ${
+										getStatusColors("in_progress").ring
 									}`
-									: isCancelled
-										? `${getStatusBadgeClassName("cancelled")} ring-2 ${getStatusColors("cancelled").ring
+								: isCompleted
+									? `${getStatusBadgeClassName("completed")} ring-2 ${
+											getStatusColors("completed").ring
 										}`
-										: "rounded-full bg-gray-100 text-gray-700"
-							} transition-all hover:opacity-90`}
+									: isRejected
+										? `${getStatusBadgeClassName("rejected")} ring-2 ${
+												getStatusColors("rejected").ring
+											}`
+										: isCancelled
+											? `${getStatusBadgeClassName("cancelled")} ring-2 ${
+													getStatusColors("cancelled").ring
+												}`
+											: "rounded-full bg-gray-100 text-gray-700"
+						} transition-all hover:opacity-90`}
 						variant="secondary"
 					>
 						{getMoreStatusLabel()} <ChevronDown className="ml-1 size-3" />
@@ -154,8 +162,9 @@ export function StatusChips({
 						<Button
 							className={
 								isInProgress
-									? `w-full justify-between font-medium ${getStatusColors("in_progress").bg
-									} ${getStatusColors("in_progress").text} hover:opacity-95`
+									? `w-full justify-between font-medium ${
+											getStatusColors("in_progress").bg
+										} ${getStatusColors("in_progress").text} hover:opacity-95`
 									: "w-full justify-between"
 							}
 							onClick={() => onChange(["in_progress"])}
@@ -172,8 +181,9 @@ export function StatusChips({
 						<Button
 							className={
 								isCompleted
-									? `w-full justify-between font-medium ${getStatusColors("completed").bg
-									} ${getStatusColors("completed").text} hover:opacity-95`
+									? `w-full justify-between font-medium ${
+											getStatusColors("completed").bg
+										} ${getStatusColors("completed").text} hover:opacity-95`
 									: "w-full justify-between"
 							}
 							onClick={() => onChange(["completed"])}
@@ -190,8 +200,9 @@ export function StatusChips({
 						<Button
 							className={
 								isRejected
-									? `w-full justify-between font-medium ${getStatusColors("rejected").bg
-									} ${getStatusColors("rejected").text} hover:opacity-95`
+									? `w-full justify-between font-medium ${
+											getStatusColors("rejected").bg
+										} ${getStatusColors("rejected").text} hover:opacity-95`
 									: "w-full justify-between"
 							}
 							onClick={() => onChange(["rejected"])}
@@ -208,8 +219,9 @@ export function StatusChips({
 						<Button
 							className={
 								isCancelled
-									? `w-full justify-between font-medium ${getStatusColors("cancelled").bg
-									} ${getStatusColors("cancelled").text} hover:opacity-95`
+									? `w-full justify-between font-medium ${
+											getStatusColors("cancelled").bg
+										} ${getStatusColors("cancelled").text} hover:opacity-95`
 									: "w-full justify-between"
 							}
 							onClick={() => onChange(["cancelled"])}

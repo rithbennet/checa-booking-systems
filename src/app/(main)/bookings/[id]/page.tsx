@@ -95,12 +95,12 @@ export default async function BookingDetailPage({
 						</Badge>
 						{(booking.status === "draft" ||
 							booking.status === "revision_requested") && (
-								<Button asChild>
-									<Link href={`/bookings/${booking.id}/edit`}>
-										Continue Editing
-									</Link>
-								</Button>
-							)}
+							<Button asChild>
+								<Link href={`/bookings/${booking.id}/edit`}>
+									Continue Editing
+								</Link>
+							</Button>
+						)}
 					</div>
 				</div>
 			</div>

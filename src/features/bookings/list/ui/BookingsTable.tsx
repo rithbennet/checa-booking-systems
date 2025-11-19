@@ -1,6 +1,11 @@
 "use client";
 
 import { Briefcase, Eye, Pencil, Trash2 } from "lucide-react";
+import {
+	getStatusBadgeClassName,
+	getStatusColors,
+	getStatusLabel,
+} from "@/shared/lib/status-utils";
 import RouterButton from "@/shared/ui/router-button";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
@@ -18,13 +23,6 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/shared/ui/shadcn/tooltip";
-import {
-	getStatusBadgeClassName,
-	getStatusColors,
-	getStatusLabel,
-	STATUS_COLORS,
-	STATUS_LABELS,
-} from "@/shared/lib/status-utils";
 import { BookingListTableSkeleton } from "./BookingListTableSkeleton";
 
 export interface BookingRow {
@@ -170,7 +168,9 @@ export function BookingsTable({
 											</TooltipTrigger>
 											<TooltipContent className="max-w-xs">
 												<div>
-													<p className="font-semibold">Admin has requested changes</p>
+													<p className="font-semibold">
+														Admin has requested changes
+													</p>
 													{row.reviewNotes && (
 														<p className="mt-1 text-xs">{row.reviewNotes}</p>
 													)}

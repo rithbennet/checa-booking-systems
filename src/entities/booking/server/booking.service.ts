@@ -344,6 +344,34 @@ export async function submit(params: {
 		throw new BookingValidationError(validationResult.error.issues);
 	}
 
+	// Conflict safety: Check for overlapping workspace bookings for the same user
+	if (dto.workspaceBookings && dto.workspaceBookings.length > 0) {
+		// Query existing workspace bookings for this user where parent status allows overlap
+		const existingWorkspaces = await repo.findUserWorkspaceBookings({
+			userId,
+			excludeBookingId: bookingId, // Exclude current booking being submitted
+			statuses: ["pending_approval", "approved", "in_progress"],
+		});
+
+		// Check for overlaps with new workspace bookings
+		for (const newWs of dto.workspaceBookings) {
+			const newStart = new Date(newWs.startDate);
+			const newEnd = new Date(newWs.endDate);
+
+			for (const existing of existingWorkspaces) {
+				const existingStart = new Date(existing.startDate);
+				const existingEnd = new Date(existing.endDate);
+
+				// Overlap condition: newStart <= existingEnd AND newEnd >= existingStart
+				if (newStart <= existingEnd && newEnd >= existingStart) {
+					throw new Error(
+						`Workspace booking conflict: Your requested dates (${newStart.toLocaleDateString()} - ${newEnd.toLocaleDateString()}) overlap with an existing workspace booking (${existingStart.toLocaleDateString()} - ${existingEnd.toLocaleDateString()}). Please adjust your dates or cancel the conflicting booking first.`,
+					);
+				}
+			}
+		}
+	}
+
 	// Determine new status based on user verification state
 	const newStatus =
 		userStatus === "active" ? "pending_approval" : "pending_user_verification";
