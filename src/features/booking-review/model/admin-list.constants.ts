@@ -10,7 +10,6 @@ export const ADMIN_DEFAULT_SORT: AdminSortKey = "updated_newest";
 
 export const ADMIN_DEFAULT_STATUS_FILTER = [
   "pending_approval",
-  "revision_submitted",
 ] as const;
 
 export const ADMIN_PAGE_SIZE_OPTIONS = [25, 50, 100] as const;
@@ -29,7 +28,6 @@ export const ADMIN_SORT_OPTIONS: Array<{
 
 export const ADMIN_STATUS_LABELS: Record<string, string> = {
   pending_approval: "Pending",
-  revision_submitted: "Rev. Submitted",
   revision_requested: "Rev. Requested",
   approved: "Approved",
   in_progress: "In Progress",
@@ -46,11 +44,6 @@ export const ADMIN_STATUS_COLORS: Record<
     bg: "bg-blue-50 dark:bg-blue-900/20",
     text: "text-blue-700 dark:text-blue-200",
     ring: "ring-blue-600",
-  },
-  revision_submitted: {
-    bg: "bg-cyan-50 dark:bg-cyan-900/20",
-    text: "text-cyan-700 dark:text-cyan-200",
-    ring: "ring-cyan-600",
   },
   revision_requested: {
     bg: "bg-amber-50 dark:bg-amber-900/20",
@@ -89,12 +82,6 @@ export const ADMIN_STATUS_COLORS: Record<
  */
 export const ADMIN_ACTION_PERMISSIONS = {
   pending_approval: {
-    approve: true,
-    requestRevision: true,
-    reject: true,
-    delete: false,
-  },
-  revision_submitted: {
     approve: true,
     requestRevision: true,
     reject: true,

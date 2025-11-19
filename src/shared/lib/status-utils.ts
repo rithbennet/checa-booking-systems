@@ -7,7 +7,6 @@ export const STATUS_LABELS: Record<string, string> = {
   draft: "Draft",
   pending_user_verification: "Pending",
   pending_approval: "Pending",
-  revision_submitted: "Rev. Submitted",
   revision_requested: "Rev. Requested",
   approved: "Approved",
   in_progress: "In progress",
@@ -34,11 +33,6 @@ export const STATUS_COLORS: Record<
     bg: "bg-yellow-50 dark:bg-yellow-900/20",
     text: "text-yellow-800 dark:text-yellow-200",
     ring: "ring-yellow-600",
-  },
-  revision_submitted: {
-    bg: "bg-cyan-50 dark:bg-cyan-900/20",
-    text: "text-cyan-700 dark:text-cyan-200",
-    ring: "ring-cyan-600",
   },
   revision_requested: {
     bg: "bg-amber-50 dark:bg-amber-900/20",

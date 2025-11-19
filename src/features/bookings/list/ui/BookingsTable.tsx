@@ -34,6 +34,7 @@ export interface BookingRow {
 	status: string;
 	amountLabel: string;
 	createdAtLabel: string;
+	reviewNotes?: string | null;
 	flags?: {
 		hasWorkingSpace: boolean;
 	};
@@ -56,11 +57,13 @@ export function BookingsTable({
 	onSelectRow,
 	onDelete,
 }: BookingsTableProps) {
-	const draftRows = rows.filter((r) => r.status === "draft");
-	const allDraftsSelected =
-		draftRows.length > 0 && draftRows.every((r) => selectedIds.has(r.id));
-	const someDraftsSelected =
-		draftRows.some((r) => selectedIds.has(r.id)) && !allDraftsSelected;
+	const editableRows = rows.filter(
+		(r) => r.status === "draft" || r.status === "revision_requested",
+	);
+	const allEditableSelected =
+		editableRows.length > 0 && editableRows.every((r) => selectedIds.has(r.id));
+	const someEditableSelected =
+		editableRows.some((r) => selectedIds.has(r.id)) && !allEditableSelected;
 
 	return (
 		<div className="rounded-md border">
@@ -70,12 +73,12 @@ export function BookingsTable({
 						<TableHead className="w-[50px]">
 							<Checkbox
 								aria-label="Select all"
-								checked={allDraftsSelected || someDraftsSelected}
-								disabled={draftRows.length === 0}
+								checked={allEditableSelected || someEditableSelected}
+								disabled={editableRows.length === 0}
 								onCheckedChange={(checked) =>
 									onSelectAll(
 										checked as boolean,
-										draftRows.map((r) => r.id),
+										editableRows.map((r) => r.id),
 									)
 								}
 							/>
@@ -98,6 +101,8 @@ export function BookingsTable({
 					{rows.map((row) => {
 						const isSelected = selectedIds.has(row.id);
 						const isDraft = row.status === "draft";
+						const isRevisionRequested = row.status === "revision_requested";
+						const isEditable = isDraft || isRevisionRequested;
 
 						return (
 							<TableRow key={row.id}>
@@ -105,7 +110,7 @@ export function BookingsTable({
 									<Checkbox
 										aria-label={`Select ${row.reference}`}
 										checked={isSelected}
-										disabled={!isDraft}
+										disabled={!isEditable}
 										onCheckedChange={(checked) =>
 											onSelectRow(row.id, checked as boolean)
 										}
@@ -152,13 +157,38 @@ export function BookingsTable({
 									</Tooltip>
 								</TableCell>
 								<TableCell>
-									<Badge
-										className={`${getStatusBadgeClassName(
-											row.status,
-										)} ring-2 ${getStatusColors(row.status).ring}`}
-									>
-										{getStatusLabel(row.status)}
-									</Badge>
+									{isRevisionRequested ? (
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<Badge
+													className={`${getStatusBadgeClassName(
+														row.status,
+													)} ring-2 ${getStatusColors(row.status).ring} cursor-help`}
+												>
+													{getStatusLabel(row.status)}
+												</Badge>
+											</TooltipTrigger>
+											<TooltipContent className="max-w-xs">
+												<div>
+													<p className="font-semibold">Admin has requested changes</p>
+													{row.reviewNotes && (
+														<p className="mt-1 text-xs">{row.reviewNotes}</p>
+													)}
+													<p className="mt-1 text-xs opacity-75">
+														Click edit to revise your booking
+													</p>
+												</div>
+											</TooltipContent>
+										</Tooltip>
+									) : (
+										<Badge
+											className={`${getStatusBadgeClassName(
+												row.status,
+											)} ring-2 ${getStatusColors(row.status).ring}`}
+										>
+											{getStatusLabel(row.status)}
+										</Badge>
+									)}
 								</TableCell>
 								<TableCell className="text-right">{row.amountLabel}</TableCell>
 								<TableCell className="text-right">
@@ -181,7 +211,7 @@ export function BookingsTable({
 											</TooltipTrigger>
 											<TooltipContent>View</TooltipContent>
 										</Tooltip>
-										{isDraft && (
+										{isEditable && (
 											<>
 												<Tooltip>
 													<TooltipTrigger asChild>

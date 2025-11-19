@@ -72,7 +72,6 @@ export function AdminBookingsTable({
                             <TableHead className="min-w-[180px]">Project</TableHead>
                             <TableHead className="w-[120px]">Status</TableHead>
                             <TableHead className="w-[120px] text-right">Amount</TableHead>
-                            <TableHead className="w-[110px] text-right">Created</TableHead>
                             <TableHead className="w-[110px] text-right">Updated</TableHead>
                             <TableHead className="w-[200px] text-right">Actions</TableHead>
                         </TableRow>
@@ -111,7 +110,6 @@ export function AdminBookingsTable({
                         <TableHead className="min-w-[180px]">Project</TableHead>
                         <TableHead className="w-[120px]">Status</TableHead>
                         <TableHead className="w-[120px] text-right">Amount</TableHead>
-                        <TableHead className="w-[110px] text-right">Created</TableHead>
                         <TableHead className="w-[110px] text-right">Updated</TableHead>
                         <TableHead className="w-[200px] text-right">Actions</TableHead>
                     </TableRow>
@@ -268,11 +266,6 @@ export function AdminBookingsTable({
                                 {/* Amount */}
                                 <TableCell className="text-right">
                                     {formatAmount(Number(booking.totalAmount))}
-                                </TableCell>
-
-                                {/* Created */}
-                                <TableCell className="text-right text-sm">
-                                    {formatDate(booking.createdAt)}
                                 </TableCell>
 
                                 {/* Updated */}

@@ -15,7 +15,6 @@ export type AdminSortKey =
 
 export type AdminBookingStatus =
   | "pending_approval"
-  | "revision_submitted"
   | "revision_requested"
   | "approved"
   | "in_progress"
@@ -49,7 +48,6 @@ export type AdminBookingListFilters = {
 export type AdminStatusCounts = {
   all: number;
   pending_approval: number;
-  revision_submitted: number;
   revision_requested: number;
   approved: number;
   in_progress: number;

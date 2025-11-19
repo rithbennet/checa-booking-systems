@@ -18,6 +18,7 @@ type Counts = {
 	draft: number;
 	pending_user_verification: number;
 	pending_approval: number;
+	revision_requested: number;
 	approved: number;
 	rejected: number;
 	in_progress: number;
@@ -39,9 +40,10 @@ export function StatusChips({
 	const isDraft = active?.length === 1 && active[0] === "draft";
 	const isPending =
 		Array.isArray(active) &&
-		active.length === 2 &&
+		active.length === 3 &&
 		active.includes("pending_user_verification") &&
-		active.includes("pending_approval");
+		active.includes("pending_approval") &&
+		active.includes("revision_requested");
 	const isApproved = active?.length === 1 && active[0] === "approved";
 	const isInProgress = active?.length === 1 && active[0] === "in_progress";
 	const isCompleted = active?.length === 1 && active[0] === "completed";
@@ -49,7 +51,9 @@ export function StatusChips({
 	const isCancelled = active?.length === 1 && active[0] === "cancelled";
 
 	const pendingCount = counts
-		? counts.pending_user_verification + counts.pending_approval
+		? counts.pending_user_verification +
+		counts.pending_approval +
+		(counts.revision_requested || 0)
 		: undefined;
 
 	const getMoreStatusLabel = () => {
@@ -94,7 +98,11 @@ export function StatusChips({
 						: "cursor-pointer rounded-full bg-gray-100 text-gray-700 transition-all hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300"
 				}
 				onClick={() =>
-					onChange(["pending_user_verification", "pending_approval"])
+					onChange([
+						"pending_user_verification",
+						"pending_approval",
+						"revision_requested",
+					])
 				}
 				variant="secondary"
 			>
@@ -123,18 +131,18 @@ export function StatusChips({
 					}
 					<Badge
 						className={`cursor-pointer ${isInProgress
-								? `${getStatusBadgeClassName("in_progress")} ring-2 ${getStatusColors("in_progress").ring
+							? `${getStatusBadgeClassName("in_progress")} ring-2 ${getStatusColors("in_progress").ring
+							}`
+							: isCompleted
+								? `${getStatusBadgeClassName("completed")} ring-2 ${getStatusColors("completed").ring
 								}`
-								: isCompleted
-									? `${getStatusBadgeClassName("completed")} ring-2 ${getStatusColors("completed").ring
+								: isRejected
+									? `${getStatusBadgeClassName("rejected")} ring-2 ${getStatusColors("rejected").ring
 									}`
-									: isRejected
-										? `${getStatusBadgeClassName("rejected")} ring-2 ${getStatusColors("rejected").ring
+									: isCancelled
+										? `${getStatusBadgeClassName("cancelled")} ring-2 ${getStatusColors("cancelled").ring
 										}`
-										: isCancelled
-											? `${getStatusBadgeClassName("cancelled")} ring-2 ${getStatusColors("cancelled").ring
-											}`
-											: "rounded-full bg-gray-100 text-gray-700"
+										: "rounded-full bg-gray-100 text-gray-700"
 							} transition-all hover:opacity-90`}
 						variant="secondary"
 					>

@@ -18,6 +18,7 @@ export type BookingListItem = {
 	currency: string;
 	createdAt: string | Date;
 	updatedAt: string | Date;
+	reviewNotes?: string | null;
 	flags: {
 		hasWorkingSpace: boolean;
 		hasUnread: boolean;

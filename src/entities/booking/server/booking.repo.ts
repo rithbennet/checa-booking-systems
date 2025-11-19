@@ -508,7 +508,7 @@ export async function setStatus(params: {
 }
 
 /**
- * Delete draft booking (only when status = draft)
+ * Delete draft booking (only when status = draft or revision_requested)
  */
 export async function deleteDraft(params: {
   bookingId: string;
@@ -521,8 +521,13 @@ export async function deleteDraft(params: {
     select: { status: true },
   });
 
-  if (booking?.status !== "draft") {
-    throw new Error("Can only delete draft bookings");
+  if (
+    booking?.status !== "draft" &&
+    booking?.status !== "revision_requested"
+  ) {
+    throw new Error(
+      "Can only delete draft or revision_requested bookings",
+    );
   }
 
   return db.bookingRequest.delete({
@@ -788,6 +793,7 @@ export async function listUserBookings(params: ListUserBookingsParams) {
         projectDescription: true,
         status: true,
         totalAmount: true,
+        reviewNotes: true,
         createdAt: true,
         updatedAt: true,
         _count: {
@@ -810,6 +816,7 @@ export async function listUserBookings(params: ListUserBookingsParams) {
     currency: "MYR",
     createdAt: r.createdAt,
     updatedAt: r.updatedAt,
+    reviewNotes: r.reviewNotes,
     flags: {
       hasWorkingSpace: r._count.workspaceBookings > 0,
       hasUnread: false,
@@ -877,18 +884,17 @@ export async function countUserBookingsByStatus(params: {
     _count: { _all: true },
   });
 
-  const initial: Record<$Enums.booking_status_enum, number> = {
-    draft: 0,
-    pending_user_verification: 0,
-    pending_approval: 0,
-    approved: 0,
-    rejected: 0,
-    in_progress: 0,
-    completed: 0,
-    cancelled: 0,
-    revision_requested: 0,
-    revision_submitted: 0,
-  };
+  	const initial: Record<$Enums.booking_status_enum, number> = {
+		draft: 0,
+		pending_user_verification: 0,
+		pending_approval: 0,
+		approved: 0,
+		rejected: 0,
+		in_progress: 0,
+		completed: 0,
+		cancelled: 0,
+		revision_requested: 0,
+	};
 
   for (const row of grouped) {
     const key = row.status as keyof typeof initial;
@@ -897,15 +903,16 @@ export async function countUserBookingsByStatus(params: {
 
   const all = Object.values(initial).reduce((a, b) => a + b, 0);
 
-  return {
-    all,
-    draft: initial.draft,
-    pending_user_verification: initial.pending_user_verification,
-    pending_approval: initial.pending_approval,
-    approved: initial.approved,
-    rejected: initial.rejected,
-    in_progress: initial.in_progress,
-    completed: initial.completed,
-    cancelled: initial.cancelled,
-  };
+  	return {
+		all,
+		draft: initial.draft,
+		pending_user_verification: initial.pending_user_verification,
+		pending_approval: initial.pending_approval,
+		revision_requested: initial.revision_requested,
+		approved: initial.approved,
+		rejected: initial.rejected,
+		in_progress: initial.in_progress,
+		completed: initial.completed,
+		cancelled: initial.cancelled,
+	};
 }

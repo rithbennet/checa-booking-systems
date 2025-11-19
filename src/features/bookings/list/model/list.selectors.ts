@@ -11,6 +11,7 @@ export function toRow(item: BookingListItem, showAmount: boolean) {
 			? formatAmount(item.totalAmount, item.currency)
 			: "—",
 		createdAtLabel: formatDate(item.createdAt),
+		reviewNotes: item.reviewNotes,
 		flags: item.flags,
 		nextRequiredAction: item.nextRequiredAction,
 	};

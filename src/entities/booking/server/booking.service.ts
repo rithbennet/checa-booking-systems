@@ -102,10 +102,15 @@ export async function saveDraft(params: {
 	// Ensure ownership
 	await repo.ensureOwner(bookingId, userId);
 
-	// Ensure status is draft
+	// Ensure status is draft or revision_requested
 	const booking = await repo.findBookingById(bookingId);
-	if (!booking || booking.status !== "draft") {
-		throw new Error("Booking is not editable (must be in draft status)");
+	if (
+		!booking ||
+		(booking.status !== "draft" && booking.status !== "revision_requested")
+	) {
+		throw new Error(
+			"Booking is not editable (must be in draft or revision_requested status)",
+		);
 	}
 
 	// Update basic fields
@@ -256,10 +261,15 @@ export async function submit(params: {
 	// Ensure ownership
 	await repo.ensureOwner(bookingId, userId);
 
-	// Ensure status is draft
+	// Ensure status is draft or revision_requested
 	const booking = await repo.findBookingById(bookingId);
-	if (!booking || booking.status !== "draft") {
-		throw new Error("Booking is not submittable (must be in draft status)");
+	if (
+		!booking ||
+		(booking.status !== "draft" && booking.status !== "revision_requested")
+	) {
+		throw new Error(
+			"Booking is not submittable (must be in draft or revision_requested status)",
+		);
 	}
 
 	// Partition items: exclude working_space from service items mapping
