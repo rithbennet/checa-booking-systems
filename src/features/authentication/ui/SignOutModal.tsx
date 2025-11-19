@@ -35,31 +35,51 @@ export function SignOutModal({ open, onOpenChange }: SignOutModalProps) {
 			try {
 				const session = await authClient.getSession();
 
-				if (isActive) {
-					const userId = session.data?.user?.id;
+				if (!isActive) return;
 
-					await clearPersistAndRehydrate();
+				const userId = session.data?.user?.id;
 
+				// Clear local state first
+				await clearPersistAndRehydrate();
+
+				if (!isActive) return;
+
+				if (userId) {
+					await clearAllUserDrafts(userId);
+				}
+
+				if (!isActive) return;
+
+				// Sign out with Better Auth - this will clear the session
+				try {
+					await authClient.signOut({
+						fetchOptions: {
+							onSuccess: () => {
+								if (isActive) {
+									router.push("/");
+									router.refresh(); // Refresh to update server components
+									onOpenChange?.(false);
+								}
+							},
+						},
+					});
+				} catch (e) {
+					console.error("[SignOutModal] signOut failed", e);
+					// Even if sign-out fails, redirect to home
 					if (isActive) {
-						if (userId) {
-							await clearAllUserDrafts(userId);
-						}
-
-						try {
-							await authClient.signOut();
-						} catch (e) {
-							console.error("[SignOutModal] signOut failed, continuing", e);
-						}
-
-						if (isActive) {
-							router.push("/");
-							onOpenChange?.(false);
-						}
+						router.push("/");
+						router.refresh();
+						onOpenChange?.(false);
 					}
 				}
 			} catch (e) {
 				console.error("[SignOutModal] unexpected sign-out error", e);
-				// Optional: toast here
+				// On error, still try to redirect
+				if (isActive) {
+					router.push("/");
+					router.refresh();
+					onOpenChange?.(false);
+				}
 			} finally {
 				if (isActive) {
 					setIsSigningOut(false);
@@ -73,7 +93,7 @@ export function SignOutModal({ open, onOpenChange }: SignOutModalProps) {
 			// component closed/unmounted while async work in flight
 			isActive = false;
 		};
-	}, [open, isSigningOut, router, onOpenChange, clearPersistAndRehydrate]);
+	}, [open, router, onOpenChange, clearPersistAndRehydrate]);
 
 	return (
 		<Dialog onOpenChange={onOpenChange} open={open}>
