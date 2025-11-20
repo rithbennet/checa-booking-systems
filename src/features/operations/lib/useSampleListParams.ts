@@ -4,15 +4,40 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 import type { SampleFiltersState } from "../model/sample-filters.schema";
+import { SampleFiltersSchema } from "../model/sample-filters.schema";
 
 function fromSearchParams(searchParams: URLSearchParams): SampleFiltersState {
 	const statusAll = searchParams.getAll("status");
-	return {
-		page: Number.parseInt(searchParams.get("page") ?? "1", 10) || 1,
-		pageSize: Number.parseInt(searchParams.get("pageSize") ?? "25", 10) || 25,
+
+	// Parse and validate page
+	const pageRaw = Number.parseInt(searchParams.get("page") ?? "1", 10);
+	const page = Number.isNaN(pageRaw) || pageRaw < 1 ? 1 : pageRaw;
+
+	// Parse and validate pageSize (min 1, max 100)
+	const pageSizeRaw = Number.parseInt(searchParams.get("pageSize") ?? "25", 10);
+	const pageSize =
+		Number.isNaN(pageSizeRaw) || pageSizeRaw < 1
+			? 25
+			: pageSizeRaw > 100
+				? 100
+				: pageSizeRaw;
+
+	// Use Zod schema to normalize and validate
+	const result = SampleFiltersSchema.safeParse({
+		page,
+		pageSize,
 		q: searchParams.get("q") ?? "",
 		status: statusAll.length > 0 ? statusAll : [],
-	};
+	});
+
+	return result.success
+		? result.data
+		: {
+				page: 1,
+				pageSize: 25,
+				q: "",
+				status: [],
+			};
 }
 
 function buildHref(pathname: string, params: SampleFiltersState): string {

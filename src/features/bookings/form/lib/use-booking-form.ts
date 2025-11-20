@@ -32,7 +32,7 @@ import type { Service, UserType } from "@/entities/service";
 import { getServicePrice } from "@/entities/service";
 import {
 	calculateWorkspaceEndDate,
-	doDateRangesOverlap,
+	dateBlocksOverlap,
 	normalizeDate as normalizeWorkspaceDate,
 } from "@/features/bookings/form/lib/workspace-utils";
 import type { BookingProfile } from "../model/types";
@@ -331,7 +331,7 @@ export function useBookingForm({
 					if (!b?.startDate || !b?.endDate) continue;
 					const bStart = normalizeWorkspaceDate(new Date(b.startDate));
 					const bEnd = normalizeWorkspaceDate(new Date(b.endDate));
-					if (doDateRangesOverlap(aStart, aEnd, bStart, bEnd)) {
+					if (dateBlocksOverlap(aStart, aEnd, bStart, bEnd)) {
 						overlapIndices.add(i);
 						overlapIndices.add(j);
 					}

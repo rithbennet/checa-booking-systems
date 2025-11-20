@@ -46,7 +46,9 @@ export function useUpdateSampleStatus() {
 			});
 
 			// Snapshot previous values for rollback
-			const previousQueries = new Map();
+			const previousQueries = new Map(
+				queryClient.getQueriesData({ queryKey: sampleTrackingKeys.all }),
+			);
 
 			// Optimistically update all sample queries
 			queryClient.setQueriesData(
@@ -75,17 +77,19 @@ export function useUpdateSampleStatus() {
 				});
 			}
 
+			// Also invalidate to ensure fresh data after rollback
+			queryClient.invalidateQueries({
+				queryKey: sampleTrackingKeys.all,
+			});
+
 			toast.error("Failed to update status", {
 				description: error instanceof Error ? error.message : "Unknown error",
 			});
 		},
 		onSuccess: (_data, variables) => {
-			// Invalidate queries to refetch fresh data
+			// Invalidate all sample tracking queries to refetch fresh data
 			queryClient.invalidateQueries({
-				queryKey: sampleTrackingKeys.operationsList({}),
-			});
-			queryClient.invalidateQueries({
-				queryKey: sampleTrackingKeys.userActive(""),
+				queryKey: sampleTrackingKeys.all,
 			});
 
 			toast.success("Status updated", {

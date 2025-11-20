@@ -91,7 +91,7 @@ export function isValidWorkspaceStartDate(date: Date): boolean {
 /** ------------------ Range calculations ------------------ **/
 
 /** Check if two date ranges overlap (inclusive). */
-export function doDateRangesOverlap(
+export function dateBlocksOverlap(
 	start1: Date,
 	end1: Date,
 	start2: Date,
@@ -120,7 +120,7 @@ export function hasOverlappingBooking(
 		const { startDate: s, endDate: e } = parseWorkspaceDates(
 			slot as Partial<ServiceItem>,
 		);
-		return s && e ? doDateRangesOverlap(startDate, endDate, s, e) : false;
+		return s && e ? dateBlocksOverlap(startDate, endDate, s, e) : false;
 	});
 }
 

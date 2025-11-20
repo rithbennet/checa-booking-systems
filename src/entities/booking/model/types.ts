@@ -150,10 +150,7 @@ export interface BookingFormData {
 	projectDescription?: string;
 	preferredStartDate?: Date;
 	preferredEndDate?: Date;
-	serviceItems: Omit<
-		BookingServiceItem,
-		"id" | "serviceId" | "equipmentUsages"
-	>[];
+	serviceItems: Omit<BookingServiceItem, "id" | "equipmentUsages">[];
 	workspaceBookings?: Omit<
 		WorkspaceBooking,
 		"id" | "bookingRequestId" | "equipmentUsages"

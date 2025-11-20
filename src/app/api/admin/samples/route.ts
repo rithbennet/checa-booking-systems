@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { ZodError, type z } from "zod";
 import { listSamples } from "@/entities/sample-tracking/server/actions";
 import { SampleListQuerySchema } from "@/entities/sample-tracking/server/validations";
@@ -27,8 +26,8 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
 				q,
 				userId,
 				exclude,
-				page: searchParams.get("page"),
-				pageSize: searchParams.get("pageSize"),
+				page: searchParams.get("page") ?? undefined,
+				pageSize: searchParams.get("pageSize") ?? undefined,
 			});
 		} catch (zodError) {
 			if (zodError instanceof ZodError) {
@@ -39,7 +38,7 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
 
 		const result = await listSamples(validated);
 
-		return NextResponse.json(result);
+		return result;
 	} catch (error) {
 		console.error("[admin/samples GET]", error);
 		return serverError("Internal server error");

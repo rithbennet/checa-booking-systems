@@ -17,7 +17,7 @@ interface UserSampleTrackerProps {
 }
 
 export function UserSampleTracker({ userId }: UserSampleTrackerProps) {
-	const { data, isLoading } = useUserActiveSamples(userId);
+	const { data, isLoading, isError, error } = useUserActiveSamples(userId);
 
 	const items = data?.items.map(mapToWidgetItem) ?? [];
 
@@ -30,6 +30,12 @@ export function UserSampleTracker({ userId }: UserSampleTrackerProps) {
 				{isLoading ? (
 					<div className="py-4 text-center text-muted-foreground text-sm">
 						Loading samples...
+					</div>
+				) : isError ? (
+					<div className="py-4 text-center text-destructive text-sm">
+						{error instanceof Error
+							? error.message
+							: "Failed to load samples. Please try again later."}
 					</div>
 				) : items.length === 0 ? (
 					<div className="py-4 text-center text-muted-foreground text-sm">
@@ -52,6 +58,7 @@ export function UserSampleTracker({ userId }: UserSampleTrackerProps) {
 									</div>
 								</div>
 								<RouterButton
+									aria-label="View booking"
 									href={`/bookings/${item.bookingId}`}
 									size="icon"
 									title="View booking"
