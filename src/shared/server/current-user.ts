@@ -17,6 +17,7 @@ export type CurrentUser = {
 
 /**
  * Shape the user object from session into CurrentUser
+ * Uses id as fallback when appUserId is missing
  */
 function shapeUser(u: {
 	appUserId?: string | null;
@@ -27,8 +28,16 @@ function shapeUser(u: {
 	status?: string | null;
 	id?: string;
 }): CurrentUser {
+	// Use appUserId if available, otherwise fallback to id (BetterAuth user id)
+	// This ensures we always have a non-null identifier
+	const appUserId = u.appUserId ?? u.id;
+
+	if (!appUserId) {
+		throw new Error("Missing both appUserId and id in user session");
+	}
+
 	return {
-		appUserId: u.appUserId as string,
+		appUserId: appUserId,
 		email: u.email as string,
 		name: (u.name ?? null) as string | null,
 		image: (u.image ?? null) as string | null,
@@ -40,7 +49,8 @@ function shapeUser(u: {
 
 /**
  * Require current user in Server Components (RSC) and pages
- * Redirects to /signIn if not authenticated or appUserId is missing
+ * Redirects to /signIn if not authenticated or both appUserId and id are missing
+ * Uses id as fallback when appUserId is missing to ensure a non-null identifier
  */
 export async function requireCurrentUser(): Promise<CurrentUser> {
 	const session = await auth();
@@ -53,20 +63,29 @@ export async function requireCurrentUser(): Promise<CurrentUser> {
 
 	console.log("[requireCurrentUser] user", session.user);
 
+	// Ensure we have at least one identifier (appUserId or id)
 	if (!session.user.appUserId && !session.user.id) {
 		console.warn("[requireCurrentUser] missing appUserId/id", session.user);
 		redirect("/signIn");
 	}
+
+	// shapeUser will use id as fallback if appUserId is missing
+	// This ensures appUserId is always a non-null string
 	return shapeUser(session.user);
 }
 
 /**
  * Get optional current user in Server Components (RSC) and pages
- * Returns null if not authenticated or appUserId is missing
+ * Returns null if not authenticated or both appUserId and id are missing
+ * Uses id as fallback when appUserId is missing
  */
 export async function getOptionalCurrentUser(): Promise<CurrentUser | null> {
 	const session = await auth();
-	if (!session?.user?.appUserId) {
+	if (!session?.user) {
+		return null;
+	}
+	// Need at least one identifier (appUserId or id)
+	if (!session.user.appUserId && !session.user.id) {
 		return null;
 	}
 	return shapeUser(session.user);
@@ -74,12 +93,19 @@ export async function getOptionalCurrentUser(): Promise<CurrentUser | null> {
 
 /**
  * Require current user in API routes
- * Throws an error with status 401 if not authenticated or appUserId is missing
+ * Throws an error with status 401 if not authenticated or both appUserId and id are missing
+ * Uses id as fallback when appUserId is missing
  * This error should be caught by withAuth or error handlers
  */
 export async function requireCurrentUserApi(): Promise<CurrentUser> {
 	const session = await auth();
-	if (!session?.user?.appUserId) {
+	if (!session?.user) {
+		const err = new Error("Unauthorized") as Error & { status?: number };
+		err.status = 401;
+		throw err;
+	}
+	// Need at least one identifier (appUserId or id)
+	if (!session.user.appUserId && !session.user.id) {
 		const err = new Error("Unauthorized") as Error & { status?: number };
 		err.status = 401;
 		throw err;

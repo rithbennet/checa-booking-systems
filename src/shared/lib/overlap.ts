@@ -4,10 +4,6 @@
  * ⚠️ WARNING: This function is for DATE-ONLY (start-of-day) comparisons only.
  * It normalizes all dates to start-of-day, dropping time information.
  *
- * For booking conflict checks that need to preserve time information,
- * use the overlap logic in `src/entities/booking/server/booking.service.ts`
- * (see lines ~365) or `src/features/bookings/form/lib/workspace-utils.ts`
- * which use `doDateRangesOverlap` without normalization.
  *
  * This function is suitable only when you need to check if date blocks
  * (calendar days) overlap, ignoring time-of-day.

@@ -7,6 +7,7 @@ import type {
 	CreateBookingInput,
 	WorkspaceBookingInput,
 } from "@/entities/booking/model/schemas";
+import { dateBlocksOverlap } from "@/shared/lib/overlap";
 
 type ServiceItem = NonNullable<CreateBookingInput["serviceItems"]>[number];
 
@@ -91,18 +92,6 @@ export function isValidWorkspaceStartDate(date: Date): boolean {
 /** ------------------ Range calculations ------------------ **/
 
 /** Check if two date ranges overlap (inclusive). */
-export function dateBlocksOverlap(
-	start1: Date,
-	end1: Date,
-	start2: Date,
-	end2: Date,
-): boolean {
-	const s1 = normalize(start1),
-		e1 = normalize(end1),
-		s2 = normalize(start2),
-		e2 = normalize(end2);
-	return s1 <= e2 && s2 <= e1;
-}
 
 /** Check if a range overlaps with any existing slots. */
 export function hasOverlappingBooking(
