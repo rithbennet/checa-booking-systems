@@ -102,10 +102,15 @@ export async function saveDraft(params: {
 	// Ensure ownership
 	await repo.ensureOwner(bookingId, userId);
 
-	// Ensure status is draft
+	// Ensure status is draft or revision_requested
 	const booking = await repo.findBookingById(bookingId);
-	if (!booking || booking.status !== "draft") {
-		throw new Error("Booking is not editable (must be in draft status)");
+	if (
+		!booking ||
+		(booking.status !== "draft" && booking.status !== "revision_requested")
+	) {
+		throw new Error(
+			"Booking is not editable (must be in draft or revision_requested status)",
+		);
 	}
 
 	// Update basic fields
@@ -256,10 +261,15 @@ export async function submit(params: {
 	// Ensure ownership
 	await repo.ensureOwner(bookingId, userId);
 
-	// Ensure status is draft
+	// Ensure status is draft or revision_requested
 	const booking = await repo.findBookingById(bookingId);
-	if (!booking || booking.status !== "draft") {
-		throw new Error("Booking is not submittable (must be in draft status)");
+	if (
+		!booking ||
+		(booking.status !== "draft" && booking.status !== "revision_requested")
+	) {
+		throw new Error(
+			"Booking is not submittable (must be in draft or revision_requested status)",
+		);
 	}
 
 	// Partition items: exclude working_space from service items mapping
@@ -332,6 +342,34 @@ export async function submit(params: {
 	const validationResult = bookingSubmitDto.safeParse(dto);
 	if (!validationResult.success) {
 		throw new BookingValidationError(validationResult.error.issues);
+	}
+
+	// Conflict safety: Check for overlapping workspace bookings for the same user
+	if (dto.workspaceBookings && dto.workspaceBookings.length > 0) {
+		// Query existing workspace bookings for this user where parent status allows overlap
+		const existingWorkspaces = await repo.findUserWorkspaceBookings({
+			userId,
+			excludeBookingId: bookingId, // Exclude current booking being submitted
+			statuses: ["pending_approval", "approved", "in_progress"],
+		});
+
+		// Check for overlaps with new workspace bookings
+		for (const newWs of dto.workspaceBookings) {
+			const newStart = new Date(newWs.startDate);
+			const newEnd = new Date(newWs.endDate);
+
+			for (const existing of existingWorkspaces) {
+				const existingStart = new Date(existing.startDate);
+				const existingEnd = new Date(existing.endDate);
+
+				// Overlap condition: newStart <= existingEnd AND newEnd >= existingStart
+				if (newStart <= existingEnd && newEnd >= existingStart) {
+					throw new Error(
+						`Workspace booking conflict: Your requested dates (${newStart.toLocaleDateString()} - ${newEnd.toLocaleDateString()}) overlap with an existing workspace booking (${existingStart.toLocaleDateString()} - ${existingEnd.toLocaleDateString()}). Please adjust your dates or cancel the conflicting booking first.`,
+					);
+				}
+			}
+		}
 	}
 
 	// Determine new status based on user verification state

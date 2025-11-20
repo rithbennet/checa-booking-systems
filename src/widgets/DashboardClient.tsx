@@ -25,8 +25,13 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/shared/ui/shadcn/select";
+import { UserSampleTracker } from "@/widgets/user-sample-tracker";
 
-export default function UserDashboard() {
+interface DashboardClientProps {
+	userId: string;
+}
+
+export function DashboardClient({ userId }: DashboardClientProps) {
 	// Fetch real counts
 	const { data: counts } = useBookingStatusCounts({
 		type: "all",
@@ -147,7 +152,7 @@ export default function UserDashboard() {
 					{/* Main Content */}
 					<div className="space-y-6 lg:col-span-3">
 						{/* Welcome Section */}
-						<div className="rounded-lg bg-linear-to-r from-blue-600 to-indigo-600 p-6 text-white">
+						<div className="rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
 							<h2 className="mb-2 font-bold text-2xl">Welcome back!</h2>
 							<p className="text-blue-100">
 								You have {totalBookings} total bookings
@@ -218,6 +223,9 @@ export default function UserDashboard() {
 								title="In Progress"
 							/>
 						</div>
+
+						{/* Sample Tracker Widget */}
+						<UserSampleTracker userId={userId} />
 
 						<DashboardBookingsWidget
 							limit={8}

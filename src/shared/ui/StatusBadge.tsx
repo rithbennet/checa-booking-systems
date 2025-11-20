@@ -15,7 +15,6 @@ const statusConfig: Record<
 	},
 	pending_approval: { label: "Pending Approval", variant: "secondary" },
 	revision_requested: { label: "Revision Requested", variant: "secondary" },
-	revision_submitted: { label: "Revision Submitted", variant: "secondary" },
 	approved: { label: "Approved", variant: "default" },
 	rejected: { label: "Rejected", variant: "destructive" },
 	in_progress: { label: "In Progress", variant: "default" },

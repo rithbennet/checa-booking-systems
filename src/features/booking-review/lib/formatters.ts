@@ -6,7 +6,6 @@ export function formatStatus(status: booking_status_enum): string {
 		pending_user_verification: "Pending Verification",
 		pending_approval: "Pending Approval",
 		revision_requested: "Revision Requested",
-		revision_submitted: "Revision Submitted",
 		approved: "Approved",
 		rejected: "Rejected",
 		in_progress: "In Progress",

@@ -24,8 +24,7 @@ export async function doAdminAction(params: {
 			select: { id: true, status: true, userId: true },
 		});
 
-		const isActionable =
-			b.status === "pending_approval" || b.status === "revision_submitted";
+		const isActionable = b.status === "pending_approval";
 
 		if (!isActionable) {
 			throw new Error("Booking is not in a reviewable state");

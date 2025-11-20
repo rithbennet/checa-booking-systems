@@ -62,7 +62,7 @@ export default async function EditBookingPage({ params }: PageProps) {
 		// If missing, redirect to bookings list (alternatively render 404)
 		redirect("/bookings");
 	}
-	if (booking.status !== "draft") {
+	if (booking.status !== "draft" && booking.status !== "revision_requested") {
 		redirect(`/bookings/${bookingId}`);
 	}
 
@@ -75,11 +75,13 @@ export default async function EditBookingPage({ params }: PageProps) {
 	return (
 		<BookingWizardPage
 			bookingId={bookingId}
+			bookingStatus={booking.status}
 			equipment={equipment}
 			initialData={initialData}
 			key={bookingId}
 			mode="edit"
 			profile={profile}
+			reviewNotes={booking.reviewNotes}
 			services={services}
 			userId={userId}
 			userStatus={userStatus}

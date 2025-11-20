@@ -44,6 +44,8 @@ type BookingMode = "new" | "edit";
 interface BookingWizardPageProps {
 	mode: BookingMode;
 	bookingId?: string;
+	bookingStatus?: string;
+	reviewNotes?: string | null;
 	initialData?: CreateBookingInput;
 	initialServices?: Array<{
 		service: Service;
@@ -60,6 +62,8 @@ interface BookingWizardPageProps {
 export function BookingWizardPage({
 	mode,
 	bookingId,
+	bookingStatus,
+	reviewNotes,
 	initialData,
 	initialServices,
 	services,
@@ -190,6 +194,20 @@ export function BookingWizardPage({
 						<div className="flex-1 text-amber-800 text-sm">
 							Your account is currently {userStatus}. You can browse the app,
 							but you cannot submit new bookings until approved by an admin.
+						</div>
+					</div>
+				)}
+
+				{/* Revision Request Alert */}
+				{bookingStatus === "revision_requested" && reviewNotes && (
+					<div className="mb-6 flex items-start gap-3 rounded-md border border-amber-200 bg-amber-50 p-4">
+						<AlertCircle className="mt-0.5 h-5 w-5 text-amber-600" />
+						<div className="flex-1 text-amber-900 text-sm">
+							<p className="font-semibold">Revision Requested</p>
+							<p className="mt-1">{reviewNotes}</p>
+							<p className="mt-2 text-xs">
+								Please address the comments above and resubmit your booking.
+							</p>
 						</div>
 					</div>
 				)}

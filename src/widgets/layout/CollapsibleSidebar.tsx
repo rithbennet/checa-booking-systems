@@ -5,6 +5,7 @@ import {
 	BarChart3,
 	Bell,
 	Calendar,
+	ClipboardList,
 	DollarSign,
 	FileText,
 	FlaskConical,
@@ -64,7 +65,7 @@ export default function CollapsibleSidebar({
 		{ icon: Users, label: "Users", href: "/admin/users" },
 		{ icon: FlaskConical, label: "Services", href: "/admin/services" },
 		{ icon: Calendar, label: "Bookings", href: "/admin/bookings" },
-		{ icon: FileText, label: "Samples", href: "/admin/samples" },
+		{ icon: ClipboardList, label: "Operations", href: "/admin/operations" },
 		{
 			icon: DollarSign,
 			label: "Financial Management",

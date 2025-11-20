@@ -1,586 +1,270 @@
-Ensure you scan the current architecture of the project for consistency.
-
-1) Schema and lifecycle updates
-
-- Add explicit revision states to booking_status_enum for clarity across all listings:
-  - revision_requested: admin sends booking back to user for more data.
-  - revision_submitted: user resubmits after editing; ready for re-review.
-
-- Updated enum
-```diff
-enum booking_status_enum {
-  draft
-  pending_user_verification
-  pending_approval
-+ revision_requested
-+ revision_submitted
-  approved
-  rejected
-  in_progress
-  completed
-  cancelled
-}
-```
-
-- Allowed transitions for this feature:
-  - pending_approval → approved | rejected | revision_requested
-  - revision_requested → revision_submitted (user action)
-  - revision_submitted → approved | rejected | revision_requested
-  - Bulk delete allowed only for draft | rejected | cancelled | revision_requested
-
-- Prisma migration note for Postgres enum:
-  - Prisma will generate ALTER TYPE statements. If applying manually:
-```sql
-ALTER TYPE "booking_status_enum"
-  ADD VALUE IF NOT EXISTS 'revision_requested';
-ALTER TYPE "booking_status_enum"
-  ADD VALUE IF NOT EXISTS 'revision_submitted';
-```
-
-2) FSD and Entities layout ( Next.js app router assumed )
-
-Create these folders/files. Names are stable and agent-friendly.
-
-- Entities (source of truth for data contracts, queries, mutations)
-  - src/entities/booking/
-    - index.ts
-    - model/
-      - types.ts                       // shared Booking types (view models)
-      - status.ts                      // guards, allowed transitions
-      - mappers.ts                     // DB → VM mapping
-    - api/
-      - query-keys.ts                  // TanStack stable keys
-      - useAdminBookingList.ts         // list query hook
-      - useAdminBookingDetail.ts       // detail query hook
-    - review/
-      - api/
-        - useApproveBooking.ts
-        - useRejectBooking.ts
-        - useRequestRevision.ts
-        - useBulkAction.ts
-      - server/                        // you asked for this domain
-        - actions.ts                   // server actions (Prisma + tx)
-        - validations.ts               // zod schemas for payloads
-        - repository.ts                // prisma queries for review module
-- Features (UI that composes entities) You can reuse components from the booking list, if they are universal moved them to the shared/ui folder.
-  - src/features/booking-review/
-    - ui/
-      - AdminBookingList.tsx
-      - AdminBookingToolbar.tsx
-      - AdminBookingTable.tsx
-      - AdminBookingQuickViewDialog.tsx
-      - AdminBookingDetailPage.tsx
-      - ActionButtons.tsx
-    - lib/
-      - columns.ts                     // table column defs (reused/adapted)
-      - formatters.ts
-- Notifications factory (pluggable)
-  - src/entities/notification/
-    - model/
-      - events.ts                      // domain events types
-    - server/
-      - factory.ts                     // one place to wire email/push later
-      - templates.ts                   // title/message mappers
-- Routes (app)
-  - app/admin/bookings/page.tsx        // uses AdminBookingList
-  - app/admin/bookings/[id]/page.tsx   // uses AdminBookingDetailPage
-  - app/api/admin/bookings/[id]/action/route.ts
-  - app/api/admin/bookings/bulk-action/route.ts
-- Shared UI (reusable)
-  - src/shared/ui/StatusBadge.tsx
-  - src/shared/ui/ConfirmDialog.tsx
-  - src/shared/ui/QuickViewDialog.tsx
-
-3) Entities: contracts, query keys, and guards
-
-- types.ts (view models used by UI)
-```ts
-import { booking_status_enum, Service } from "@prisma/client";
-
-export type BookingListItemVM = {
-  id: string;
-  referenceNumber: string;
-  createdAt: string;
-  status: booking_status_enum;
-  user: { id: string; name: string; email: string };
-  organization?: { company?: string; branch?: string };
-  totalAmount: string;
-  services: Array<{ id: string; name: string; qty: number }>;
-};
-
-export type BookingDetailVM = BookingListItemVM & {
-  projectDescription?: string;
-  serviceItems: Array<{
-    id: string;
-    service: Pick<Service, "id" | "name" | "category">;
-    quantity: number;
-    unitPrice: string;
-    totalPrice: string;
-    sampleName?: string;
-  }>;
-  workspace?: {
-    startDate?: string;
-    endDate?: string;
-    notes?: string;
-  };
-  reviewNotes?: string | null;
-};
-```
-
-- status.ts (allowed transitions and admin guards)
-```ts
-import { booking_status_enum } from "@prisma/client";
-
-export const adminCanApprove = (s: booking_status_enum) =>
-  s === "pending_approval" || s === "revision_submitted";
-
-export const adminCanReject = (s: booking_status_enum) => adminCanApprove(s);
-
-export const adminCanRequestRevision = (s: booking_status_enum) =>
-  s === "pending_approval" || s === "revision_submitted";
-
-export const adminCanDelete = (s: booking_status_enum) =>
-  s === "draft" || s === "rejected" || s === "cancelled" || s === "revision_requested";
-```
-
-- query-keys.ts
-```ts
-export const bookingKeys = {
-  all: ["bookings"] as const,
-  adminList: (params: Record<string, unknown>) =>
-    [...bookingKeys.all, "admin", "list", params] as const,
-  adminDetail: (id: string) =>
-    [...bookingKeys.all, "admin", "detail", id] as const,
-};
-```
-
-4) Entities: server repository + actions (Prisma + transactions)
-
-- repository.ts
-```ts
-import { prisma } from "@/lib/prisma";
-
-export async function repoAdminList(params: {
-  status?: string[];
-  query?: string;
-  page?: number;
-  pageSize?: number;
-}) {
-  const { status, query, page = 1, pageSize = 25 } = params;
-
-  const where: any = {
-    ...(status?.length ? { status: { in: status } } : {}),
-    ...(query
-      ? {
-          OR: [
-            { referenceNumber: { contains: query, mode: "insensitive" } },
-            { user: { firstName: { contains: query, mode: "insensitive" } } },
-            { user: { lastName: { contains: query, mode: "insensitive" } } },
-            { companyRelation: { name: { contains: query, mode: "insensitive" } } },
-          ],
-        }
-      : {}),
-  };
-
-  const [items, total] = await Promise.all([
-    prisma.bookingRequest.findMany({
-      where,
-      include: {
-        user: true,
-        companyRelation: true,
-        companyBranch: true,
-        serviceItems: { include: { service: true } },
-        workspaceBookings: true,
-      },
-      orderBy: { createdAt: "desc" },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    }),
-    prisma.bookingRequest.count({ where }),
-  ]);
-
-  return { items, total, page, pageSize };
-}
-
-export async function repoAdminDetail(id: string) {
-  return prisma.bookingRequest.findUniqueOrThrow({
-    where: { id },
-    include: {
-      user: true,
-      companyRelation: true,
-      companyBranch: true,
-      serviceItems: {
-        include: {
-          service: true,
-          serviceAddOns: true,
-          equipmentUsages: { include: { equipment: true } },
-          sampleTracking: true, // used later
-        },
-      },
-      workspaceBookings: {
-        include: {
-          equipmentUsages: { include: { equipment: true } },
-          serviceAddOns: true,
-        },
-      },
-    },
-  });
-}
-```
-
-- validations.ts (zod)
-```ts
-import { z } from "zod";
-
-export const AdminActionSchema = z.object({
-  action: z.enum(["approve", "reject", "request_revision"]),
-  comment: z.string().max(2000).optional(),
-});
-
-export const BulkActionSchema = z.object({
-  action: z.enum(["approve", "reject", "request_revision", "delete"]),
-  ids: z.array(z.string().uuid()).min(1),
-  comment: z.string().max(2000).optional(),
-});
-```
-
-- actions.ts (single source of truth for transitions)
-```ts
-import { prisma } from "@/lib/prisma";
-import { booking_status_enum, Prisma } from "@prisma/client";
-import { sendBookingEvent } from "@/entities/notification/server/factory";
-
-type AdminAction = "approve" | "reject" | "request_revision";
-
-function nextStatus(action: AdminAction): booking_status_enum {
-  if (action === "approve") return "approved";
-  if (action === "reject") return "rejected";
-  return "revision_requested";
-}
-
-export async function doAdminAction(params: {
-  bookingId: string;
-  adminUserId: string;
-  action: AdminAction;
-  comment?: string;
-}) {
-  const { bookingId, adminUserId, action, comment } = params;
-
-  return prisma.$transaction(async (tx) => {
-    const b = await tx.bookingRequest.findUniqueOrThrow({
-      where: { id: bookingId },
-      select: { id: true, status: true, userId: true },
-    });
-
-    const isActionable =
-      b.status === "pending_approval" || b.status === "revision_submitted";
-
-    if (!isActionable) {
-      throw new Error("Booking is not in a reviewable state");
-    }
-
-    const updated = await tx.bookingRequest.update({
-      where: { id: bookingId },
-      data: {
-        status: nextStatus(action),
-        reviewedBy: adminUserId,
-        reviewedAt: new Date(),
-        reviewNotes: comment,
-      },
-    });
-
-    await sendBookingEvent(tx, {
-      bookingId: b.id,
-      userId: b.userId,
-      event:
-        action === "approve"
-          ? "BOOKING_APPROVED"
-          : action === "reject"
-          ? "BOOKING_REJECTED"
-          : "BOOKING_REVISION_REQUESTED",
-      comment,
-      oldStatus: b.status,
-      newStatus: updated.status,
-    });
-
-    await tx.auditLog.create({
-      data: {
-        userId: adminUserId,
-        action: `booking.${action}`,
-        entity: "booking",
-        entityId: b.id,
-        metadata: { oldStatus: b.status, newStatus: updated.status, comment },
-      },
-    });
-
-    return updated;
-  });
-}
-
-export async function doBulkAdminAction(params: {
-  ids: string[];
-  adminUserId: string;
-  action: AdminAction | "delete";
-  comment?: string;
-}) {
-  const { ids, adminUserId, action, comment } = params;
-
-  if (action === "delete") {
-    // Only safe deletions
-    await prisma.bookingRequest.deleteMany({
-      where: {
-        id: { in: ids },
-        status: { in: ["draft", "rejected", "cancelled", "revision_requested"] },
-      },
-    });
-    return { ok: true };
-  }
-
-  // Loop to keep notifications/audit per item
-  const results = [];
-  for (const id of ids) {
-    try {
-      const r = await doAdminAction({
-        bookingId: id,
-        adminUserId,
-        action: action as AdminAction,
-        comment,
-      });
-      results.push({ id, ok: true });
-    } catch (e: any) {
-      results.push({ id, ok: false, error: e.message });
-    }
-  }
-  return { results };
-}
-```
-
-5) Entities: client hooks with TanStack Query
-
-- useAdminBookingList.ts
-```ts
-import { useQuery } from "@tanstack/react-query";
-import { bookingKeys } from "./query-keys";
-
-export function useAdminBookingList(params: {
-  status?: string[];
-  query?: string;
-  page?: number;
-  pageSize?: number;
-}) {
-  return useQuery({
-    queryKey: bookingKeys.adminList(params),
-    queryFn: async () => {
-      const res = await fetch(
-        `/api/admin/bookings?` +
-          new URLSearchParams({
-            ...(params.query ? { query: params.query } : {}),
-            ...(params.status?.length ? { status: params.status.join(",") } : {}),
-            page: String(params.page ?? 1),
-            pageSize: String(params.pageSize ?? 25),
-          }),
-      );
-      if (!res.ok) throw new Error("Failed to load bookings");
-      return res.json();
-    },
-    staleTime: 10_000,
-    keepPreviousData: true,
-  });
-}
-```
-
-- useAdminBookingDetail.ts
-```ts
-import { useQuery } from "@tanstack/react-query";
-import { bookingKeys } from "./query-keys";
-
-export function useAdminBookingDetail(id: string) {
-  return useQuery({
-    queryKey: bookingKeys.adminDetail(id),
-    queryFn: async () => {
-      const res = await fetch(`/api/admin/bookings/${id}`);
-      if (!res.ok) throw new Error("Failed to load booking");
-      return res.json();
-    },
-  });
-}
-```
-
-- mutations (approve/reject/request revision)
-```ts
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bookingKeys } from "../../api/query-keys";
-
-function useAction(action: "approve" | "reject" | "request_revision") {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (args: { id: string; comment?: string }) => {
-      const res = await fetch(`/api/admin/bookings/${args.id}/action`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, comment: args.comment }),
-      });
-      if (!res.ok) throw new Error("Action failed");
-      return res.json();
-    },
-    onSuccess: (_data, variables) => {
-      qc.invalidateQueries({ queryKey: bookingKeys.all });
-      qc.invalidateQueries({ queryKey: bookingKeys.adminDetail(variables.id) });
-    },
-  });
-}
-
-export const useApproveBooking = () => useAction("approve");
-export const useRejectBooking = () => useAction("reject");
-export const useRequestRevision = () => useAction("request_revision");
-```
-
-6) API routes (app router)
-
-- GET list: app/api/admin/bookings/route.ts → uses repoAdminList
-- GET detail: app/api/admin/bookings/[id]/route.ts → uses repoAdminDetail
-- POST action: app/api/admin/bookings/[id]/action/route.ts → uses doAdminAction
-- POST bulk: app/api/admin/bookings/bulk-action/route.ts → uses doBulkAdminAction
-
-All routes must call requireAdmin guard.
-
-7) Notifications factory (pluggable push/email)
-
-- events.ts
-```ts
-export type BookingEvent =
-  | "BOOKING_APPROVED"
-  | "BOOKING_REJECTED"
-  | "BOOKING_REVISION_REQUESTED";
-```
-
-- templates.ts
-```ts
-import { notification_type_enum } from "@prisma/client";
-import { BookingEvent } from "./events";
-
-export function mapBookingEventToTemplate(e: {
-  event: BookingEvent;
-  comment?: string;
-}) {
-  switch (e.event) {
-    case "BOOKING_APPROVED":
-      return {
-        title: "Booking approved",
-        message: "Your booking has been approved.",
-        type: notification_type_enum.booking_approved,
-      };
-    case "BOOKING_REJECTED":
-      return {
-        title: "Booking rejected",
-        message: e.comment ?? "Your booking was rejected.",
-        type: notification_type_enum.booking_rejected,
-      };
-    case "BOOKING_REVISION_REQUESTED":
-      return {
-        title: "More information required",
-        message:
-          e.comment ??
-          "Please revise your booking and resubmit for approval.",
-        type: notification_type_enum.booking_pending_verification,
-      };
-  }
-}
-```
-
-- factory.ts
-```ts
-import { PrismaClient } from "@prisma/client";
-import { mapBookingEventToTemplate } from "./templates";
-import { BookingEvent } from "./events";
-
-type Tx = Omit<PrismaClient, "$on" | "$connect" | "$disconnect">;
-
-export async function sendBookingEvent(
-  tx: Tx,
-  args: {
-    bookingId: string;
-    userId: string;
-    event: BookingEvent;
-    comment?: string;
-    oldStatus: string;
-    newStatus: string;
-  },
-) {
-  const tpl = mapBookingEventToTemplate({
-    event: args.event,
-    comment: args.comment,
-  });
-
-  await tx.notification.create({
-    data: {
-      userId: args.userId,
-      type: tpl.type,
-      relatedEntityType: "booking",
-      relatedEntityId: args.bookingId,
-      title: tpl.title,
-      message: tpl.message,
-      emailSent: false,
-    },
-  });
-
-  // Future: plug email/push providers here only.
-}
-```
-
-8) UI behavior summary
-
-- AdminBookingList
-  - Filters: status multi-select includes revision_requested and revision_submitted.
-  - Search: reference, user, company.
-  - Bulk actions: approve, reject, request revision, delete (safe only).
-  - Row actions: Quick View (dialog), Open full page.
-
-- AdminBookingQuickViewDialog
-  - Shows booking summary, services, workspace summary.
-  - Inline actions with optional comment field (for reject/request revision).
-  - “Open full page” button.
-
-- AdminBookingDetailPage
-  - Header: ref, user/org, StatusBadge, action buttons.
-  - Tabs:
-    - Overview: all booking/service details (reuse user components).
-    - Samples: disabled tab placeholder; future integration.
-  - After action success, surface toast and update status.
-
-9) Permissions and invariants
-
-- requireAdmin guard for all admin endpoints and pages.
-- Action guards:
-  - approve/reject/request revision: only pending_approval or revision_submitted.
-  - delete: only draft, rejected, cancelled, revision_requested.
-- On success, always:
-  - write AuditLog
-  - emit notification via factory
-  - invalidate TanStack queries bookingKeys.all
-
-10) Test plan (minimal to start)
-
-- Unit: nextStatus() mapping returns correct enum.
-- Integration (server):
-  - doAdminAction transitions with tx; prevents invalid transitions.
-  - doBulkAdminAction deletes only allowed statuses.
-  - Notification row created with expected type/title.
-- E2E (smoke):
-  - Admin list loads with filters.
-  - Quick view approve updates status and list reflects without full reload.
-
-11) Rollout checklist
-
-- Apply enum migration (revision_requested, revision_submitted).
-- Update all existing listing/status badge components to recognize new statuses.
-- Seed/test bookings covering each actionable state.
-- Deploy routes and confirm admin auth guard works.
-- Verify notifications table entries on actions.
-
-12) Out of scope for this sprint (stubs in UI)
-
-- Sample tracking updates (tab exists, disabled).
-- PDF generation and uploads, invoices, payments.
-- Email/push providers (factory ready; no provider wired).
-
+Revised Architecture Plan: Lab Operations Module + Conflict Safety
+
+Guiding principles
+- Use Feature-Sliced architecture: app → pages → features → entities → shared.
+- TanStack Query usage is restricted to entities. Pages and features should consume entity hooks only.
+- Reuse existing components, utilities, API/server actions where available (e.g., booking list table, filters, Admin layout, badges, calendar primitives).
+- Keep complex UI modular; target <600 lines per file by splitting concerns (columns, cells, headers, adapters).
+- Ensure design consistency by referencing the existing Booking List and its filter patterns.
+- Remove any references to review_submitted; it is deprecated.
+
+High-level overview
+- Admin page: Operations dashboard with two tabs: Samples and Workspace.
+- Samples tab: Operational list with inline status updates.
+- Workspace tab: Read-only calendar + daily schedule.
+- User dashboard: Lightweight sample status widget.
+- Booking engine: Anti-Double-Booking validation for workspace items.
+
+Architecture map (FSD-style)
+
+1) Pages
+- src/app/(main)/admin/operations/page.tsx
+  - Server page using Admin layout.
+  - Composes two feature sections: Sample Tracker and Workspace Overview.
+  - Delegates all data fetching to entities via feature components.
+
+- src/app/(main)/dashboard/page.tsx
+  - Reuse existing dashboard layout.
+  - Composes the UserSampleTracker widget from widgets/features.
+
+2) Features
+- features/operations
+  - ui/OperationsTabs (tabs shell only)
+  - ui/SampleTrackerSection (composes filters + table; no data logic)
+  - ui/WorkspaceOverviewSection (composes calendar + daily schedule; no data logic)
+  - model/constants (tab ids, copy, route paths)
+
+- features/sample-status-update
+  - model/mutation (mutations only; calls existing server action if available)
+  - ui/StatusCell (inline Select cell; optimistic update and toasts; no queries)
+
+- widgets/user-sample-tracker
+  - ui/UserSampleTracker (small list for dashboard view; consumes entity query)
+  - model/mappers (row/item adapters for widget)
+
+3) Entities
+- entities/sample-tracking
+  - api/server (server action wrappers; reuse existing actions if present)
+  - model/types (SampleStatus union without review_submitted)
+  - model/query-keys
+  - model/queries (TanStack hooks: get operations list, get current user samples)
+  - lib/mappers (Prisma → UI row)
+  - ui/StatusBadge (shared styling reused across admin/user)
+
+- entities/workspace-booking
+  - api/server (server action wrapper(s); reuse existing schedule/bookings APIs)
+  - model/types (Booking event DTO for calendar, time slots)
+  - model/query-keys
+  - model/queries (month range schedule fetch; per-day selector)
+  - lib/mappers (Prisma → calendar event)
+  - ui/Legend/Badge (reuse shared where possible)
+
+- entities/booking-request
+  - model/types (statuses, mapping for approved/in_progress/completed)
+  - lib/selectors (filters reused by workspace schedule)
+  - Reuse existing where already implemented.
+
+- entities/user, entities/service
+  - Reuse existing models/types/selectors for display (name, userType badge, service name).
+
+4) Shared
+- shared/ui
+  - DataTable (reuse from booking list)
+  - Calendar primitives (reuse shadcn Calendar / react-day-picker wrapper)
+  - Card, Tabs, Badge, Select (reuse)
+  - Toast/Toaster config (reuse sonner integration)
+
+- shared/config
+  - status-maps (SampleStatus → label, color, semantic intent)
+  - date formatting and range helpers (reuse existing date utils)
+
+- shared/lib
+  - date-range utils, overlap checks (reused in booking conflict logic)
+  - type guards and result helpers
+  - revalidate helpers (if centralized)
+
+- shared/mappers
+  - name formatting (User), service display, slot formatting
+
+Domain and data contracts
+
+SampleTracking
+- Core fields consumed: id, sampleIdentifier, status, createdAt
+- Required includes: BookingServiceItem → BookingRequest → User
+- Display shape (row): sampleIdentifier, customerName, userType, serviceName, status, bookingId, createdAt
+
+WorkspaceBooking
+- Core fields consumed: id, startDate, endDate, timeSlot, purpose
+- Required includes: BookingRequest (approved | in_progress | completed), User
+- Calendar event: id, userName, startDate, endDate, timeSlot, purpose
+
+Statuses
+- Sample statuses allowed: pending, received, in_analysis, analysis_complete, returned
+- review_submitted removed entirely
+- analysis_complete should trigger revalidation of relevant paths (admin ops and dashboard)
+
+Data access and server layer
+
+Reuse-first strategy
+- Prefer existing server actions/endpoints from booking list and workspace modules.
+- Only add new actions if no equivalent exists. If creating, locate them near the entity (entities/*/api/server).
+
+Server actions
+- Sample operations list: fetch SampleTracking with includes; filter by status; sort oldest first; paginate if list may grow.
+- Sample status update: update SampleTracking.status; if set to analysis_complete, trigger revalidate for admin ops route and user dashboard widgets.
+- Workspace schedule: fetch WorkspaceBooking for a date range with parent BookingRequest in approved | in_progress | completed; flatten to calendar events.
+
+Queries in entities
+- entities/sample-tracking/model/queries
+  - useSampleOperationsList(filters, pagination)
+  - useUserActiveSamples(userId) excluding returned
+
+- entities/workspace-booking/model/queries
+  - useWorkspaceScheduleForRange(monthStart, monthEnd) with a normalization layer
+  - Provide a selector util to get events for a selected date from cached range
+
+Query keys
+- Namespaced by entity and params to avoid collisions
+- Stable across tabs and widgets to maximize cache reuse
+
+Caching, revalidation, and consistency
+- Revalidate paths on sample status transitions as above.
+- Invalidate relevant query keys from mutation layer (features/sample-status-update) to keep lists and widget in sync.
+- Consider month-scoped caching for the workspace schedule to minimize refetching.
+
+UI composition and modularity
+
+Admin Operations Page
+- page.tsx: server component shell, sets up Tabs (Samples | Workspace), delegates to feature sections
+- Keep page.tsx minimal; actual UI resides in features/operations/ui
+
+Tab 1: Sample Tracker
+- SampleTrackerSection
+  - Header: reuse AdminPageHeader style
+  - Filter Bar: reuse BookingList filter pattern/components; adjust config to sample statuses
+  - Table: reuse shared DataTable; columns defined in a separate file
+    - Columns split files:
+      - columns.ts (definitions only)
+      - cells/StatusCell.tsx (Select control; belongs to features/sample-status-update)
+      - cells/CustomerCell.tsx (uses shared UserBadge)
+      - cells/ServiceCell.tsx
+      - cells/ActionsCell.tsx (link to /admin/bookings/[id])
+  - Data source: useSampleOperationsList from entities/sample-tracking
+  - Pagination: reuse DataTable pagination pattern
+
+Tab 2: Workspace Overview
+- WorkspaceOverviewSection
+  - Left: Calendar (reuse shared/ui calendar). Month navigation updates the cached range via entity query.
+  - Right: Daily Schedule Card
+    - Title shows selected date
+    - List entries: userName, purpose, timeSlot
+    - Empty state message when none
+  - Data source: useWorkspaceScheduleForRange; client-side filter by selected date using entity selector
+
+User Dashboard: Sample Tracker Widget
+- UserSampleTracker widget
+  - Small list of active samples (exclude returned)
+  - StatusBadge reused from entities/sample-tracking/ui
+  - Consistent status colors with admin view
+
+Booking Engine: Conflict Safety (User-specific)
+- Location: submission flow under features/bookings (reuse existing submission action)
+- Logic (no code):
+  - If a booking includes a workspace item, query existing WorkspaceBooking for the current user where parent BookingRequest is pending_approval, approved, or in_progress (ignore rejected/cancelled)
+  - Check overlap: newStart <= existingEnd AND newEnd >= existingStart
+  - On conflict, throw a domain error with a clear message
+- Reuse shared/lib date overlap helper and existing repository/query functions if present
+- Indexing: ensure WorkspaceBooking has an index on userId + startDate + endDate for efficient overlap checks
+
+Design and UX consistency
+- Adopt styles from Booking List: filter chips, table density, badge sizes
+- Status badge colors centralized in shared/config/status-maps
+- Use existing UserBadge, Service label patterns
+- Toasts: reuse global toasting config; success and error variants consistent
+
+Performance and file-size budget
+- Split table concerns (columns, cells, adapters) into small files
+- Use adapters/mappers to flatten Prisma types into presentation shapes in entities/lib
+- Calendar: prefetch month range; avoid per-day queries
+- Lists: consider virtualization only if row counts are high; otherwise paginate
+
+Error handling and access control
+- Admin route guard: ensure only admins can access Operations
+- Feature mutations: surface domain errors via toasts; keep UI responsive with optimistic update and rollback on error
+- Fallbacks: show empty states and skeletons consistent with existing patterns
+
+Testing and QA
+- Unit: mappers, status maps, overlap logic
+- Integration: entity queries and mutations (mock server actions)
+- E2E: admin updates sample status, workspace calendar shows correct daily schedule, dashboard widget reflects updates
+- Regression: ensure existing booking list behavior unaffected
+
+Telemetry and logging (optional)
+- Track status change events (admin) and schedule view interactions (date selections) following existing analytics conventions
+
+Deprecations and cleanup
+- Remove any lingering review_submitted references from enums, filters, and UI
+- Align SampleStatus across server and client types
+
+Planned file inventory (create/modify)
+
+Pages
+- src/app/(main)/admin/operations/page.tsx
+
+Features
+- src/features/operations/ui/OperationsTabs.tsx
+- src/features/operations/ui/SampleTrackerSection.tsx
+- src/features/operations/ui/WorkspaceOverviewSection.tsx
+- src/features/operations/model/constants.ts
+- src/features/sample-status-update/model/mutation.ts
+- src/features/sample-status-update/ui/StatusCell.tsx
+- src/widgets/user-sample-tracker/ui/UserSampleTracker.tsx
+- src/widgets/user-sample-tracker/model/mappers.ts
+
+Entities
+- src/entities/sample-tracking/api/server.ts
+- src/entities/sample-tracking/model/types.ts
+- src/entities/sample-tracking/model/query-keys.ts
+- src/entities/sample-tracking/model/queries.ts
+- src/entities/sample-tracking/lib/mappers.ts
+- src/entities/sample-tracking/ui/StatusBadge.tsx
+- src/entities/workspace-booking/api/server.ts
+- src/entities/workspace-booking/model/types.ts
+- src/entities/workspace-booking/model/query-keys.ts
+- src/entities/workspace-booking/model/queries.ts
+- src/entities/workspace-booking/lib/mappers.ts
+- src/entities/booking-request/model/types.ts (reuse/extend existing)
+- src/entities/booking-request/lib/selectors.ts (reuse)
+- src/entities/user (reuse existing)
+- src/entities/service (reuse existing)
+
+Shared
+- src/shared/ui/DataTable (reuse)
+- src/shared/ui/Calendar (reuse)
+- src/shared/ui/Badge, Card, Tabs, Select (reuse)
+- src/shared/config/status-maps.ts
+- src/shared/lib/date.ts (reuse)
+- src/shared/lib/overlap.ts (reuse or add if missing)
+
+Backend integration and reuse notes
+- If server actions for sample list/status or workspace schedule already exist, import and wrap them in entities’ api/server to avoid duplication.
+- Keep Prisma includes consistent with existing booking list includes to maintain data shape alignment.
+- Reuse existing filter models from booking list where possible; only extend for sample-specific needs.
+
+Rollout order
+1) Entities scaffolding (types, query keys, mappers) for sample-tracking and workspace-booking
+2) Feature: Sample Tracker section wired to entity queries; StatusCell wired to mutation
+3) Feature: Workspace Overview section wired to entity schedule queries and daily filtering
+4) Widget: UserSampleTracker on dashboard
+5) Booking engine conflict safety logic in submission flow
+6) QA, accessibility checks, and consistency polish
+
+Acceptance criteria
+- Admin Operations page shows two tabs; page loads with existing admin layout
+- Samples tab lists samples with filters and inline status updates; updates propagate to dashboard widget and list without manual refresh
+- Workspace tab shows monthly calendar and accurate per-day schedule; read-only
+- User dashboard displays active user samples with consistent badge colors
+- Double-booking for workspace is prevented for the same user across overlapping dates
+- No references to review_submitted remain anywhere in UI or logic
+
+This plan prioritizes architectural boundaries, reusability, and consistency with your current codebase. It avoids re-implementing existing features and keeps TanStack Query confined to entities, with mutations encapsulated in features.
