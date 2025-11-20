@@ -32,9 +32,9 @@ import type { Service, UserType } from "@/entities/service";
 import { getServicePrice } from "@/entities/service";
 import {
 	calculateWorkspaceEndDate,
-	dateBlocksOverlap,
 	normalizeDate as normalizeWorkspaceDate,
 } from "@/features/bookings/form/lib/workspace-utils";
+import { dateBlocksOverlap } from "@/shared/lib/overlap";
 import type { BookingProfile } from "../model/types";
 import { useBookingWizardStore } from "../model/use-booking-wizard-store";
 

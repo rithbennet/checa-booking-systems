@@ -91,8 +91,6 @@ export function isValidWorkspaceStartDate(date: Date): boolean {
 
 /** ------------------ Range calculations ------------------ **/
 
-/** Check if two date ranges overlap (inclusive). */
-
 /** Check if a range overlaps with any existing slots. */
 export function hasOverlappingBooking(
 	startDate: Date,
