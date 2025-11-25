@@ -88,6 +88,7 @@ function TimelineStepItem({
 	isCurrent,
 	isUpcoming,
 	dateStr,
+	isoDate,
 	subtitle,
 	isEditMode,
 	onDateSelect,
@@ -97,6 +98,7 @@ function TimelineStepItem({
 	isCurrent: boolean;
 	isUpcoming: boolean;
 	dateStr: string | null;
+	isoDate?: string | null;
 	subtitle: string | null;
 	isEditMode: boolean;
 	onDateSelect: (step: TimelineStep, date: Date | undefined) => void;
@@ -148,7 +150,7 @@ function TimelineStepItem({
 								onDateSelect(step.key, date);
 								setCalendarOpen(false);
 							}}
-							selected={dateStr ? new Date(dateStr) : undefined}
+							selected={isoDate ? new Date(isoDate) : undefined}
 						/>
 					</PopoverContent>
 				</Popover>
@@ -203,29 +205,35 @@ export function BookingStatusTimeline({
 					const isCurrent = isTimelineStepCurrent(currentStep, step.key);
 					const isUpcoming = !isCompleted && !isCurrent;
 
-					// Get corresponding date
+					// Get corresponding date (both formatted display and raw ISO)
 					let dateStr: string | null = null;
+					let isoDate: string | null = null;
 					let subtitle: string | null = null;
 
 					switch (step.key) {
 						case "verified":
 							dateStr = formatShortDate(dates?.verifiedAt);
+							isoDate = dates?.verifiedAt ?? null;
 							break;
 						case "samples_in":
 							dateStr = formatShortDate(dates?.samplesReceivedAt);
+							isoDate = dates?.samplesReceivedAt ?? null;
 							break;
 						case "processing":
 							if (isCurrent && estimatedDays) {
 								subtitle = `Est ${estimatedDays} Days`;
 							} else {
 								dateStr = formatShortDate(dates?.processingStartedAt);
+								isoDate = dates?.processingStartedAt ?? null;
 							}
 							break;
 						case "payment":
 							dateStr = formatShortDate(dates?.paidAt);
+							isoDate = dates?.paidAt ?? null;
 							break;
 						case "released":
 							dateStr = formatShortDate(dates?.releasedAt);
+							isoDate = dates?.releasedAt ?? null;
 							break;
 					}
 
@@ -235,6 +243,7 @@ export function BookingStatusTimeline({
 							isCompleted={isCompleted}
 							isCurrent={isCurrent}
 							isEditMode={isEditMode}
+							isoDate={isoDate}
 							isUpcoming={isUpcoming}
 							key={step.key}
 							onDateSelect={handleDateSelect}

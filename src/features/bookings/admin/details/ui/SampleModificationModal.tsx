@@ -9,7 +9,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, Loader2, Package } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { ServiceItemVM } from "@/entities/booking/model/command-center-types";
 import { Button } from "@/shared/ui/shadcn/button";
@@ -68,15 +68,18 @@ export function SampleModificationModal({
 
 	// Watch quantity changes for price preview
 	const watchedQuantity = watch("newQuantity");
-	if (
-		watchedQuantity !== preview.newQuantity &&
-		!Number.isNaN(watchedQuantity)
-	) {
-		setPreview({
-			newQuantity: watchedQuantity,
-			newTotal: unitPrice * watchedQuantity,
-		});
-	}
+
+	useEffect(() => {
+		if (
+			watchedQuantity !== preview.newQuantity &&
+			!Number.isNaN(watchedQuantity)
+		) {
+			setPreview({
+				newQuantity: watchedQuantity,
+				newTotal: unitPrice * watchedQuantity,
+			});
+		}
+	}, [watchedQuantity, unitPrice, preview.newQuantity]);
 
 	const priceDifference = preview.newTotal - Number(serviceItem.totalPrice);
 
