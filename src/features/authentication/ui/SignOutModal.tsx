@@ -2,7 +2,7 @@
 
 import { Loader2, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { clearAllUserDrafts } from "@/entities/booking/lib/draftService";
 import { useBookingWizardStore } from "@/features/bookings/form/model/use-booking-wizard-store";
 import { authClient } from "@/shared/server/better-auth/client";
@@ -21,79 +21,53 @@ interface SignOutModalProps {
 
 export function SignOutModal({ open, onOpenChange }: SignOutModalProps) {
 	const router = useRouter();
-	const [isSigningOut, setIsSigningOut] = useState(false);
+	const hasStartedSignOut = useRef(false);
 	const { clearPersistAndRehydrate } = useBookingWizardStore();
 
+	// Reset the ref when modal closes
 	useEffect(() => {
-		if (!open || isSigningOut) return;
+		if (!open) {
+			hasStartedSignOut.current = false;
+		}
+	}, [open]);
 
-		let isActive = true;
+	useEffect(() => {
+		// Only run once when modal opens
+		if (!open || hasStartedSignOut.current) return;
+
+		hasStartedSignOut.current = true;
 
 		const run = async () => {
-			setIsSigningOut(true);
-
 			try {
 				const session = await authClient.getSession();
-
-				if (!isActive) return;
-
 				const userId = session.data?.user?.id;
 
 				// Clear local state first
 				await clearPersistAndRehydrate();
 
-				if (!isActive) return;
-
 				if (userId) {
 					await clearAllUserDrafts(userId);
 				}
 
-				if (!isActive) return;
-
 				// Sign out with Better Auth - this will clear the session
-				try {
-					await authClient.signOut({
-						fetchOptions: {
-							onSuccess: () => {
-								if (isActive) {
-									router.push("/");
-									router.refresh(); // Refresh to update server components
-									onOpenChange?.(false);
-								}
-							},
-						},
-					});
-				} catch (e) {
-					console.error("[SignOutModal] signOut failed", e);
-					// Even if sign-out fails, redirect to home
-					if (isActive) {
-						router.push("/");
-						router.refresh();
-						onOpenChange?.(false);
-					}
-				}
+				// Don't rely on onSuccess callback, handle the promise directly
+				await authClient.signOut();
+
+				// After successful sign out, redirect
+				router.push("/");
+				router.refresh();
+				onOpenChange?.(false);
 			} catch (e) {
-				console.error("[SignOutModal] unexpected sign-out error", e);
-				// On error, still try to redirect
-				if (isActive) {
-					router.push("/");
-					router.refresh();
-					onOpenChange?.(false);
-				}
-			} finally {
-				if (isActive) {
-					setIsSigningOut(false);
-				}
+				console.error("[SignOutModal] sign-out error", e);
+				// Even if sign-out fails, redirect to home
+				router.push("/");
+				router.refresh();
+				onOpenChange?.(false);
 			}
 		};
 
 		void run();
-
-		return () => {
-			// component closed/unmounted while async work in flight
-			isActive = false;
-		};
-	}, [open, router, onOpenChange, clearPersistAndRehydrate, isSigningOut]);
+	}, [open, router, onOpenChange, clearPersistAndRehydrate]);
 
 	return (
 		<Dialog onOpenChange={onOpenChange} open={open}>

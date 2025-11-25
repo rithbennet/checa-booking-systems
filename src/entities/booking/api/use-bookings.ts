@@ -346,3 +346,59 @@ export function useSaveDraft() {
 		clear: clearDraftFromLocalStorage,
 	};
 }
+
+/**
+ * Workspace conflict check types
+ */
+export interface WorkspaceConflict {
+	id: string;
+	startDate: Date | string;
+	endDate: Date | string;
+	bookingRequestId: string;
+}
+
+export interface ConflictData {
+	proposedStartDate: string;
+	proposedEndDate: string;
+	existingBookings: WorkspaceConflict[];
+}
+
+export interface WorkspaceConflictCheckResult {
+	hasConflicts: boolean;
+	conflicts: ConflictData[];
+}
+
+/**
+ * Check for workspace booking conflicts
+ */
+async function checkWorkspaceConflicts(params: {
+	bookingId?: string;
+	workspaceBookings: Array<{
+		startDate: Date | string;
+		endDate: Date | string;
+	}>;
+}): Promise<WorkspaceConflictCheckResult> {
+	const response = await fetch("/api/bookings/check-conflicts", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(params),
+	});
+
+	if (!response.ok) {
+		const error = await response.json();
+		throw new Error(error.message || "Failed to check workspace conflicts");
+	}
+
+	return response.json();
+}
+
+/**
+ * Hook to check for workspace booking conflicts
+ */
+export function useCheckWorkspaceConflicts() {
+	return useMutation({
+		mutationFn: checkWorkspaceConflicts,
+	});
+}

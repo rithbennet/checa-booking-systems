@@ -8,8 +8,8 @@ export default async function layout({
 }) {
 	const currentUser = await requireCurrentUser();
 
-	if (currentUser.role !== "user") {
-		redirect("/dashboard");
+	if (currentUser.role === "lab_administrator") {
+		redirect("/admin");
 	}
 
 	return <>{children}</>;

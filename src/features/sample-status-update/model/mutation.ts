@@ -5,6 +5,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { bookingKeys } from "@/entities/booking/api/query-keys";
 import { sampleTrackingKeys } from "@/entities/sample-tracking/model/query-keys";
 import type { SampleStatus } from "@/entities/sample-tracking/model/types";
 
@@ -90,6 +91,10 @@ export function useUpdateSampleStatus() {
 			// Invalidate all sample tracking queries to refetch fresh data
 			queryClient.invalidateQueries({
 				queryKey: sampleTrackingKeys.all,
+			});
+			// Also invalidate booking command center to update inline sample statuses
+			queryClient.invalidateQueries({
+				queryKey: bookingKeys.all,
 			});
 
 			toast.success("Status updated", {

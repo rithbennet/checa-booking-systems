@@ -612,3 +612,82 @@ export async function deleteDraft(params: {
 export async function purgeExpiredDrafts(cutoff: Date) {
 	return repo.deleteExpiredDrafts(cutoff);
 }
+
+/**
+ * Check for workspace booking conflicts
+ * Returns conflicting workspace bookings if any overlap with the proposed dates
+ */
+export interface WorkspaceConflict {
+	id: string;
+	startDate: Date;
+	endDate: Date;
+	bookingRequestId: string;
+}
+
+export interface WorkspaceConflictCheckResult {
+	hasConflicts: boolean;
+	conflicts: Array<{
+		proposedStartDate: string;
+		proposedEndDate: string;
+		existingBookings: WorkspaceConflict[];
+	}>;
+}
+
+export async function checkWorkspaceConflicts(params: {
+	userId: string;
+	bookingId?: string;
+	workspaceBookings: Array<{
+		startDate: Date | string;
+		endDate: Date | string;
+	}>;
+}): Promise<WorkspaceConflictCheckResult> {
+	const { userId, bookingId, workspaceBookings } = params;
+
+	if (!workspaceBookings || workspaceBookings.length === 0) {
+		return { hasConflicts: false, conflicts: [] };
+	}
+
+	// Query existing workspace bookings for this user
+	const existingWorkspaces = await repo.findUserWorkspaceBookings({
+		userId,
+		excludeBookingId: bookingId,
+		statuses: ["pending_approval", "approved", "in_progress"],
+	});
+
+	const conflicts: WorkspaceConflictCheckResult["conflicts"] = [];
+
+	for (const newWs of workspaceBookings) {
+		const newStart = new Date(newWs.startDate);
+		const newEnd = new Date(newWs.endDate);
+
+		const overlappingBookings: WorkspaceConflict[] = [];
+
+		for (const existing of existingWorkspaces) {
+			const existingStart = new Date(existing.startDate);
+			const existingEnd = new Date(existing.endDate);
+
+			// Overlap condition: newStart <= existingEnd AND newEnd >= existingStart
+			if (newStart <= existingEnd && newEnd >= existingStart) {
+				overlappingBookings.push({
+					id: existing.id,
+					startDate: existing.startDate,
+					endDate: existing.endDate,
+					bookingRequestId: existing.bookingRequestId,
+				});
+			}
+		}
+
+		if (overlappingBookings.length > 0) {
+			conflicts.push({
+				proposedStartDate: newStart.toISOString(),
+				proposedEndDate: newEnd.toISOString(),
+				existingBookings: overlappingBookings,
+			});
+		}
+	}
+
+	return {
+		hasConflicts: conflicts.length > 0,
+		conflicts,
+	};
+}
