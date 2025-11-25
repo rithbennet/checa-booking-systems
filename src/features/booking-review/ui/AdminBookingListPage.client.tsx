@@ -53,9 +53,12 @@ export function AdminBookingListPage() {
 		});
 	};
 
-	const handleSelectAll = (checked: boolean) => {
+	const handleSelectAll = (
+		checked: boolean,
+		bookings: typeof items,
+	) => {
 		if (checked) {
-			const newSelection = new Set(items.map((item) => item.id));
+			const newSelection = new Set(bookings.map((item) => item.id));
 			setSelectedIds(newSelection);
 		} else {
 			setSelectedIds(new Set());
@@ -94,7 +97,6 @@ export function AdminBookingListPage() {
 				toast.success(result.message);
 			}
 			setSelectedIds(new Set());
-			queryClient.invalidateQueries({ queryKey: ["admin", "bookings"] });
 		} catch (error) {
 			toast.error("Action failed", {
 				description:
@@ -107,7 +109,6 @@ export function AdminBookingListPage() {
 		try {
 			await deleteBooking(id);
 			toast.success("Booking deleted");
-			queryClient.invalidateQueries({ queryKey: ["admin", "bookings"] });
 		} catch (error) {
 			toast.error("Delete failed", {
 				description:
@@ -199,7 +200,7 @@ export function AdminBookingListPage() {
 					window.open(`/admin/bookings/${id}`, "_self")
 				}
 				onQuickView={setQuickViewId}
-				onSelectAll={(checked: boolean) => handleSelectAll(checked)}
+				onSelectAll={handleSelectAll}
 				onSelectRow={handleSelectRow}
 				onSingleAction={handleSingleAction}
 				selectedIds={selectedIds}

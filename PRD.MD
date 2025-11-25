@@ -157,12 +157,7 @@ The ChECA Lab Operations system is a centralized, web-based platform replacing d
 ## 6. AI Agent Implementation Guide (Prompts)
 
 Use these prompts sequentially with your AI coding agent.
-
-### Step 1: Project Scaffold
-> "Initialize a Next.js 15 project with TypeScript, Tailwind CSS, and Biome. Install `better-auth`, `prisma`, `@tanstack/react-query`, and `zustand`. Copy the provided `schema.prisma` file. Run `prisma generate`."
-
-### Step 2: Authentication & User
-> "Implement authentication using Better Auth with the Prisma adapter. Create a registration form using `react-hook-form` and `zod` that supports conditional fields: if 'External' is selected, show Company fields; if 'Internal', show Faculty/Ikohza fields. Implement the `@utm.my` email domain check to auto-suggest user type."
+l' is selected, show Company fields; if 'Internal', show Faculty/Ikohza fields. Implement the `@utm.my` email domain check to auto-suggest user type."
 
 ### Step 3: Service & Pricing (Server Actions)
 > "Create a Server Action `getServicesWithPricing`. It should accept the current user's ID, fetch their `User` record to get `userType`, and then query `Service` include `ServicePricing` where `userType` matches. Return a flat object with the correct price for that user."

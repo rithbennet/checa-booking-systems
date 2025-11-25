@@ -38,6 +38,7 @@ import {
 } from "@/shared/ui/shadcn/alert-dialog";
 import { Button } from "@/shared/ui/shadcn/button";
 import { ServicesValidationDialog } from "./ServicesValidationDialog";
+import { WorkspaceConflictDialog } from "./WorkspaceConflictDialog";
 
 type BookingMode = "new" | "edit";
 
@@ -123,6 +124,10 @@ export function BookingWizardPage({
 		isSaving,
 		lastSavedAt,
 		hasSavedStep1,
+		// Workspace conflict dialog
+		workspaceConflictsOpen,
+		workspaceConflictsData,
+		setWorkspaceConflictsOpen,
 	} = bookingForm;
 
 	const steps = [
@@ -379,10 +384,17 @@ export function BookingWizardPage({
 					open={servicesValidationOpen}
 				/>
 
+				{/* Workspace Conflict Dialog */}
+				<WorkspaceConflictDialog
+					conflicts={workspaceConflictsData}
+					onOpenChange={setWorkspaceConflictsOpen}
+					open={workspaceConflictsOpen}
+				/>
+
 				{/* Global submitting dialog */}
 				<LoadingDialog
 					description="Please wait while we submit your booking and redirect you to the details page."
-					open={isSubmittingDialog || isSubmitting}
+					open={isSubmittingDialog}
 					title="Submitting booking"
 				/>
 			</div>

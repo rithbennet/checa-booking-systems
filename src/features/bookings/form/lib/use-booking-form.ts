@@ -8,6 +8,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast as sonnerToast } from "sonner";
 import {
+	type ConflictData,
+	useCheckWorkspaceConflicts,
 	useCreateBookingDraft,
 	useDeleteBookingDraft,
 	useSaveBookingDraft,
@@ -109,6 +111,7 @@ export function useBookingForm({
 	const saveDraftMutation = useSaveBookingDraft();
 	const submitMutation = useSubmitBooking();
 	const deleteMutation = useDeleteBookingDraft();
+	const checkConflictsMutation = useCheckWorkspaceConflicts();
 
 	// Local UI state for services/workspace validation dialog (hierarchical)
 	type ServiceSampleIssues = { sampleIndex: number; issues: string[] };
@@ -123,6 +126,12 @@ export function useBookingForm({
 		services: ServiceIssuesGroup[];
 		workspaces: WorkspaceIssues[];
 	}>({ open: false, services: [], workspaces: [] });
+
+	// Workspace conflict dialog state
+	const [workspaceConflicts, setWorkspaceConflicts] = useState<{
+		open: boolean;
+		conflicts: ConflictData[];
+	}>({ open: false, conflicts: [] });
 
 	// Wizard store for UI/meta state only
 	const {
@@ -427,6 +436,36 @@ export function useBookingForm({
 			}
 		}
 
+		// Check for workspace booking conflicts when leaving step 1
+		if (currentStep === 1 && bookingId) {
+			const workspaceData = form.getValues("workspaceBookings");
+			if (workspaceData && workspaceData.length > 0) {
+				try {
+					const conflictResult = await checkConflictsMutation.mutateAsync({
+						bookingId,
+						workspaceBookings: workspaceData.map(
+							(ws: WorkspaceBookingInput) => ({
+								startDate: ws.startDate,
+								endDate: ws.endDate,
+							}),
+						),
+					});
+
+					if (conflictResult.hasConflicts) {
+						// Show conflict dialog instead of proceeding
+						setWorkspaceConflicts({
+							open: true,
+							conflicts: conflictResult.conflicts,
+						});
+						return;
+					}
+				} catch (error) {
+					console.error("Failed to check workspace conflicts:", error);
+					// Continue anyway if the check fails - server will catch it on submit
+				}
+			}
+		}
+
 		// Save draft on next
 		if (bookingId) {
 			try {
@@ -540,6 +579,28 @@ export function useBookingForm({
 					description: "Please fix all errors before submitting.",
 				});
 				return;
+			}
+
+			// Check for workspace booking conflicts before submission
+			if (data.workspaceBookings && data.workspaceBookings.length > 0) {
+				const conflictResult = await checkConflictsMutation.mutateAsync({
+					bookingId,
+					workspaceBookings: data.workspaceBookings.map(
+						(ws: WorkspaceBookingInput) => ({
+							startDate: ws.startDate,
+							endDate: ws.endDate,
+						}),
+					),
+				});
+
+				if (conflictResult.hasConflicts) {
+					// Show conflict dialog instead of submitting
+					setWorkspaceConflicts({
+						open: true,
+						conflicts: conflictResult.conflicts,
+					});
+					return;
+				}
 			}
 
 			// Validation passed — open the submitting dialog (blocking UI)
@@ -748,10 +809,15 @@ export function useBookingForm({
 		setServicesValidationOpen: (open: boolean) =>
 			setServicesValidation((s) => ({ ...s, open })),
 		setCurrentStep,
-		isSubmitting: submitMutation.isPending,
+		isSubmitting: submitMutation.isPending || checkConflictsMutation.isPending,
 		isSubmittingDialog,
 		isSaving: saveDraftMutation.isPending,
 		lastSavedAt,
 		hasSavedStep1: hasSavedStep1Ref.current,
+		// Workspace conflict dialog
+		workspaceConflictsOpen: workspaceConflicts.open,
+		workspaceConflictsData: workspaceConflicts.conflicts,
+		setWorkspaceConflictsOpen: (open: boolean) =>
+			setWorkspaceConflicts((s) => ({ ...s, open })),
 	};
 }
