@@ -14,12 +14,12 @@
 import { FinanceDashboard } from "@/widgets/finance-dashboard";
 
 export default function AdminFinancePage() {
-	// Note: Admin role check is handled by the parent admin layout
-	// See src/app/(main)/admin/layout.tsx
+    // Note: Admin role check is handled by the parent admin layout
+    // See src/app/(main)/admin/layout.tsx
 
-	return (
-		<div className="space-y-6 p-6">
-			<FinanceDashboard />
-		</div>
-	);
+    return (
+        <div className="space-y-6 p-6">
+            <FinanceDashboard />
+        </div>
+    );
 }

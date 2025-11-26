@@ -14,7 +14,9 @@ interface FinanceOverviewResponse {
 
 export function useFinanceOverview(params: FinanceOverviewFilters) {
 	return useQuery<FinanceOverviewResponse>({
-		queryKey: financeKeys.overview(params as unknown as Record<string, unknown>),
+		queryKey: financeKeys.overview(
+			params as unknown as Record<string, unknown>,
+		),
 		queryFn: async () => {
 			const searchParams = new URLSearchParams();
 			searchParams.set("page", String(params.page));

@@ -145,7 +145,10 @@ export async function getAdminServiceDetail(
 		pricing: service.pricing
 			.filter((p) => p.userType !== "lab_administrator")
 			.map((p) => ({
-				userType: p.userType as "mjiit_member" | "utm_member" | "external_member",
+				userType: p.userType as
+					| "mjiit_member"
+					| "utm_member"
+					| "external_member",
 				price: Number(p.price),
 				unit: p.unit,
 			})),

@@ -17,7 +17,9 @@ interface UseResultsOnHoldParams {
 
 export function useResultsOnHold(params: UseResultsOnHoldParams) {
 	return useQuery<ResultsOnHoldResponse>({
-		queryKey: financeKeys.resultsOnHold(params as unknown as Record<string, unknown>),
+		queryKey: financeKeys.resultsOnHold(
+			params as unknown as Record<string, unknown>,
+		),
 		queryFn: async () => {
 			const searchParams = new URLSearchParams();
 			searchParams.set("page", String(params.page));

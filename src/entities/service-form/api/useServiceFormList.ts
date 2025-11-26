@@ -29,7 +29,9 @@ interface UseServiceFormListParams {
 
 export function useServiceFormList(params: UseServiceFormListParams) {
 	return useQuery<ServiceFormListResponse>({
-		queryKey: serviceFormKeys.list(params as unknown as Record<string, unknown>),
+		queryKey: serviceFormKeys.list(
+			params as unknown as Record<string, unknown>,
+		),
 		queryFn: async () => {
 			const searchParams = new URLSearchParams();
 			searchParams.set("page", String(params.page));
