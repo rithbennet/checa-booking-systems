@@ -53,10 +53,7 @@ export function AdminBookingListPage() {
 		});
 	};
 
-	const handleSelectAll = (
-		checked: boolean,
-		bookings: typeof items,
-	) => {
+	const handleSelectAll = (checked: boolean, bookings: typeof items) => {
 		if (checked) {
 			const newSelection = new Set(bookings.map((item) => item.id));
 			setSelectedIds(newSelection);

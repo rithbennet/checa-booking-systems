@@ -69,7 +69,7 @@ export default function CollapsibleSidebar({
 		{
 			icon: DollarSign,
 			label: "Financial Management",
-			href: "/admin/invoices",
+			href: "/admin/finance",
 		},
 		{ icon: BarChart3, label: "System Activity", href: "/admin/analytics" },
 	];

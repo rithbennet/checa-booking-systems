@@ -8,8 +8,23 @@
  * services server-side. Services are passed as props to components.
  */
 
+// Admin hooks
+export * from "./api";
 export * from "./lib/utils";
-export * from "./model/types";
+export * from "./model/admin-types";
+export * from "./model/query-keys";
+// Re-export only specific types from types.ts to avoid conflicts with admin-types.ts
+export type {
+	Service,
+	ServiceAddOn,
+	ServiceFilters,
+	ServicePricing,
+	ServiceSortOption,
+	ServiceWithPricing,
+	UserType,
+} from "./model/types";
 
 // Server-side functions should be imported directly:
 // import { getServices } from "@/entities/service/api/get-services";
+// import { getAdminServices, getAdminServiceDetail } from "@/entities/service/server/admin-repository";
+// import { upsertAdminService, toggleServiceActive } from "@/entities/service/server/admin-actions";
