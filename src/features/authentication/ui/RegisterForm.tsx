@@ -129,6 +129,7 @@ export function RegisterForm() {
 									await authClient.signIn.social({
 										provider: "google",
 										callbackURL: "/dashboard",
+										newUserCallbackURL: "/onboarding",
 									});
 								}}
 								variant="outline"

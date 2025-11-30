@@ -27,11 +27,7 @@ import {
 } from "@/shared/ui/shadcn/select";
 import { UserSampleTracker } from "@/widgets/user-sample-tracker";
 
-interface DashboardClientProps {
-	userId: string;
-}
-
-export function DashboardClient({ userId }: DashboardClientProps) {
+export function DashboardClient() {
 	// Fetch real counts
 	const { data: counts } = useBookingStatusCounts({
 		type: "all",
@@ -225,7 +221,7 @@ export function DashboardClient({ userId }: DashboardClientProps) {
 						</div>
 
 						{/* Sample Tracker Widget */}
-						<UserSampleTracker userId={userId} />
+						<UserSampleTracker />
 
 						<DashboardBookingsWidget
 							limit={8}

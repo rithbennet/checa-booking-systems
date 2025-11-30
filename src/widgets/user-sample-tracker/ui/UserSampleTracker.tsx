@@ -12,12 +12,8 @@ import {
 } from "@/shared/ui/shadcn/card";
 import { mapToWidgetItem } from "../model/mappers";
 
-interface UserSampleTrackerProps {
-	userId: string;
-}
-
-export function UserSampleTracker({ userId }: UserSampleTrackerProps) {
-	const { data, isLoading, isError, error } = useUserActiveSamples(userId);
+export function UserSampleTracker() {
+	const { data, isLoading, isError, error } = useUserActiveSamples();
 
 	const items = data?.items.map(mapToWidgetItem) ?? [];
 
