@@ -6,4 +6,6 @@ export const bookingKeys = {
 		[...bookingKeys.all, "admin", "detail", id] as const,
 	commandCenter: (id: string) =>
 		[...bookingKeys.all, "admin", "commandCenter", id] as const,
+	userDetail: (id: string) =>
+		[...bookingKeys.all, "user", "detail", id] as const,
 };

@@ -36,3 +36,6 @@ export { useAvailableEquipment } from "./use-equipment";
 export { useAdminBookingDetail } from "./useAdminBookingDetail";
 export { useAdminBookingList } from "./useAdminBookingList";
 export { useBookingCommandCenter } from "./useBookingCommandCenter";
+
+// User hooks
+export { useUserBookingDetail } from "./useUserBookingDetail";

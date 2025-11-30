@@ -56,6 +56,32 @@ export function BookingCommandCenter({ booking }: BookingCommandCenterProps) {
 		? Number.parseInt(booking.serviceItems[0].turnaroundEstimate, 10)
 		: 4;
 
+	// Get earliest sample received date across all service items
+	const samplesReceivedAt = booking.serviceItems
+		.flatMap((item) => item.sampleTracking)
+		.map((sample) => sample.receivedAt)
+		.filter((date): date is string => date !== null)
+		.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
+
+	// Get earliest analysis start date across all samples
+	const processingStartedAt = booking.serviceItems
+		.flatMap((item) => item.sampleTracking)
+		.map((sample) => sample.analysisStartAt)
+		.filter((date): date is string => date !== null)
+		.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
+
+	// Get first verified payment date
+	const paidAt = booking.serviceForms
+		.flatMap((form) => form.invoices)
+		.flatMap((invoice) => invoice.payments)
+		.filter((payment) => payment.status === "verified" && payment.verifiedAt)
+		.map((payment) => payment.verifiedAt)
+		.filter((date): date is string => date !== null)
+		.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
+
+	// Released date is when booking is completed
+	const releasedAt = booking.status === "completed" ? booking.updatedAt : null;
+
 	return (
 		<div className="mx-auto max-w-[1600px] p-4 pb-24 md:p-6">
 			{/* 1. Customer Header & Global Actions */}
@@ -65,15 +91,10 @@ export function BookingCommandCenter({ booking }: BookingCommandCenterProps) {
 			<BookingStatusTimeline
 				dates={{
 					verifiedAt: booking.reviewedAt,
-					// TODO: Add sample received date from first sample
-					samplesReceivedAt:
-						booking.serviceItems[0]?.sampleTracking[0]?.receivedAt,
-					processingStartedAt:
-						booking.serviceItems[0]?.sampleTracking[0]?.analysisStartAt,
-					// TODO: Add paid date from payments
-					paidAt: null,
-					// TODO: Add released date
-					releasedAt: null,
+					samplesReceivedAt,
+					processingStartedAt,
+					paidAt,
+					releasedAt,
 				}}
 				estimatedDays={estimatedDays}
 				status={booking.status}

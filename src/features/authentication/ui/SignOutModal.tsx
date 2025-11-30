@@ -1,8 +1,7 @@
 "use client";
 
 import { Loader2, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { clearAllUserDrafts } from "@/entities/booking/lib/draftService";
 import { useBookingWizardStore } from "@/features/bookings/form/model/use-booking-wizard-store";
 import { authClient } from "@/shared/server/better-auth/client";
@@ -20,9 +19,15 @@ interface SignOutModalProps {
 }
 
 export function SignOutModal({ open, onOpenChange }: SignOutModalProps) {
-	const router = useRouter();
 	const hasStartedSignOut = useRef(false);
 	const { clearPersistAndRehydrate } = useBookingWizardStore();
+
+	// Stable redirect function using window.location for a hard redirect
+	const performRedirect = useCallback(() => {
+		onOpenChange?.(false);
+		// Use window.location for a hard redirect to ensure all state is cleared
+		window.location.href = "/";
+	}, [onOpenChange]);
 
 	// Reset the ref when modal closes
 	useEffect(() => {
@@ -49,25 +54,28 @@ export function SignOutModal({ open, onOpenChange }: SignOutModalProps) {
 					await clearAllUserDrafts(userId);
 				}
 
-				// Sign out with Better Auth - this will clear the session
-				// Don't rely on onSuccess callback, handle the promise directly
-				await authClient.signOut();
-
-				// After successful sign out, redirect
-				router.push("/");
-				router.refresh();
-				onOpenChange?.(false);
+				// Sign out with Better Auth using fetchOptions.onSuccess for proper redirect
+				await authClient.signOut({
+					fetchOptions: {
+						onSuccess: () => {
+							performRedirect();
+						},
+						onError: (error) => {
+							console.error("[SignOutModal] sign-out error in fetchOptions", error);
+							// Even if sign-out fails, redirect to home
+							performRedirect();
+						},
+					},
+				});
 			} catch (e) {
 				console.error("[SignOutModal] sign-out error", e);
 				// Even if sign-out fails, redirect to home
-				router.push("/");
-				router.refresh();
-				onOpenChange?.(false);
+				performRedirect();
 			}
 		};
 
 		void run();
-	}, [open, router, onOpenChange, clearPersistAndRehydrate]);
+	}, [open, clearPersistAndRehydrate, performRedirect]);
 
 	return (
 		<Dialog onOpenChange={onOpenChange} open={open}>
