@@ -22,6 +22,8 @@ export const env = createEnv({
 		RESEND_API_KEY: z.string().optional(),
 		EMAIL_FROM: z.string().email().default("noreply@checa.lab"),
 		EMAIL_REPLY_TO: z.string().email().optional(),
+		// Trusted origins for CORS (comma-separated)
+		TRUSTED_ORIGINS: z.string().optional(),
 	},
 
 	/**
@@ -49,6 +51,7 @@ export const env = createEnv({
 		RESEND_API_KEY: process.env.RESEND_API_KEY,
 		EMAIL_FROM: process.env.EMAIL_FROM,
 		EMAIL_REPLY_TO: process.env.EMAIL_REPLY_TO,
+		TRUSTED_ORIGINS: process.env.TRUSTED_ORIGINS,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

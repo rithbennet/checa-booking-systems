@@ -13,6 +13,7 @@ export type CurrentUser = {
 	role: string | null;
 	status: string | null;
 	authUserId: string | null; // BetterAuth id for reference
+	needsOnboarding?: boolean; // OAuth users without User record
 };
 
 /**
@@ -27,6 +28,7 @@ function shapeUser(u: {
 	role?: string | null;
 	status?: string | null;
 	id?: string;
+	needsOnboarding?: boolean;
 }): CurrentUser {
 	// Use appUserId if available, otherwise fallback to id (BetterAuth user id)
 	// This ensures we always have a non-null identifier
@@ -44,12 +46,14 @@ function shapeUser(u: {
 		role: (u.role ?? null) as string | null,
 		status: (u.status ?? null) as string | null,
 		authUserId: (u.id ?? null) as string | null,
+		needsOnboarding: u.needsOnboarding ?? false,
 	};
 }
 
 /**
  * Require current user in Server Components (RSC) and pages
  * Redirects to /signIn if not authenticated or both appUserId and id are missing
+ * Redirects to /onboarding if user needs to complete onboarding (OAuth users without User record)
  * Uses id as fallback when appUserId is missing to ensure a non-null identifier
  */
 export async function requireCurrentUser(): Promise<CurrentUser> {
@@ -63,8 +67,19 @@ export async function requireCurrentUser(): Promise<CurrentUser> {
 
 	console.log("[requireCurrentUser] user", session.user);
 
+	// Check if user needs onboarding (OAuth user without User record)
+	const user = session.user as {
+		needsOnboarding?: boolean;
+		appUserId?: string | null;
+		id?: string;
+	};
+	if (user.needsOnboarding) {
+		console.log("[requireCurrentUser] user needs onboarding, redirecting");
+		redirect("/onboarding");
+	}
+
 	// Ensure we have at least one identifier (appUserId or id)
-	if (!session.user.appUserId && !session.user.id) {
+	if (!user.appUserId && !user.id) {
 		console.warn("[requireCurrentUser] missing appUserId/id", session.user);
 		redirect("/signIn");
 	}

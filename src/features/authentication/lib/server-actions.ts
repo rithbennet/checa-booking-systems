@@ -46,6 +46,7 @@ export async function loginWithGoogle() {
 		body: {
 			provider: "google",
 			callbackURL: "/dashboard",
+			newUserCallbackURL: "/onboarding",
 		},
 	});
 

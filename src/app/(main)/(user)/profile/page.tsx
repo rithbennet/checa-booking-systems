@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useUserProfile } from "@/entities/user";
+import { LinkedAccountsCard } from "@/features/users";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import {
 	Card,
@@ -315,6 +316,9 @@ export default function ProfilePage() {
 							</CardContent>
 						</Card>
 					)}
+
+					{/* Linked Accounts */}
+					<LinkedAccountsCard />
 				</div>
 			</div>
 		</div>
