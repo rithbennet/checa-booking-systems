@@ -80,7 +80,7 @@ export default function CollapsibleSidebar({
 		{ icon: FlaskConical, label: "Browse Services", href: "/services" },
 		{ icon: Calendar, label: "My Bookings", href: "/bookings" },
 		{ icon: FolderOpen, label: "Documents", href: "/documents" },
-		{ icon: DollarSign, label: "Financials", href: "/payments" },
+		{ icon: DollarSign, label: "Financials", href: "/financials" },
 		{ icon: FileText, label: "Results", href: "/results" },
 	];
 

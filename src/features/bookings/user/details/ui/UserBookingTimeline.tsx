@@ -17,9 +17,11 @@ import {
 	Loader2,
 	Package,
 } from "lucide-react";
-import type { UserBookingDetailVM } from "@/entities/booking/model/user-detail-types";
+import type {
+	UserBookingDetailVM,
+	UserTimelineStep,
+} from "@/entities/booking/model/user-detail-types";
 import { getUserTimelineSteps } from "@/entities/booking/model/user-detail-types";
-import type { UserTimelineStep } from "@/entities/booking/model/user-detail-types";
 import { cn } from "@/shared/lib/utils";
 import { formatShortDate } from "../lib/helpers";
 
@@ -27,7 +29,10 @@ interface UserBookingTimelineProps {
 	booking: UserBookingDetailVM;
 }
 
-const stepIcons: Record<UserTimelineStep, React.ComponentType<{ className?: string }>> = {
+const stepIcons: Record<
+	UserTimelineStep,
+	React.ComponentType<{ className?: string }>
+> = {
 	submitted: FileCheck,
 	approved: CheckCircle,
 	samples_received: Package,
@@ -81,7 +86,8 @@ export function UserBookingTimeline({ booking }: UserBookingTimelineProps) {
 								className={cn(
 									"z-10 mb-2 flex h-6 w-6 items-center justify-center rounded-full",
 									step.isCompleted && "bg-green-500 text-white",
-									step.isCurrent && "bg-blue-600 text-white ring-4 ring-blue-50",
+									step.isCurrent &&
+										"bg-blue-600 text-white ring-4 ring-blue-50",
 									isUpcoming && "bg-slate-200 text-slate-400",
 								)}
 							>

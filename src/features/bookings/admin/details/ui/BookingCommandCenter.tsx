@@ -57,27 +57,30 @@ export function BookingCommandCenter({ booking }: BookingCommandCenterProps) {
 		: 4;
 
 	// Get earliest sample received date across all service items
-	const samplesReceivedAt = booking.serviceItems
-		.flatMap((item) => item.sampleTracking)
-		.map((sample) => sample.receivedAt)
-		.filter((date): date is string => date !== null)
-		.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
+	const samplesReceivedAt =
+		booking.serviceItems
+			.flatMap((item) => item.sampleTracking)
+			.map((sample) => sample.receivedAt)
+			.filter((date): date is string => date !== null)
+			.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
 
 	// Get earliest analysis start date across all samples
-	const processingStartedAt = booking.serviceItems
-		.flatMap((item) => item.sampleTracking)
-		.map((sample) => sample.analysisStartAt)
-		.filter((date): date is string => date !== null)
-		.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
+	const processingStartedAt =
+		booking.serviceItems
+			.flatMap((item) => item.sampleTracking)
+			.map((sample) => sample.analysisStartAt)
+			.filter((date): date is string => date !== null)
+			.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
 
 	// Get first verified payment date
-	const paidAt = booking.serviceForms
-		.flatMap((form) => form.invoices)
-		.flatMap((invoice) => invoice.payments)
-		.filter((payment) => payment.status === "verified" && payment.verifiedAt)
-		.map((payment) => payment.verifiedAt)
-		.filter((date): date is string => date !== null)
-		.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
+	const paidAt =
+		booking.serviceForms
+			.flatMap((form) => form.invoices)
+			.flatMap((invoice) => invoice.payments)
+			.filter((payment) => payment.status === "verified" && payment.verifiedAt)
+			.map((payment) => payment.verifiedAt)
+			.filter((date): date is string => date !== null)
+			.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
 
 	// Released date is when booking is completed
 	const releasedAt = booking.status === "completed" ? booking.updatedAt : null;

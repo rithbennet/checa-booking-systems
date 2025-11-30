@@ -7,7 +7,6 @@
 
 "use client";
 
-import { useState } from "react";
 import {
 	AlertCircle,
 	CheckCircle2,
@@ -18,7 +17,9 @@ import {
 	Receipt,
 	Upload,
 } from "lucide-react";
+import { useState } from "react";
 import type { UserBookingDetailVM } from "@/entities/booking/model/user-detail-types";
+import { cn } from "@/shared/lib/utils";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -28,8 +29,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
-import { cn } from "@/shared/lib/utils";
-import { formatDate, formatCurrency } from "../lib/helpers";
+import { formatCurrency, formatDate } from "../lib/helpers";
 
 interface UserDocumentsSectionProps {
 	booking: UserBookingDetailVM;
@@ -42,7 +42,10 @@ function getStatusBadge(status: string, dueDate?: string) {
 
 	if (status === "signed_forms_uploaded" || status === "paid") {
 		return (
-			<Badge className="border-green-200 bg-green-100 text-green-700" variant="outline">
+			<Badge
+				className="border-green-200 bg-green-100 text-green-700"
+				variant="outline"
+			>
 				<CheckCircle2 className="mr-1 h-3 w-3" />
 				{status === "signed_forms_uploaded" ? "Signed" : "Paid"}
 			</Badge>
@@ -51,16 +54,26 @@ function getStatusBadge(status: string, dueDate?: string) {
 
 	if (status === "overdue" || isOverdue) {
 		return (
-			<Badge className="border-red-200 bg-red-100 text-red-700" variant="outline">
+			<Badge
+				className="border-red-200 bg-red-100 text-red-700"
+				variant="outline"
+			>
 				<AlertCircle className="mr-1 h-3 w-3" />
 				Overdue
 			</Badge>
 		);
 	}
 
-	if (status === "pending" || status === "generated" || status === "downloaded") {
+	if (
+		status === "pending" ||
+		status === "generated" ||
+		status === "downloaded"
+	) {
 		return (
-			<Badge className="border-yellow-200 bg-yellow-100 text-yellow-700" variant="outline">
+			<Badge
+				className="border-yellow-200 bg-yellow-100 text-yellow-700"
+				variant="outline"
+			>
 				<Clock className="mr-1 h-3 w-3" />
 				{status === "generated" ? "Awaiting Signature" : "Pending"}
 			</Badge>
@@ -69,18 +82,17 @@ function getStatusBadge(status: string, dueDate?: string) {
 
 	if (status === "sent") {
 		return (
-			<Badge className="border-blue-200 bg-blue-100 text-blue-700" variant="outline">
+			<Badge
+				className="border-blue-200 bg-blue-100 text-blue-700"
+				variant="outline"
+			>
 				<FileText className="mr-1 h-3 w-3" />
 				Sent
 			</Badge>
 		);
 	}
 
-	return (
-		<Badge variant="outline">
-			{status}
-		</Badge>
-	);
+	return <Badge variant="outline">{status}</Badge>;
 }
 
 function DocumentIcon({ type }: { type: DocumentType }) {
@@ -130,7 +142,8 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 						<FileText className="mx-auto h-10 w-10 text-slate-300" />
 						<p className="mt-2 font-medium text-slate-600">No documents yet</p>
 						<p className="mt-1 text-slate-500 text-sm">
-							Documents will appear here once your booking is approved and service forms are generated.
+							Documents will appear here once your booking is approved and
+							service forms are generated.
 						</p>
 					</div>
 				</CardContent>
@@ -151,7 +164,7 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 			</CardHeader>
 			<CardContent className="space-y-6">
 				{booking.serviceForms.map((form) => (
-					<div key={form.id} className="space-y-3">
+					<div className="space-y-3" key={form.id}>
 						{/* Service Form */}
 						<div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-4">
 							<div className="flex items-center gap-3">
@@ -160,7 +173,8 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 									<p className="font-medium text-slate-900">Service Form</p>
 									<p className="text-slate-500 text-sm">{form.formNumber}</p>
 									<p className="text-slate-400 text-xs">
-										Generated: {formatDate(form.generatedAt)} • Valid until: {formatDate(form.validUntil)}
+										Generated: {formatDate(form.generatedAt)} • Valid until:{" "}
+										{formatDate(form.validUntil)}
 									</p>
 								</div>
 							</div>
@@ -183,7 +197,9 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 											variant="default"
 										>
 											<Upload className="mr-1 h-4 w-4" />
-											{uploadingId === form.id ? "Uploading..." : "Upload Signed"}
+											{uploadingId === form.id
+												? "Uploading..."
+												: "Upload Signed"}
 										</Button>
 									)}
 								</div>
@@ -196,15 +212,21 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 								<div className="flex items-center gap-3">
 									<DocumentIcon type="working_area_agreement" />
 									<div>
-										<p className="font-medium text-slate-900">Working Area Agreement</p>
-										<p className="text-slate-500 text-sm">Required for workspace access</p>
+										<p className="font-medium text-slate-900">
+											Working Area Agreement
+										</p>
+										<p className="text-slate-500 text-sm">
+											Required for workspace access
+										</p>
 									</div>
 								</div>
 								<div className="flex items-center gap-3">
 									{getStatusBadge(form.status)}
 									<div className="flex gap-2">
 										<Button
-											onClick={() => handleDownload("working_area_agreement", form.id)}
+											onClick={() =>
+												handleDownload("working_area_agreement", form.id)
+											}
 											size="sm"
 											variant="outline"
 										>
@@ -235,13 +257,13 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 								</p>
 								{form.invoices.map((invoice) => (
 									<div
-										key={invoice.id}
 										className={cn(
 											"flex items-center justify-between rounded-lg border p-4",
 											invoice.status === "overdue"
 												? "border-red-200 bg-red-50"
 												: "border-slate-200 bg-white",
 										)}
+										key={invoice.id}
 									>
 										<div className="flex items-center gap-3">
 											<DocumentIcon type="invoice" />
@@ -250,10 +272,12 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 													Invoice {invoice.invoiceNumber}
 												</p>
 												<p className="text-slate-500 text-sm">
-													Amount: {formatCurrency(Number.parseFloat(invoice.amount))}
+													Amount:{" "}
+													{formatCurrency(Number.parseFloat(invoice.amount))}
 												</p>
 												<p className="text-slate-400 text-xs">
-													Issued: {formatDate(invoice.invoiceDate)} • Due: {formatDate(invoice.dueDate)}
+													Issued: {formatDate(invoice.invoiceDate)} • Due:{" "}
+													{formatDate(invoice.dueDate)}
 												</p>
 											</div>
 										</div>
@@ -282,10 +306,20 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 						<div className="text-blue-800 text-sm">
 							<p className="font-medium">Document Instructions</p>
 							<ul className="mt-1 list-inside list-disc space-y-1 text-blue-700 text-xs">
-								<li>Download and print the service form, sign it, and upload the signed copy</li>
-								<li>Download invoices for your records and payment processing</li>
-								{booking.serviceForms.some((f) => f.requiresWorkingAreaAgreement) && (
-									<li>Working area agreement must be signed before workspace access</li>
+								<li>
+									Download and print the service form, sign it, and upload the
+									signed copy
+								</li>
+								<li>
+									Download invoices for your records and payment processing
+								</li>
+								{booking.serviceForms.some(
+									(f) => f.requiresWorkingAreaAgreement,
+								) && (
+									<li>
+										Working area agreement must be signed before workspace
+										access
+									</li>
 								)}
 							</ul>
 						</div>

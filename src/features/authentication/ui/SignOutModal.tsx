@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2, LogOut } from "lucide-react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { clearAllUserDrafts } from "@/entities/booking/lib/draftService";
 import { useBookingWizardStore } from "@/features/bookings/form/model/use-booking-wizard-store";
 import { authClient } from "@/shared/server/better-auth/client";
@@ -20,19 +20,20 @@ interface SignOutModalProps {
 
 export function SignOutModal({ open, onOpenChange }: SignOutModalProps) {
 	const hasStartedSignOut = useRef(false);
+	const [status, setStatus] = useState<"loading" | "error">("loading");
 	const { clearPersistAndRehydrate } = useBookingWizardStore();
 
 	// Stable redirect function using window.location for a hard redirect
 	const performRedirect = useCallback(() => {
-		onOpenChange?.(false);
 		// Use window.location for a hard redirect to ensure all state is cleared
 		window.location.href = "/";
-	}, [onOpenChange]);
+	}, []);
 
 	// Reset the ref when modal closes
 	useEffect(() => {
 		if (!open) {
 			hasStartedSignOut.current = false;
+			setStatus("loading");
 		}
 	}, [open]);
 
@@ -54,23 +55,25 @@ export function SignOutModal({ open, onOpenChange }: SignOutModalProps) {
 					await clearAllUserDrafts(userId);
 				}
 
-				// Sign out with Better Auth using fetchOptions.onSuccess for proper redirect
-				await authClient.signOut({
-					fetchOptions: {
-						onSuccess: () => {
-							performRedirect();
-						},
-						onError: (error) => {
-							console.error("[SignOutModal] sign-out error in fetchOptions", error);
-							// Even if sign-out fails, redirect to home
-							performRedirect();
-						},
-					},
-				});
+				// Sign out with Better Auth
+				const result = await authClient.signOut();
+
+				// Check if sign-out was successful
+				if (result.error) {
+					console.error("[SignOutModal] sign-out returned error", result.error);
+					setStatus("error");
+					// Still redirect after a short delay even on error
+					setTimeout(performRedirect, 1500);
+					return;
+				}
+
+				// Success - redirect
+				performRedirect();
 			} catch (e) {
 				console.error("[SignOutModal] sign-out error", e);
-				// Even if sign-out fails, redirect to home
-				performRedirect();
+				setStatus("error");
+				// Even if sign-out fails, redirect after a short delay
+				setTimeout(performRedirect, 1500);
 			}
 		};
 
@@ -87,10 +90,12 @@ export function SignOutModal({ open, onOpenChange }: SignOutModalProps) {
 						</div>
 					</div>
 					<DialogTitle className="text-center text-xl">
-						Signing you out...
+						{status === "error" ? "Sign out issue" : "Signing you out..."}
 					</DialogTitle>
 					<DialogDescription className="pt-2 text-center">
-						Please wait while we securely sign you out of your account.
+						{status === "error"
+							? "There was an issue signing out. Redirecting you to the home page..."
+							: "Please wait while we securely sign you out of your account."}
 					</DialogDescription>
 				</DialogHeader>
 				<div className="flex items-center justify-center py-4">

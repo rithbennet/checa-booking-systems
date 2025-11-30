@@ -8,4 +8,5 @@ export const bookingKeys = {
 		[...bookingKeys.all, "admin", "commandCenter", id] as const,
 	userDetail: (id: string) =>
 		[...bookingKeys.all, "user", "detail", id] as const,
+	userFinancials: () => [...bookingKeys.all, "user", "financials"] as const,
 };

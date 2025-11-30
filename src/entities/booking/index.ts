@@ -9,6 +9,7 @@ export * from "./api/useAdminBookingList";
 export * from "./api/useFinanceOverview";
 export * from "./api/useFinanceStats";
 export * from "./api/useResultsOnHold";
+export * from "./api/useUserFinancials";
 export * from "./lib/booking-mappers";
 export * from "./lib/utils";
 export * from "./model/mappers";

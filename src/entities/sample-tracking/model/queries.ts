@@ -5,7 +5,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { sampleTrackingKeys } from "./query-keys";
-import type { SampleOperationsRow, UserActiveSample } from "./types";
+import type {
+	SampleOperationsRow,
+	UserActiveSample,
+	UserSampleResultRow,
+} from "./types";
 
 /**
  * Fetch sample operations list (admin)
@@ -60,6 +64,20 @@ async function fetchUserActiveSamples(
 }
 
 /**
+ * Fetch user sample results (results page)
+ */
+async function fetchUserSampleResults(): Promise<{
+	items: UserSampleResultRow[];
+}> {
+	const res = await fetch("/api/user/samples");
+	if (!res.ok) {
+		const error = await res.json().catch(() => ({}));
+		throw new Error(error.error || "Failed to fetch sample results");
+	}
+	return res.json();
+}
+
+/**
  * Hook to get sample operations list (admin)
  */
 export function useSampleOperationsList(params: {
@@ -87,6 +105,18 @@ export function useUserActiveSamples(userId: string | null | undefined) {
 			return fetchUserActiveSamples(userId);
 		},
 		enabled: !!userId,
+		staleTime: 60 * 1000, // 1 minute
+	});
+}
+
+/**
+ * Hook to get user sample results (results page)
+ * Shows all samples with payment/download status
+ */
+export function useUserSampleResults() {
+	return useQuery({
+		queryKey: sampleTrackingKeys.userResults(),
+		queryFn: fetchUserSampleResults,
 		staleTime: 60 * 1000, // 1 minute
 	});
 }

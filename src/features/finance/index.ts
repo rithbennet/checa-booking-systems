@@ -11,3 +11,6 @@ export { FinanceOverviewTable } from "./overview/ui/FinanceOverviewTable";
 export { PaymentHistoryTable } from "./payments/ui/PaymentHistoryTable";
 export { PendingPaymentsTable } from "./payments/ui/PendingPaymentsTable";
 export { ResultsOnHoldTable } from "./results-on-hold/ui/ResultsOnHoldTable";
+
+// User Financials
+export * from "./user-financials";

@@ -117,7 +117,10 @@ function getItemStatus(item: UserServiceItemVM): {
 		return { label: "Received", className: "bg-blue-100 text-blue-700" };
 	}
 	if (statuses.some((s) => s === "pending")) {
-		return { label: "Awaiting Samples", className: "bg-slate-100 text-slate-600" };
+		return {
+			label: "Awaiting Samples",
+			className: "bg-slate-100 text-slate-600",
+		};
 	}
 
 	return { label: "Queued", className: "bg-slate-100 text-slate-600" };

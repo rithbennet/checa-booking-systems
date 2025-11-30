@@ -268,12 +268,13 @@ export function getUserTimelineSteps(
 				booking.status === "in_progress" ||
 				booking.status === "completed" ||
 				hasSamplesReceived,
-			isCurrent:
-				booking.status === "approved" && !hasSamplesReceived,
+			isCurrent: booking.status === "approved" && !hasSamplesReceived,
 		},
 		samples_received: {
-			isCompleted: hasSamplesReceived && (hasAnalysisStarted || allAnalysisComplete),
-			isCurrent: hasSamplesReceived && !hasAnalysisStarted && !allAnalysisComplete,
+			isCompleted:
+				hasSamplesReceived && (hasAnalysisStarted || allAnalysisComplete),
+			isCurrent:
+				hasSamplesReceived && !hasAnalysisStarted && !allAnalysisComplete,
 		},
 		in_progress: {
 			isCompleted: allAnalysisComplete,

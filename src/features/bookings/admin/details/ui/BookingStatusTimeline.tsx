@@ -91,8 +91,9 @@ function TimelineStepItem({
 			{/* Connecting Line */}
 			{showLine && (
 				<div
-					className={`-z-10 absolute top-3 left-[50%] h-0.5 w-full ${isLineCompleted ? "bg-green-500" : "bg-slate-200"
-						}`}
+					className={`-z-10 absolute top-3 left-[50%] h-0.5 w-full ${
+						isLineCompleted ? "bg-green-500" : "bg-slate-200"
+					}`}
 				/>
 			)}
 
