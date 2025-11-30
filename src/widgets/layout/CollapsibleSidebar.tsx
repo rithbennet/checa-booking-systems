@@ -69,7 +69,7 @@ export default function CollapsibleSidebar({
 		{
 			icon: DollarSign,
 			label: "Financial Management",
-			href: "/admin/invoices",
+			href: "/admin/finance",
 		},
 		{ icon: BarChart3, label: "System Activity", href: "/admin/analytics" },
 	];
@@ -80,7 +80,7 @@ export default function CollapsibleSidebar({
 		{ icon: FlaskConical, label: "Browse Services", href: "/services" },
 		{ icon: Calendar, label: "My Bookings", href: "/bookings" },
 		{ icon: FolderOpen, label: "Documents", href: "/documents" },
-		{ icon: DollarSign, label: "Financials", href: "/payments" },
+		{ icon: DollarSign, label: "Financials", href: "/financials" },
 		{ icon: FileText, label: "Results", href: "/results" },
 	];
 

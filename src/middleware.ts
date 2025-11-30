@@ -20,7 +20,8 @@ export function middleware(req: NextRequest) {
 	baseHeaders.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
 	// Enforce CSRF for state-changing API requests
-	if (pathname.startsWith("/api/")) {
+	// Skip CSRF check for Better Auth routes - they handle their own CSRF protection
+	if (pathname.startsWith("/api/") && !pathname.startsWith("/api/auth/")) {
 		const method = req.method?.toUpperCase() ?? "GET";
 		const stateChanging = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
 

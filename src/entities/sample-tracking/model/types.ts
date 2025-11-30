@@ -36,3 +36,33 @@ export interface UserActiveSample {
 	bookingId: string;
 	createdAt: Date | string;
 }
+
+/**
+ * Analysis result for user results page
+ */
+export interface UserAnalysisResult {
+	id: string;
+	fileName: string;
+	fileSize: number;
+	fileType: string;
+	description: string | null;
+}
+
+/**
+ * User sample result row (user results page)
+ * Each row represents a single physical sample with its payment/download status
+ */
+export interface UserSampleResultRow {
+	id: string;
+	sampleIdentifier: string;
+	status: SampleStatus;
+	serviceName: string;
+	bookingId: string;
+	bookingRef: string;
+	isPaid: boolean;
+	hasResults: boolean;
+	resultCount: number;
+	analysisResults: UserAnalysisResult[];
+	createdAt: string;
+	updatedAt: string;
+}

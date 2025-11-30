@@ -13,4 +13,5 @@ export const sampleTrackingKeys = {
 	}) => [...sampleTrackingKeys.all, "operations", "list", params] as const,
 	userActive: (userId: string) =>
 		[...sampleTrackingKeys.all, "user", userId, "active"] as const,
+	userResults: () => [...sampleTrackingKeys.all, "user", "results"] as const,
 };
