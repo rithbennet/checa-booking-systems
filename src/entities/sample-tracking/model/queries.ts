@@ -46,21 +46,32 @@ async function fetchSampleOperationsList(params: {
 
 /**
  * Fetch user active samples (dashboard widget)
+ * Reuses the user samples endpoint and filters client-side
  */
-async function fetchUserActiveSamples(
-	userId: string,
-): Promise<{ items: UserActiveSample[] }> {
-	const searchParams = new URLSearchParams();
-	searchParams.set("userId", userId);
-	searchParams.set("exclude", "returned");
-
-	const res = await fetch(`/api/admin/samples?${searchParams.toString()}`);
+async function fetchUserActiveSamples(): Promise<{
+	items: UserActiveSample[];
+}> {
+	const res = await fetch("/api/user/samples");
 	if (!res.ok) {
 		const error = await res.json().catch(() => ({}));
 		throw new Error(error.error || "Failed to fetch user samples");
 	}
 	const data = await res.json();
-	return { items: data.items };
+	// Filter to only show active samples (exclude returned)
+	const activeSamples = data.items
+		.filter(
+			(item: UserSampleResultRow) =>
+				item.status !== "returned" && item.status !== "return_requested",
+		)
+		.map((item: UserSampleResultRow) => ({
+			id: item.id,
+			sampleIdentifier: item.sampleIdentifier,
+			serviceName: item.serviceName,
+			status: item.status,
+			bookingId: item.bookingId,
+			createdAt: item.createdAt,
+		}));
+	return { items: activeSamples };
 }
 
 /**
@@ -96,15 +107,12 @@ export function useSampleOperationsList(params: {
 
 /**
  * Hook to get user active samples (dashboard widget)
+ * No longer requires userId - uses authenticated user from session
  */
-export function useUserActiveSamples(userId: string | null | undefined) {
+export function useUserActiveSamples() {
 	return useQuery({
-		queryKey: sampleTrackingKeys.userActive(userId ?? ""),
-		queryFn: () => {
-			if (!userId) throw new Error("User ID is required");
-			return fetchUserActiveSamples(userId);
-		},
-		enabled: !!userId,
+		queryKey: sampleTrackingKeys.userActive("current"),
+		queryFn: fetchUserActiveSamples,
 		staleTime: 60 * 1000, // 1 minute
 	});
 }

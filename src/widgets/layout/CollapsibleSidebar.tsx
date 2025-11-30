@@ -1,17 +1,17 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import type { LucideIcon } from "lucide-react";
 import {
 	BarChart3,
-	Bell,
 	Calendar,
 	ClipboardList,
 	DollarSign,
 	FileText,
 	FlaskConical,
-	FolderOpen,
 	HelpCircle,
 	LayoutDashboard,
+	Loader2,
 	LogOut,
 	RefreshCw,
 	Settings,
@@ -21,7 +21,9 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { SignOutModal } from "@/features/authentication/ui/SignOutModal";
+import { NotificationNavBadge } from "@/features/notifications";
 import { cn } from "@/shared/lib/utils";
 import type { CurrentUser } from "@/shared/server/current-user";
 import {
@@ -51,13 +53,31 @@ export default function CollapsibleSidebar({
 	session: CurrentUser | null;
 }) {
 	const pathname = usePathname();
+	const queryClient = useQueryClient();
 	const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
+	const [isRefreshing, setIsRefreshing] = useState(false);
 	const { toggleSidebar } = useSidebar();
 
 	const role = session?.role;
 	const isAdmin = role === "lab_administrator";
 
 	const isActive = (href: string) => pathname?.startsWith(href);
+
+	const handleRefresh = async () => {
+		setIsRefreshing(true);
+		try {
+			await queryClient.invalidateQueries();
+			toast.success("Refreshed", {
+				description: "All data has been refreshed",
+			});
+		} catch {
+			toast.error("Refresh failed", {
+				description: "Please try again",
+			});
+		} finally {
+			setIsRefreshing(false);
+		}
+	};
 
 	// Admin menu items (Administrator-only per PRD)
 	const adminNavItems: NavItem[] = [
@@ -79,7 +99,6 @@ export default function CollapsibleSidebar({
 		{ icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
 		{ icon: FlaskConical, label: "Browse Services", href: "/services" },
 		{ icon: Calendar, label: "My Bookings", href: "/bookings" },
-		{ icon: FolderOpen, label: "Documents", href: "/documents" },
 		{ icon: DollarSign, label: "Financials", href: "/financials" },
 		{ icon: FileText, label: "Results", href: "/results" },
 	];
@@ -88,14 +107,14 @@ export default function CollapsibleSidebar({
 
 	// Bottom items - Settings is admin-only per PRD
 	const bottomItems: NavItem[] = [
-		{ icon: RefreshCw, label: "Refresh", href: "#" },
 		...(isAdmin
 			? [{ icon: Settings, label: "Settings", href: "/admin/settings" }]
 			: []),
 		{ icon: HelpCircle, label: "Help", href: "/help" },
-		{ icon: Bell, label: "Notifications", href: "/notifications" },
 		{ icon: User, label: "Profile", href: "/profile" },
 	];
+
+	const isNotificationsActive = isActive("/notifications");
 
 	return (
 		<Sidebar collapsible="icon">
@@ -163,6 +182,21 @@ export default function CollapsibleSidebar({
 
 			<SidebarFooter>
 				<SidebarMenu>
+					{/* Refresh button - separate from nav items */}
+					<SidebarMenuItem>
+						<SidebarMenuButton
+							disabled={isRefreshing}
+							onClick={handleRefresh}
+							tooltip={isRefreshing ? "Refreshing..." : "Refresh all data"}
+						>
+							{isRefreshing ? (
+								<Loader2 className="animate-spin" />
+							) : (
+								<RefreshCw />
+							)}
+							<span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
+						</SidebarMenuButton>
+					</SidebarMenuItem>
 					{bottomItems.map((item) => {
 						const Icon = item.icon;
 						const active = isActive(item.href);
@@ -181,6 +215,8 @@ export default function CollapsibleSidebar({
 							</SidebarMenuItem>
 						);
 					})}
+					{/* Notifications with unread badge */}
+					<NotificationNavBadge isActive={isNotificationsActive} />
 					<SidebarMenuItem>
 						<SidebarMenuButton
 							onClick={() => setIsSignOutModalOpen(true)}

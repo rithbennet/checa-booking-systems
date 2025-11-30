@@ -1,10 +1,18 @@
+import {
+	sendAccountVerifiedEmail,
+	sendAdminNewBookingEmail,
+	sendAdminUserVerifiedEmail,
+	sendBookingApprovedEmail,
+	sendBookingRejectedEmail,
+	sendBookingRevisionRequestedEmail,
+	sendBookingSubmittedEmail,
+} from "@/entities/notification/server/email-sender";
 import { db } from "@/shared/server/db";
 import type { notification_type_enum } from "../../../../generated/prisma";
 
 /**
  * Notification adapter for booking events
- * Currently implements in-app notifications via database
- * Email/queue integration can be added here without changing service layer signatures
+ * Implements both in-app notifications (database) and email notifications (Resend)
  */
 
 /**
@@ -32,20 +40,26 @@ export async function enqueueInApp(params: {
 }
 
 /**
- * Enqueue email notification (no-op for now, placeholder for future implementation)
+ * Mark notification as email sent
  */
-export async function enqueueEmail(params: {
-	to: string;
-	template: string;
-	variables: Record<string, unknown>;
-}) {
-	// TODO: Integrate with email service (e.g., SendGrid, AWS SES)
-	// For now, just log
-	console.log("Email queued:", {
-		to: params.to,
-		template: params.template,
-		variables: params.variables,
+async function markEmailSent(notificationId: string) {
+	return db.notification.update({
+		where: { id: notificationId },
+		data: { emailSent: true, emailSentAt: new Date() },
 	});
+}
+
+/**
+ * Get user details for email
+ */
+async function getUserEmailDetails(userId: string) {
+	const user = await db.user.findUnique({
+		where: { id: userId },
+		select: { email: true, firstName: true, lastName: true },
+	});
+	return user
+		? { email: user.email, name: `${user.firstName} ${user.lastName}` }
+		: null;
 }
 
 /**
@@ -62,7 +76,8 @@ export async function notifyUserBookingSubmitted(params: {
 			? "Your booking is now pending admin approval."
 			: "Your booking is pending account verification. Once your account is verified, it will be reviewed by administrators.";
 
-	await enqueueInApp({
+	// Create in-app notification
+	const notification = await enqueueInApp({
 		userId: params.userId,
 		type: "booking_submitted",
 		relatedEntityType: "booking",
@@ -70,6 +85,20 @@ export async function notifyUserBookingSubmitted(params: {
 		title: "Booking Submitted",
 		message: `Your booking ${params.referenceNumber} has been submitted. ${statusMessage}`,
 	});
+
+	// Send email notification
+	const userDetails = await getUserEmailDetails(params.userId);
+	if (userDetails) {
+		const result = await sendBookingSubmittedEmail({
+			to: userDetails.email,
+			customerName: userDetails.name,
+			referenceNumber: params.referenceNumber,
+			status: params.status,
+		});
+		if (result.success) {
+			await markEmailSent(notification.id);
+		}
+	}
 }
 
 /**
@@ -80,6 +109,8 @@ export async function notifyAdminsNewBooking(params: {
 	bookingId: string;
 	referenceNumber: string;
 	status: "pending_approval" | "pending_user_verification";
+	customerName?: string;
+	customerEmail?: string;
 }) {
 	const type =
 		params.status === "pending_user_verification"
@@ -91,6 +122,9 @@ export async function notifyAdminsNewBooking(params: {
 			? `Booking ${params.referenceNumber} is pending user verification.`
 			: `New booking ${params.referenceNumber} is pending your approval.`;
 
+	// Collect admin emails for batch email
+	const adminEmails: string[] = [];
+
 	for (const adminId of params.adminIds) {
 		await enqueueInApp({
 			userId: adminId,
@@ -99,6 +133,22 @@ export async function notifyAdminsNewBooking(params: {
 			relatedEntityId: params.bookingId,
 			title: "New Booking Submitted",
 			message,
+		});
+
+		const adminDetails = await getUserEmailDetails(adminId);
+		if (adminDetails) {
+			adminEmails.push(adminDetails.email);
+		}
+	}
+
+	// Send email to all admins
+	if (adminEmails.length > 0 && params.customerName && params.customerEmail) {
+		await sendAdminNewBookingEmail({
+			to: adminEmails,
+			adminName: "Admin",
+			referenceNumber: params.referenceNumber,
+			customerName: params.customerName,
+			customerEmail: params.customerEmail,
 		});
 	}
 }
@@ -111,7 +161,7 @@ export async function notifyUserBookingApproved(params: {
 	bookingId: string;
 	referenceNumber: string;
 }) {
-	await enqueueInApp({
+	const notification = await enqueueInApp({
 		userId: params.userId,
 		type: "booking_approved",
 		relatedEntityType: "booking",
@@ -119,6 +169,20 @@ export async function notifyUserBookingApproved(params: {
 		title: "Booking Approved",
 		message: `Your booking ${params.referenceNumber} has been approved by the administrator.`,
 	});
+
+	// Send email notification
+	const userDetails = await getUserEmailDetails(params.userId);
+	if (userDetails) {
+		const result = await sendBookingApprovedEmail({
+			to: userDetails.email,
+			customerName: userDetails.name,
+			referenceNumber: params.referenceNumber,
+			bookingId: params.bookingId,
+		});
+		if (result.success) {
+			await markEmailSent(notification.id);
+		}
+	}
 }
 
 /**
@@ -130,7 +194,7 @@ export async function notifyUserBookingRejected(params: {
 	referenceNumber: string;
 	note: string;
 }) {
-	await enqueueInApp({
+	const notification = await enqueueInApp({
 		userId: params.userId,
 		type: "booking_rejected",
 		relatedEntityType: "booking",
@@ -138,6 +202,21 @@ export async function notifyUserBookingRejected(params: {
 		title: "Booking Rejected",
 		message: `Your booking ${params.referenceNumber} has been rejected. Admin notes: ${params.note}`,
 	});
+
+	// Send email notification
+	const userDetails = await getUserEmailDetails(params.userId);
+	if (userDetails) {
+		const result = await sendBookingRejectedEmail({
+			to: userDetails.email,
+			customerName: userDetails.name,
+			referenceNumber: params.referenceNumber,
+			reason: params.note,
+			bookingId: params.bookingId,
+		});
+		if (result.success) {
+			await markEmailSent(notification.id);
+		}
+	}
 }
 
 /**
@@ -149,7 +228,7 @@ export async function notifyUserBookingReturnedForEdit(params: {
 	referenceNumber: string;
 	note: string;
 }) {
-	await enqueueInApp({
+	const notification = await enqueueInApp({
 		userId: params.userId,
 		type: "booking_submitted",
 		relatedEntityType: "booking",
@@ -157,6 +236,21 @@ export async function notifyUserBookingReturnedForEdit(params: {
 		title: "Booking Returned for Edit",
 		message: `Your booking ${params.referenceNumber} has been returned for editing. Admin notes: ${params.note}`,
 	});
+
+	// Send email notification
+	const userDetails = await getUserEmailDetails(params.userId);
+	if (userDetails) {
+		const result = await sendBookingRevisionRequestedEmail({
+			to: userDetails.email,
+			customerName: userDetails.name,
+			referenceNumber: params.referenceNumber,
+			adminNotes: params.note,
+			bookingId: params.bookingId,
+		});
+		if (result.success) {
+			await markEmailSent(notification.id);
+		}
+	}
 }
 
 /**
@@ -166,14 +260,27 @@ export async function notifyUserAccountVerified(params: {
 	userId: string;
 	userEmail: string;
 }) {
-	await enqueueInApp({
+	const notification = await enqueueInApp({
 		userId: params.userId,
 		type: "booking_submitted",
 		relatedEntityType: "user",
 		relatedEntityId: params.userId,
 		title: "Account Verified",
-		message: `Your account has been verified. Any pending bookings will now be reviewed by administrators.`,
+		message:
+			"Your account has been verified. Any pending bookings will now be reviewed by administrators.",
 	});
+
+	// Send email notification
+	const userDetails = await getUserEmailDetails(params.userId);
+	if (userDetails) {
+		const result = await sendAccountVerifiedEmail({
+			to: userDetails.email,
+			customerName: userDetails.name,
+		});
+		if (result.success) {
+			await markEmailSent(notification.id);
+		}
+	}
 }
 
 /**
@@ -185,6 +292,9 @@ export async function notifyAdminsUserVerified(params: {
 	userEmail: string;
 	bookingCount: number;
 }) {
+	// Collect admin emails for batch email
+	const adminEmails: string[] = [];
+
 	for (const adminId of params.adminIds) {
 		await enqueueInApp({
 			userId: adminId,
@@ -193,6 +303,21 @@ export async function notifyAdminsUserVerified(params: {
 			relatedEntityId: params.userId,
 			title: "User Account Verified",
 			message: `User ${params.userEmail} has been verified. ${params.bookingCount} booking(s) moved to pending approval.`,
+		});
+
+		const adminDetails = await getUserEmailDetails(adminId);
+		if (adminDetails) {
+			adminEmails.push(adminDetails.email);
+		}
+	}
+
+	// Send email to all admins
+	if (adminEmails.length > 0) {
+		await sendAdminUserVerifiedEmail({
+			to: adminEmails,
+			adminName: "Admin",
+			customerEmail: params.userEmail,
+			bookingCount: params.bookingCount,
 		});
 	}
 }

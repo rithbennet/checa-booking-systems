@@ -5,3 +5,4 @@ export {
 	useRejectUser,
 	useUpdateUserStatus,
 } from "./useUserMutations";
+export { useUserProfile } from "./useUserProfile";

@@ -1,5 +1,6 @@
 /**
  * Booking entity public API
+ * NOTE: For server-side booking notifications, import from "@/entities/booking/server/booking.notifications"
  */
 
 // API hooks

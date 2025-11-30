@@ -1,3 +1,4 @@
+// Client-safe exports only
+export * from "./api";
 export * from "./model/events";
-export * from "./server/factory";
-export * from "./server/templates";
+export * from "./model/types";
