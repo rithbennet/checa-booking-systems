@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import type { FinanceOverviewVM } from "@/entities/booking/server/finance-repository";

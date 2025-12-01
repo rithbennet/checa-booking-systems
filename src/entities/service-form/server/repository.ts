@@ -3,7 +3,7 @@
  * Data access layer for service form operations
  */
 
-import type { form_status_enum, Prisma } from "generated/prisma";
+import type { Prisma } from "generated/prisma";
 import { db } from "@/shared/server/db";
 import type { ServiceFormListFilters, ServiceFormListVM } from "../model/types";
 

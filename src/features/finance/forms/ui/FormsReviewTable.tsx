@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Eye, FileText } from "lucide-react";
+import { Eye, FileText } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import type { ServiceFormListVM } from "@/entities/service-form/model/types";

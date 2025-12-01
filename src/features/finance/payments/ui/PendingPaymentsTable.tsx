@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Eye, FileText, X } from "lucide-react";
+import { Check, FileText, X } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import type { PendingPaymentVM } from "@/entities/payment/model/types";

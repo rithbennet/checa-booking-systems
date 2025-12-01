@@ -11,7 +11,6 @@ import type {
 import { db } from "@/shared/server/db";
 import type {
 	PaymentHistoryVM,
-	PaymentListFilters,
 	PaymentVM,
 	PendingPaymentVM,
 } from "../model/types";

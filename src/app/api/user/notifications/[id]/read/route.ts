@@ -7,7 +7,13 @@ import { createProtectedHandler } from "@/shared/lib/api-factory";
  */
 export const POST = createProtectedHandler(
 	async (_req, user, { params }) => {
-		const { id } = await params;
+		const id = params?.id;
+		if (!id) {
+			return Response.json(
+				{ error: "Notification ID is required" },
+				{ status: 400 },
+			);
+		}
 		const success = await markNotificationAsRead(id, user.id);
 
 		if (!success) {
