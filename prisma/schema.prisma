@@ -281,6 +281,7 @@ model User {
   uploadedPayments   Payment[] @relation("PaymentUploaders")
   uploadedFileBlobs  FileBlob[] @relation("FileBlobUploaders")
   createdBookingDocuments BookingDocument[] @relation("BookingDocumentCreators")
+  verifiedBookingDocuments BookingDocument[] @relation("BookingDocumentVerifiers")
 
   @@index([userType])
   @@index([status])
@@ -870,6 +871,14 @@ enum upload_document_type_enum {
   sample_result
 }
 
+enum document_verification_status_enum {
+  pending_upload      // Generated/available but not yet uploaded by user
+  pending_verification // Uploaded by user, awaiting admin review
+  verified            // Admin verified/approved
+  rejected            // Admin rejected, user needs to re-upload
+  not_required        // Document not required for this booking
+}
+
 model BookingDocument {
   id            String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   bookingId     String                   @db.Uuid
@@ -878,13 +887,19 @@ model BookingDocument {
   blobId        String                   @db.Uuid
   blob          FileBlob                 @relation(fields: [blobId], references: [id])
   note          String?                  @db.Text
-  status        String?                  @db.VarChar(50) // e.g., "sent", "uploaded", "verified"
+  // New verification status field
+  verificationStatus document_verification_status_enum @default(pending_verification)
+  rejectionReason   String?              @db.Text
+  verifiedAt        DateTime?            @db.Timestamp(6)
+  verifiedBy        String?              @db.Uuid
+  verifiedByUser    User?                @relation("BookingDocumentVerifiers", fields: [verifiedBy], references: [id])
   createdAt     DateTime                 @default(now()) @db.Timestamp(6)
   createdById   String                   @db.Uuid
   createdBy     User                     @relation("BookingDocumentCreators", fields: [createdById], references: [id])
 
   @@index([bookingId, type])
   @@index([createdById])
+  @@index([verificationStatus])
   @@map("booking_document")
 }
 

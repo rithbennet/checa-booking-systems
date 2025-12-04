@@ -35,6 +35,7 @@ export interface UserSampleTrackingVM {
 export interface UserAnalysisResultVM {
 	id: string;
 	fileName: string;
+	filePath: string;
 	fileSize: number;
 	fileType: string;
 	description: string | null;
@@ -130,6 +131,8 @@ export interface UserServiceFormVM {
 	totalAmount: string;
 	status: "generated" | "downloaded" | "signed_forms_uploaded" | "expired";
 	validUntil: string;
+	serviceFormUnsignedPdfPath: string | null;
+	workingAreaAgreementUnsignedPdfPath: string | null;
 	requiresWorkingAreaAgreement: boolean;
 	generatedAt: string;
 	invoices: UserInvoiceVM[];
@@ -142,6 +145,7 @@ export interface UserInvoiceVM {
 	dueDate: string;
 	amount: string;
 	status: invoice_status_enum;
+	filePath: string | null;
 	payments: UserPaymentVM[];
 }
 
@@ -153,6 +157,29 @@ export interface UserPaymentVM {
 	referenceNumber: string | null;
 	status: payment_status_enum;
 	verifiedAt: string | null;
+}
+
+// ============================================
+// Modification Request Types
+// ============================================
+
+export type ModificationStatus = "pending" | "approved" | "rejected";
+
+export interface UserModificationVM {
+	id: string;
+	bookingServiceItemId: string;
+	serviceName: string;
+	originalQuantity: number;
+	newQuantity: number;
+	originalTotalPrice: string;
+	newTotalPrice: string;
+	reason: string;
+	status: ModificationStatus;
+	initiatedByAdmin: boolean;
+	createdBy: { firstName: string; lastName: string };
+	createdAt: string;
+	approvedAt: string | null;
+	approvedBy: { firstName: string; lastName: string } | null;
 }
 
 // ============================================
@@ -181,6 +208,9 @@ export interface UserBookingDetailVM {
 
 	// Service forms (with invoices and payments)
 	serviceForms: UserServiceFormVM[];
+
+	// Pending modification requests
+	pendingModifications: UserModificationVM[];
 
 	// Computed fields
 	paidAmount: string;

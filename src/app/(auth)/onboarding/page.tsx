@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { OnboardingForm } from "@/features/authentication";
+import { OnboardingWizard } from "@/features/authentication";
 import { auth } from "@/shared/server/auth";
 
 export default async function OnboardingPage() {
@@ -21,7 +21,7 @@ export default async function OnboardingPage() {
 	}
 
 	return (
-		<OnboardingForm
+		<OnboardingWizard
 			email={session.user.email}
 			image={session.user.image ?? undefined}
 			name={session.user.name ?? undefined}

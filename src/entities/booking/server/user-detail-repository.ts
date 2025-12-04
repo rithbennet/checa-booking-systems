@@ -5,9 +5,13 @@
  * Enforces ownership and excludes admin-only data.
  */
 
+import type { document_verification_status_enum } from "generated/prisma";
 import type { Decimal } from "generated/prisma/runtime/library";
 import { db } from "@/shared/server/db";
-import type { UserBookingDetailVM } from "../model/user-detail-types";
+import type {
+	UserBookingDetailVM,
+	UserModificationVM,
+} from "../model/user-detail-types";
 
 function decimalToString(value: Decimal | null | undefined): string {
 	return value?.toString() ?? "0";
@@ -15,6 +19,39 @@ function decimalToString(value: Decimal | null | undefined): string {
 
 function dateToISOString(date: Date | null | undefined): string | null {
 	return date?.toISOString() ?? null;
+}
+
+/**
+ * Check if all required documents are verified for result download
+ * Result Gatekeeper: All documents must be verified before results can be downloaded
+ */
+function checkDocumentVerificationForDownload(
+	documents: Array<{
+		type: string;
+		verificationStatus: document_verification_status_enum | null;
+	}>,
+	hasWorkspaceService: boolean,
+): boolean {
+	let serviceFormVerified = false;
+	let workspaceFormVerified = false;
+	let paymentReceiptVerified = false;
+
+	for (const doc of documents) {
+		if (doc.verificationStatus === "verified") {
+			if (doc.type === "service_form_signed") {
+				serviceFormVerified = true;
+			} else if (doc.type === "workspace_form_signed") {
+				workspaceFormVerified = true;
+			} else if (doc.type === "payment_receipt") {
+				paymentReceiptVerified = true;
+			}
+		}
+	}
+
+	// Workspace form is only required if booking has workspace service
+	const workspaceFormOk = !hasWorkspaceService || workspaceFormVerified;
+
+	return serviceFormVerified && workspaceFormOk && paymentReceiptVerified;
 }
 
 /**
@@ -30,6 +67,13 @@ export async function getUserBookingDetailData(
 			userId: userId, // Enforce ownership
 		},
 		include: {
+			// Include documents for verification check
+			bookingDocuments: {
+				select: {
+					type: true,
+					verificationStatus: true,
+				},
+			},
 			serviceItems: {
 				include: {
 					service: true,
@@ -44,6 +88,7 @@ export async function getUserBookingDetailData(
 								select: {
 									id: true,
 									fileName: true,
+									filePath: true,
 									fileSize: true,
 									fileType: true,
 									description: true,
@@ -97,6 +142,25 @@ export async function getUserBookingDetailData(
 		}
 	}
 
+	// Check payment receipt document verification status (new flow)
+	const paymentReceiptVerifiedDoc = booking.bookingDocuments.find(
+		(doc) =>
+			doc.type === "payment_receipt" && doc.verificationStatus === "verified",
+	);
+	const pendingPaymentDoc = booking.bookingDocuments.find(
+		(doc) =>
+			doc.type === "payment_receipt" &&
+			doc.verificationStatus === "pending_verification",
+	);
+
+	// If payment receipt is verified via document verification, consider paid
+	const isPaidViaDocVerification = Boolean(paymentReceiptVerifiedDoc);
+
+	// If there are pending payment receipt documents, flag for verification
+	if (pendingPaymentDoc) {
+		hasUnverifiedPayments = true;
+	}
+
 	// Calculate sample counts
 	let totalSamples = 0;
 	let samplesCompleted = 0;
@@ -107,9 +171,76 @@ export async function getUserBookingDetailData(
 		).length;
 	}
 
-	// Check if user can download results (payment verified)
-	const isPaid = totalPaid >= Number(booking.totalAmount);
-	const canDownloadResults = isPaid && samplesCompleted > 0;
+	// Check if booking has workspace service
+	const hasWorkspaceService = booking.workspaceBookings.length > 0;
+
+	// Calculate if paid - legacy payment model OR document verification
+	const isPaid =
+		totalPaid >= Number(booking.totalAmount) || isPaidViaDocVerification;
+
+	// Result Gatekeeper: Check document verification status
+	// Results can only be downloaded if all required documents are verified
+	const allDocsVerified = checkDocumentVerificationForDownload(
+		booking.bookingDocuments,
+		hasWorkspaceService,
+	);
+	const canDownloadResults = allDocsVerified && samplesCompleted > 0;
+
+	// Fetch pending modifications for all service items in this booking
+	const serviceItemIds = booking.serviceItems.map((item) => item.id);
+	const modifications = await db.sampleModification.findMany({
+		where: {
+			bookingServiceItemId: { in: serviceItemIds },
+		},
+		include: {
+			bookingServiceItem: {
+				include: {
+					service: { select: { name: true } },
+				},
+			},
+			createdByUser: {
+				select: {
+					id: true,
+					firstName: true,
+					lastName: true,
+					userType: true,
+				},
+			},
+			approvedByUser: {
+				select: {
+					firstName: true,
+					lastName: true,
+				},
+			},
+		},
+		orderBy: { createdAt: "desc" },
+	});
+
+	// Map modifications to VM - determine if initiated by admin
+	const pendingModifications: UserModificationVM[] = modifications.map((m) => ({
+		id: m.id,
+		bookingServiceItemId: m.bookingServiceItemId,
+		serviceName: m.bookingServiceItem.service.name,
+		originalQuantity: m.originalQuantity,
+		newQuantity: m.newQuantity,
+		originalTotalPrice: decimalToString(m.originalTotalPrice),
+		newTotalPrice: decimalToString(m.newTotalPrice),
+		reason: m.reason,
+		status: m.status,
+		initiatedByAdmin: m.createdByUser.userType === "lab_administrator",
+		createdBy: {
+			firstName: m.createdByUser.firstName ?? "Unknown",
+			lastName: m.createdByUser.lastName ?? "",
+		},
+		createdAt: m.createdAt.toISOString(),
+		approvedAt: m.approvedAt?.toISOString() ?? null,
+		approvedBy: m.approvedByUser
+			? {
+					firstName: m.approvedByUser.firstName ?? "Unknown",
+					lastName: m.approvedByUser.lastName ?? "",
+				}
+			: null,
+	}));
 
 	return {
 		id: booking.id,
@@ -178,6 +309,7 @@ export async function getUserBookingDetailData(
 				analysisResults: st.analysisResults.map((ar) => ({
 					id: ar.id,
 					fileName: ar.fileName,
+					filePath: ar.filePath,
 					fileSize: ar.fileSize,
 					fileType: ar.fileType,
 					description: ar.description,
@@ -216,6 +348,9 @@ export async function getUserBookingDetailData(
 			totalAmount: decimalToString(form.totalAmount),
 			status: form.status,
 			validUntil: form.validUntil.toISOString(),
+			serviceFormUnsignedPdfPath: form.serviceFormUnsignedPdfPath,
+			workingAreaAgreementUnsignedPdfPath:
+				form.workingAreaAgreementUnsignedPdfPath,
 			requiresWorkingAreaAgreement: form.requiresWorkingAreaAgreement,
 			generatedAt: form.generatedAt.toISOString(),
 			invoices: form.invoices.map((inv) => ({
@@ -225,6 +360,7 @@ export async function getUserBookingDetailData(
 				dueDate: inv.dueDate.toISOString(),
 				amount: decimalToString(inv.amount),
 				status: inv.status,
+				filePath: inv.filePath,
 				payments: inv.payments.map((pay) => ({
 					id: pay.id,
 					amount: decimalToString(pay.amount),
@@ -237,6 +373,7 @@ export async function getUserBookingDetailData(
 			})),
 		})),
 
+		pendingModifications,
 		paidAmount: totalPaid.toFixed(2),
 		isPaid,
 		hasUnverifiedPayments,

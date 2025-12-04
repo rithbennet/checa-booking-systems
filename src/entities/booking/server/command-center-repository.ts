@@ -75,6 +75,16 @@ export async function getBookingCommandCenterData(
 					},
 				},
 			},
+			// Include booking documents to check verification status
+			bookingDocuments: {
+				where: {
+					type: "payment_receipt",
+				},
+				select: {
+					id: true,
+					verificationStatus: true,
+				},
+			},
 		},
 	});
 
@@ -82,6 +92,7 @@ export async function getBookingCommandCenterData(
 	let totalPaid = 0;
 	let hasUnverifiedPayments = false;
 
+	// Check for pending payments in the payments table (legacy)
 	for (const form of booking.serviceForms) {
 		for (const invoice of form.invoices) {
 			for (const payment of invoice.payments) {
@@ -92,6 +103,22 @@ export async function getBookingCommandCenterData(
 				}
 			}
 		}
+	}
+
+	// Check payment receipt document verification status (new flow)
+	const paymentReceiptDoc = booking.bookingDocuments.find(
+		(doc) => doc.verificationStatus === "verified",
+	);
+	const pendingPaymentDoc = booking.bookingDocuments.find(
+		(doc) => doc.verificationStatus === "pending_verification",
+	);
+
+	// If payment receipt is verified via document verification, consider paid
+	const isPaidViaDocVerification = Boolean(paymentReceiptDoc);
+
+	// If there are pending payment receipt documents, flag for verification
+	if (pendingPaymentDoc) {
+		hasUnverifiedPayments = true;
 	}
 
 	// Calculate sample counts
@@ -253,6 +280,8 @@ export async function getBookingCommandCenterData(
 				form.workingAreaAgreementUnsignedPdfPath,
 			workingAreaAgreementSignedPdfPath: form.workingAreaAgreementSignedPdfPath,
 			generatedAt: form.generatedAt.toISOString(),
+			signedFormsUploadedAt: dateToISOString(form.signedFormsUploadedAt),
+			signedFormsUploadedBy: form.signedFormsUploadedBy,
 			invoices: form.invoices.map((inv) => ({
 				id: inv.id,
 				invoiceNumber: inv.invoiceNumber,
@@ -278,7 +307,9 @@ export async function getBookingCommandCenterData(
 		isExternal,
 		organizationName,
 		paidAmount: totalPaid.toFixed(2),
-		isPaid: totalPaid >= Number(booking.totalAmount),
+		// isPaid is true if either legacy payment verified OR payment receipt document verified
+		isPaid:
+			totalPaid >= Number(booking.totalAmount) || isPaidViaDocVerification,
 		hasUnverifiedPayments,
 		totalSamples,
 		samplesInAnalysis,

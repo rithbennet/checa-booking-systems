@@ -21,309 +21,309 @@ import { db } from "@/shared/server/db";
 import { utapi } from "@/shared/server/uploadthing";
 
 interface RouteParams {
-    params: Promise<{
-        bookingId: string;
-    }>;
+	params: Promise<{
+		bookingId: string;
+	}>;
 }
 
 export async function POST(
-    _request: Request,
-    { params }: RouteParams,
+	_request: Request,
+	{ params }: RouteParams,
 ): Promise<Response> {
-    try {
-        // Require admin authentication
-        const adminUser = await requireAdmin();
-        const { bookingId } = await params;
+	try {
+		// Require admin authentication
+		const adminUser = await requireAdmin();
+		const { bookingId } = await params;
 
-        // Fetch booking with all related data
-        const booking = await db.bookingRequest.findUnique({
-            where: { id: bookingId },
-            include: {
-                user: {
-                    include: {
-                        facultyRelation: true,
-                        departmentRelation: true,
-                        companyRelation: true,
-                        companyBranch: true,
-                    },
-                },
-                serviceItems: {
-                    include: {
-                        service: true,
-                    },
-                },
-                workspaceBookings: {
-                    include: {
-                        equipmentUsages: {
-                            include: {
-                                equipment: true,
-                            },
-                        },
-                    },
-                },
-                serviceForms: {
-                    orderBy: { createdAt: "desc" },
-                    take: 1,
-                },
-            },
-        });
+		// Fetch booking with all related data
+		const booking = await db.bookingRequest.findUnique({
+			where: { id: bookingId },
+			include: {
+				user: {
+					include: {
+						facultyRelation: true,
+						departmentRelation: true,
+						companyRelation: true,
+						companyBranch: true,
+					},
+				},
+				serviceItems: {
+					include: {
+						service: true,
+					},
+				},
+				workspaceBookings: {
+					include: {
+						equipmentUsages: {
+							include: {
+								equipment: true,
+							},
+						},
+					},
+				},
+				serviceForms: {
+					orderBy: { createdAt: "desc" },
+					take: 1,
+				},
+			},
+		});
 
-        if (!booking) {
-            return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-        }
+		if (!booking) {
+			return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+		}
 
-        // Check if forms were already generated
-        const existingForm = booking.serviceForms[0];
-        if (existingForm) {
-            return NextResponse.json(
-                {
-                    error: "Forms already generated",
-                    formId: existingForm.id,
-                    formNumber: existingForm.formNumber,
-                },
-                { status: 409 },
-            );
-        }
+		// Check if forms were already generated
+		const existingForm = booking.serviceForms[0];
+		if (existingForm) {
+			return NextResponse.json(
+				{
+					error: "Forms already generated",
+					formId: existingForm.id,
+					formNumber: existingForm.formNumber,
+				},
+				{ status: 409 },
+			);
+		}
 
-        // Booking should be in "approved" status to generate forms
-        if (booking.status !== "approved") {
-            return NextResponse.json(
-                {
-                    error: `Booking must be approved before generating forms. Current status: ${booking.status}`,
-                },
-                { status: 400 },
-            );
-        }
+		// Booking should be in "approved" status to generate forms
+		if (booking.status !== "approved") {
+			return NextResponse.json(
+				{
+					error: `Booking must be approved before generating forms. Current status: ${booking.status}`,
+				},
+				{ status: 400 },
+			);
+		}
 
-        // Generate form number
-        const formCount = await db.serviceForm.count();
-        const formNumber = `SF-${new Date().getFullYear()}-${String(formCount + 1).padStart(5, "0")}`;
+		// Generate form number
+		const formCount = await db.serviceForm.count();
+		const formNumber = `SF-${new Date().getFullYear()}-${String(formCount + 1).padStart(5, "0")}`;
 
-        // Calculate totals
-        const subtotal = booking.serviceItems.reduce(
-            (sum, item) => sum + Number(item.totalPrice),
-            0,
-        );
-        const totalAmount = Number(booking.totalAmount);
+		// Calculate totals
+		const subtotal = booking.serviceItems.reduce(
+			(sum, item) => sum + Number(item.totalPrice),
+			0,
+		);
+		const totalAmount = Number(booking.totalAmount);
 
-        // Check if booking has workspace items (requires working area agreement)
-        const hasWorkspace = booking.workspaceBookings.length > 0;
+		// Check if booking has workspace items (requires working area agreement)
+		const hasWorkspace = booking.workspaceBookings.length > 0;
 
-        // Prepare common data
-        const userName = `${booking.user.firstName} ${booking.user.lastName}`;
-        const userFaculty =
-            booking.user.facultyRelation?.name ??
-            booking.user.companyRelation?.name ??
-            booking.user.companyBranch?.name ??
-            "N/A";
-        const supervisorName = booking.user.supervisorName ?? "N/A";
+		// Prepare common data
+		const userName = `${booking.user.firstName} ${booking.user.lastName}`;
+		const userFaculty =
+			booking.user.facultyRelation?.name ??
+			booking.user.companyRelation?.name ??
+			booking.user.companyBranch?.name ??
+			"N/A";
+		const supervisorName = booking.user.supervisorName ?? "N/A";
 
-        // 1. Generate Service Form (TOR) PDF
-        const serviceItem = booking.serviceItems[0];
-        const torRefNo = `TOR-${formNumber}`;
+		// 1. Generate Service Form (TOR) PDF
+		const serviceItem = booking.serviceItems[0];
+		const torRefNo = `TOR-${formNumber}`;
 
-        const torPdfBuffer = await renderToBuffer(
-            <TORTemplate
-                date={new Date()}
-                equipmentCode={serviceItem?.service.code}
-                equipmentName={serviceItem?.service.name}
-                refNo={torRefNo}
-                supervisorName={supervisorName}
-                userEmail={booking.user.email}
-                userFaculty={userFaculty}
-                userName={userName}
-            />,
-        );
+		const torPdfBuffer = await renderToBuffer(
+			<TORTemplate
+				date={new Date()}
+				equipmentCode={serviceItem?.service.code}
+				equipmentName={serviceItem?.service.name}
+				refNo={torRefNo}
+				supervisorName={supervisorName}
+				userEmail={booking.user.email}
+				userFaculty={userFaculty}
+				userName={userName}
+			/>,
+		);
 
-        // Upload TOR PDF to UploadThing
-        const torFileName = `service-form-${torRefNo}.pdf`;
-        const torFile = new UTFile([new Uint8Array(torPdfBuffer)], torFileName, {
-            customId: `tor-${bookingId}`,
-        });
+		// Upload TOR PDF to UploadThing
+		const torFileName = `service-form-${torRefNo}.pdf`;
+		const torFile = new UTFile([new Uint8Array(torPdfBuffer)], torFileName, {
+			customId: `tor-${bookingId}`,
+		});
 
-        const torUploadResult = await utapi.uploadFiles([torFile]);
-        if (torUploadResult[0]?.error || !torUploadResult[0]?.data) {
-            console.error(
-                "[FormGeneration] TOR upload failed:",
-                torUploadResult[0]?.error,
-            );
-            return NextResponse.json(
-                { error: "Failed to upload service form PDF" },
-                { status: 500 },
-            );
-        }
-        const torUrl = torUploadResult[0].data.url;
-        const torKey = torUploadResult[0].data.key;
+		const torUploadResult = await utapi.uploadFiles([torFile]);
+		if (torUploadResult[0]?.error || !torUploadResult[0]?.data) {
+			console.error(
+				"[FormGeneration] TOR upload failed:",
+				torUploadResult[0]?.error,
+			);
+			return NextResponse.json(
+				{ error: "Failed to upload service form PDF" },
+				{ status: 500 },
+			);
+		}
+		const torUrl = torUploadResult[0].data.url;
+		const torKey = torUploadResult[0].data.key;
 
-        // 2. Generate Working Area Agreement PDF (if applicable)
-        let waUrl: string | null = null;
-        let waKey: string | null = null;
+		// 2. Generate Working Area Agreement PDF (if applicable)
+		let waUrl: string | null = null;
+		let waKey: string | null = null;
 
-        if (hasWorkspace) {
-            const workspaceBooking = booking.workspaceBookings[0];
-            if (workspaceBooking) {
-                const startDate = new Date(workspaceBooking.startDate);
-                const endDate = new Date(workspaceBooking.endDate);
-                const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                const duration =
-                    diffDays > 30
-                        ? `${Math.ceil(diffDays / 30)} month(s)`
-                        : `${diffDays} day(s)`;
+		if (hasWorkspace) {
+			const workspaceBooking = booking.workspaceBookings[0];
+			if (workspaceBooking) {
+				const startDate = new Date(workspaceBooking.startDate);
+				const endDate = new Date(workspaceBooking.endDate);
+				const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+				const duration =
+					diffDays > 30
+						? `${Math.ceil(diffDays / 30)} month(s)`
+						: `${diffDays} day(s)`;
 
-                const waRefNo = `WA-${formNumber}`;
+				const waRefNo = `WA-${formNumber}`;
 
-                const waPdfBuffer = await renderToBuffer(
-                    <WorkAreaTemplate
-                        department={booking.user.departmentRelation?.name}
-                        duration={duration}
-                        endDate={endDate}
-                        faculty={userFaculty}
-                        purpose={
-                            booking.projectDescription ??
-                            workspaceBooking.purpose ??
-                            undefined
-                        }
-                        refNo={waRefNo}
-                        startDate={startDate}
-                        studentName={userName}
-                        supervisorName={supervisorName}
-                    />,
-                );
+				const waPdfBuffer = await renderToBuffer(
+					<WorkAreaTemplate
+						department={booking.user.departmentRelation?.name}
+						duration={duration}
+						endDate={endDate}
+						faculty={userFaculty}
+						purpose={
+							booking.projectDescription ??
+							workspaceBooking.purpose ??
+							undefined
+						}
+						refNo={waRefNo}
+						startDate={startDate}
+						studentName={userName}
+						supervisorName={supervisorName}
+					/>,
+				);
 
-                const waFileName = `working-area-${waRefNo}.pdf`;
-                const waFile = new UTFile([new Uint8Array(waPdfBuffer)], waFileName, {
-                    customId: `wa-${bookingId}`,
-                });
+				const waFileName = `working-area-${waRefNo}.pdf`;
+				const waFile = new UTFile([new Uint8Array(waPdfBuffer)], waFileName, {
+					customId: `wa-${bookingId}`,
+				});
 
-                const waUploadResult = await utapi.uploadFiles([waFile]);
-                if (waUploadResult[0]?.error || !waUploadResult[0]?.data) {
-                    console.error(
-                        "[FormGeneration] WA upload failed:",
-                        waUploadResult[0]?.error,
-                    );
-                    // Don't fail entirely - service form was uploaded successfully
-                } else {
-                    waUrl = waUploadResult[0].data.url;
-                    waKey = waUploadResult[0].data.key;
-                }
-            }
-        }
+				const waUploadResult = await utapi.uploadFiles([waFile]);
+				if (waUploadResult[0]?.error || !waUploadResult[0]?.data) {
+					console.error(
+						"[FormGeneration] WA upload failed:",
+						waUploadResult[0]?.error,
+					);
+					// Don't fail entirely - service form was uploaded successfully
+				} else {
+					waUrl = waUploadResult[0].data.url;
+					waKey = waUploadResult[0].data.key;
+				}
+			}
+		}
 
-        // 3. Create database records in a transaction
-        const result = await db.$transaction(async (tx) => {
-            // Create ServiceForm record
-            const serviceForm = await tx.serviceForm.create({
-                data: {
-                    bookingRequestId: bookingId,
-                    formNumber,
-                    facilityLab: "ChECA iKohza",
-                    subtotal,
-                    totalAmount,
-                    validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-                    status: "generated",
-                    serviceFormUnsignedPdfPath: torUrl,
-                    requiresWorkingAreaAgreement: hasWorkspace,
-                    workingAreaAgreementUnsignedPdfPath: waUrl,
-                    generatedBy: adminUser.adminId,
-                },
-            });
+		// 3. Create database records in a transaction
+		const result = await db.$transaction(async (tx) => {
+			// Create ServiceForm record
+			const serviceForm = await tx.serviceForm.create({
+				data: {
+					bookingRequestId: bookingId,
+					formNumber,
+					facilityLab: "ChECA iKohza",
+					subtotal,
+					totalAmount,
+					validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+					status: "generated",
+					serviceFormUnsignedPdfPath: torUrl,
+					requiresWorkingAreaAgreement: hasWorkspace,
+					workingAreaAgreementUnsignedPdfPath: waUrl,
+					generatedBy: adminUser.adminId,
+				},
+			});
 
-            // Create FileBlob and BookingDocument for TOR
-            const torBlob = await tx.fileBlob.create({
-                data: {
-                    key: torKey,
-                    url: torUrl,
-                    mimeType: "application/pdf",
-                    fileName: torFileName,
-                    sizeBytes: torPdfBuffer.byteLength,
-                    uploadedById: adminUser.adminId,
-                },
-            });
+			// Create FileBlob and BookingDocument for TOR
+			const torBlob = await tx.fileBlob.create({
+				data: {
+					key: torKey,
+					url: torUrl,
+					mimeType: "application/pdf",
+					fileName: torFileName,
+					sizeBytes: torPdfBuffer.byteLength,
+					uploadedById: adminUser.adminId,
+				},
+			});
 
-            await tx.bookingDocument.create({
-                data: {
-                    bookingId,
-                    type: "service_form_unsigned",
-                    blobId: torBlob.id,
-                    createdById: adminUser.adminId,
-                },
-            });
+			await tx.bookingDocument.create({
+				data: {
+					bookingId,
+					type: "service_form_unsigned",
+					blobId: torBlob.id,
+					createdById: adminUser.adminId,
+				},
+			});
 
-            // Create FileBlob and BookingDocument for Working Area if applicable
-            if (waUrl && waKey) {
-                const waBlob = await tx.fileBlob.create({
-                    data: {
-                        key: waKey,
-                        url: waUrl,
-                        mimeType: "application/pdf",
-                        fileName: `working-area-WA-${formNumber}.pdf`,
-                        sizeBytes: 0, // We don't have the size easily
-                        uploadedById: adminUser.adminId,
-                    },
-                });
+			// Create FileBlob and BookingDocument for Working Area if applicable
+			if (waUrl && waKey) {
+				const waBlob = await tx.fileBlob.create({
+					data: {
+						key: waKey,
+						url: waUrl,
+						mimeType: "application/pdf",
+						fileName: `working-area-WA-${formNumber}.pdf`,
+						sizeBytes: 0, // We don't have the size easily
+						uploadedById: adminUser.adminId,
+					},
+				});
 
-                await tx.bookingDocument.create({
-                    data: {
-                        bookingId,
-                        type: "workspace_form_unsigned",
-                        blobId: waBlob.id,
-                        createdById: adminUser.adminId,
-                    },
-                });
-            }
+				await tx.bookingDocument.create({
+					data: {
+						bookingId,
+						type: "workspace_form_unsigned",
+						blobId: waBlob.id,
+						createdById: adminUser.adminId,
+					},
+				});
+			}
 
-            return serviceForm;
-        });
+			return serviceForm;
+		});
 
-        // 4. Send notification to user
-        const validUntilDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-        try {
-            await notifyServiceFormReady({
-                userId: booking.user.id,
-                formId: result.id,
-                bookingId,
-                bookingReference: booking.referenceNumber,
-                formNumber,
-                validUntil: validUntilDate.toISOString().split("T")[0] ?? "",
-                requiresWorkingAreaAgreement: hasWorkspace,
-            });
-        } catch (notifyError) {
-            // Don't fail the request if notification fails
-            console.error(
-                "[FormGeneration] Failed to send notification:",
-                notifyError,
-            );
-        }
+		// 4. Send notification to user
+		const validUntilDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+		try {
+			await notifyServiceFormReady({
+				userId: booking.user.id,
+				formId: result.id,
+				bookingId,
+				bookingReference: booking.referenceNumber,
+				formNumber,
+				validUntil: validUntilDate.toISOString().split("T")[0] ?? "",
+				requiresWorkingAreaAgreement: hasWorkspace,
+			});
+		} catch (notifyError) {
+			// Don't fail the request if notification fails
+			console.error(
+				"[FormGeneration] Failed to send notification:",
+				notifyError,
+			);
+		}
 
-        return NextResponse.json({
-            success: true,
-            serviceForm: {
-                id: result.id,
-                formNumber: result.formNumber,
-                serviceFormUrl: torUrl,
-                workingAreaFormUrl: waUrl,
-                validUntil: result.validUntil.toISOString(),
-            },
-        });
-    } catch (error) {
-        console.error("[admin/forms/generate] Error:", error);
+		return NextResponse.json({
+			success: true,
+			serviceForm: {
+				id: result.id,
+				formNumber: result.formNumber,
+				serviceFormUrl: torUrl,
+				workingAreaFormUrl: waUrl,
+				validUntil: result.validUntil.toISOString(),
+			},
+		});
+	} catch (error) {
+		console.error("[admin/forms/generate] Error:", error);
 
-        if (error instanceof Error) {
-            if (error.message === "Unauthorized") {
-                return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-            }
-            if (error.message.includes("Admin")) {
-                return NextResponse.json(
-                    { error: "Forbidden: Admin access required" },
-                    { status: 403 },
-                );
-            }
-        }
+		if (error instanceof Error) {
+			if (error.message === "Unauthorized") {
+				return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+			}
+			if (error.message.includes("Admin")) {
+				return NextResponse.json(
+					{ error: "Forbidden: Admin access required" },
+					{ status: 403 },
+				);
+			}
+		}
 
-        return NextResponse.json(
-            { error: "Failed to generate forms" },
-            { status: 500 },
-        );
-    }
+		return NextResponse.json(
+			{ error: "Failed to generate forms" },
+			{ status: 500 },
+		);
+	}
 }

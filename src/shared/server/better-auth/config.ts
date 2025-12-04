@@ -11,6 +11,12 @@ import { getFromEmail, resend } from "@/shared/server/email";
 // Create a tiny in-memory cache for session extensions
 const userCache = new NodeCache({ stdTTL: 300 }); // 5 minutes
 
+// Expose a helper to invalidate cached session extras for a user
+export function invalidateUserSessionCache(userId: string) {
+	const cacheKey = `user_session_${userId}`;
+	userCache.del(cacheKey);
+}
+
 export const auth = betterAuth({
 	database: prismaAdapter(db, {
 		provider: "postgresql",
@@ -84,11 +90,21 @@ export const auth = betterAuth({
 				select: { id: true, userType: true, status: true },
 			});
 
+			// If no User record exists, mark as needing onboarding
 			if (!appUser) {
-				return { user, session };
+				const needsOnboardingExtra = {
+					needsOnboarding: true,
+					appUserId: null,
+					role: null,
+					status: null,
+				};
+				// Cache this too to avoid repeated DB lookups
+				userCache.set(cacheKey, needsOnboardingExtra);
+				return { user: { ...user, ...needsOnboardingExtra }, session };
 			}
 
 			const extra = {
+				needsOnboarding: false,
 				appUserId: appUser.id,
 				role:
 					appUser.userType === "lab_administrator"

@@ -1,10 +1,3 @@
-/**
- * UserDocumentsSection Component
- *
- * Section for users to view and download service forms, invoices,
- * and upload signed documents using UploadThing.
- */
-
 "use client";
 
 import {
@@ -14,10 +7,22 @@ import {
 	Download,
 	FileSignature,
 	FileText,
-	Receipt,
+	Loader2,
+	Lock,
+	ShieldCheck,
 	Upload,
+	XCircle,
 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import type { UserBookingDetailVM } from "@/entities/booking/model/user-detail-types";
+import {
+	type DocumentVerificationStatus,
+	getVerificationStatusLabel,
+	useBookingDocuments,
+	useDocumentVerificationState,
+	verificationStatusColors,
+} from "@/entities/booking-document";
 import {
 	BookingDocUploader,
 	BookingDocumentsList,
@@ -33,112 +38,114 @@ import {
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
 import { Separator } from "@/shared/ui/shadcn/separator";
-import { formatCurrency, formatDate } from "../lib/helpers";
+import { formatDate } from "../lib/helpers";
 
-interface UserDocumentsSectionProps {
+type DocumentType = "service_form" | "working_area_agreement";
+
+function VerificationBadge({ status }: { status: DocumentVerificationStatus }) {
+	const colors = verificationStatusColors[status];
+	const label = getVerificationStatusLabel(status);
+
+	const icon =
+		status === "verified" ? (
+			<CheckCircle2 className="mr-1 h-3 w-3" />
+		) : status === "rejected" ? (
+			<XCircle className="mr-1 h-3 w-3" />
+		) : status === "pending_verification" ? (
+			<Clock className="mr-1 h-3 w-3" />
+		) : (
+			<Upload className="mr-1 h-3 w-3" />
+		);
+
+	return (
+		<Badge
+			className={cn("gap-1", colors.bg, colors.text, colors.border)}
+			variant="outline"
+		>
+			{icon}
+			{label}
+		</Badge>
+	);
+}
+
+export function UserDocumentsSection({
+	booking,
+}: {
 	booking: UserBookingDetailVM;
-}
+}) {
+	const [downloadingId, setDownloadingId] = useState<string | null>(null);
+	const { data: verificationState } = useDocumentVerificationState(booking.id);
 
-type DocumentType = "service_form" | "invoice" | "working_area_agreement";
+	// Expecting exactly one service form in this simplified UI
+	const form = useMemo(() => booking.serviceForms[0], [booking.serviceForms]);
 
-function getStatusBadge(status: string, dueDate?: string) {
-	const isOverdue = dueDate && new Date(dueDate) < new Date();
+	// Fetch all booking documents to control single-file slots per type
+	const { data: allDocs, isLoading: docsLoading } = useBookingDocuments(
+		booking.id,
+	);
 
-	if (status === "signed_forms_uploaded" || status === "paid") {
-		return (
-			<Badge
-				className="border-green-200 bg-green-100 text-green-700"
-				variant="outline"
-			>
-				<CheckCircle2 className="mr-1 h-3 w-3" />
-				{status === "signed_forms_uploaded" ? "Signed" : "Paid"}
-			</Badge>
-		);
-	}
-
-	if (status === "overdue" || isOverdue) {
-		return (
-			<Badge
-				className="border-red-200 bg-red-100 text-red-700"
-				variant="outline"
-			>
-				<AlertCircle className="mr-1 h-3 w-3" />
-				Overdue
-			</Badge>
-		);
-	}
-
-	if (
-		status === "pending" ||
-		status === "generated" ||
-		status === "downloaded"
-	) {
-		return (
-			<Badge
-				className="border-yellow-200 bg-yellow-100 text-yellow-700"
-				variant="outline"
-			>
-				<Clock className="mr-1 h-3 w-3" />
-				{status === "generated" ? "Awaiting Signature" : "Pending"}
-			</Badge>
-		);
-	}
-
-	if (status === "sent") {
-		return (
-			<Badge
-				className="border-blue-200 bg-blue-100 text-blue-700"
-				variant="outline"
-			>
-				<FileText className="mr-1 h-3 w-3" />
-				Sent
-			</Badge>
-		);
-	}
-
-	return <Badge variant="outline">{status}</Badge>;
-}
-
-function DocumentIcon({ type }: { type: DocumentType }) {
-	switch (type) {
-		case "service_form":
-			return <FileSignature className="h-5 w-5 text-purple-500" />;
-		case "invoice":
-			return <Receipt className="h-5 w-5 text-blue-500" />;
-		case "working_area_agreement":
-			return <FileText className="h-5 w-5 text-orange-500" />;
-		default:
-			return <FileText className="h-5 w-5 text-slate-500" />;
-	}
-}
-
-export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
-	// Handle document download (placeholder - would need actual API)
-	const handleDownload = (documentType: string, documentId: string) => {
-		// TODO: Implement actual download via API
-		console.log("Download:", documentType, documentId);
+	// Helper to check if a specific type already has an uploaded doc
+	const hasDocOfType = (type: "service_form_signed" | "payment_receipt" | "workspace_form_signed") => {
+		if (!allDocs) return false;
+		return allDocs.some((d) => d.type === type);
 	};
 
-	// Show empty state if no service forms
-	if (booking.serviceForms.length === 0) {
+	const isResultsUnlocked =
+		verificationState &&
+		verificationState.serviceFormSigned === "verified" &&
+		(verificationState.workspaceFormSigned === "verified" ||
+			verificationState.workspaceFormSigned === "not_required") &&
+		verificationState.paymentReceipt === "verified";
+
+	const handleDownload = async (documentType: DocumentType) => {
+		if (!form) return;
+		const downloadId = `${documentType}-${form.id}`;
+		setDownloadingId(downloadId);
+
+		try {
+			let filePath: string | null = null;
+			let fileName = "";
+
+			if (documentType === "service_form") {
+				filePath = form.serviceFormUnsignedPdfPath;
+				fileName = `ServiceForm_${form.formNumber}.pdf`;
+			} else if (documentType === "working_area_agreement") {
+				filePath = form.workingAreaAgreementUnsignedPdfPath;
+				fileName = `WorkingAreaAgreement_${form.formNumber}.pdf`;
+			}
+
+			if (!filePath) {
+				throw new Error("Document not available");
+			}
+
+			window.open(filePath, "_blank");
+			toast.success("Opening document", { description: fileName });
+		} catch (error) {
+			toast.error("Download failed", {
+				description:
+					error instanceof Error ? error.message : "Please try again",
+			});
+		} finally {
+			setDownloadingId(null);
+		}
+	};
+
+	if (!form) {
 		return (
-			<Card className="mb-6">
+			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2 text-lg">
 						<FileText className="h-5 w-5 text-slate-400" />
 						Documents
 					</CardTitle>
-					<CardDescription>
-						Service forms, invoices, and signed documents
-					</CardDescription>
+					<CardDescription>Service form and payment receipt</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="rounded-lg border border-slate-300 border-dashed bg-slate-50 p-8 text-center">
 						<FileText className="mx-auto h-10 w-10 text-slate-300" />
 						<p className="mt-2 font-medium text-slate-600">No documents yet</p>
 						<p className="mt-1 text-slate-500 text-sm">
-							Documents will appear here once your booking is approved and
-							service forms are generated.
+							Your documents will appear once the service form is generated.
 						</p>
 					</div>
 				</CardContent>
@@ -147,225 +154,239 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 	}
 
 	return (
-		<Card className="mb-6">
-			<CardHeader>
+		<Card>
+			<CardHeader className="pb-3">
 				<CardTitle className="flex items-center gap-2 text-lg">
 					<FileText className="h-5 w-5 text-slate-400" />
 					Documents
 				</CardTitle>
 				<CardDescription>
-					Download service forms and invoices, upload signed documents
+					Download the service form and upload your signed form and payment
+					receipt
 				</CardDescription>
 			</CardHeader>
+
 			<CardContent className="space-y-6">
-				{booking.serviceForms.map((form) => (
-					<div className="space-y-3" key={form.id}>
-						{/* Service Form */}
-						<div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-4">
-							<div className="flex items-center gap-3">
-								<DocumentIcon type="service_form" />
-								<div>
-									<p className="font-medium text-slate-900">Service Form</p>
-									<p className="text-slate-500 text-sm">{form.formNumber}</p>
-									<p className="text-slate-400 text-xs">
-										Generated: {formatDate(form.generatedAt)} • Valid until:{" "}
-										{formatDate(form.validUntil)}
+				{/* Verification Summary */}
+				{verificationState && (
+					<div
+						className={cn(
+							"rounded-lg border p-4",
+							isResultsUnlocked
+								? "border-green-200 bg-green-50"
+								: "border-amber-200 bg-amber-50",
+						)}
+					>
+						<div className="mb-2 flex items-center gap-2">
+							{isResultsUnlocked ? (
+								<ShieldCheck className="h-5 w-5 text-green-600" />
+							) : (
+								<Lock className="h-5 w-5 text-amber-600" />
+							)}
+							<span
+								className={cn(
+									"font-medium",
+									isResultsUnlocked ? "text-green-800" : "text-amber-800",
+								)}
+							>
+								{isResultsUnlocked
+									? "Results Unlocked"
+									: "Results Locked - Complete Verification"}
+							</span>
+						</div>
+
+						<div className="grid gap-2 sm:grid-cols-3">
+							<div className="flex items-center justify-between rounded border bg-white p-2">
+								<span className="text-slate-600 text-xs">Service Form</span>
+								<VerificationBadge
+									status={verificationState.serviceFormSigned}
+								/>
+							</div>
+							<div className="flex items-center justify-between rounded border bg-white p-2">
+								<span className="text-slate-600 text-xs">
+									{verificationState.requiresWorkspaceForm
+										? "Workspace"
+										: "Workspace (N/A)"}
+								</span>
+								<VerificationBadge
+									status={verificationState.workspaceFormSigned}
+								/>
+							</div>
+							<div className="flex items-center justify-between rounded border bg-white p-2">
+								<span className="text-slate-600 text-xs">Payment</span>
+								<VerificationBadge status={verificationState.paymentReceipt} />
+							</div>
+						</div>
+					</div>
+				)}
+
+				{/* Single merged card */}
+				<div className="rounded-lg border border-slate-200">
+					{/* Header row: service form meta + download */}
+					<div className="flex flex-col gap-3 border-b bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+						<div className="flex items-center gap-3">
+							<FileSignature className="h-5 w-5 text-purple-500" />
+							<div>
+								<p className="font-medium text-slate-900">
+									Service Form {form.formNumber}
+								</p>
+								<p className="text-slate-400 text-xs">
+									Generated: {formatDate(form.generatedAt)} • Valid until:{" "}
+									{formatDate(form.validUntil)}
+								</p>
+							</div>
+						</div>
+
+						<Button
+							disabled={downloadingId === `service_form-${form.id}`}
+							onClick={() => handleDownload("service_form")}
+							size="sm"
+							variant="outline"
+						>
+							{downloadingId === `service_form-${form.id}` ? (
+								<Loader2 className="mr-1 h-4 w-4 animate-spin" />
+							) : (
+								<Download className="mr-1 h-4 w-4" />
+							)}
+							Download unsigned form
+						</Button>
+					</div>
+
+					{/* Upload area + latest uploads list in one body */}
+					<div className="p-4">
+						<div className="grid gap-4 md:grid-cols-2">
+							{/* Signed Service Form single-file slot */}
+							<div className="rounded border p-3">
+								<div className="mb-2">
+									<p className="font-medium text-slate-900">Signed Service Form</p>
+									<p className="text-slate-500 text-xs">
+										Upload the signed PDF copy of your service form
 									</p>
 								</div>
-							</div>
-							<div className="flex items-center gap-3">
-								{getStatusBadge(form.status)}
-								<Button
-									onClick={() => handleDownload("service_form", form.id)}
-									size="sm"
-									variant="outline"
-								>
-									<Download className="mr-1 h-4 w-4" />
-									Download
-								</Button>
-							</div>
-						</div>
-
-						{/* Working Area Agreement (if required) */}
-						{form.requiresWorkingAreaAgreement && (
-							<div className="ml-6 flex items-center justify-between rounded-lg border border-slate-200 p-4">
-								<div className="flex items-center gap-3">
-									<DocumentIcon type="working_area_agreement" />
-									<div>
-										<p className="font-medium text-slate-900">
-											Working Area Agreement
-										</p>
-										<p className="text-slate-500 text-sm">
-											Required for workspace access
-										</p>
+								{docsLoading ? (
+									<div className="flex items-center justify-center py-4">
+										<Loader2 className="h-4 w-4 animate-spin text-slate-400" />
 									</div>
-								</div>
-								<div className="flex items-center gap-3">
-									{getStatusBadge(form.status)}
-									<Button
-										onClick={() =>
-											handleDownload("working_area_agreement", form.id)
-										}
-										size="sm"
-										variant="outline"
-									>
-										<Download className="mr-1 h-4 w-4" />
-										Download
-									</Button>
-								</div>
+								) : hasDocOfType("service_form_signed") ? (
+									<BookingDocumentsList
+										bookingId={booking.id}
+										filterTypes={["service_form_signed"]}
+										showDelete
+										showEmptyState={false}
+									/>
+								) : (
+									<BookingDocUploader
+										bookingId={booking.id}
+										compact
+										type="service_form_signed"
+									/>
+								)}
 							</div>
-						)}
 
-						{/* Invoices for this form */}
-						{form.invoices.length > 0 && (
-							<div className="ml-6 space-y-2">
-								<p className="mb-2 font-medium text-slate-500 text-xs uppercase tracking-wider">
-									Invoices
-								</p>
-								{form.invoices.map((invoice) => (
-									<div
-										className={cn(
-											"flex items-center justify-between rounded-lg border p-4",
-											invoice.status === "overdue"
-												? "border-red-200 bg-red-50"
-												: "border-slate-200 bg-white",
-										)}
-										key={invoice.id}
-									>
-										<div className="flex items-center gap-3">
-											<DocumentIcon type="invoice" />
-											<div>
-												<p className="font-medium text-slate-900">
-													Invoice {invoice.invoiceNumber}
-												</p>
-												<p className="text-slate-500 text-sm">
-													Amount:{" "}
-													{formatCurrency(Number.parseFloat(invoice.amount))}
-												</p>
-												<p className="text-slate-400 text-xs">
-													Issued: {formatDate(invoice.invoiceDate)} • Due:{" "}
-													{formatDate(invoice.dueDate)}
-												</p>
-											</div>
+							{/* Payment Receipt single-file slot */}
+							<div className="rounded border p-3">
+								<div className="mb-2">
+									<p className="font-medium text-slate-900">Payment Receipt</p>
+									<p className="text-slate-500 text-xs">
+										Upload proof of payment (PDF or image)
+									</p>
+								</div>
+								{docsLoading ? (
+									<div className="flex items-center justify-center py-4">
+										<Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+									</div>
+								) : hasDocOfType("payment_receipt") ? (
+									<BookingDocumentsList
+										bookingId={booking.id}
+										filterTypes={["payment_receipt"]}
+										showDelete
+										showEmptyState={false}
+									/>
+								) : (
+									<BookingDocUploader
+										bookingId={booking.id}
+										compact
+										type="payment_receipt"
+									/>
+								)}
+							</div>
+
+							{/* Optional workspace agreement single-file slot */}
+							{form.requiresWorkingAreaAgreement && (
+								<div className="rounded border p-3 md:col-span-2">
+									<div className="mb-2 flex items-center justify-between">
+										<div>
+											<p className="font-medium text-slate-900">
+												Signed Working Area Agreement
+											</p>
+											<p className="text-slate-500 text-xs">
+												Upload your signed workspace agreement PDF
+											</p>
 										</div>
-										<div className="flex items-center gap-3">
-											{getStatusBadge(invoice.status, invoice.dueDate)}
-											<Button
-												onClick={() => handleDownload("invoice", invoice.id)}
-												size="sm"
-												variant="outline"
-											>
+										<Button
+											disabled={
+												downloadingId === `working_area_agreement-${form.id}`
+											}
+											onClick={() => handleDownload("working_area_agreement")}
+											size="sm"
+											variant="outline"
+										>
+											{downloadingId === `working_area_agreement-${form.id}` ? (
+												<Loader2 className="mr-1 h-4 w-4 animate-spin" />
+											) : (
 												<Download className="mr-1 h-4 w-4" />
-												Download
-											</Button>
-										</div>
+											)}
+											Download agreement
+										</Button>
 									</div>
-								))}
-							</div>
-						)}
-					</div>
-				))}
-
-				<Separator />
-
-				{/* Upload Sections */}
-				<div className="space-y-4">
-					<h4 className="flex items-center gap-2 font-medium text-slate-900">
-						<Upload className="h-4 w-4" />
-						Upload Required Documents
-					</h4>
-
-					{/* Signed Service Form Upload */}
-					<div className="rounded-lg border border-slate-200 p-4">
-						<div className="mb-3">
-							<p className="font-medium text-slate-900">Signed Service Form</p>
-							<p className="text-slate-500 text-sm">
-								Upload your signed service form PDF
-							</p>
-						</div>
-						<BookingDocUploader
-							bookingId={booking.id}
-							compact
-							type="service_form_signed"
-						/>
-					</div>
-
-					{/* Signed Workspace Form Upload (if applicable) */}
-					{booking.serviceForms.some((f) => f.requiresWorkingAreaAgreement) && (
-						<div className="rounded-lg border border-slate-200 p-4">
-							<div className="mb-3">
-								<p className="font-medium text-slate-900">
-									Signed Working Area Agreement
-								</p>
-								<p className="text-slate-500 text-sm">
-									Upload your signed workspace agreement PDF
-								</p>
-							</div>
-							<BookingDocUploader
-								bookingId={booking.id}
-								compact
-								type="workspace_form_signed"
-							/>
-						</div>
-					)}
-
-					{/* Payment Receipt Upload */}
-					<div className="rounded-lg border border-slate-200 p-4">
-						<div className="mb-3">
-							<p className="font-medium text-slate-900">Payment Receipt</p>
-							<p className="text-slate-500 text-sm">
-								Upload proof of payment (PDF or image)
-							</p>
-						</div>
-						<BookingDocUploader
-							bookingId={booking.id}
-							compact
-							type="payment_receipt"
-						/>
-					</div>
-				</div>
-
-				<Separator />
-
-				{/* Uploaded Documents List */}
-				<div>
-					<h4 className="mb-3 font-medium text-slate-900">
-						Your Uploaded Documents
-					</h4>
-					<BookingDocumentsList
-						bookingId={booking.id}
-						filterTypes={[
-							"service_form_signed",
-							"workspace_form_signed",
-							"payment_receipt",
-						]}
-					/>
-				</div>
-
-				{/* Info Banner */}
-				<div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-					<div className="flex gap-3">
-						<AlertCircle className="h-5 w-5 shrink-0 text-blue-600" />
-						<div className="text-blue-800 text-sm">
-							<p className="font-medium">Document Instructions</p>
-							<ul className="mt-1 list-inside list-disc space-y-1 text-blue-700 text-xs">
-								<li>
-									Download and print the service form, sign it, and upload the
-									signed copy
-								</li>
-								<li>
-									Download invoices for your records and payment processing
-								</li>
-								<li>Upload your payment receipt after completing payment</li>
-								{booking.serviceForms.some(
-									(f) => f.requiresWorkingAreaAgreement,
-								) && (
-										<li>
-											Working area agreement must be signed before workspace
-											access
-										</li>
+									{docsLoading ? (
+										<div className="flex items-center justify-center py-4">
+											<Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+										</div>
+									) : hasDocOfType("workspace_form_signed") ? (
+										<BookingDocumentsList
+											bookingId={booking.id}
+											filterTypes={["workspace_form_signed"]}
+											showDelete
+											showEmptyState={false}
+										/>
+									) : (
+										<BookingDocUploader
+											bookingId={booking.id}
+											compact
+											type="workspace_form_signed"
+										/>
 									)}
-							</ul>
+								</div>
+							)}
+						</div>
+
+						<Separator className="my-4" />
+
+
+
+						<div className="mt-4 rounded border border-blue-200 bg-blue-50 p-3">
+							<div className="flex gap-2">
+								<AlertCircle className="h-5 w-5 shrink-0 text-blue-600" />
+								<div className="text-blue-800 text-sm">
+									<p className="font-medium">Instructions</p>
+									<ul className="mt-1 list-inside list-disc space-y-1 text-blue-700 text-xs">
+										<li>
+											Download the service form, sign it, then upload the signed
+											PDF.
+										</li>
+										<li>
+											Upload your payment receipt after completing payment.
+										</li>
+										{form.requiresWorkingAreaAgreement && (
+											<li>
+												Workspace access requires the signed working area
+												agreement.
+											</li>
+										)}
+									</ul>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

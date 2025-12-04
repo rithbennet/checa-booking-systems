@@ -13,6 +13,7 @@
 
 import { Clock, DollarSign, FileCheck, FileText, Lock } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useFinanceOverview, useResultsOnHold } from "@/entities/booking";
 import { useInvoiceList } from "@/entities/invoice/api/useInvoiceList";
 import {
@@ -90,14 +91,42 @@ export function FinanceDashboard() {
 
 	// Handlers for payment verification/rejection
 	const handleVerifyPayment = (payment: PendingPaymentVM) => {
-		verifyPayment.mutate({ paymentId: payment.id });
+		verifyPayment.mutate(
+			{ paymentId: payment.id },
+			{
+				onSuccess: () => {
+					toast.success("Payment verified", {
+						description: `Payment for invoice ${payment.invoiceNumber} has been verified.`,
+					});
+				},
+				onError: (error) => {
+					toast.error("Failed to verify payment", {
+						description: error.message,
+					});
+				},
+			},
+		);
 	};
 
 	const handleRejectPayment = (payment: PendingPaymentVM) => {
 		// In a real implementation, you'd show a dialog to get the rejection reason
 		const reason = prompt("Enter rejection reason:");
 		if (reason) {
-			rejectPayment.mutate({ paymentId: payment.id, notes: reason });
+			rejectPayment.mutate(
+				{ paymentId: payment.id, notes: reason },
+				{
+					onSuccess: () => {
+						toast.success("Payment rejected", {
+							description: `Payment for invoice ${payment.invoiceNumber} has been rejected.`,
+						});
+					},
+					onError: (error) => {
+						toast.error("Failed to reject payment", {
+							description: error.message,
+						});
+					},
+				},
+			);
 		}
 	};
 

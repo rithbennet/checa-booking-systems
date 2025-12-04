@@ -6,7 +6,9 @@
 
 "use client";
 
-import { Download, FileText } from "lucide-react";
+import { Download, FileText, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import type { UserSampleTrackingVM } from "@/entities/booking/model/user-detail-types";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
@@ -38,12 +40,48 @@ export function UserSampleDrawer({
 	onOpenChange,
 	canDownload,
 }: UserSampleDrawerProps) {
+	const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
 	if (!sample) return null;
 
 	const formatFileSize = (bytes: number) => {
 		if (bytes < 1024) return `${bytes} B`;
 		if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
 		return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+	};
+
+	const handleDownload = async (resultId: string, fileName: string) => {
+		setDownloadingId(resultId);
+		try {
+			const response = await fetch(`/api/downloads/result/${resultId}`);
+
+			if (!response.ok) {
+				const error = await response.json().catch(() => ({}));
+				throw new Error(error.error || "Download failed");
+			}
+
+			// Create blob and trigger download
+			const blob = await response.blob();
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = fileName;
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+			document.body.removeChild(a);
+
+			toast.success("Download started", {
+				description: fileName,
+			});
+		} catch (error) {
+			toast.error("Download failed", {
+				description:
+					error instanceof Error ? error.message : "Please try again",
+			});
+		} finally {
+			setDownloadingId(null);
+		}
 	};
 
 	return (
@@ -68,9 +106,9 @@ export function UserSampleDrawer({
 					</div>
 				</SheetHeader>
 
-				<div className="mt-6 space-y-6">
+				<div className="mt-6 px-6">
 					{/* Timeline */}
-					<div className="space-y-3">
+					<div className="">
 						<h3 className="font-semibold text-slate-900 text-sm">Timeline</h3>
 						<div className="space-y-2 text-sm">
 							{sample.receivedAt && (
@@ -156,8 +194,19 @@ export function UserSampleDrawer({
 											</div>
 										</div>
 										{canDownload ? (
-											<Button size="sm" variant="outline">
-												<Download className="mr-1 h-4 w-4" />
+											<Button
+												disabled={downloadingId === result.id}
+												onClick={() =>
+													handleDownload(result.id, result.fileName)
+												}
+												size="sm"
+												variant="outline"
+											>
+												{downloadingId === result.id ? (
+													<Loader2 className="mr-1 h-4 w-4 animate-spin" />
+												) : (
+													<Download className="mr-1 h-4 w-4" />
+												)}
 												Download
 											</Button>
 										) : (

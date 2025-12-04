@@ -5,10 +5,11 @@ export {
 	useLinkSocialAccount,
 	useUnlinkAccount,
 } from "./useLinkedAccounts";
+export { useOnboardingOptions } from "./useOnboardingOptions";
 export { useUserCounts, useUserList } from "./useUserList";
 export {
 	useApproveUser,
 	useRejectUser,
 	useUpdateUserStatus,
 } from "./useUserMutations";
-export { useUserProfile } from "./useUserProfile";
+export { useUpdateProfile, useUserProfile } from "./useUserProfile";

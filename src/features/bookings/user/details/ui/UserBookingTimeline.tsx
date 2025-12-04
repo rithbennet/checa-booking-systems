@@ -54,7 +54,7 @@ export function UserBookingTimeline({ booking }: UserBookingTimelineProps) {
 	}
 
 	return (
-		<div className="mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+		<div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
 			<h2 className="mb-4 font-semibold text-slate-900">Progress Timeline</h2>
 
 			<div className="mx-auto flex max-w-5xl items-start px-4">

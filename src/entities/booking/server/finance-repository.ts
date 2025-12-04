@@ -303,28 +303,39 @@ function getPaymentSummary(
  * Get finance stats for KPI header
  */
 export async function getFinanceStats(): Promise<FinanceStatsVM> {
-	const [outstandingInvoices, pendingForms, pendingPayments] =
-		await Promise.all([
-			// Outstanding and overdue invoices
-			db.invoice.findMany({
-				where: {
-					status: { in: ["pending", "sent", "overdue"] },
-				},
-				select: {
-					amount: true,
-					dueDate: true,
-					status: true,
-				},
-			}),
-			// Pending form reviews
-			db.serviceForm.count({
-				where: { status: "signed_forms_uploaded" },
-			}),
-			// Pending payment verifications
-			db.payment.count({
-				where: { status: "pending" },
-			}),
-		]);
+	const [
+		outstandingInvoices,
+		pendingForms,
+		pendingPayments,
+		pendingDocVerifications,
+	] = await Promise.all([
+		// Outstanding and overdue invoices
+		db.invoice.findMany({
+			where: {
+				status: { in: ["pending", "sent", "overdue"] },
+			},
+			select: {
+				amount: true,
+				dueDate: true,
+				status: true,
+			},
+		}),
+		// Pending form reviews
+		db.serviceForm.count({
+			where: { status: "signed_forms_uploaded" },
+		}),
+		// Pending payment verifications (legacy)
+		db.payment.count({
+			where: { status: "pending" },
+		}),
+		// Pending document verifications (new flow - payment receipts)
+		db.bookingDocument.count({
+			where: {
+				type: "payment_receipt",
+				verificationStatus: "pending_verification",
+			},
+		}),
+	]);
 
 	const now = new Date();
 	let totalOutstanding = 0;
@@ -343,7 +354,8 @@ export async function getFinanceStats(): Promise<FinanceStatsVM> {
 		totalOutstanding: totalOutstanding.toString(),
 		overdueAmount: overdueAmount.toString(),
 		pendingFormReviews: pendingForms,
-		pendingPaymentVerifications: pendingPayments,
+		// Combine legacy payment verifications and new document verifications
+		pendingPaymentVerifications: pendingPayments + pendingDocVerifications,
 	};
 }
 
@@ -396,6 +408,17 @@ export async function getFinanceOverview(
 					companyBranch: { select: { name: true } },
 				},
 			},
+			// Include documents for verification check
+			bookingDocuments: {
+				select: {
+					type: true,
+					verificationStatus: true,
+				},
+			},
+			// Include workspace bookings to check if workspace form is required
+			workspaceBookings: {
+				select: { id: true },
+			},
 			serviceForms: {
 				include: {
 					invoices: {
@@ -434,10 +457,29 @@ export async function getFinanceOverview(
 		const invoiceSummary = getInvoiceSummary(allInvoices);
 		const paymentSummary = getPaymentSummary(allPayments);
 
-		// Calculate gate status
-		const totalInvoiced = Number(invoiceSummary.totalInvoiced);
-		const totalVerified = Number(paymentSummary.totalVerifiedPaid);
-		const resultsUnlocked = totalInvoiced > 0 && totalVerified >= totalInvoiced;
+		// Result Gatekeeper: Check document verification status
+		// Results are unlocked when all required documents are verified
+		const hasWorkspaceService = booking.workspaceBookings.length > 0;
+
+		let serviceFormVerified = false;
+		let workspaceFormVerified = false;
+		let paymentReceiptVerified = false;
+
+		for (const doc of booking.bookingDocuments) {
+			if (doc.verificationStatus === "verified") {
+				if (doc.type === "service_form_signed") {
+					serviceFormVerified = true;
+				} else if (doc.type === "workspace_form_signed") {
+					workspaceFormVerified = true;
+				} else if (doc.type === "payment_receipt") {
+					paymentReceiptVerified = true;
+				}
+			}
+		}
+
+		const workspaceFormOk = !hasWorkspaceService || workspaceFormVerified;
+		const resultsUnlocked =
+			serviceFormVerified && workspaceFormOk && paymentReceiptVerified;
 
 		return {
 			id: booking.id,
@@ -490,7 +532,9 @@ export async function getFinanceOverview(
 }
 
 /**
- * Get results on hold - bookings with analysis complete but no verified payment
+ * Get results on hold - bookings with analysis complete but documents not verified
+ * Uses the new Document Verification flow: results are locked until all required
+ * documents (service form, workspace form if applicable, payment receipt) are verified.
  */
 export async function getResultsOnHold(params: {
 	q?: string;
@@ -545,31 +589,51 @@ export async function getResultsOnHold(params: {
 					},
 				},
 			},
+			// Include documents for verification check
+			bookingDocuments: {
+				select: {
+					type: true,
+					verificationStatus: true,
+				},
+			},
+			// Include workspace bookings to check if workspace form is required
+			workspaceBookings: {
+				select: { id: true },
+			},
 			serviceForms: {
 				include: {
-					invoices: {
-						include: {
-							payments: { where: { status: "verified" } },
-						},
-					},
+					invoices: true,
 				},
 			},
 		},
 	});
 
-	// Filter to only those without verified payment
+	// Filter to only those where documents are NOT fully verified (results locked)
 	const resultsOnHold = bookingsWithCompletedSamples.filter((booking) => {
-		const allInvoices = booking.serviceForms.flatMap((sf) => sf.invoices);
-		const totalInvoiced = allInvoices.reduce(
-			(sum, inv) => sum + Number(inv.amount),
-			0,
-		);
-		const totalVerified = allInvoices
-			.flatMap((inv) => inv.payments)
-			.reduce((sum, p) => sum + Number(p.amount), 0);
+		const hasWorkspaceService = booking.workspaceBookings.length > 0;
 
-		// Results are on hold if there's unpaid balance
-		return totalInvoiced === 0 || totalVerified < totalInvoiced;
+		let serviceFormVerified = false;
+		let workspaceFormVerified = false;
+		let paymentReceiptVerified = false;
+
+		for (const doc of booking.bookingDocuments) {
+			if (doc.verificationStatus === "verified") {
+				if (doc.type === "service_form_signed") {
+					serviceFormVerified = true;
+				} else if (doc.type === "workspace_form_signed") {
+					workspaceFormVerified = true;
+				} else if (doc.type === "payment_receipt") {
+					paymentReceiptVerified = true;
+				}
+			}
+		}
+
+		const workspaceFormOk = !hasWorkspaceService || workspaceFormVerified;
+		const resultsUnlocked =
+			serviceFormVerified && workspaceFormOk && paymentReceiptVerified;
+
+		// Include in "on hold" if results are NOT unlocked
+		return !resultsUnlocked;
 	});
 
 	// Map to VMs

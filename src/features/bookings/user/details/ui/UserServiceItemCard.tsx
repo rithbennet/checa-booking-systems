@@ -12,6 +12,7 @@ import {
 	Beaker,
 	ChevronDown,
 	ChevronRight,
+	Edit,
 	FileText,
 	Lock,
 	Waves,
@@ -34,7 +35,9 @@ import {
 interface UserServiceItemCardProps {
 	serviceItem: UserServiceItemVM;
 	canDownloadResults: boolean;
+	canRequestModification?: boolean;
 	onSampleClick?: (sample: UserSampleTrackingVM) => void;
+	onRequestModification?: (serviceItem: UserServiceItemVM) => void;
 }
 
 // Get icon based on service category
@@ -129,7 +132,9 @@ function getItemStatus(item: UserServiceItemVM): {
 export function UserServiceItemCard({
 	serviceItem,
 	canDownloadResults,
+	canRequestModification = false,
 	onSampleClick,
+	onRequestModification,
 }: UserServiceItemCardProps) {
 	const [isOpen, setIsOpen] = useState(true);
 
@@ -209,6 +214,17 @@ export function UserServiceItemCard({
 								</p>
 							</div>
 						</div>
+						{canRequestModification && onRequestModification && (
+							<Button
+								className="h-8 gap-1.5 text-xs"
+								onClick={() => onRequestModification(serviceItem)}
+								size="sm"
+								variant="outline"
+							>
+								<Edit className="h-3.5 w-3.5" />
+								Request Change
+							</Button>
+						)}
 					</div>
 
 					{/* Sample Table */}

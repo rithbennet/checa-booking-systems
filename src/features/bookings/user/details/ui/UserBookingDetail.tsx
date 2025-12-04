@@ -6,15 +6,28 @@
 
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type {
 	UserBookingDetailVM,
 	UserSampleTrackingVM,
+	UserServiceItemVM,
 } from "@/entities/booking/model/user-detail-types";
+import {
+	Tabs,
+	TabsContent,
+	TabsList,
+	TabsTrigger,
+} from "@/shared/ui/shadcn/tabs";
+import {
+	extractPrefetchableUrls,
+	usePrefetchFiles,
+} from "../lib/usePrefetchFiles";
+import { ModificationAlert } from "./ModificationAlert";
 import { UserBookingHeader } from "./UserBookingHeader";
+import { UserBookingOverview } from "./UserBookingOverview";
 import { UserBookingSidebar } from "./UserBookingSidebar";
-import { UserBookingTimeline } from "./UserBookingTimeline";
 import { UserDocumentsSection } from "./UserDocumentsSection";
+import { UserModificationModal } from "./UserModificationModal";
 import { UserSampleDrawer } from "./UserSampleDrawer";
 import { UserServiceItemCard } from "./UserServiceItemCard";
 import { UserWorkspaceCard } from "./UserWorkspaceCard";
@@ -30,6 +43,22 @@ export function UserBookingDetail({ booking }: UserBookingDetailProps) {
 	const [selectedSampleName, setSelectedSampleName] = useState<string>();
 	const [drawerOpen, setDrawerOpen] = useState(false);
 
+	// State for modification modal
+	const [modificationModalOpen, setModificationModalOpen] = useState(false);
+	const [selectedServiceItem, setSelectedServiceItem] =
+		useState<UserServiceItemVM | null>(null);
+
+	// Prefetch all file URLs in the background for faster viewing
+	const prefetchableFiles = useMemo(
+		() => extractPrefetchableUrls(booking),
+		[booking],
+	);
+	usePrefetchFiles(prefetchableFiles);
+
+	// Check if user can request modifications (approved or in_progress status)
+	const canRequestModification =
+		booking.status === "approved" || booking.status === "in_progress";
+
 	// Handle sample click
 	const handleSampleClick = (
 		sample: UserSampleTrackingVM,
@@ -40,51 +69,91 @@ export function UserBookingDetail({ booking }: UserBookingDetailProps) {
 		setDrawerOpen(true);
 	};
 
+	// Handle modification request
+	const handleRequestModification = (serviceItem: UserServiceItemVM) => {
+		setSelectedServiceItem(serviceItem);
+		setModificationModalOpen(true);
+	};
+
+	const [activeTab, setActiveTab] = useState("overview");
+
 	return (
-		<div className="mx-auto max-w-[1400px] px-4 py-6">
+		<div className="mx-auto max-w-[1400px] space-y-6 px-4 py-6">
 			{/* Header with reference, status, and actions */}
 			<UserBookingHeader booking={booking} />
 
-			{/* Progress Timeline */}
-			<UserBookingTimeline booking={booking} />
-
-			{/* Documents Section */}
-			<UserDocumentsSection booking={booking} />
-
-			{/* Main Content Grid */}
-			<div className="grid grid-cols-12 gap-6">
-				{/* Left Column: Services & Workspaces */}
-				<div className="col-span-12 space-y-4 xl:col-span-8">
-					{/* Service Items */}
-					{booking.serviceItems.map((item) => (
-						<UserServiceItemCard
-							canDownloadResults={booking.canDownloadResults}
-							key={item.id}
-							onSampleClick={(sample) =>
-								handleSampleClick(sample, item.sampleName ?? undefined)
-							}
-							serviceItem={item}
+			{/* Modification Alerts - show if there are pending admin modifications */}
+			{booking.pendingModifications?.some(
+				(m) => m.status === "pending" && m.initiatedByAdmin,
+			) && (
+					<div className="mb-6">
+						<ModificationAlert
+							bookingId={booking.id}
+							modifications={booking.pendingModifications}
 						/>
-					))}
+					</div>
+				)}
 
-					{/* Workspace Bookings */}
-					{booking.workspaceBookings.map((workspace) => (
-						<UserWorkspaceCard key={workspace.id} workspace={workspace} />
-					))}
+			<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+				{/* Main Content Area */}
+				<div className="lg:col-span-2">
+					<Tabs
+						className="w-full"
+						onValueChange={setActiveTab}
+						value={activeTab}
+					>
+						<TabsList className="grid w-full grid-cols-3">
+							<TabsTrigger value="overview">Overview</TabsTrigger>
+							<TabsTrigger value="services">Services & Samples</TabsTrigger>
+							<TabsTrigger value="documents">Documents</TabsTrigger>
+						</TabsList>
 
-					{/* Empty state */}
-					{booking.serviceItems.length === 0 &&
-						booking.workspaceBookings.length === 0 && (
-							<div className="rounded-xl border border-slate-200 bg-white p-12 text-center shadow-sm">
-								<p className="text-slate-500">
-									No services or workspace bookings in this request.
-								</p>
-							</div>
-						)}
+						<TabsContent className="mt-6 space-y-6" value="overview">
+							<UserBookingOverview
+								booking={booking}
+								onTabChange={setActiveTab}
+							/>
+						</TabsContent>
+
+						<TabsContent className="mt-6 space-y-6" value="services">
+							{/* Service Items */}
+							{booking.serviceItems.map((item) => (
+								<UserServiceItemCard
+									canDownloadResults={booking.canDownloadResults}
+									canRequestModification={canRequestModification}
+									key={item.id}
+									onRequestModification={handleRequestModification}
+									onSampleClick={(sample) =>
+										handleSampleClick(sample, item.sampleName ?? undefined)
+									}
+									serviceItem={item}
+								/>
+							))}
+
+							{/* Workspace Bookings */}
+							{booking.workspaceBookings.map((workspace) => (
+								<UserWorkspaceCard key={workspace.id} workspace={workspace} />
+							))}
+
+							{/* Empty state */}
+							{booking.serviceItems.length === 0 &&
+								booking.workspaceBookings.length === 0 && (
+									<div className="rounded-xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+										<p className="text-slate-500">
+											No services or workspace bookings in this request.
+										</p>
+									</div>
+								)}
+						</TabsContent>
+
+						<TabsContent className="mt-6 space-y-6" value="documents">
+							<UserDocumentsSection booking={booking} />
+						</TabsContent>
+					</Tabs>
 				</div>
 
-				{/* Right Column: Sidebar */}
-				<div className="col-span-12 xl:col-span-4">
+				{/* Sidebar */}
+				<div className="space-y-6">
 					<UserBookingSidebar booking={booking} />
 				</div>
 			</div>
@@ -96,6 +165,14 @@ export function UserBookingDetail({ booking }: UserBookingDetailProps) {
 				open={drawerOpen}
 				sample={selectedSample}
 				sampleName={selectedSampleName}
+			/>
+
+			{/* Modification Request Modal */}
+			<UserModificationModal
+				bookingId={booking.id}
+				onOpenChange={setModificationModalOpen}
+				open={modificationModalOpen}
+				serviceItem={selectedServiceItem}
 			/>
 		</div>
 	);

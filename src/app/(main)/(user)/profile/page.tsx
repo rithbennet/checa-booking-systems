@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useUserProfile } from "@/entities/user";
-import { LinkedAccountsCard } from "@/features/users";
+import { LinkedAccountsCard, ProfileEditDialog } from "@/features/users";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import {
 	Card,
@@ -97,11 +97,14 @@ export default function ProfilePage() {
 	return (
 		<div className="space-y-6 p-6">
 			{/* Page Header */}
-			<div>
-				<h1 className="font-bold text-2xl text-slate-900">My Profile</h1>
-				<p className="text-muted-foreground text-sm">
-					View and manage your account information
-				</p>
+			<div className="flex items-center justify-between">
+				<div>
+					<h1 className="font-bold text-2xl text-slate-900">My Profile</h1>
+					<p className="text-muted-foreground text-sm">
+						View and manage your account information
+					</p>
+				</div>
+				<ProfileEditDialog />
 			</div>
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

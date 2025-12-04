@@ -9,30 +9,42 @@
 
 "use client";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { invoice_status_enum } from "generated/prisma";
 import {
 	CalendarClock,
 	CheckCircle,
 	ChevronDown,
 	Download,
+	ExternalLink,
+	Eye,
 	FileCheck,
 	FilePlus,
 	FileText,
 	Loader2,
 	Lock,
 	Plus,
+	RefreshCw,
+	ShieldCheck,
+	X,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { bookingKeys } from "@/entities/booking/api/query-keys";
 import type {
 	BookingCommandCenterVM,
 	InvoiceVM,
 } from "@/entities/booking/model/command-center-types";
+import {
+	bookingDocumentKeys,
+	useBookingDocuments,
+} from "@/entities/booking-document";
 import { useGenerateForms } from "@/entities/service-form";
 import {
 	BookingDocUploader,
 	BookingDocumentsList,
 } from "@/features/bookings/shared";
+import { DocumentVerificationPanel } from "@/features/document-verification";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import { Checkbox } from "@/shared/ui/shadcn/checkbox";
@@ -41,6 +53,14 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "@/shared/ui/shadcn/collapsible";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/shared/ui/shadcn/dialog";
 import {
 	Tooltip,
 	TooltipContent,
@@ -129,6 +149,57 @@ function TimelineWidget({ booking }: { booking: BookingCommandCenterVM }) {
 function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
 	const [showInvoiceUpload, setShowInvoiceUpload] = useState(false);
 	const generateForms = useGenerateForms();
+	const queryClient = useQueryClient();
+
+	// Regenerate form mutation
+	const regenerateForm = useMutation({
+		mutationFn: async (formId: string) => {
+			const res = await fetch(`/api/admin/forms/${formId}/regenerate`, {
+				method: "POST",
+			});
+			if (!res.ok) {
+				const error = await res.json().catch(() => ({}));
+				throw new Error(error.error || "Failed to regenerate form");
+			}
+			return res.json();
+		},
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: bookingKeys.all });
+			toast.success("Form regenerated successfully", {
+				description: `New form number: ${data.serviceForm.formNumber}`,
+			});
+		},
+		onError: (error) => {
+			toast.error("Failed to regenerate form", {
+				description: error instanceof Error ? error.message : "Unknown error",
+			});
+		},
+	});
+
+	// Verify signature mutation
+	const verifySignature = useMutation({
+		mutationFn: async (formId: string) => {
+			const res = await fetch(`/api/admin/forms/${formId}/verify-signature`, {
+				method: "POST",
+			});
+			if (!res.ok) {
+				const error = await res.json().catch(() => ({}));
+				throw new Error(error.error || "Failed to verify signature");
+			}
+			return res.json();
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: bookingKeys.all });
+			toast.success("Signature verified", {
+				description: "You can now verify payments for this booking",
+			});
+		},
+		onError: (error) => {
+			toast.error("Failed to verify signature", {
+				description: error instanceof Error ? error.message : "Unknown error",
+			});
+		},
+	});
 
 	// Get all documents from service forms
 	const serviceForms = booking.serviceForms;
@@ -137,6 +208,11 @@ function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
 
 	// Can generate if booking is approved and no forms exist
 	const canGenerateForms = booking.status === "approved" && !hasServiceForm;
+
+	// Check if signatures need verification
+	const formNeedingVerification = serviceForms.find(
+		(f) => f.status === "signed_forms_uploaded" && !f.signedFormsUploadedBy,
+	);
 
 	const handleGenerateForms = () => {
 		generateForms.mutate(booking.id, {
@@ -152,6 +228,40 @@ function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
 				});
 			},
 		});
+	};
+
+	const handlePreviewForm = (url: string | null | undefined, name: string) => {
+		if (!url) {
+			toast.error("Document not available");
+			return;
+		}
+		window.open(url, "_blank");
+		toast.success(`Opening ${name}`);
+	};
+
+	const handleDownloadForm = async (
+		url: string | null | undefined,
+		fileName: string,
+	) => {
+		if (!url) {
+			toast.error("Document not available");
+			return;
+		}
+		try {
+			const response = await fetch(url);
+			const blob = await response.blob();
+			const downloadUrl = window.URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = downloadUrl;
+			a.download = fileName;
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(downloadUrl);
+			document.body.removeChild(a);
+			toast.success("Download started", { description: fileName });
+		} catch {
+			toast.error("Download failed");
+		}
 	};
 
 	return (
@@ -183,6 +293,33 @@ function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
 				</div>
 			)}
 
+			{/* Signature Verification Banner */}
+			{formNeedingVerification && (
+				<div className="border-amber-200 border-b bg-amber-50 p-3">
+					<div className="flex items-center justify-between gap-2">
+						<div className="flex items-center gap-2">
+							<ShieldCheck className="h-4 w-4 text-amber-600" />
+							<span className="font-medium text-amber-800 text-xs">
+								Signed forms uploaded - verify signature
+							</span>
+						</div>
+						<Button
+							className="h-7 gap-1.5 text-xs"
+							disabled={verifySignature.isPending}
+							onClick={() => verifySignature.mutate(formNeedingVerification.id)}
+							size="sm"
+						>
+							{verifySignature.isPending ? (
+								<Loader2 className="h-3 w-3 animate-spin" />
+							) : (
+								<ShieldCheck className="h-3 w-3" />
+							)}
+							Verify
+						</Button>
+					</div>
+				</div>
+			)}
+
 			{/* Client Uploads Section */}
 			<div className="space-y-2 p-4">
 				<p className="mb-2 font-bold text-[10px] text-slate-400 uppercase tracking-wider">
@@ -197,6 +334,7 @@ function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
 						"workspace_form_signed",
 						"payment_receipt",
 					]}
+					showDelete
 					showEmptyState={false}
 					showUploader
 				/>
@@ -205,31 +343,64 @@ function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
 				{serviceForms
 					.filter((f) => f.serviceFormSignedPdfPath)
 					.map((form) => (
-						<Tooltip key={form.id}>
-							<TooltipTrigger asChild>
-								<div className="group flex cursor-not-allowed items-center gap-3 rounded border border-transparent p-2">
-									<FileCheck className="h-4 w-4 text-slate-400" />
-									<div className="flex-1 overflow-hidden">
-										<p className="truncate font-medium text-slate-900 text-xs">
-											Signed_Service_Form.pdf
-										</p>
-										<p className="text-[10px] text-slate-400">
-											{form.formNumber} • {formatDate(form.generatedAt)}
-										</p>
-									</div>
-									<Download className="h-3 w-3 text-slate-300" />
-								</div>
-							</TooltipTrigger>
-							<TooltipContent>
-								<p>Document download coming soon</p>
-							</TooltipContent>
-						</Tooltip>
+						<div
+							className="group flex items-center gap-3 rounded border border-slate-200 bg-white p-2"
+							key={form.id}
+						>
+							<FileCheck className="h-4 w-4 text-green-500" />
+							<div className="flex-1 overflow-hidden">
+								<p className="truncate font-medium text-slate-900 text-xs">
+									Signed Service Form
+								</p>
+								<p className="text-[10px] text-slate-400">
+									{form.formNumber} • {formatDate(form.generatedAt)}
+								</p>
+							</div>
+							<div className="flex items-center gap-1">
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<Button
+											className="h-6 w-6"
+											onClick={() =>
+												handlePreviewForm(
+													form.serviceFormSignedPdfPath,
+													"Signed Service Form",
+												)
+											}
+											size="icon"
+											variant="ghost"
+										>
+											<Eye className="h-3 w-3" />
+										</Button>
+									</TooltipTrigger>
+									<TooltipContent>Preview</TooltipContent>
+								</Tooltip>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<Button
+											className="h-6 w-6"
+											onClick={() =>
+												handleDownloadForm(
+													form.serviceFormSignedPdfPath,
+													`Signed_Service_Form_${form.formNumber}.pdf`,
+												)
+											}
+											size="icon"
+											variant="ghost"
+										>
+											<Download className="h-3 w-3" />
+										</Button>
+									</TooltipTrigger>
+									<TooltipContent>Download</TooltipContent>
+								</Tooltip>
+							</div>
+						</div>
 					))}
 
 				{serviceForms.filter((f) => f.serviceFormSignedPdfPath).length ===
 					0 && (
-						<p className="text-slate-400 text-xs italic">No client uploads yet</p>
-					)}
+					<p className="text-slate-400 text-xs italic">No client uploads yet</p>
+				)}
 			</div>
 
 			{/* Admin / System Generated Documents */}
@@ -242,6 +413,7 @@ function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
 					<BookingDocumentsList
 						bookingId={booking.id}
 						filterTypes={["invoice"]}
+						showDelete
 						showEmptyState={false}
 						showUploader
 					/>
@@ -251,15 +423,153 @@ function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
 						<InvoiceDocumentRow invoice={invoice} key={invoice.id} />
 					))}
 
-					{/* Generate Service Form Button */}
-					{hasServiceForm ? (
-						<div className="flex items-center gap-2 rounded border border-green-200 bg-green-50 p-2 text-green-700 text-xs">
-							<FileCheck className="h-3.5 w-3.5" />
-							<span>
-								Service form generated ({serviceForms[0]?.formNumber})
-							</span>
+					{/* Generated Service Forms Preview */}
+					{serviceForms.map((form) => (
+						<div
+							className="space-y-2 rounded border border-slate-200 bg-white p-3"
+							key={form.id}
+						>
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<FileCheck className="h-4 w-4 text-green-500" />
+									<span className="font-medium text-slate-900 text-xs">
+										{form.formNumber}
+									</span>
+								</div>
+								<Badge
+									className={
+										form.status === "signed_forms_uploaded"
+											? "border-green-200 bg-green-100 text-green-700"
+											: "border-slate-200 bg-slate-100 text-slate-600"
+									}
+									variant="outline"
+								>
+									{form.status === "signed_forms_uploaded"
+										? "Signed"
+										: form.status === "downloaded"
+											? "Downloaded"
+											: "Generated"}
+								</Badge>
+							</div>
+
+							{/* Unsigned Service Form */}
+							<div className="flex items-center justify-between rounded bg-slate-50 p-2">
+								<div className="flex items-center gap-2">
+									<FileText className="h-3.5 w-3.5 text-slate-400" />
+									<span className="text-slate-600 text-xs">
+										Service Form (Unsigned)
+									</span>
+								</div>
+								<div className="flex items-center gap-1">
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Button
+												className="h-6 w-6"
+												onClick={() =>
+													handlePreviewForm(
+														form.serviceFormUnsignedPdfPath,
+														"Service Form",
+													)
+												}
+												size="icon"
+												variant="ghost"
+											>
+												<Eye className="h-3 w-3" />
+											</Button>
+										</TooltipTrigger>
+										<TooltipContent>Preview</TooltipContent>
+									</Tooltip>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Button
+												className="h-6 w-6"
+												onClick={() =>
+													handleDownloadForm(
+														form.serviceFormUnsignedPdfPath,
+														`Service_Form_${form.formNumber}.pdf`,
+													)
+												}
+												size="icon"
+												variant="ghost"
+											>
+												<Download className="h-3 w-3" />
+											</Button>
+										</TooltipTrigger>
+										<TooltipContent>Download</TooltipContent>
+									</Tooltip>
+								</div>
+							</div>
+
+							{/* Working Area Agreement (if exists) */}
+							{form.workingAreaAgreementUnsignedPdfPath && (
+								<div className="flex items-center justify-between rounded bg-slate-50 p-2">
+									<div className="flex items-center gap-2">
+										<FileText className="h-3.5 w-3.5 text-slate-400" />
+										<span className="text-slate-600 text-xs">
+											Working Area Agreement
+										</span>
+									</div>
+									<div className="flex items-center gap-1">
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<Button
+													className="h-6 w-6"
+													onClick={() =>
+														handlePreviewForm(
+															form.workingAreaAgreementUnsignedPdfPath,
+															"Working Area Agreement",
+														)
+													}
+													size="icon"
+													variant="ghost"
+												>
+													<Eye className="h-3 w-3" />
+												</Button>
+											</TooltipTrigger>
+											<TooltipContent>Preview</TooltipContent>
+										</Tooltip>
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<Button
+													className="h-6 w-6"
+													onClick={() =>
+														handleDownloadForm(
+															form.workingAreaAgreementUnsignedPdfPath,
+															`Working_Area_${form.formNumber}.pdf`,
+														)
+													}
+													size="icon"
+													variant="ghost"
+												>
+													<Download className="h-3 w-3" />
+												</Button>
+											</TooltipTrigger>
+											<TooltipContent>Download</TooltipContent>
+										</Tooltip>
+									</div>
+								</div>
+							)}
+
+							{/* Regenerate Button */}
+							<Button
+								className="mt-2 h-7 w-full gap-1.5 text-xs"
+								disabled={regenerateForm.isPending}
+								onClick={() => regenerateForm.mutate(form.id)}
+								size="sm"
+								variant="outline"
+							>
+								{regenerateForm.isPending ? (
+									<Loader2 className="h-3 w-3 animate-spin" />
+								) : (
+									<RefreshCw className="h-3 w-3" />
+								)}
+								Regenerate Forms
+							</Button>
 						</div>
-					) : (
+					))}
+
+					{/* Generate Service Form Button */}
+					{!hasServiceForm && (
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<Button
@@ -364,6 +674,20 @@ function InvoiceDocumentRow({ invoice }: { invoice: InvoiceVM }) {
 // Financial Gate Component
 function FinancialGate({ booking }: { booking: BookingCommandCenterVM }) {
 	const [servicesOpen, setServicesOpen] = useState(false);
+	const [verificationDialogOpen, setVerificationDialogOpen] = useState(false);
+	const [verificationNotes, setVerificationNotes] = useState("");
+	const [isVerifying, setIsVerifying] = useState(false);
+	const [isRejecting, setIsRejecting] = useState(false);
+	const queryClient = useQueryClient();
+
+	// Fetch booking documents to get pending payment receipts
+	const { data: documents } = useBookingDocuments(booking.id);
+	const pendingPaymentDocs =
+		documents?.filter(
+			(doc) =>
+				doc.type === "payment_receipt" &&
+				doc.verificationStatus === "pending_verification",
+		) ?? [];
 
 	const totalAmount = Number.parseFloat(booking.totalAmount);
 	const isPaid = booking.isPaid;
@@ -373,6 +697,70 @@ function FinancialGate({ booking }: { booking: BookingCommandCenterVM }) {
 	const serviceCount = booking.serviceItems.length;
 	const workspaceCount = booking.workspaceBookings.length;
 	const totalItems = serviceCount + workspaceCount;
+
+	// Check if there are pending payment docs or unverified payments flag
+	const hasUnverifiedPayments =
+		booking.hasUnverifiedPayments || pendingPaymentDocs.length > 0;
+
+	const handleVerify = async (documentId: string) => {
+		setIsVerifying(true);
+		try {
+			const res = await fetch(`/api/booking-docs/${documentId}/verify`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ notes: verificationNotes }),
+			});
+			if (!res.ok) {
+				const error = await res.json().catch(() => ({}));
+				throw new Error(error.error || "Failed to verify payment");
+			}
+			toast.success("Payment verified successfully");
+			queryClient.invalidateQueries({ queryKey: bookingKeys.all });
+			queryClient.invalidateQueries({
+				queryKey: bookingDocumentKeys.byBooking(booking.id),
+			});
+			setVerificationNotes("");
+			setVerificationDialogOpen(false);
+		} catch (error) {
+			toast.error("Failed to verify payment", {
+				description: error instanceof Error ? error.message : "Unknown error",
+			});
+		} finally {
+			setIsVerifying(false);
+		}
+	};
+
+	const handleReject = async (documentId: string) => {
+		if (!verificationNotes.trim()) {
+			toast.error("Please provide rejection notes");
+			return;
+		}
+		setIsRejecting(true);
+		try {
+			const res = await fetch(`/api/booking-docs/${documentId}/reject`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ notes: verificationNotes }),
+			});
+			if (!res.ok) {
+				const error = await res.json().catch(() => ({}));
+				throw new Error(error.error || "Failed to reject payment");
+			}
+			toast.success("Payment rejected");
+			queryClient.invalidateQueries({ queryKey: bookingKeys.all });
+			queryClient.invalidateQueries({
+				queryKey: bookingDocumentKeys.byBooking(booking.id),
+			});
+			setVerificationNotes("");
+			setVerificationDialogOpen(false);
+		} catch (error) {
+			toast.error("Failed to reject payment", {
+				description: error instanceof Error ? error.message : "Unknown error",
+			});
+		} finally {
+			setIsRejecting(false);
+		}
+	};
 
 	return (
 		<div className="relative overflow-hidden rounded-xl border-2 border-orange-100 bg-white shadow-sm">
@@ -497,25 +885,173 @@ function FinancialGate({ booking }: { booking: BookingCommandCenterVM }) {
 					</div>
 				)}
 
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<Button
-							className="relative z-10 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded bg-slate-400 py-2.5 font-bold text-white text-xs shadow-sm"
-							disabled
-						>
-							<CheckCircle className="h-4 w-4" />
-							{booking.hasUnverifiedPayments
-								? "Verify Payment Proof"
-								: isPaid
-									? "Payment Verified"
-									: "Record Payment"}
-						</Button>
-					</TooltipTrigger>
-					<TooltipContent>
-						<p>Payment recording coming soon</p>
-					</TooltipContent>
-				</Tooltip>
+				{hasUnverifiedPayments ? (
+					<Button
+						className="relative z-10 flex w-full items-center justify-center gap-2 rounded py-2.5 font-bold text-white text-xs shadow-sm"
+						onClick={() => setVerificationDialogOpen(true)}
+					>
+						<CheckCircle className="h-4 w-4" />
+						Verify Payment Proof
+					</Button>
+				) : (
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button
+								className="relative z-10 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded bg-slate-400 py-2.5 font-bold text-white text-xs shadow-sm"
+								disabled
+							>
+								<CheckCircle className="h-4 w-4" />
+								{isPaid ? "Payment Verified" : "Record Payment"}
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent>
+							<p>
+								{isPaid
+									? "All payments verified"
+									: "Payment recording coming soon"}
+							</p>
+						</TooltipContent>
+					</Tooltip>
+				)}
 			</div>
+
+			{/* Payment Verification Dialog */}
+			<Dialog
+				onOpenChange={setVerificationDialogOpen}
+				open={verificationDialogOpen}
+			>
+				<DialogContent className="max-w-2xl">
+					<DialogHeader>
+						<DialogTitle>Verify Payment Proof</DialogTitle>
+						<DialogDescription>
+							Review and verify the payment proof uploaded by the customer.
+						</DialogDescription>
+					</DialogHeader>
+
+					<div className="space-y-4">
+						{pendingPaymentDocs.map((doc) => (
+							<div
+								className="rounded-lg border border-slate-200 bg-slate-50 p-4"
+								key={doc.id}
+							>
+								<div className="mb-3 flex items-start justify-between">
+									<div>
+										<p className="font-bold text-slate-900">Payment Receipt</p>
+										<p className="text-slate-600 text-sm">
+											Uploaded: {formatDate(doc.createdAt)}
+										</p>
+										<p className="text-slate-500 text-xs">
+											by {doc.createdBy.firstName} {doc.createdBy.lastName}
+										</p>
+									</div>
+									<Badge className="bg-yellow-100 text-yellow-700">
+										Pending Verification
+									</Badge>
+								</div>
+
+								<div className="mb-3 flex items-center gap-2">
+									<FileText className="h-4 w-4 text-slate-400" />
+									<span className="text-slate-700 text-sm">
+										{doc.blob.fileName}
+									</span>
+									<span className="text-slate-400 text-xs">
+										({Math.round(doc.blob.sizeBytes / 1024)} KB)
+									</span>
+								</div>
+
+								<a
+									className="inline-flex items-center gap-2 text-blue-600 text-sm hover:underline"
+									href={`/api/booking-docs/${doc.id}/download`}
+									rel="noopener noreferrer"
+									target="_blank"
+								>
+									<ExternalLink className="h-3 w-3" />
+									View Payment Receipt
+								</a>
+
+								{doc.note && (
+									<p className="mt-2 text-slate-600 text-sm">
+										<span className="font-medium">Note:</span> {doc.note}
+									</p>
+								)}
+							</div>
+						))}
+					</div>
+
+					<div>
+						<label
+							className="mb-2 block font-medium text-slate-700 text-sm"
+							htmlFor="verification-notes"
+						>
+							Verification Notes (Optional for approval, required for rejection)
+						</label>
+						<textarea
+							className="w-full rounded border border-slate-300 bg-white p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+							disabled={isVerifying || isRejecting}
+							id="verification-notes"
+							onChange={(e) => setVerificationNotes(e.target.value)}
+							placeholder="Add any notes about the verification..."
+							rows={3}
+							value={verificationNotes}
+						/>
+					</div>
+
+					<DialogFooter className="flex gap-2 sm:justify-between">
+						<Button
+							disabled={isVerifying || isRejecting}
+							onClick={() => setVerificationDialogOpen(false)}
+							variant="outline"
+						>
+							Cancel
+						</Button>
+						<div className="flex gap-2">
+							<Button
+								disabled={
+									isVerifying || isRejecting || pendingPaymentDocs.length === 0
+								}
+								onClick={() => {
+									const doc = pendingPaymentDocs[0];
+									if (doc) handleReject(doc.id);
+								}}
+								variant="destructive"
+							>
+								{isRejecting ? (
+									<>
+										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+										Rejecting...
+									</>
+								) : (
+									<>
+										<X className="mr-2 h-4 w-4" />
+										Reject
+									</>
+								)}
+							</Button>
+							<Button
+								disabled={
+									isVerifying || isRejecting || pendingPaymentDocs.length === 0
+								}
+								onClick={() => {
+									const doc = pendingPaymentDocs[0];
+									if (doc) handleVerify(doc.id);
+								}}
+							>
+								{isVerifying ? (
+									<>
+										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+										Verifying...
+									</>
+								) : (
+									<>
+										<CheckCircle className="mr-2 h-4 w-4" />
+										Verify Payment
+									</>
+								)}
+							</Button>
+						</div>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }
@@ -526,6 +1062,11 @@ export function BookingSidebar({ booking }: BookingSidebarProps) {
 		<div className="space-y-6">
 			<TimelineWidget booking={booking} />
 			<DocumentVault booking={booking} />
+			{/* Document Verification Panel - Admin can verify user uploads */}
+			<DocumentVerificationPanel
+				bookingId={booking.id}
+				bookingReference={booking.referenceNumber}
+			/>
 			<FinancialGate booking={booking} />
 		</div>
 	);

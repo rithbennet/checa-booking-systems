@@ -34,11 +34,32 @@ export const GET = createProtectedHandler(
 			return notFound("Result not found");
 		}
 
-		// Payment gate check
+		// Document verification gate check
+		// Results are only available after all required documents are verified
 		if (!data.isPaid) {
-			return forbidden(
-				"Payment Required: Please verify payment in the Financials tab to unlock this result.",
-			);
+			const details = data.verificationDetails;
+			let message = "Results Locked: ";
+
+			if (details) {
+				const missing: string[] = [];
+				if (!details.serviceFormVerified) missing.push("signed service form");
+				if (details.requiresWorkspaceForm && !details.workspaceFormVerified)
+					missing.push("signed workspace form");
+				if (!details.paymentReceiptVerified)
+					missing.push("verified payment receipt");
+
+				if (missing.length > 0) {
+					message += `Please upload and get the following verified: ${missing.join(", ")}.`;
+				} else {
+					message +=
+						"Please complete document verification to unlock your results.";
+				}
+			} else {
+				message +=
+					"Please complete document verification to unlock your results.";
+			}
+
+			return forbidden(message);
 		}
 
 		const { result } = data;

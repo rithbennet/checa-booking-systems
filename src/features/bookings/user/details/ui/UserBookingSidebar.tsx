@@ -6,9 +6,8 @@
 
 "use client";
 
-import { CheckCircle, Clock, CreditCard, FileText, Lock } from "lucide-react";
+import { CheckCircle, Clock, CreditCard, Lock } from "lucide-react";
 import type { UserBookingDetailVM } from "@/entities/booking/model/user-detail-types";
-import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
 	Card,
@@ -16,7 +15,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
-import { formatCurrency, formatDate, getDaysRemaining } from "../lib/helpers";
+import { formatCurrency } from "../lib/helpers";
 
 interface UserBookingSidebarProps {
 	booking: UserBookingDetailVM;
@@ -26,8 +25,6 @@ export function UserBookingSidebar({ booking }: UserBookingSidebarProps) {
 	const totalAmount = Number.parseFloat(booking.totalAmount);
 	const paidAmount = Number.parseFloat(booking.paidAmount);
 	const remainingAmount = totalAmount - paidAmount;
-
-	const daysRemaining = getDaysRemaining(booking.preferredEndDate);
 
 	return (
 		<div className="space-y-6">
@@ -107,118 +104,6 @@ export function UserBookingSidebar({ booking }: UserBookingSidebarProps) {
 					)}
 				</CardContent>
 			</Card>
-
-			{/* Timeline */}
-			{booking.preferredEndDate && (
-				<Card>
-					<CardHeader className="pb-2">
-						<CardTitle className="flex items-center gap-2 text-base">
-							<Clock className="h-4 w-4 text-slate-400" />
-							Expected Timeline
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-							<p className="font-bold text-[10px] text-slate-400 uppercase tracking-wider">
-								Target Completion
-							</p>
-							<p className="font-bold text-lg text-slate-900">
-								{formatDate(booking.preferredEndDate)}
-							</p>
-							{daysRemaining !== null && (
-								<p className="mt-0.5 text-[10px] text-slate-500">
-									{daysRemaining > 0
-										? `${daysRemaining} days remaining`
-										: daysRemaining === 0
-											? "Due today"
-											: `${Math.abs(daysRemaining)} days overdue`}
-								</p>
-							)}
-						</div>
-					</CardContent>
-				</Card>
-			)}
-
-			{/* Documents */}
-			{booking.serviceForms.length > 0 && (
-				<Card>
-					<CardHeader className="pb-2">
-						<CardTitle className="flex items-center gap-2 text-base">
-							<FileText className="h-4 w-4 text-slate-400" />
-							Documents
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="space-y-2">
-							{booking.serviceForms.map((form) => (
-								<div key={form.id}>
-									<div className="flex items-center justify-between rounded-lg border p-2">
-										<div className="flex items-center gap-2">
-											<FileText className="h-4 w-4 text-slate-400" />
-											<div>
-												<p className="font-medium text-slate-900 text-xs">
-													Service Form
-												</p>
-												<p className="text-[10px] text-slate-400">
-													{form.formNumber}
-												</p>
-											</div>
-										</div>
-										<Badge
-											className={
-												form.status === "signed_forms_uploaded"
-													? "border-green-200 bg-green-100 text-green-700"
-													: "border-slate-200 bg-slate-100 text-slate-600"
-											}
-											variant="outline"
-										>
-											{form.status === "signed_forms_uploaded"
-												? "Signed"
-												: "Pending"}
-										</Badge>
-									</div>
-									{form.invoices.map((invoice) => (
-										<div
-											className="mt-2 flex items-center justify-between rounded-lg border p-2"
-											key={invoice.id}
-										>
-											<div className="flex items-center gap-2">
-												<FileText className="h-4 w-4 text-slate-400" />
-												<div>
-													<p className="font-medium text-slate-900 text-xs">
-														Invoice
-													</p>
-													<p className="text-[10px] text-slate-400">
-														{invoice.invoiceNumber}
-													</p>
-												</div>
-											</div>
-											<Badge
-												className={
-													invoice.status === "paid"
-														? "border-green-200 bg-green-100 text-green-700"
-														: invoice.status === "overdue"
-															? "border-red-200 bg-red-100 text-red-700"
-															: "border-blue-200 bg-blue-100 text-blue-600"
-												}
-												variant="outline"
-											>
-												{invoice.status === "paid"
-													? "Paid"
-													: invoice.status === "overdue"
-														? "Overdue"
-														: invoice.status === "sent"
-															? "Sent"
-															: "Pending"}
-											</Badge>
-										</div>
-									))}
-								</div>
-							))}
-						</div>
-					</CardContent>
-				</Card>
-			)}
 
 			{/* Project Info */}
 			{booking.projectDescription && (

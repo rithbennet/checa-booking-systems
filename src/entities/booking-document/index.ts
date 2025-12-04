@@ -6,20 +6,37 @@
  */
 
 // API exports (TanStack Query)
-export { bookingDocumentKeys, useBookingDocuments } from "./api";
+export {
+	bookingDocumentKeys,
+	useBookingDocuments,
+	useDocumentVerificationState,
+	useDownloadEligibility,
+	useRejectDocument,
+	useVerifyDocument,
+} from "./api";
 
 // Model exports (types and helpers)
 export type {
 	BookingDocumentUploadInput,
 	BookingDocumentVM,
 	DocumentType,
+	DocumentVerificationStateVM,
+	DocumentVerificationStatus,
+	DownloadEligibilityVM,
 	FileBlobVM,
+	RejectDocumentInput,
+	VerifyDocumentInput,
 } from "./model";
 export {
 	documentTypeLabels,
 	formatFileSize,
 	getAdminUploadableTypes,
 	getDocumentTypeLabel,
+	getSystemGeneratedTypes,
 	getUserUploadableTypes,
+	getVerifiableDocumentTypes,
+	getVerificationStatusLabel,
 	isAdminOnlyDocumentType,
+	verificationStatusColors,
+	verificationStatusLabels,
 } from "./model";

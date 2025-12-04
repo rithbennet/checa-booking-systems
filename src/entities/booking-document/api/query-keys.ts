@@ -9,4 +9,8 @@ export const bookingDocumentKeys = {
 	byBooking: (bookingId: string) =>
 		[...bookingDocumentKeys.all, "booking", bookingId] as const,
 	detail: (id: string) => [...bookingDocumentKeys.all, "detail", id] as const,
+	verificationState: (bookingId: string) =>
+		[...bookingDocumentKeys.all, "verification-state", bookingId] as const,
+	downloadEligibility: (bookingId: string) =>
+		[...bookingDocumentKeys.all, "download-eligibility", bookingId] as const,
 };

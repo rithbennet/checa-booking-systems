@@ -6,7 +6,10 @@
  * - Users: upload signed service forms, workspace forms, and payment receipts
  */
 
-import type { upload_document_type_enum } from "generated/prisma";
+import type {
+	document_verification_status_enum,
+	upload_document_type_enum,
+} from "generated/prisma";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { z } from "zod";
 import { notifyAdminsPaymentUploaded } from "@/entities/notification/server/finance.notifications";
@@ -35,15 +38,16 @@ export const fileRouter = {
 	/**
 	 * Booking Documents Uploader
 	 *
-	 * Accepts PDFs (up to 16MB), images (up to 8MB), and spreadsheets (up to 10MB)
+	 * Accepts PDFs (up to 16MB), images (up to 8MB), and spreadsheets/text (up to 10MB)
 	 * Role-based permissions:
 	 * - Users: service_form_signed, workspace_form_signed, payment_receipt
 	 * - Admins: invoice, sample_result
 	 */
 	bookingDocs: f({
-		pdf: { maxFileSize: "16MB", maxFileCount: 1 },
-		image: { maxFileSize: "8MB", maxFileCount: 1 },
-		blob: { maxFileSize: "8MB", maxFileCount: 1 }, // For xlsx, csv files
+		pdf: { maxFileSize: "16MB", maxFileCount: 10 },
+		image: { maxFileSize: "8MB", maxFileCount: 10 },
+		blob: { maxFileSize: "8MB", maxFileCount: 10 }, // For xlsx, csv, txt files
+		text: { maxFileSize: "8MB", maxFileCount: 10 }, // For txt files
 	})
 		.input(bookingDocInput)
 		.middleware(async ({ input }) => {
@@ -124,24 +128,31 @@ export const fileRouter = {
 				},
 			});
 
-			// Determine initial status based on document type
-			let status: string;
+			// Determine initial verification status based on document type
+			// - Admin-generated docs (invoice) start as not_required (no verification needed)
+			// - User-uploaded docs requiring verification start as pending_verification
+			// - Service/workspace forms need to be uploaded, so start as pending_verification
+			let verificationStatus: document_verification_status_enum;
 			switch (metadata.documentType) {
 				case "invoice":
-					status = "sent";
+					// Invoices are admin-generated and don't need verification
+					verificationStatus = "not_required";
 					break;
 				case "payment_receipt":
-					status = "pending_verification";
+					// Payment receipts need admin verification
+					verificationStatus = "pending_verification";
 					break;
 				case "service_form_signed":
 				case "workspace_form_signed":
-					status = "uploaded";
+					// Signed forms need admin verification
+					verificationStatus = "pending_verification";
 					break;
 				case "sample_result":
-					status = "available";
+					// Results are admin-uploaded and don't need verification
+					verificationStatus = "not_required";
 					break;
 				default:
-					status = "uploaded";
+					verificationStatus = "pending_verification";
 			}
 
 			// Create BookingDocument record
@@ -150,7 +161,7 @@ export const fileRouter = {
 					bookingId: metadata.bookingId,
 					type: metadata.documentType as upload_document_type_enum,
 					blobId: blob.id,
-					status,
+					verificationStatus,
 					createdById: metadata.userId,
 					note: metadata.sampleTrackingId
 						? `Sample: ${metadata.sampleTrackingId}`

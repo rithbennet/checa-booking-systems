@@ -7,9 +7,20 @@
 
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import type { sample_status_enum } from "generated/prisma";
-import { Send, UploadCloud, X } from "lucide-react";
+import {
+	Download,
+	Eye,
+	Loader2,
+	Plus,
+	Send,
+	Trash2,
+	UploadCloud,
+	X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import type { SampleTrackingVM } from "@/entities/booking/model/command-center-types";
 import type { SampleStatus } from "@/entities/sample-tracking/model/types";
 import { BookingDocUploader } from "@/features/bookings/shared";
@@ -124,22 +135,73 @@ export function SampleDetailDrawer({
 	open,
 	onOpenChange,
 }: SampleDetailDrawerProps) {
+	const queryClient = useQueryClient();
 	const [status, setStatus] = useState<sample_status_enum>(
 		sample?.status ?? "pending",
 	);
 	const [note, setNote] = useState("");
+	const [showUploader, setShowUploader] = useState(false);
+	const [deletingId, setDeletingId] = useState<string | null>(null);
 	const statusMutation = useUpdateSampleStatus();
 
 	// Sync local status when sample changes
 	useEffect(() => {
 		if (sample) {
 			setStatus(sample.status);
+			setShowUploader(false);
 		}
 	}, [sample]);
 
 	if (!sample) return null;
 
 	const activityLog = buildActivityLog(sample);
+
+	const handlePreview = (filePath: string) => {
+		window.open(filePath, "_blank");
+	};
+
+	const handleDownload = async (filePath: string, fileName: string) => {
+		try {
+			const response = await fetch(filePath);
+			const blob = await response.blob();
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = fileName;
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+			document.body.removeChild(a);
+			toast.success("Download started", { description: fileName });
+		} catch {
+			toast.error("Download failed");
+		}
+	};
+
+	const handleDelete = async (resultId: string) => {
+		setDeletingId(resultId);
+		try {
+			const response = await fetch(`/api/admin/samples/results/${resultId}`, {
+				method: "DELETE",
+			});
+
+			if (!response.ok) {
+				const error = await response.json().catch(() => ({}));
+				throw new Error(error.error || "Delete failed");
+			}
+
+			toast.success("Result file deleted");
+			// Invalidate booking query to refresh the data
+			queryClient.invalidateQueries({ queryKey: ["admin", "booking"] });
+		} catch (error) {
+			toast.error("Delete failed", {
+				description:
+					error instanceof Error ? error.message : "Please try again",
+			});
+		} finally {
+			setDeletingId(null);
+		}
+	};
 
 	return (
 		<Sheet onOpenChange={onOpenChange} open={open}>
@@ -207,15 +269,31 @@ export function SampleDetailDrawer({
 						<div className="mb-3 flex items-center justify-between">
 							<h3 className="flex items-center gap-2 font-bold text-blue-900 text-sm">
 								<UploadCloud className="h-4 w-4" />
-								Analysis Result
+								Analysis Results
 							</h3>
-							<span className="rounded-full bg-blue-100 px-2 py-0.5 font-medium text-[10px] text-blue-600">
-								Required
-							</span>
+							<div className="flex items-center gap-2">
+								<span className="rounded-full bg-blue-100 px-2 py-0.5 font-medium text-[10px] text-blue-600">
+									{sample.analysisResults.length > 0
+										? `${sample.analysisResults.length} file${sample.analysisResults.length > 1 ? "s" : ""}`
+										: "Required"}
+								</span>
+								{sample.analysisResults.length > 0 && !showUploader && (
+									<Button
+										className="h-6 px-2 text-[10px]"
+										onClick={() => setShowUploader(true)}
+										size="sm"
+										variant="outline"
+									>
+										<Plus className="mr-1 h-3 w-3" />
+										Add More
+									</Button>
+								)}
+							</div>
 						</div>
 
-						{sample.analysisResults.length > 0 ? (
-							<div className="space-y-2">
+						{/* Existing Files */}
+						{sample.analysisResults.length > 0 && (
+							<div className="mb-3 space-y-2">
 								{sample.analysisResults.map((result) => (
 									<div
 										className="flex items-center gap-3 rounded border border-blue-200 bg-white p-2"
@@ -231,13 +309,75 @@ export function SampleDetailDrawer({
 												{result.uploadedBy.lastName}
 											</p>
 										</div>
+										<div className="flex items-center gap-1">
+											<Tooltip>
+												<TooltipTrigger asChild>
+													<Button
+														className="h-7 w-7"
+														onClick={() => handlePreview(result.filePath)}
+														size="icon"
+														variant="ghost"
+													>
+														<Eye className="h-3.5 w-3.5" />
+													</Button>
+												</TooltipTrigger>
+												<TooltipContent>Preview</TooltipContent>
+											</Tooltip>
+											<Tooltip>
+												<TooltipTrigger asChild>
+													<Button
+														className="h-7 w-7"
+														onClick={() =>
+															handleDownload(result.filePath, result.fileName)
+														}
+														size="icon"
+														variant="ghost"
+													>
+														<Download className="h-3.5 w-3.5" />
+													</Button>
+												</TooltipTrigger>
+												<TooltipContent>Download</TooltipContent>
+											</Tooltip>
+											<Tooltip>
+												<TooltipTrigger asChild>
+													<Button
+														className="h-7 w-7 text-red-500 hover:text-red-600"
+														disabled={deletingId === result.id}
+														onClick={() => handleDelete(result.id)}
+														size="icon"
+														variant="ghost"
+													>
+														{deletingId === result.id ? (
+															<Loader2 className="h-3.5 w-3.5 animate-spin" />
+														) : (
+															<Trash2 className="h-3.5 w-3.5" />
+														)}
+													</Button>
+												</TooltipTrigger>
+												<TooltipContent>Delete</TooltipContent>
+											</Tooltip>
+										</div>
 									</div>
 								))}
 							</div>
-						) : (
+						)}
+
+						{/* Uploader - show if no files or if showUploader is true */}
+						{(sample.analysisResults.length === 0 || showUploader) && (
 							<BookingDocUploader
+								allowMultiple
 								bookingId={bookingId}
-								label="Upload Analysis Result"
+								label={
+									sample.analysisResults.length > 0
+										? "Upload Additional Result"
+										: "Upload Analysis Result"
+								}
+								onUploaded={() => {
+									setShowUploader(false);
+									queryClient.invalidateQueries({
+										queryKey: ["admin", "booking"],
+									});
+								}}
 								sampleTrackingId={sample.id}
 								type="sample_result"
 							/>
@@ -254,8 +394,9 @@ export function SampleDetailDrawer({
 								{activityLog.map((item) => (
 									<div className="relative" key={`${item.title}-${item.date}`}>
 										<div
-											className={`-left-[21px] absolute top-1.5 h-3 w-3 rounded-full ring-4 ring-white ${item.isCurrent ? "bg-blue-500" : "bg-slate-300"
-												}`}
+											className={`-left-[21px] absolute top-1.5 h-3 w-3 rounded-full ring-4 ring-white ${
+												item.isCurrent ? "bg-blue-500" : "bg-slate-300"
+											}`}
 										/>
 										<div className="flex items-start justify-between">
 											<div>

@@ -6,6 +6,7 @@
 
 import { NextResponse } from "next/server";
 import { ZodError, type z } from "zod";
+import { notifyUserModificationRequested } from "@/entities/notification/server";
 import { CreateModificationSchema } from "@/features/bookings/admin/details/lib/modification-types";
 import {
 	badRequest,
@@ -44,6 +45,8 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 				},
 				bookingRequest: {
 					select: {
+						id: true,
+						referenceNumber: true,
 						userId: true,
 						user: {
 							select: {
@@ -93,8 +96,16 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 			},
 		});
 
-		// TODO: Send notification to customer for approval
-		// await notifyCustomerOfModification(serviceItem.bookingRequest.userId, modification.id);
+		// Send notification to customer for approval
+		await notifyUserModificationRequested({
+			userId: serviceItem.bookingRequest.userId,
+			bookingId: serviceItem.bookingRequest.id,
+			bookingReference: serviceItem.bookingRequest.referenceNumber,
+			serviceName: serviceItem.service.name,
+			originalQuantity: serviceItem.quantity,
+			newQuantity: validated.newQuantity,
+			reason: validated.reason,
+		});
 
 		return NextResponse.json({
 			id: modification.id,

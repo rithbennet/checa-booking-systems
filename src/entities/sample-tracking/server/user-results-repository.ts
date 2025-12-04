@@ -3,7 +3,10 @@
  * Data access layer for user-facing sample results with payment gate
  */
 
-import type { payment_status_enum, sample_status_enum } from "generated/prisma";
+import type {
+	document_verification_status_enum,
+	sample_status_enum,
+} from "generated/prisma";
 import { db } from "@/shared/server/db";
 
 // ==============================================================
@@ -40,26 +43,47 @@ export interface UserSampleResultsResponse {
 // ==============================================================
 
 /**
- * Check if a booking has verified payment
- * A booking is considered paid if any payment has status 'verified'
+ * Check if all required documents are verified for result download
+ * Result Gatekeeper: All documents must be verified before results can be downloaded
  */
-function checkBookingPaymentStatus(
-	serviceForms: Array<{
-		invoices: Array<{
-			payments: Array<{ status: payment_status_enum }>;
-		}>;
+function checkDocumentVerificationStatus(
+	documents: Array<{
+		type: string;
+		verificationStatus: document_verification_status_enum | null;
 	}>,
-): boolean {
-	for (const form of serviceForms) {
-		for (const invoice of form.invoices) {
-			for (const payment of invoice.payments) {
-				if (payment.status === "verified") {
-					return true;
-				}
+	hasWorkspaceService: boolean,
+): {
+	allVerified: boolean;
+	serviceFormVerified: boolean;
+	workspaceFormVerified: boolean;
+	paymentReceiptVerified: boolean;
+} {
+	let serviceFormVerified = false;
+	let workspaceFormVerified = false;
+	let paymentReceiptVerified = false;
+
+	for (const doc of documents) {
+		if (doc.verificationStatus === "verified") {
+			if (doc.type === "service_form_signed") {
+				serviceFormVerified = true;
+			} else if (doc.type === "workspace_form_signed") {
+				workspaceFormVerified = true;
+			} else if (doc.type === "payment_receipt") {
+				paymentReceiptVerified = true;
 			}
 		}
 	}
-	return false;
+
+	// Workspace form is only required if booking has workspace service
+	const workspaceFormOk = !hasWorkspaceService || workspaceFormVerified;
+
+	return {
+		allVerified:
+			serviceFormVerified && workspaceFormOk && paymentReceiptVerified,
+		serviceFormVerified,
+		workspaceFormVerified,
+		paymentReceiptVerified,
+	};
 }
 
 // ==============================================================
@@ -69,6 +93,8 @@ function checkBookingPaymentStatus(
 /**
  * Get all sample tracking records for a user with payment status
  * Sorted by updatedAt descending (most recent activity first)
+ *
+ * Result Gatekeeper: Uses document verification status to determine download eligibility
  */
 export async function getUserSampleResults(
 	userId: string,
@@ -98,18 +124,16 @@ export async function getUserSampleResults(
 						select: {
 							id: true,
 							referenceNumber: true,
-							serviceForms: {
-								include: {
-									invoices: {
-										include: {
-											payments: {
-												select: {
-													status: true,
-												},
-											},
-										},
-									},
+							// Include documents for verification check
+							bookingDocuments: {
+								select: {
+									type: true,
+									verificationStatus: true,
 								},
+							},
+							// Include workspace bookings to check if workspace form is required
+							workspaceBookings: {
+								select: { id: true },
 							},
 						},
 					},
@@ -133,7 +157,18 @@ export async function getUserSampleResults(
 	// Map to VMs
 	const items: UserSampleResultVM[] = samples.map((sample) => {
 		const booking = sample.bookingServiceItem.bookingRequest;
-		const isPaid = checkBookingPaymentStatus(booking.serviceForms);
+
+		// Check if booking has workspace service
+		const hasWorkspaceService = booking.workspaceBookings.length > 0;
+
+		// Result Gatekeeper: Check document verification status
+		const verificationStatus = checkDocumentVerificationStatus(
+			booking.bookingDocuments,
+			hasWorkspaceService,
+		);
+
+		// Results are unlocked when all required documents are verified
+		const isPaid = verificationStatus.allVerified;
 
 		return {
 			id: sample.id,
@@ -161,8 +196,13 @@ export async function getUserSampleResults(
 }
 
 /**
- * Get a single analysis result with payment verification
+ * Get a single analysis result with document verification check
  * Returns null if not found or user doesn't own the booking
+ *
+ * Result Gatekeeper Logic:
+ * - All required documents must be verified before results can be downloaded
+ * - Required: service_form_signed, payment_receipt
+ * - Required if workspace service: workspace_form_signed
  */
 export async function getAnalysisResultWithPaymentCheck(
 	resultId: string,
@@ -175,6 +215,12 @@ export async function getAnalysisResultWithPaymentCheck(
 		fileType: string;
 	};
 	isPaid: boolean;
+	verificationDetails?: {
+		serviceFormVerified: boolean;
+		workspaceFormVerified: boolean;
+		paymentReceiptVerified: boolean;
+		requiresWorkspaceForm: boolean;
+	};
 } | null> {
 	const analysisResult = await db.analysisResult.findUnique({
 		where: { id: resultId },
@@ -187,16 +233,16 @@ export async function getAnalysisResultWithPaymentCheck(
 								select: {
 									id: true,
 									userId: true,
-									serviceForms: {
-										include: {
-											invoices: {
-												include: {
-													payments: {
-														select: { status: true },
-													},
-												},
-											},
+									// Include documents for verification check
+									bookingDocuments: {
+										select: {
+											type: true,
+											verificationStatus: true,
 										},
+									},
+									// Include workspace bookings to check if workspace form is required
+									workspaceBookings: {
+										select: { id: true },
 									},
 								},
 							},
@@ -219,7 +265,17 @@ export async function getAnalysisResultWithPaymentCheck(
 		return null;
 	}
 
-	const isPaid = checkBookingPaymentStatus(booking.serviceForms);
+	// Check if booking has workspace service
+	const hasWorkspaceService = booking.workspaceBookings.length > 0;
+
+	// Result Gatekeeper: Check document verification status
+	const verificationStatus = checkDocumentVerificationStatus(
+		booking.bookingDocuments,
+		hasWorkspaceService,
+	);
+
+	// Results are unlocked when all required documents are verified
+	const isPaid = verificationStatus.allVerified;
 
 	return {
 		result: {
@@ -229,5 +285,11 @@ export async function getAnalysisResultWithPaymentCheck(
 			fileType: analysisResult.fileType,
 		},
 		isPaid,
+		verificationDetails: {
+			serviceFormVerified: verificationStatus.serviceFormVerified,
+			workspaceFormVerified: verificationStatus.workspaceFormVerified,
+			paymentReceiptVerified: verificationStatus.paymentReceiptVerified,
+			requiresWorkspaceForm: hasWorkspaceService,
+		},
 	};
 }

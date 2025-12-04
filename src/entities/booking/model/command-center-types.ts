@@ -140,6 +140,8 @@ export interface ServiceFormVM {
 	workingAreaAgreementUnsignedPdfPath: string | null;
 	workingAreaAgreementSignedPdfPath: string | null;
 	generatedAt: string;
+	signedFormsUploadedAt: string | null;
+	signedFormsUploadedBy: string | null;
 	invoices: InvoiceVM[];
 }
 

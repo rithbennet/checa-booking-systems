@@ -2,12 +2,14 @@
 
 /**
  * Result Action Cell Component
- * Handles the download gating logic based on payment status and analysis completion
+ * Handles the download gating logic based on document verification and analysis completion
  *
- * Logic Tree:
+ * Result Gatekeeper Logic Tree:
  * A) Analysis Not Complete → Disabled "Processing" button with spinner
- * B) Complete BUT Unpaid → Disabled "Locked" button with lock icon & tooltip
- * C) Complete AND Paid → Active "Download" button(s)
+ * B) Complete BUT Documents Not Verified → Disabled "Locked" button with lock icon & tooltip
+ *    - Required: signed service form, verified payment receipt
+ *    - Required if workspace service: signed workspace form
+ * C) Complete AND All Documents Verified → Active "Download" button(s)
  */
 
 import { Download, ExternalLink, Loader2, Lock } from "lucide-react";
@@ -93,7 +95,7 @@ export function ResultActionCell({ sample }: ResultActionCellProps) {
 		);
 	}
 
-	// Scenario B: Complete BUT Unpaid (locked)
+	// Scenario B: Complete BUT Not Verified (locked - documents pending verification)
 	if (!isPaid) {
 		return (
 			<div className="flex items-center justify-end gap-2">
@@ -111,7 +113,8 @@ export function ResultActionCell({ sample }: ResultActionCellProps) {
 					</TooltipTrigger>
 					<TooltipContent className="max-w-xs">
 						<p>
-							Please verify payment in the Financials tab to unlock this result.
+							Results are locked until all documents are verified. Please check
+							your booking details to view verification status.
 						</p>
 					</TooltipContent>
 				</Tooltip>
