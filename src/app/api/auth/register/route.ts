@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
+import { sendUserWelcomeVerification } from "@/entities/notification/server";
+import { env } from "@/env";
 import { auth } from "@/shared/server/better-auth/config";
 import { db } from "@/shared/server/db";
 
 /**
  * Register a new user:
- * - creates a Better Auth user
- * - creates an application User record
+ * - creates a Better Auth user (unverified)
+ * - creates an application User record (pending status)
+ * - sends verification email
  */
 export async function POST(request: Request) {
 	let body: Record<string, unknown> | undefined;
@@ -28,7 +31,7 @@ export async function POST(request: Request) {
 			);
 		}
 
-		// 1. Create Better Auth user
+		// 1. Create Better Auth user (email will NOT be verified yet)
 		const signUpResult = await auth.api.signUpEmail({
 			body: {
 				email,
@@ -45,13 +48,7 @@ export async function POST(request: Request) {
 			);
 		}
 
-		// 2. Mark email as verified
-		await db.betterAuthUser.update({
-			where: { email },
-			data: { emailVerified: true },
-		});
-
-		// 3. Create our User record
+		// 2. Create our User record (with pending status, NOT verified)
 		await db.user.create({
 			data: {
 				email,
@@ -62,15 +59,35 @@ export async function POST(request: Request) {
 					| "external_member"
 					| "lab_administrator",
 				status: "pending", // New users start as pending
-				emailVerifiedAt: new Date(),
+				// Do NOT set emailVerifiedAt yet
 				authUser: {
 					connect: { email },
 				},
 			},
 		});
 
+		// 3. Generate verification token and send email
+		const verificationToken = await db.betterAuthVerification.create({
+			data: {
+				identifier: email,
+				value: crypto.randomUUID(), // Generate unique token
+				expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+				userId: signUpResult.user.id,
+			},
+		});
+
+		const verificationUrl = `${env.BETTER_AUTH_URL}/api/auth/verify-email?token=${verificationToken.value}&email=${encodeURIComponent(email)}`;
+
+		// Send welcome verification email
+		await sendUserWelcomeVerification({
+			email,
+			name: `${firstName} ${lastName}`,
+			verificationUrl,
+		});
+
 		return NextResponse.json({
-			message: "Account created successfully. Please wait for admin approval.",
+			message:
+				"Account created successfully. Please check your email to verify your account.",
 		});
 	} catch (error) {
 		console.error("Registration error:", error);

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { notifyAdminsNewUserRegistered } from "@/entities/notification/server";
 import { getSession } from "@/shared/server/better-auth/server";
 import { db } from "@/shared/server/db";
 
@@ -76,6 +77,22 @@ export async function POST(request: Request) {
 			await db.betterAuthUser.update({
 				where: { id: authUserId },
 				data: { name: fullName },
+			});
+		}
+
+		// Notify admins of new OAuth user registration
+		const admins = await db.user.findMany({
+			where: { userType: "lab_administrator", status: "active" },
+			select: { id: true },
+		});
+
+		if (admins.length > 0) {
+			await notifyAdminsNewUserRegistered({
+				adminIds: admins.map((a) => a.id),
+				userId: newUser.id,
+				userName: fullName,
+				userEmail: email,
+				userType: userType as string,
 			});
 		}
 

@@ -133,6 +133,7 @@ export function BookingCommandCenter({ booking }: BookingCommandCenterProps) {
 
 			{/* Sample Detail Drawer */}
 			<SampleDetailDrawer
+				bookingId={booking.id}
 				onOpenChange={setDrawerOpen}
 				open={drawerOpen}
 				sample={selectedSample}

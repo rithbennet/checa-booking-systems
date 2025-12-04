@@ -1,3 +1,4 @@
+import { notifyUserAccountApproved } from "@/entities/notification/server";
 import { approveUser } from "@/entities/user/server/user-repository";
 import {
 	createProtectedHandler,
@@ -22,6 +23,9 @@ export const POST = createProtectedHandler(
 			}
 
 			await approveUser(userId, user.id);
+
+			// Send approval notification to user
+			await notifyUserAccountApproved({ userId });
 
 			return Response.json({ success: true, message: "User approved" });
 		} catch (error) {

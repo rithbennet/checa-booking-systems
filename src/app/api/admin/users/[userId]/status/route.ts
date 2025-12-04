@@ -1,3 +1,4 @@
+import { notifyUserAccountStatusChanged } from "@/entities/notification/server";
 import { updateUserStatus } from "@/entities/user/server/user-repository";
 import {
 	createProtectedHandler,
@@ -22,7 +23,7 @@ export const PATCH = createProtectedHandler(
 			}
 
 			const body = await request.json();
-			const { status } = body;
+			const { status, reason } = body;
 
 			if (!["active", "inactive", "suspended"].includes(status)) {
 				return Response.json(
@@ -32,6 +33,15 @@ export const PATCH = createProtectedHandler(
 			}
 
 			await updateUserStatus(userId, status);
+
+			// Send notification for inactive or suspended status
+			if (status === "inactive" || status === "suspended") {
+				await notifyUserAccountStatusChanged({
+					userId,
+					status,
+					reason,
+				});
+			}
 
 			return Response.json({
 				success: true,

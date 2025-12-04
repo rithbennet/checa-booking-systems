@@ -8,6 +8,7 @@ import type {
 	payment_method_enum,
 	payment_status_enum,
 } from "generated/prisma";
+import { notifyPaymentVerified } from "@/entities/notification/server/finance.notifications";
 import { db } from "@/shared/server/db";
 import type {
 	PaymentHistoryVM,
@@ -416,6 +417,23 @@ export async function verifyPayment(params: {
 				emailSent: false,
 			},
 		});
+
+		// Send email notification (outside transaction to not block)
+		setTimeout(async () => {
+			try {
+				await notifyPaymentVerified({
+					userId: booking.userId,
+					paymentId,
+					invoiceNumber: payment.invoice.invoiceNumber,
+					amount: `RM ${payment.amount}`,
+					paymentDate: payment.paymentDate.toISOString().split("T")[0] ?? "",
+					bookingReference: booking.referenceNumber,
+					bookingId: booking.id,
+				});
+			} catch (emailErr) {
+				console.error("[Payment] Failed to send verification email:", emailErr);
+			}
+		}, 0);
 
 		// Create audit log
 		await tx.auditLog.create({

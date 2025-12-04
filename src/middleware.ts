@@ -17,11 +17,17 @@ export function middleware(req: NextRequest) {
 	const baseHeaders = new Headers();
 	baseHeaders.set("X-Content-Type-Options", "nosniff");
 	baseHeaders.set("X-Frame-Options", "DENY");
-	baseHeaders.set("Referrer-Policy", "strict-origin-when-cross-origin");
+	baseHeaders.set("Referrer-Policy", "strict-origin-when	-cross-origin");
 
 	// Enforce CSRF for state-changing API requests
-	// Skip CSRF check for Better Auth routes - they handle their own CSRF protection
-	if (pathname.startsWith("/api/") && !pathname.startsWith("/api/auth/")) {
+	// Skip CSRF check for:
+	// - Better Auth routes - they handle their own CSRF protection
+	// - UploadThing routes - they handle security via HMAC signatures
+	if (
+		pathname.startsWith("/api/") &&
+		!pathname.startsWith("/api/auth/") &&
+		!pathname.startsWith("/api/uploadthing")
+	) {
 		const method = req.method?.toUpperCase() ?? "GET";
 		const stateChanging = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
 

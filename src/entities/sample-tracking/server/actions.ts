@@ -4,6 +4,7 @@
  */
 
 import type { sample_status_enum } from "generated/prisma";
+import { notifySampleStatusChanged } from "@/entities/notification/server/sample.notifications";
 import { mapSampleToOperationsRow } from "../lib/mappers";
 import * as repo from "./repository";
 
@@ -72,14 +73,29 @@ export async function listSamples(params: {
 }
 
 /**
+ * Statuses that trigger notifications to the user
+ */
+const NOTIFIABLE_STATUSES = [
+	"received",
+	"in_analysis",
+	"analysis_complete",
+	"return_requested",
+	"returned",
+] as const;
+
+type NotifiableStatus = (typeof NOTIFIABLE_STATUSES)[number];
+
+/**
  * Update sample status
+ * Sends notification to user for status changes
  */
 export async function updateSampleStatus(params: {
 	sampleId: string;
 	status: sample_status_enum;
 	updatedBy: string;
+	notes?: string;
 }) {
-	const { sampleId, status, updatedBy } = params;
+	const { sampleId, status, updatedBy, notes } = params;
 
 	// Verify sample exists
 	const existing = await repo.findSampleById(sampleId);
@@ -88,7 +104,39 @@ export async function updateSampleStatus(params: {
 	}
 
 	// Update status
-	const updated = await repo.updateSampleStatus(sampleId, status, updatedBy);
+	const updated = await repo.updateSampleStatusWithNotificationData(
+		sampleId,
+		status,
+		updatedBy,
+	);
+
+	// Send notification to user for relevant status changes
+	// This is done AFTER the DB commit (not in transaction) to ensure data consistency
+	// Type guard to check if status is notifiable
+	const isNotifiableStatus = (s: sample_status_enum): s is NotifiableStatus => {
+		return (NOTIFIABLE_STATUSES as readonly string[]).includes(s);
+	};
+
+	if (isNotifiableStatus(status)) {
+		try {
+			await notifySampleStatusChanged({
+				userId: updated.bookingServiceItem.bookingRequest.userId,
+				sampleId: updated.id,
+				sampleIdentifier: updated.sampleIdentifier,
+				serviceName: updated.bookingServiceItem.service.name,
+				bookingReference:
+					updated.bookingServiceItem.bookingRequest.referenceNumber,
+				status,
+				notes,
+			});
+		} catch (notifyError) {
+			// Log but don't fail the request - notification is non-critical
+			console.error(
+				"[SampleTracking] Failed to send notification:",
+				notifyError,
+			);
+		}
+	}
 
 	return mapSampleToOperationsRow(updated);
 }

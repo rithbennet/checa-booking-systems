@@ -18,14 +18,21 @@ import {
 	FileCheck,
 	FilePlus,
 	FileText,
+	Loader2,
 	Lock,
 	Plus,
 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import type {
 	BookingCommandCenterVM,
 	InvoiceVM,
 } from "@/entities/booking/model/command-center-types";
+import { useGenerateForms } from "@/entities/service-form";
+import {
+	BookingDocUploader,
+	BookingDocumentsList,
+} from "@/features/bookings/shared";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import { Checkbox } from "@/shared/ui/shadcn/checkbox";
@@ -120,25 +127,61 @@ function TimelineWidget({ booking }: { booking: BookingCommandCenterVM }) {
 
 // Document Vault Component
 function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
+	const [showInvoiceUpload, setShowInvoiceUpload] = useState(false);
+	const generateForms = useGenerateForms();
+
 	// Get all documents from service forms
 	const serviceForms = booking.serviceForms;
 	const invoices = serviceForms.flatMap((f) => f.invoices);
+	const hasServiceForm = serviceForms.length > 0;
+
+	// Can generate if booking is approved and no forms exist
+	const canGenerateForms = booking.status === "approved" && !hasServiceForm;
+
+	const handleGenerateForms = () => {
+		generateForms.mutate(booking.id, {
+			onSuccess: (data) => {
+				toast.success("Forms generated successfully", {
+					description: `Form ${data.serviceForm.formNumber} is now ready for the customer to download and sign.`,
+				});
+			},
+			onError: (error) => {
+				toast.error("Failed to generate forms", {
+					description:
+						error instanceof Error ? error.message : "Unknown error occurred",
+				});
+			},
+		});
+	};
 
 	return (
 		<div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 			<div className="flex items-center justify-between border-slate-100 border-b bg-slate-50/50 p-4">
 				<h3 className="font-bold text-slate-900 text-sm">Documents</h3>
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<button className="cursor-not-allowed text-slate-300" type="button">
-							<Plus className="h-4 w-4" />
-						</button>
-					</TooltipTrigger>
-					<TooltipContent>
-						<p>Add documents coming soon</p>
-					</TooltipContent>
-				</Tooltip>
+				<button
+					className="text-blue-600 hover:text-blue-800"
+					onClick={() => setShowInvoiceUpload(!showInvoiceUpload)}
+					type="button"
+				>
+					<Plus className="h-4 w-4" />
+				</button>
 			</div>
+
+			{/* Invoice Upload Section (collapsible) */}
+			{showInvoiceUpload && (
+				<div className="border-slate-100 border-b bg-blue-50/50 p-4">
+					<p className="mb-2 font-medium text-blue-800 text-xs">
+						Upload Invoice PDF
+					</p>
+					<BookingDocUploader
+						bookingId={booking.id}
+						compact
+						label="Upload Invoice"
+						onUploaded={() => setShowInvoiceUpload(false)}
+						type="invoice"
+					/>
+				</div>
+			)}
 
 			{/* Client Uploads Section */}
 			<div className="space-y-2 p-4">
@@ -146,6 +189,19 @@ function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
 					Client Uploads
 				</p>
 
+				{/* Show uploaded documents from new system */}
+				<BookingDocumentsList
+					bookingId={booking.id}
+					filterTypes={[
+						"service_form_signed",
+						"workspace_form_signed",
+						"payment_receipt",
+					]}
+					showEmptyState={false}
+					showUploader
+				/>
+
+				{/* Legacy: Show service forms with signed paths */}
 				{serviceForms
 					.filter((f) => f.serviceFormSignedPdfPath)
 					.map((form) => (
@@ -171,7 +227,9 @@ function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
 					))}
 
 				{serviceForms.filter((f) => f.serviceFormSignedPdfPath).length ===
-					0 && <p className="text-slate-400 text-xs italic">No uploads yet</p>}
+					0 && (
+						<p className="text-slate-400 text-xs italic">No client uploads yet</p>
+					)}
 			</div>
 
 			{/* Admin / System Generated Documents */}
@@ -180,27 +238,60 @@ function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
 					Admin / System
 				</p>
 				<div className="space-y-2">
-					{/* Invoices */}
+					{/* Show uploaded invoices from new system */}
+					<BookingDocumentsList
+						bookingId={booking.id}
+						filterTypes={["invoice"]}
+						showEmptyState={false}
+						showUploader
+					/>
+
+					{/* Legacy Invoices */}
 					{invoices.map((invoice) => (
 						<InvoiceDocumentRow invoice={invoice} key={invoice.id} />
 					))}
 
 					{/* Generate Service Form Button */}
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<Button
-								className="flex h-auto w-full cursor-not-allowed items-center justify-center gap-2 rounded border border-slate-300 bg-white py-2 font-medium text-slate-400 text-xs shadow-sm"
-								disabled
-								variant="outline"
-							>
-								<FilePlus className="h-3.5 w-3.5" />
-								Generate Service Form
-							</Button>
-						</TooltipTrigger>
-						<TooltipContent>
-							<p>Service form generation coming soon</p>
-						</TooltipContent>
-					</Tooltip>
+					{hasServiceForm ? (
+						<div className="flex items-center gap-2 rounded border border-green-200 bg-green-50 p-2 text-green-700 text-xs">
+							<FileCheck className="h-3.5 w-3.5" />
+							<span>
+								Service form generated ({serviceForms[0]?.formNumber})
+							</span>
+						</div>
+					) : (
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									className="flex h-auto w-full items-center justify-center gap-2 rounded border border-slate-300 bg-white py-2 font-medium text-xs shadow-sm"
+									disabled={!canGenerateForms || generateForms.isPending}
+									onClick={handleGenerateForms}
+									variant="outline"
+								>
+									{generateForms.isPending ? (
+										<>
+											<Loader2 className="h-3.5 w-3.5 animate-spin" />
+											Generating...
+										</>
+									) : (
+										<>
+											<FilePlus className="h-3.5 w-3.5" />
+											Generate Service Form
+										</>
+									)}
+								</Button>
+							</TooltipTrigger>
+							{!canGenerateForms && (
+								<TooltipContent>
+									<p>
+										{booking.status !== "approved"
+											? "Booking must be approved first"
+											: "Forms already generated"}
+									</p>
+								</TooltipContent>
+							)}
+						</Tooltip>
+					)}
 				</div>
 			</div>
 		</div>

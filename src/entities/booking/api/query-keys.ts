@@ -1,5 +1,6 @@
 export const bookingKeys = {
 	all: ["bookings"] as const,
+	detail: (id: string) => [...bookingKeys.all, "detail", id] as const,
 	adminList: (params: Record<string, unknown>) =>
 		[...bookingKeys.all, "admin", "list", params] as const,
 	adminDetail: (id: string) =>

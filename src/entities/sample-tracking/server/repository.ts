@@ -235,6 +235,62 @@ export async function updateSampleStatus(
 }
 
 /**
+ * Update sample status with full data needed for notifications
+ * Returns userId and referenceNumber for sending notifications
+ */
+export async function updateSampleStatusWithNotificationData(
+	sampleId: string,
+	status: sample_status_enum,
+	updatedBy: string,
+) {
+	const updateData: Prisma.SampleTrackingUpdateInput = {
+		status,
+		...(updatedBy ? { updatedBy } : {}),
+	};
+
+	// Set timestamp fields based on status
+	const now = new Date();
+	if (status === "received") {
+		updateData.receivedAt = now;
+	} else if (status === "in_analysis") {
+		updateData.analysisStartAt = now;
+	} else if (status === "analysis_complete") {
+		updateData.analysisCompleteAt = now;
+	} else if (status === "return_requested") {
+		updateData.returnRequestedAt = now;
+	} else if (status === "returned") {
+		updateData.returnedAt = now;
+	}
+
+	return db.sampleTracking.update({
+		where: { id: sampleId },
+		data: updateData,
+		include: {
+			bookingServiceItem: {
+				include: {
+					bookingRequest: {
+						include: {
+							user: {
+								select: {
+									firstName: true,
+									lastName: true,
+									userType: true,
+								},
+							},
+						},
+					},
+					service: {
+						select: {
+							name: true,
+						},
+					},
+				},
+			},
+		},
+	});
+}
+
+/**
  * Find sample by ID with full includes
  */
 export async function findSampleById(sampleId: string) {

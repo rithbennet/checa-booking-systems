@@ -9,3 +9,4 @@ export * from "./finance.notifications";
 export * from "./form.notifications";
 export * from "./sample.notifications";
 export * from "./templates";
+export * from "./user.notifications";

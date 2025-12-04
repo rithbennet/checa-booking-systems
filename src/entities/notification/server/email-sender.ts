@@ -1,17 +1,30 @@
 /**
  * Email Sender Service
  * Handles sending emails via Resend with React Email templates
+ *
+ * Features:
+ * - Centralized safeSendEmail wrapper with retry logic
+ * - No-op when RESEND_API_KEY is missing (with clear logging)
+ * - Email redirect for staging/testing environments
+ * - Structured logging for observability
+ * - Exponential backoff retry on failures
  */
 
+import type React from "react";
 import { env } from "@/env";
 import {
+	getEmailRedirectTo,
 	getFromEmail,
 	getReplyToEmail,
 	isEmailEnabled,
 	resend,
+	shouldRedirectEmails,
 } from "@/shared/server/email";
 import {
+	AccountRejectedEmail,
+	AccountSuspendedEmail,
 	AccountVerifiedEmail,
+	AdminNewUserRegisteredEmail,
 	AdminNotificationEmail,
 	BookingApprovedEmail,
 	BookingRejectedEmail,
@@ -22,7 +35,33 @@ import {
 	ResultsAvailableEmail,
 	SampleStatusUpdateEmail,
 	ServiceFormReadyEmail,
+	WelcomeVerificationEmail,
 } from "./email-templates";
+
+// ============================================
+// Types
+// ============================================
+
+export interface EmailResult {
+	success: boolean;
+	error?: string;
+	messageId?: string;
+}
+
+export interface EmailLogContext {
+	template: string;
+	userId?: string;
+	entityId?: string;
+	entityType?: string;
+	originalRecipient?: string;
+}
+
+// ============================================
+// Configuration
+// ============================================
+
+const MAX_RETRIES = 3;
+const INITIAL_RETRY_DELAY_MS = 1000;
 
 /**
  * Get the base URL for dashboard links
@@ -31,43 +70,161 @@ function getBaseUrl(): string {
 	return env.BETTER_AUTH_URL || "http://localhost:3000";
 }
 
+// ============================================
+// Core Email Functions
+// ============================================
+
 /**
- * Send email with error handling
+ * Sleep for a given number of milliseconds
  */
-async function sendEmail(params: {
+function sleep(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Structured logger for email events
+ */
+function logEmailEvent(
+	level: "info" | "warn" | "error",
+	event: string,
+	context: EmailLogContext & Record<string, unknown>,
+): void {
+	const timestamp = new Date().toISOString();
+	const logData = {
+		timestamp,
+		event: `email-${event}`,
+		...context,
+	};
+
+	switch (level) {
+		case "info":
+			console.log("[Email]", JSON.stringify(logData));
+			break;
+		case "warn":
+			console.warn("[Email]", JSON.stringify(logData));
+			break;
+		case "error":
+			console.error("[Email]", JSON.stringify(logData));
+			break;
+	}
+}
+
+/**
+ * Safe email sender with retry logic and comprehensive error handling
+ *
+ * Features:
+ * - No-ops gracefully when email is disabled
+ * - Redirects emails in staging environments
+ * - Retries with exponential backoff on transient failures
+ * - Structured logging for all operations
+ */
+export async function safeSendEmail(params: {
 	to: string | string[];
 	subject: string;
 	react: React.ReactElement;
-}): Promise<{ success: boolean; error?: string }> {
+	context: EmailLogContext;
+}): Promise<EmailResult> {
+	const { to, subject, react, context } = params;
+
+	// Check if email is enabled
 	if (!isEmailEnabled() || !resend) {
-		console.log(
-			"[Email] Resend not configured, skipping email:",
-			params.subject,
-		);
+		logEmailEvent("info", "skipped", {
+			...context,
+			subject,
+			reason: "email_disabled",
+			originalRecipient: Array.isArray(to) ? to.join(", ") : to,
+		});
 		return { success: true }; // Silently succeed when not configured
 	}
 
-	try {
-		const { error } = await resend.emails.send({
-			from: getFromEmail(),
-			replyTo: getReplyToEmail(),
-			to: params.to,
-			subject: params.subject,
-			react: params.react,
-		});
+	// Determine final recipient (with redirect support for staging)
+	let finalRecipient = to;
+	const originalRecipient = Array.isArray(to) ? to.join(", ") : to;
 
-		if (error) {
-			console.error("[Email] Failed to send:", error);
-			return { success: false, error: error.message };
+	if (shouldRedirectEmails()) {
+		const redirectTo = getEmailRedirectTo();
+		if (redirectTo) {
+			finalRecipient = redirectTo;
+			logEmailEvent("info", "redirected", {
+				...context,
+				subject,
+				originalRecipient,
+				redirectedTo: redirectTo,
+			});
 		}
-
-		console.log("[Email] Sent successfully:", params.subject);
-		return { success: true };
-	} catch (err) {
-		const errorMessage = err instanceof Error ? err.message : "Unknown error";
-		console.error("[Email] Error sending email:", errorMessage);
-		return { success: false, error: errorMessage };
 	}
+
+	// Retry loop with exponential backoff
+	let lastError: string | undefined;
+
+	for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+		try {
+			const { data, error } = await resend.emails.send({
+				from: getFromEmail(),
+				replyTo: getReplyToEmail(),
+				to: finalRecipient,
+				subject,
+				react,
+			});
+
+			if (error) {
+				lastError = error.message;
+				logEmailEvent("warn", "api-error", {
+					...context,
+					subject,
+					attempt,
+					error: error.message,
+					originalRecipient,
+				});
+
+				// If it's the last attempt, don't retry
+				if (attempt === MAX_RETRIES) break;
+
+				// Wait before retrying with exponential backoff
+				const delay = INITIAL_RETRY_DELAY_MS * 2 ** (attempt - 1);
+				await sleep(delay);
+				continue;
+			}
+
+			// Success!
+			logEmailEvent("info", "sent", {
+				...context,
+				subject,
+				originalRecipient,
+				messageId: data?.id,
+				attempt,
+			});
+
+			return { success: true, messageId: data?.id };
+		} catch (err) {
+			lastError = err instanceof Error ? err.message : "Unknown error";
+			logEmailEvent("error", "exception", {
+				...context,
+				subject,
+				attempt,
+				error: lastError,
+				originalRecipient,
+			});
+
+			// If it's the last attempt, don't retry
+			if (attempt === MAX_RETRIES) break;
+
+			// Wait before retrying with exponential backoff
+			const delay = INITIAL_RETRY_DELAY_MS * 2 ** (attempt - 1);
+			await sleep(delay);
+		}
+	}
+
+	// All retries exhausted
+	logEmailEvent("error", "failed", {
+		...context,
+		subject,
+		error: lastError,
+		originalRecipient,
+		maxRetriesExhausted: true,
+	});
+
+	return { success: false, error: lastError };
 }
 
 // ============================================
@@ -79,9 +236,11 @@ export async function sendBookingSubmittedEmail(params: {
 	customerName: string;
 	referenceNumber: string;
 	status: "pending_approval" | "pending_user_verification";
+	bookingId?: string;
+	userId?: string;
 }) {
 	const dashboardUrl = `${getBaseUrl()}/bookings`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `Booking Submitted - ${params.referenceNumber}`,
 		react: BookingSubmittedEmail({
@@ -90,6 +249,12 @@ export async function sendBookingSubmittedEmail(params: {
 			status: params.status,
 			dashboardUrl,
 		}),
+		context: {
+			template: "BookingSubmitted",
+			entityType: "booking",
+			entityId: params.bookingId,
+			userId: params.userId,
+		},
 	});
 }
 
@@ -98,9 +263,10 @@ export async function sendBookingApprovedEmail(params: {
 	customerName: string;
 	referenceNumber: string;
 	bookingId: string;
+	userId?: string;
 }) {
 	const dashboardUrl = `${getBaseUrl()}/bookings/${params.bookingId}`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `Booking Approved - ${params.referenceNumber}`,
 		react: BookingApprovedEmail({
@@ -108,6 +274,12 @@ export async function sendBookingApprovedEmail(params: {
 			referenceNumber: params.referenceNumber,
 			dashboardUrl,
 		}),
+		context: {
+			template: "BookingApproved",
+			entityType: "booking",
+			entityId: params.bookingId,
+			userId: params.userId,
+		},
 	});
 }
 
@@ -117,9 +289,10 @@ export async function sendBookingRejectedEmail(params: {
 	referenceNumber: string;
 	reason: string;
 	bookingId: string;
+	userId?: string;
 }) {
 	const dashboardUrl = `${getBaseUrl()}/bookings/${params.bookingId}`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `Booking Rejected - ${params.referenceNumber}`,
 		react: BookingRejectedEmail({
@@ -128,6 +301,12 @@ export async function sendBookingRejectedEmail(params: {
 			reason: params.reason,
 			dashboardUrl,
 		}),
+		context: {
+			template: "BookingRejected",
+			entityType: "booking",
+			entityId: params.bookingId,
+			userId: params.userId,
+		},
 	});
 }
 
@@ -137,9 +316,10 @@ export async function sendBookingRevisionRequestedEmail(params: {
 	referenceNumber: string;
 	adminNotes: string;
 	bookingId: string;
+	userId?: string;
 }) {
 	const editUrl = `${getBaseUrl()}/bookings/${params.bookingId}/edit`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `Action Required: Booking ${params.referenceNumber} Needs Revision`,
 		react: BookingRevisionRequestedEmail({
@@ -148,6 +328,12 @@ export async function sendBookingRevisionRequestedEmail(params: {
 			adminNotes: params.adminNotes,
 			editUrl,
 		}),
+		context: {
+			template: "BookingRevisionRequested",
+			entityType: "booking",
+			entityId: params.bookingId,
+			userId: params.userId,
+		},
 	});
 }
 
@@ -158,15 +344,21 @@ export async function sendBookingRevisionRequestedEmail(params: {
 export async function sendAccountVerifiedEmail(params: {
 	to: string;
 	customerName: string;
+	userId?: string;
 }) {
 	const dashboardUrl = `${getBaseUrl()}/dashboard`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: "Your ChECA Lab Account Has Been Verified",
 		react: AccountVerifiedEmail({
 			customerName: params.customerName,
 			dashboardUrl,
 		}),
+		context: {
+			template: "AccountVerified",
+			entityType: "user",
+			userId: params.userId,
+		},
 	});
 }
 
@@ -187,9 +379,11 @@ export async function sendSampleStatusUpdateEmail(params: {
 		| "returned";
 	bookingReference: string;
 	notes?: string;
+	sampleId?: string;
+	userId?: string;
 }) {
 	const dashboardUrl = `${getBaseUrl()}/samples`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `Sample Update: ${params.sampleIdentifier} - ${params.status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}`,
 		react: SampleStatusUpdateEmail({
@@ -201,6 +395,12 @@ export async function sendSampleStatusUpdateEmail(params: {
 			notes: params.notes,
 			dashboardUrl,
 		}),
+		context: {
+			template: "SampleStatusUpdate",
+			entityType: "sample",
+			entityId: params.sampleId,
+			userId: params.userId,
+		},
 	});
 }
 
@@ -216,9 +416,11 @@ export async function sendInvoiceUploadedEmail(params: {
 	dueDate: string;
 	bookingReference: string;
 	bookingId: string;
+	invoiceId?: string;
+	userId?: string;
 }) {
 	const dashboardUrl = `${getBaseUrl()}/bookings/${params.bookingId}`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `Invoice Ready - ${params.invoiceNumber}`,
 		react: InvoiceUploadedEmail({
@@ -229,6 +431,12 @@ export async function sendInvoiceUploadedEmail(params: {
 			bookingReference: params.bookingReference,
 			dashboardUrl,
 		}),
+		context: {
+			template: "InvoiceUploaded",
+			entityType: "invoice",
+			entityId: params.invoiceId ?? params.bookingId,
+			userId: params.userId,
+		},
 	});
 }
 
@@ -240,9 +448,11 @@ export async function sendPaymentVerifiedEmail(params: {
 	paymentDate: string;
 	bookingReference: string;
 	bookingId: string;
+	paymentId?: string;
+	userId?: string;
 }) {
 	const dashboardUrl = `${getBaseUrl()}/bookings/${params.bookingId}`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `Payment Verified - ${params.invoiceNumber}`,
 		react: PaymentVerifiedEmail({
@@ -253,6 +463,12 @@ export async function sendPaymentVerifiedEmail(params: {
 			bookingReference: params.bookingReference,
 			dashboardUrl,
 		}),
+		context: {
+			template: "PaymentVerified",
+			entityType: "payment",
+			entityId: params.paymentId ?? params.bookingId,
+			userId: params.userId,
+		},
 	});
 }
 
@@ -268,9 +484,11 @@ export async function sendServiceFormReadyEmail(params: {
 	validUntil: string;
 	requiresWorkingAreaAgreement: boolean;
 	bookingId: string;
+	formId?: string;
+	userId?: string;
 }) {
 	const dashboardUrl = `${getBaseUrl()}/bookings/${params.bookingId}`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `Service Form Ready - ${params.formNumber}`,
 		react: ServiceFormReadyEmail({
@@ -281,6 +499,12 @@ export async function sendServiceFormReadyEmail(params: {
 			requiresWorkingAreaAgreement: params.requiresWorkingAreaAgreement,
 			dashboardUrl,
 		}),
+		context: {
+			template: "ServiceFormReady",
+			entityType: "serviceForm",
+			entityId: params.formId ?? params.bookingId,
+			userId: params.userId,
+		},
 	});
 }
 
@@ -295,9 +519,11 @@ export async function sendResultsAvailableEmail(params: {
 	serviceName: string;
 	bookingReference: string;
 	bookingId: string;
+	sampleId?: string;
+	userId?: string;
 }) {
 	const dashboardUrl = `${getBaseUrl()}/bookings/${params.bookingId}`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `Results Available - ${params.sampleIdentifier}`,
 		react: ResultsAvailableEmail({
@@ -307,6 +533,12 @@ export async function sendResultsAvailableEmail(params: {
 			bookingReference: params.bookingReference,
 			dashboardUrl,
 		}),
+		context: {
+			template: "ResultsAvailable",
+			entityType: "sample",
+			entityId: params.sampleId ?? params.bookingId,
+			userId: params.userId,
+		},
 	});
 }
 
@@ -320,9 +552,10 @@ export async function sendAdminNewBookingEmail(params: {
 	referenceNumber: string;
 	customerName: string;
 	customerEmail: string;
+	bookingId?: string;
 }) {
 	const adminDashboardUrl = `${getBaseUrl()}/admin/bookings`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `New Booking: ${params.referenceNumber}`,
 		react: AdminNotificationEmail({
@@ -333,6 +566,11 @@ export async function sendAdminNewBookingEmail(params: {
 			customerEmail: params.customerEmail,
 			adminDashboardUrl,
 		}),
+		context: {
+			template: "AdminNewBooking",
+			entityType: "booking",
+			entityId: params.bookingId,
+		},
 	});
 }
 
@@ -341,9 +579,10 @@ export async function sendAdminNewUserPendingEmail(params: {
 	adminName: string;
 	customerName: string;
 	customerEmail: string;
+	userId?: string;
 }) {
 	const adminDashboardUrl = `${getBaseUrl()}/admin/users`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `New User Pending Verification: ${params.customerName}`,
 		react: AdminNotificationEmail({
@@ -353,6 +592,11 @@ export async function sendAdminNewUserPendingEmail(params: {
 			customerEmail: params.customerEmail,
 			adminDashboardUrl,
 		}),
+		context: {
+			template: "AdminNewUserPending",
+			entityType: "user",
+			entityId: params.userId,
+		},
 	});
 }
 
@@ -361,9 +605,10 @@ export async function sendAdminPaymentPendingEmail(params: {
 	adminName: string;
 	referenceNumber: string;
 	customerName: string;
+	paymentId?: string;
 }) {
 	const adminDashboardUrl = `${getBaseUrl()}/admin/finance`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `Payment Proof Uploaded: ${params.referenceNumber}`,
 		react: AdminNotificationEmail({
@@ -373,6 +618,11 @@ export async function sendAdminPaymentPendingEmail(params: {
 			customerName: params.customerName,
 			adminDashboardUrl,
 		}),
+		context: {
+			template: "AdminPaymentPending",
+			entityType: "payment",
+			entityId: params.paymentId,
+		},
 	});
 }
 
@@ -381,9 +631,10 @@ export async function sendAdminUserVerifiedEmail(params: {
 	adminName: string;
 	customerEmail: string;
 	bookingCount: number;
+	userId?: string;
 }) {
 	const adminDashboardUrl = `${getBaseUrl()}/admin/bookings`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `User Verified: ${params.customerEmail}`,
 		react: AdminNotificationEmail({
@@ -393,6 +644,11 @@ export async function sendAdminUserVerifiedEmail(params: {
 			bookingCount: params.bookingCount,
 			adminDashboardUrl,
 		}),
+		context: {
+			template: "AdminUserVerified",
+			entityType: "user",
+			entityId: params.userId,
+		},
 	});
 }
 
@@ -401,9 +657,10 @@ export async function sendAdminSignedFormsUploadedEmail(params: {
 	adminName: string;
 	referenceNumber: string;
 	customerName: string;
+	bookingId?: string;
 }) {
 	const adminDashboardUrl = `${getBaseUrl()}/admin/bookings`;
-	return sendEmail({
+	return safeSendEmail({
 		to: params.to,
 		subject: `Signed Forms Uploaded: ${params.referenceNumber}`,
 		react: AdminNotificationEmail({
@@ -413,5 +670,114 @@ export async function sendAdminSignedFormsUploadedEmail(params: {
 			customerName: params.customerName,
 			adminDashboardUrl,
 		}),
+		context: {
+			template: "AdminSignedFormsUploaded",
+			entityType: "booking",
+			entityId: params.bookingId,
+		},
+	});
+}
+
+// ============================================
+// User Registration Email Functions
+// ============================================
+
+export async function sendWelcomeVerificationEmail(params: {
+	to: string;
+	customerName: string;
+	verificationUrl: string;
+	userId?: string;
+}) {
+	return safeSendEmail({
+		to: params.to,
+		subject: "Welcome to ChECA Lab - Please Verify Your Email",
+		react: WelcomeVerificationEmail({
+			customerName: params.customerName,
+			verificationUrl: params.verificationUrl,
+		}),
+		context: {
+			template: "WelcomeVerification",
+			entityType: "user",
+			userId: params.userId,
+		},
+	});
+}
+
+export async function sendAdminNewUserRegisteredEmail(params: {
+	to: string | string[];
+	adminName: string;
+	customerName: string;
+	customerEmail: string;
+	userType: string;
+	userId?: string;
+}) {
+	const adminDashboardUrl = `${getBaseUrl()}/admin/users`;
+	return safeSendEmail({
+		to: params.to,
+		subject: `New User Registered: ${params.customerName}`,
+		react: AdminNewUserRegisteredEmail({
+			adminName: params.adminName,
+			customerName: params.customerName,
+			customerEmail: params.customerEmail,
+			userType: params.userType,
+			adminDashboardUrl,
+		}),
+		context: {
+			template: "AdminNewUserRegistered",
+			entityType: "user",
+			entityId: params.userId,
+		},
+	});
+}
+
+export async function sendAccountRejectedEmail(params: {
+	to: string;
+	customerName: string;
+	reason?: string;
+	userId?: string;
+}) {
+	const contactEmail =
+		env.EMAIL_REPLY_TO || env.EMAIL_FROM || "support@checa.lab";
+	return safeSendEmail({
+		to: params.to,
+		subject: "ChECA Lab Account Registration Not Approved",
+		react: AccountRejectedEmail({
+			customerName: params.customerName,
+			reason: params.reason,
+			contactEmail,
+		}),
+		context: {
+			template: "AccountRejected",
+			entityType: "user",
+			userId: params.userId,
+		},
+	});
+}
+
+export async function sendAccountSuspendedEmail(params: {
+	to: string;
+	customerName: string;
+	status: "suspended" | "inactive";
+	reason?: string;
+	userId?: string;
+}) {
+	const contactEmail =
+		env.EMAIL_REPLY_TO || env.EMAIL_FROM || "support@checa.lab";
+	const statusLabel =
+		params.status === "suspended" ? "Suspended" : "Deactivated";
+	return safeSendEmail({
+		to: params.to,
+		subject: `ChECA Lab Account ${statusLabel}`,
+		react: AccountSuspendedEmail({
+			customerName: params.customerName,
+			status: params.status,
+			reason: params.reason,
+			contactEmail,
+		}),
+		context: {
+			template: "AccountSuspended",
+			entityType: "user",
+			userId: params.userId,
+		},
 	});
 }

@@ -6,6 +6,7 @@ import NodeCache from "node-cache";
 
 import { env } from "@/env";
 import { db } from "@/shared/server/db";
+import { getFromEmail, resend } from "@/shared/server/email";
 
 // Create a tiny in-memory cache for session extensions
 const userCache = new NodeCache({ stdTTL: 300 }); // 5 minutes
@@ -43,7 +44,18 @@ export const auth = betterAuth({
 	},
 	emailAndPassword: {
 		enabled: true,
-		autoSignIn: true,
+		autoSignIn: false, // Don't auto sign in - require email verification
+		requireEmailVerification: true, // Require email verification
+		sendResetPassword: async ({ user, url }) => {
+			// Send password reset email
+			if (!resend) return;
+			await resend.emails.send({
+				from: getFromEmail(),
+				to: user.email,
+				subject: "Reset Your Password - ChECA Lab",
+				html: `<p>Click <a href="${url}">here</a> to reset your password.</p>`,
+			});
+		},
 	},
 
 	// ✅ Conditional social provider registration (prevents warnings)

@@ -279,6 +279,8 @@ model User {
   createdModifications SampleModification[] @relation("ModificationCreators")
   approvedModifications SampleModification[] @relation("ModificationApprovers")
   uploadedPayments   Payment[] @relation("PaymentUploaders")
+  uploadedFileBlobs  FileBlob[] @relation("FileBlobUploaders")
+  createdBookingDocuments BookingDocument[] @relation("BookingDocumentCreators")
 
   @@index([userType])
   @@index([status])
@@ -396,6 +398,7 @@ model BookingRequest {
   serviceItems      BookingServiceItem[]
   workspaceBookings WorkspaceBooking[]
   serviceForms      ServiceForm[]
+  bookingDocuments  BookingDocument[]
 
   @@index([userId])
   @@index([status])
@@ -834,5 +837,54 @@ model ServiceAddOn {
   @@index([workspaceBookingId])
   @@index([addOnCatalogId])
   @@map("service_add_on")
+}
+
+// ============================================
+// File Upload Models (UploadThing Integration)
+// ============================================
+
+model FileBlob {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key          String   @db.VarChar(255)  // uploadthing file key
+  url          String   @db.VarChar(500)  // public URL or signed route result
+  mimeType     String   @db.VarChar(100)
+  fileName     String   @db.VarChar(255)
+  sizeBytes    Int
+  createdAt    DateTime @default(now()) @db.Timestamp(6)
+  uploadedById String   @db.Uuid
+  uploadedBy   User     @relation("FileBlobUploaders", fields: [uploadedById], references: [id])
+
+  bookingDocuments BookingDocument[]
+
+  @@index([uploadedById])
+  @@map("file_blob")
+}
+
+enum upload_document_type_enum {
+  invoice
+  service_form_unsigned
+  service_form_signed
+  workspace_form_unsigned
+  workspace_form_signed
+  payment_receipt
+  sample_result
+}
+
+model BookingDocument {
+  id            String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingId     String                   @db.Uuid
+  booking       BookingRequest           @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  type          upload_document_type_enum
+  blobId        String                   @db.Uuid
+  blob          FileBlob                 @relation(fields: [blobId], references: [id])
+  note          String?                  @db.Text
+  status        String?                  @db.VarChar(50) // e.g., "sent", "uploaded", "verified"
+  createdAt     DateTime                 @default(now()) @db.Timestamp(6)
+  createdById   String                   @db.Uuid
+  createdBy     User                     @relation("BookingDocumentCreators", fields: [createdById], references: [id])
+
+  @@index([bookingId, type])
+  @@index([createdById])
+  @@map("booking_document")
 }
 

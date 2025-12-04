@@ -2,7 +2,7 @@
  * UserDocumentsSection Component
  *
  * Section for users to view and download service forms, invoices,
- * and upload signed documents.
+ * and upload signed documents using UploadThing.
  */
 
 "use client";
@@ -17,8 +17,11 @@ import {
 	Receipt,
 	Upload,
 } from "lucide-react";
-import { useState } from "react";
 import type { UserBookingDetailVM } from "@/entities/booking/model/user-detail-types";
+import {
+	BookingDocUploader,
+	BookingDocumentsList,
+} from "@/features/bookings/shared";
 import { cn } from "@/shared/lib/utils";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
@@ -29,6 +32,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
+import { Separator } from "@/shared/ui/shadcn/separator";
 import { formatCurrency, formatDate } from "../lib/helpers";
 
 interface UserDocumentsSectionProps {
@@ -109,19 +113,10 @@ function DocumentIcon({ type }: { type: DocumentType }) {
 }
 
 export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
-	const [uploadingId, setUploadingId] = useState<string | null>(null);
-
 	// Handle document download (placeholder - would need actual API)
 	const handleDownload = (documentType: string, documentId: string) => {
 		// TODO: Implement actual download via API
 		console.log("Download:", documentType, documentId);
-	};
-
-	// Handle signed form upload (placeholder - would need actual API)
-	const handleUpload = async (formId: string) => {
-		setUploadingId(formId);
-		// TODO: Implement actual upload via file input and API
-		setTimeout(() => setUploadingId(null), 1000);
 	};
 
 	// Show empty state if no service forms
@@ -180,29 +175,14 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 							</div>
 							<div className="flex items-center gap-3">
 								{getStatusBadge(form.status)}
-								<div className="flex gap-2">
-									<Button
-										onClick={() => handleDownload("service_form", form.id)}
-										size="sm"
-										variant="outline"
-									>
-										<Download className="mr-1 h-4 w-4" />
-										Download
-									</Button>
-									{form.status !== "signed_forms_uploaded" && (
-										<Button
-											disabled={uploadingId === form.id}
-											onClick={() => handleUpload(form.id)}
-											size="sm"
-											variant="default"
-										>
-											<Upload className="mr-1 h-4 w-4" />
-											{uploadingId === form.id
-												? "Uploading..."
-												: "Upload Signed"}
-										</Button>
-									)}
-								</div>
+								<Button
+									onClick={() => handleDownload("service_form", form.id)}
+									size="sm"
+									variant="outline"
+								>
+									<Download className="mr-1 h-4 w-4" />
+									Download
+								</Button>
 							</div>
 						</div>
 
@@ -222,29 +202,16 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 								</div>
 								<div className="flex items-center gap-3">
 									{getStatusBadge(form.status)}
-									<div className="flex gap-2">
-										<Button
-											onClick={() =>
-												handleDownload("working_area_agreement", form.id)
-											}
-											size="sm"
-											variant="outline"
-										>
-											<Download className="mr-1 h-4 w-4" />
-											Download
-										</Button>
-										{form.status !== "signed_forms_uploaded" && (
-											<Button
-												disabled={uploadingId === `waa-${form.id}`}
-												onClick={() => handleUpload(`waa-${form.id}`)}
-												size="sm"
-												variant="default"
-											>
-												<Upload className="mr-1 h-4 w-4" />
-												Upload Signed
-											</Button>
-										)}
-									</div>
+									<Button
+										onClick={() =>
+											handleDownload("working_area_agreement", form.id)
+										}
+										size="sm"
+										variant="outline"
+									>
+										<Download className="mr-1 h-4 w-4" />
+										Download
+									</Button>
 								</div>
 							</div>
 						)}
@@ -299,6 +266,82 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 					</div>
 				))}
 
+				<Separator />
+
+				{/* Upload Sections */}
+				<div className="space-y-4">
+					<h4 className="flex items-center gap-2 font-medium text-slate-900">
+						<Upload className="h-4 w-4" />
+						Upload Required Documents
+					</h4>
+
+					{/* Signed Service Form Upload */}
+					<div className="rounded-lg border border-slate-200 p-4">
+						<div className="mb-3">
+							<p className="font-medium text-slate-900">Signed Service Form</p>
+							<p className="text-slate-500 text-sm">
+								Upload your signed service form PDF
+							</p>
+						</div>
+						<BookingDocUploader
+							bookingId={booking.id}
+							compact
+							type="service_form_signed"
+						/>
+					</div>
+
+					{/* Signed Workspace Form Upload (if applicable) */}
+					{booking.serviceForms.some((f) => f.requiresWorkingAreaAgreement) && (
+						<div className="rounded-lg border border-slate-200 p-4">
+							<div className="mb-3">
+								<p className="font-medium text-slate-900">
+									Signed Working Area Agreement
+								</p>
+								<p className="text-slate-500 text-sm">
+									Upload your signed workspace agreement PDF
+								</p>
+							</div>
+							<BookingDocUploader
+								bookingId={booking.id}
+								compact
+								type="workspace_form_signed"
+							/>
+						</div>
+					)}
+
+					{/* Payment Receipt Upload */}
+					<div className="rounded-lg border border-slate-200 p-4">
+						<div className="mb-3">
+							<p className="font-medium text-slate-900">Payment Receipt</p>
+							<p className="text-slate-500 text-sm">
+								Upload proof of payment (PDF or image)
+							</p>
+						</div>
+						<BookingDocUploader
+							bookingId={booking.id}
+							compact
+							type="payment_receipt"
+						/>
+					</div>
+				</div>
+
+				<Separator />
+
+				{/* Uploaded Documents List */}
+				<div>
+					<h4 className="mb-3 font-medium text-slate-900">
+						Your Uploaded Documents
+					</h4>
+					<BookingDocumentsList
+						bookingId={booking.id}
+						filterTypes={[
+							"service_form_signed",
+							"workspace_form_signed",
+							"payment_receipt",
+						]}
+					/>
+				</div>
+
 				{/* Info Banner */}
 				<div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
 					<div className="flex gap-3">
@@ -313,14 +356,15 @@ export function UserDocumentsSection({ booking }: UserDocumentsSectionProps) {
 								<li>
 									Download invoices for your records and payment processing
 								</li>
+								<li>Upload your payment receipt after completing payment</li>
 								{booking.serviceForms.some(
 									(f) => f.requiresWorkingAreaAgreement,
 								) && (
-									<li>
-										Working area agreement must be signed before workspace
-										access
-									</li>
-								)}
+										<li>
+											Working area agreement must be signed before workspace
+											access
+										</li>
+									)}
 							</ul>
 						</div>
 					</div>

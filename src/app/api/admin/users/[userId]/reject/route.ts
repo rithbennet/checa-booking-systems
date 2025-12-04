@@ -1,3 +1,4 @@
+import { notifyUserAccountRejected } from "@/entities/notification/server";
 import { rejectUser } from "@/entities/user/server/user-repository";
 import {
 	createProtectedHandler,
@@ -10,7 +11,7 @@ import {
  * Reject a pending user account
  */
 export const POST = createProtectedHandler(
-	async (_request: Request, user, context) => {
+	async (request: Request, user, context) => {
 		try {
 			if (user.role !== "lab_administrator") return forbidden();
 
@@ -21,7 +22,19 @@ export const POST = createProtectedHandler(
 				return Response.json({ error: "User ID required" }, { status: 400 });
 			}
 
+			// Get optional reason from body
+			let reason: string | undefined;
+			try {
+				const body = await request.json();
+				reason = body?.reason;
+			} catch {
+				// No body provided, that's ok
+			}
+
 			await rejectUser(userId);
+
+			// Send rejection notification to user
+			await notifyUserAccountRejected({ userId, reason });
 
 			return Response.json({ success: true, message: "User rejected" });
 		} catch (error) {

@@ -12,6 +12,7 @@ import { Send, UploadCloud, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { SampleTrackingVM } from "@/entities/booking/model/command-center-types";
 import type { SampleStatus } from "@/entities/sample-tracking/model/types";
+import { BookingDocUploader } from "@/features/bookings/shared";
 import { useUpdateSampleStatus } from "@/features/sample-status-update/model/mutation";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -39,6 +40,7 @@ import { formatDateTime, formatRelativeTime } from "../lib/helpers";
 interface SampleDetailDrawerProps {
 	sample: SampleTrackingVM | null;
 	sampleName?: string;
+	bookingId: string;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }
@@ -118,6 +120,7 @@ function buildActivityLog(sample: SampleTrackingVM): ActivityLogItem[] {
 export function SampleDetailDrawer({
 	sample,
 	sampleName,
+	bookingId,
 	open,
 	onOpenChange,
 }: SampleDetailDrawerProps) {
@@ -232,24 +235,12 @@ export function SampleDetailDrawer({
 								))}
 							</div>
 						) : (
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<div className="cursor-not-allowed rounded-lg border-2 border-slate-200 border-dashed bg-slate-50 p-8 text-center">
-										<div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-slate-100">
-											<UploadCloud className="h-5 w-5 text-slate-400" />
-										</div>
-										<p className="font-bold text-slate-400 text-xs">
-											Click to upload result file
-										</p>
-										<p className="mt-1 text-[10px] text-slate-400">
-											Accepts .XLSX, .CSV, .PDF (Max 10MB)
-										</p>
-									</div>
-								</TooltipTrigger>
-								<TooltipContent>
-									<p>File upload coming soon</p>
-								</TooltipContent>
-							</Tooltip>
+							<BookingDocUploader
+								bookingId={bookingId}
+								label="Upload Analysis Result"
+								sampleTrackingId={sample.id}
+								type="sample_result"
+							/>
 						)}
 					</div>
 
@@ -263,9 +254,8 @@ export function SampleDetailDrawer({
 								{activityLog.map((item) => (
 									<div className="relative" key={`${item.title}-${item.date}`}>
 										<div
-											className={`-left-[21px] absolute top-1.5 h-3 w-3 rounded-full ring-4 ring-white ${
-												item.isCurrent ? "bg-blue-500" : "bg-slate-300"
-											}`}
+											className={`-left-[21px] absolute top-1.5 h-3 w-3 rounded-full ring-4 ring-white ${item.isCurrent ? "bg-blue-500" : "bg-slate-300"
+												}`}
 										/>
 										<div className="flex items-start justify-between">
 											<div>
