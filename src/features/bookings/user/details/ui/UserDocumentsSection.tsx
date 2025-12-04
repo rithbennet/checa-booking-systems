@@ -85,7 +85,9 @@ export function UserDocumentsSection({
 	);
 
 	// Helper to check if a specific type already has an uploaded doc
-	const hasDocOfType = (type: "service_form_signed" | "payment_receipt" | "workspace_form_signed") => {
+	const hasDocOfType = (
+		type: "service_form_signed" | "payment_receipt" | "workspace_form_signed",
+	) => {
 		if (!allDocs) return false;
 		return allDocs.some((d) => d.type === type);
 	};
@@ -258,7 +260,9 @@ export function UserDocumentsSection({
 							{/* Signed Service Form single-file slot */}
 							<div className="rounded border p-3">
 								<div className="mb-2">
-									<p className="font-medium text-slate-900">Signed Service Form</p>
+									<p className="font-medium text-slate-900">
+										Signed Service Form
+									</p>
 									<p className="text-slate-500 text-xs">
 										Upload the signed PDF copy of your service form
 									</p>
@@ -362,8 +366,6 @@ export function UserDocumentsSection({
 						</div>
 
 						<Separator className="my-4" />
-
-
 
 						<div className="mt-4 rounded border border-blue-200 bg-blue-50 p-3">
 							<div className="flex gap-2">

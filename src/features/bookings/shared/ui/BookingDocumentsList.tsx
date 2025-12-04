@@ -39,6 +39,8 @@ interface BookingDocumentsListProps {
 	className?: string;
 	/** Filter to show only specific document types */
 	filterTypes?: DocumentType[];
+	/** Filter to exclude specific document types */
+	excludeTypes?: DocumentType[];
 	/** Show empty state when no documents */
 	showEmptyState?: boolean;
 	/** Whether to show the uploader info (for admin view) */
@@ -172,6 +174,7 @@ export function BookingDocumentsList({
 	bookingId,
 	className,
 	filterTypes,
+	excludeTypes,
 	showEmptyState = true,
 	showUploader = false,
 	showDelete = false,
@@ -236,10 +239,18 @@ export function BookingDocumentsList({
 		);
 	}
 
-	// Filter documents if filterTypes is provided
-	const filteredDocs = filterTypes
-		? documents?.filter((doc) => filterTypes.includes(doc.type))
-		: documents;
+	// Filter documents if filterTypes or excludeTypes is provided
+	let filteredDocs = documents;
+	if (filterTypes) {
+		filteredDocs = documents?.filter((doc) => filterTypes.includes(doc.type));
+	}
+
+	// apply excludeTypes if passed
+	if (typeof excludeTypes !== "undefined" && excludeTypes !== null) {
+		filteredDocs = filteredDocs?.filter(
+			(doc) => !excludeTypes.includes(doc.type),
+		);
+	}
 
 	if (!filteredDocs || filteredDocs.length === 0) {
 		if (!showEmptyState) return null;

@@ -86,13 +86,13 @@ export function UserBookingDetail({ booking }: UserBookingDetailProps) {
 			{booking.pendingModifications?.some(
 				(m) => m.status === "pending" && m.initiatedByAdmin,
 			) && (
-					<div className="mb-6">
-						<ModificationAlert
-							bookingId={booking.id}
-							modifications={booking.pendingModifications}
-						/>
-					</div>
-				)}
+				<div className="mb-6">
+					<ModificationAlert
+						bookingId={booking.id}
+						modifications={booking.pendingModifications}
+					/>
+				</div>
+			)}
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
 				{/* Main Content Area */}

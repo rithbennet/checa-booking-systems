@@ -13,12 +13,19 @@ import type {
 	SampleTrackingVM,
 	ServiceItemVM,
 } from "@/entities/booking/model/command-center-types";
+import {
+	Tabs,
+	TabsContent,
+	TabsList,
+	TabsTrigger,
+} from "@/shared/ui/shadcn/tabs";
 import { BookingHeader } from "./BookingHeader";
-import { BookingSidebar } from "./BookingSidebar";
+import { FinancialGate, TimelineWidget } from "./BookingSidebar";
 import { BookingStatusTimeline } from "./BookingStatusTimeline";
 import { SampleDetailDrawer } from "./SampleDetailDrawer";
 import { SampleModificationModal } from "./SampleModificationModal";
 import { ServiceItemAccordion } from "./ServiceItemAccordion";
+import { UnifiedDocumentManager } from "./UnifiedDocumentManager";
 import { WorkspaceAccordion } from "./WorkspaceAccordion";
 
 interface BookingCommandCenterProps {
@@ -103,33 +110,67 @@ export function BookingCommandCenter({ booking }: BookingCommandCenterProps) {
 				status={booking.status}
 			/>
 
-			{/* Main Content Grid */}
-			<div className="grid grid-cols-12 gap-8">
-				{/* Left Column: Services & Workspaces */}
-				<div className="col-span-12 space-y-6 xl:col-span-8">
-					{/* Service Items */}
-					{booking.serviceItems.map((item) => (
-						<ServiceItemAccordion
-							key={item.id}
-							onRequestModification={handleRequestModification}
-							onSampleClick={(sample) =>
-								handleSampleClick(sample, item.sampleName ?? undefined)
-							}
-							serviceItem={item}
-						/>
-					))}
+			{/* 3. Main Content Tabs */}
+			<Tabs className="mt-8" defaultValue="services">
+				<TabsList className="grid w-full max-w-md grid-cols-2">
+					<TabsTrigger value="services">Services & Samples</TabsTrigger>
+					<TabsTrigger value="documents">Documents & Finance</TabsTrigger>
+				</TabsList>
 
-					{/* Workspace Bookings */}
-					{booking.workspaceBookings.map((workspace) => (
-						<WorkspaceAccordion key={workspace.id} workspace={workspace} />
-					))}
-				</div>
+				{/* Tab 1: Services & Samples */}
+				<TabsContent className="mt-6" value="services">
+					<div className="grid grid-cols-12 gap-8">
+						{/* Left Column: Services & Workspaces */}
+						<div className="col-span-12 space-y-6 xl:col-span-8">
+							{/* Service Items */}
+							{booking.serviceItems.map((item) => (
+								<ServiceItemAccordion
+									key={item.id}
+									onRequestModification={handleRequestModification}
+									onSampleClick={(sample) =>
+										handleSampleClick(sample, item.sampleName ?? undefined)
+									}
+									serviceItem={item}
+								/>
+							))}
 
-				{/* Right Column: Sidebar */}
-				<div className="col-span-12 xl:col-span-4">
-					<BookingSidebar booking={booking} />
-				</div>
-			</div>
+							{/* Workspace Bookings */}
+							{booking.workspaceBookings.map((workspace) => (
+								<WorkspaceAccordion key={workspace.id} workspace={workspace} />
+							))}
+
+							{booking.serviceItems.length === 0 &&
+								booking.workspaceBookings.length === 0 && (
+									<div className="flex h-40 items-center justify-center rounded-lg border border-slate-300 border-dashed bg-slate-50">
+										<p className="text-slate-500">
+											No services or workspaces in this booking
+										</p>
+									</div>
+								)}
+						</div>
+
+						{/* Right Column: Timeline Widget */}
+						<div className="col-span-12 xl:col-span-4">
+							<TimelineWidget booking={booking} />
+						</div>
+					</div>
+				</TabsContent>
+
+				{/* Tab 2: Documents & Finance */}
+				<TabsContent className="mt-6" value="documents">
+					<div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+						{/* Left Column: Financial Gate */}
+						<div className="space-y-6">
+							<FinancialGate booking={booking} />
+						</div>
+
+						{/* Right Column: Documents */}
+						<div className="space-y-6">
+							<UnifiedDocumentManager booking={booking} />
+						</div>
+					</div>
+				</TabsContent>
+			</Tabs>
 
 			{/* Sample Detail Drawer */}
 			<SampleDetailDrawer

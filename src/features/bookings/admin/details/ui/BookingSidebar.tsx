@@ -73,7 +73,11 @@ interface BookingSidebarProps {
 }
 
 // Timeline Widget Component
-function TimelineWidget({ booking }: { booking: BookingCommandCenterVM }) {
+export function TimelineWidget({
+	booking,
+}: {
+	booking: BookingCommandCenterVM;
+}) {
 	const [isUrgent, setIsUrgent] = useState(false);
 
 	const targetDate = booking.preferredEndDate;
@@ -146,7 +150,11 @@ function TimelineWidget({ booking }: { booking: BookingCommandCenterVM }) {
 }
 
 // Document Vault Component
-function DocumentVault({ booking }: { booking: BookingCommandCenterVM }) {
+export function DocumentVault({
+	booking,
+}: {
+	booking: BookingCommandCenterVM;
+}) {
 	const [showInvoiceUpload, setShowInvoiceUpload] = useState(false);
 	const generateForms = useGenerateForms();
 	const queryClient = useQueryClient();
@@ -672,7 +680,11 @@ function InvoiceDocumentRow({ invoice }: { invoice: InvoiceVM }) {
 }
 
 // Financial Gate Component
-function FinancialGate({ booking }: { booking: BookingCommandCenterVM }) {
+export function FinancialGate({
+	booking,
+}: {
+	booking: BookingCommandCenterVM;
+}) {
 	const [servicesOpen, setServicesOpen] = useState(false);
 	const [verificationDialogOpen, setVerificationDialogOpen] = useState(false);
 	const [verificationNotes, setVerificationNotes] = useState("");
