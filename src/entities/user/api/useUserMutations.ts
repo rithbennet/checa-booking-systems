@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { UserStatus } from "../model/types";
+import type { UserStatus, UserType } from "../model/types";
 import { userKeys } from "./query-keys";
 
 interface UpdateUserStatusInput {
@@ -82,6 +82,35 @@ export function useRejectUser() {
 			if (!res.ok) {
 				const error = await res.json();
 				throw new Error(error.message || "Failed to reject user");
+			}
+
+			return res.json();
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: userKeys.all });
+		},
+	});
+}
+
+interface UpdateUserTypeInput {
+	userId: string;
+	userType: UserType;
+}
+
+export function useUpdateUserType() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async (input: UpdateUserTypeInput) => {
+			const res = await fetch(`/api/admin/users/${input.userId}/type`, {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ userType: input.userType }),
+			});
+
+			if (!res.ok) {
+				const error = await res.json();
+				throw new Error(error.message || "Failed to update user type");
 			}
 
 			return res.json();

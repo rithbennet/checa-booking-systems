@@ -9,6 +9,7 @@ import {
 	useRejectUser,
 	userKeys,
 	useUpdateUserStatus,
+	useUpdateUserType,
 	useUserCounts,
 	useUserList,
 } from "@/entities/user";
@@ -57,6 +58,7 @@ export function UserListPage() {
 	const { mutateAsync: approveUser, isPending: isApproving } = useApproveUser();
 	const { mutateAsync: rejectUser, isPending: isRejecting } = useRejectUser();
 	const { mutateAsync: updateStatus } = useUpdateUserStatus();
+	const { mutateAsync: updateUserType } = useUpdateUserType();
 
 	const handleRefresh = () => {
 		queryClient.invalidateQueries({ queryKey: userKeys.all });
@@ -166,6 +168,21 @@ export function UserListPage() {
 	const handleView = (userId: string) => {
 		// TODO: Open user detail dialog or navigate to user profile
 		console.log("View user:", userId);
+	};
+
+	const handleChangeUserType = async (userId: string, userType: UserType) => {
+		try {
+			await updateUserType({ userId, userType });
+			toast.success("User type updated", {
+				description: `User type changed to ${userType}`,
+			});
+			queryClient.invalidateQueries({ queryKey: userKeys.all });
+		} catch (error) {
+			toast.error("Failed to update user type", {
+				description:
+					error instanceof Error ? error.message : "An error occurred",
+			});
+		}
 	};
 
 	// Status chip options with counts and colors
@@ -371,6 +388,7 @@ export function UserListPage() {
 			<UsersTable
 				isLoading={isLoading}
 				onApprove={handleApprove}
+				onChangeUserType={handleChangeUserType}
 				onReject={handleReject}
 				onSelectAll={handleSelectAll}
 				onSelectRow={handleSelectRow}

@@ -188,11 +188,12 @@ export const fileRouter = {
 
 			// Send notifications based on document type
 			try {
-				// Get admin IDs for notifications that need to notify admins
+				// Get admin IDs and emails for notifications that need to notify admins
+				// Query directly from User model per Prisma schema: email field is on User model
 				const getAdminIds = async () => {
 					const admins = await db.user.findMany({
-						where: { userType: "lab_administrator" },
-						select: { id: true },
+						where: { userType: "lab_administrator", status: "active" },
+						select: { id: true, email: true },
 					});
 					return admins.map((a) => a.id);
 				};
@@ -201,13 +202,20 @@ export const fileRouter = {
 					case "payment_receipt": {
 						// Notify admins that payment proof was uploaded
 						const adminIds = await getAdminIds();
-						await notifyAdminsPaymentUploaded({
-							adminIds,
-							paymentId: document.id,
-							bookingReference: metadata.bookingReference,
-							customerName: metadata.customerName,
-							amount: "Payment proof",
-						});
+						try {
+							await notifyAdminsPaymentUploaded({
+								adminIds,
+								paymentId: document.id,
+								bookingReference: metadata.bookingReference,
+								customerName: metadata.customerName,
+								amount: "Payment proof",
+							});
+						} catch (notifyError) {
+							console.error(
+								"[UploadThing] Failed to notify admins of payment upload:",
+								notifyError,
+							);
+						}
 						break;
 					}
 
