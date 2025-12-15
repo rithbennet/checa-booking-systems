@@ -19,7 +19,7 @@ import {
 	getServiceFormStatusLabel,
 	getUserTypeBadgeClass,
 	getUserTypeLabel,
-} from "../../lib/helpers";
+} from "../../../lib/helpers";
 
 interface FormsReviewTableProps {
 	data: ServiceFormListVM[];

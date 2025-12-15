@@ -2,6 +2,6 @@
 
 import { ProfilePage } from "@/features/users";
 
-export default function UserProfilePage() {
+export default function AdminProfilePage() {
 	return <ProfilePage />;
 }

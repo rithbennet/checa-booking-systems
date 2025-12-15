@@ -2,6 +2,6 @@
 
 import { NotificationsPage } from "@/features/notifications";
 
-export default function UserNotificationsPage() {
+export default function AdminNotificationsPage() {
 	return <NotificationsPage />;
 }

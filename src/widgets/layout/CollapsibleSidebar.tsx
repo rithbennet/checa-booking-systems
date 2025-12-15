@@ -110,11 +110,20 @@ export default function CollapsibleSidebar({
 		...(isAdmin
 			? [{ icon: Settings, label: "Settings", href: "/admin/settings" }]
 			: []),
-		{ icon: HelpCircle, label: "Help", href: "/help" },
-		{ icon: User, label: "Profile", href: "/profile" },
+		{
+			icon: HelpCircle,
+			label: "Help",
+			href: isAdmin ? "/admin/help" : "/help",
+		},
+		{
+			icon: User,
+			label: "Profile",
+			href: isAdmin ? "/admin/profile" : "/profile",
+		},
 	];
 
-	const isNotificationsActive = isActive("/notifications");
+	const notificationsHref = isAdmin ? "/admin/notifications" : "/notifications";
+	const isNotificationsActive = isActive(notificationsHref);
 
 	return (
 		<Sidebar collapsible="icon">
@@ -182,21 +191,23 @@ export default function CollapsibleSidebar({
 
 			<SidebarFooter>
 				<SidebarMenu>
-					{/* Refresh button - separate from nav items */}
-					<SidebarMenuItem>
-						<SidebarMenuButton
-							disabled={isRefreshing}
-							onClick={handleRefresh}
-							tooltip={isRefreshing ? "Refreshing..." : "Refresh all data"}
-						>
-							{isRefreshing ? (
-								<Loader2 className="animate-spin" />
-							) : (
-								<RefreshCw />
-							)}
-							<span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
-						</SidebarMenuButton>
-					</SidebarMenuItem>
+					{/* Refresh button - only for non-admin users */}
+					{!isAdmin && (
+						<SidebarMenuItem>
+							<SidebarMenuButton
+								disabled={isRefreshing}
+								onClick={handleRefresh}
+								tooltip={isRefreshing ? "Refreshing..." : "Refresh all data"}
+							>
+								{isRefreshing ? (
+									<Loader2 className="animate-spin" />
+								) : (
+									<RefreshCw />
+								)}
+								<span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+					)}
 					{bottomItems.map((item) => {
 						const Icon = item.icon;
 						const active = isActive(item.href);
@@ -216,7 +227,10 @@ export default function CollapsibleSidebar({
 						);
 					})}
 					{/* Notifications with unread badge */}
-					<NotificationNavBadge isActive={isNotificationsActive} />
+					<NotificationNavBadge
+						href={notificationsHref}
+						isActive={isNotificationsActive}
+					/>
 					<SidebarMenuItem>
 						<SidebarMenuButton
 							onClick={() => setIsSignOutModalOpen(true)}

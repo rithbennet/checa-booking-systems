@@ -7,16 +7,20 @@ import { SidebarMenuButton, SidebarMenuItem } from "@/shared/ui/shadcn/sidebar";
 
 interface NotificationNavBadgeProps {
 	isActive: boolean;
+	href?: string;
 }
 
-export function NotificationNavBadge({ isActive }: NotificationNavBadgeProps) {
+export function NotificationNavBadge({
+	isActive,
+	href = "/notifications",
+}: NotificationNavBadgeProps) {
 	const { data } = useNotifications();
 	const unreadCount = data?.unreadCount ?? 0;
 
 	return (
 		<SidebarMenuItem>
 			<SidebarMenuButton asChild isActive={isActive} tooltip="Notifications">
-				<Link href="/notifications">
+				<Link href={href}>
 					<Bell />
 					<span>Notifications</span>
 					{unreadCount > 0 && (

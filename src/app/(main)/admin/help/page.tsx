@@ -2,6 +2,6 @@
 
 import { HelpPage } from "@/features/help";
 
-export default function UserHelpPage() {
+export default function AdminHelpPage() {
 	return <HelpPage />;
 }

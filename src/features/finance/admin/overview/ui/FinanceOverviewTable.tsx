@@ -25,7 +25,7 @@ import {
 	getPaymentStatusLabel,
 	getUserTypeBadgeClass,
 	getUserTypeLabel,
-} from "../../lib/helpers";
+} from "../../../lib/helpers";
 
 interface FinanceOverviewTableProps {
 	data: FinanceOverviewVM[];

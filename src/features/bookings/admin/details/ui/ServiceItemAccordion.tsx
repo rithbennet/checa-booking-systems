@@ -27,7 +27,7 @@ import type {
 	ServiceItemVM,
 } from "@/entities/booking/model/command-center-types";
 import type { SampleStatus } from "@/entities/sample-tracking/model/types";
-import { useUpdateSampleStatus } from "@/features/sample-status-update/model/mutation";
+import { useUpdateSampleStatus } from "@/features/operations/sample-status/model/mutation";
 import { cn } from "@/shared/lib/utils";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";

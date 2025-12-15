@@ -7,7 +7,7 @@ import type { UserPaymentStatus } from "@/entities/booking/server/user-financial
 import {
 	formatAmount,
 	getFinancialsColumns,
-} from "@/features/finance/user-financials";
+} from "@/features/finance/user/financials";
 import {
 	Card,
 	CardContent,

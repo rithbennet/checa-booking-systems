@@ -1,9 +1,9 @@
 "use client";
 
-import { Eye, FileText } from "lucide-react";
+import { Check, FileText, X } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
-import type { PaymentHistoryVM } from "@/entities/payment/model/types";
+import type { PendingPaymentVM } from "@/entities/payment/model/types";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -16,24 +16,26 @@ import {
 	formatCurrencyCompact,
 	formatDate,
 	getPaymentMethodLabel,
-	getPaymentStatusBadgeClass,
-	getPaymentStatusLabel,
 	getUserTypeBadgeClass,
 	getUserTypeLabel,
-} from "../../lib/helpers";
+} from "../../../lib/helpers";
 
-interface PaymentHistoryTableProps {
-	data: PaymentHistoryVM[];
+interface PendingPaymentsTableProps {
+	data: PendingPaymentVM[];
 	isLoading: boolean;
-	onViewReceipt?: (payment: PaymentHistoryVM) => void;
+	onVerify: (payment: PendingPaymentVM) => void;
+	onReject: (payment: PendingPaymentVM) => void;
+	onViewReceipt?: (payment: PendingPaymentVM) => void;
 }
 
-export function PaymentHistoryTable({
+export function PendingPaymentsTable({
 	data,
 	isLoading,
+	onVerify,
+	onReject,
 	onViewReceipt,
-}: PaymentHistoryTableProps) {
-	const columns: ColumnDef<PaymentHistoryVM>[] = useMemo(
+}: PendingPaymentsTableProps) {
+	const columns: ColumnDef<PendingPaymentVM>[] = useMemo(
 		() => [
 			{
 				id: "invoiceNumber",
@@ -59,7 +61,7 @@ export function PaymentHistoryTable({
 			{
 				id: "client",
 				header: "Client",
-				className: "min-w-[160px]",
+				className: "min-w-[180px]",
 				cell: ({ row }) => (
 					<div>
 						<div className="flex items-center gap-2">
@@ -71,27 +73,21 @@ export function PaymentHistoryTable({
 								{getUserTypeLabel(row.client.userType)}
 							</Badge>
 						</div>
+						{row.organization && (
+							<div className="text-muted-foreground text-xs">
+								{row.organization}
+							</div>
+						)}
 					</div>
 				),
 			},
 			{
 				id: "method",
 				header: "Method",
-				className: "w-[130px]",
+				className: "w-[140px]",
 				cell: ({ row }) => (
 					<span className="text-sm">
 						{getPaymentMethodLabel(row.paymentMethod)}
-					</span>
-				),
-			},
-			{
-				id: "amount",
-				header: "Amount",
-				className: "w-[110px]",
-				align: "right",
-				cell: ({ row }) => (
-					<span className="font-medium">
-						{formatCurrencyCompact(row.amount)}
 					</span>
 				),
 			},
@@ -104,51 +100,54 @@ export function PaymentHistoryTable({
 				),
 			},
 			{
-				id: "status",
-				header: "Status",
-				className: "w-[100px]",
+				id: "amount",
+				header: "Amount",
+				className: "w-[120px]",
+				align: "right",
 				cell: ({ row }) => (
-					<Badge
-						className={getPaymentStatusBadgeClass(row.status)}
-						variant="secondary"
-					>
-						{getPaymentStatusLabel(row.status)}
-					</Badge>
+					<span className="font-medium">
+						{formatCurrencyCompact(row.amount)}
+					</span>
 				),
 			},
 			{
-				id: "verifiedBy",
-				header: "Processed By",
-				className: "w-[140px]",
+				id: "uploadedBy",
+				header: "Uploaded By",
+				className: "w-[130px]",
 				cell: ({ row }) => (
 					<div className="text-sm">
-						{row.verifiedBy ? (
-							<>
-								<div>{row.verifiedBy.name}</div>
-								<div className="text-muted-foreground text-xs">
-									{formatDate(row.processedAt)}
-								</div>
-							</>
-						) : (
-							<span className="text-muted-foreground">-</span>
-						)}
+						<div>{row.uploadedBy.name}</div>
+						<div className="text-muted-foreground text-xs">
+							{formatDate(row.uploadedAt)}
+						</div>
 					</div>
 				),
 			},
 			{
-				id: "notes",
-				header: "Notes",
-				className: "min-w-[150px]",
+				id: "age",
+				header: "Age",
+				headerTooltip: "Days since payment receipt was uploaded",
+				className: "w-[80px]",
+				align: "center",
 				cell: ({ row }) => (
-					<span className="text-muted-foreground text-sm">
-						{row.verificationNotes || "-"}
-					</span>
+					<Badge
+						className={
+							row.age > 7
+								? "bg-red-100 text-red-800"
+								: row.age > 3
+									? "bg-yellow-100 text-yellow-800"
+									: "bg-gray-100 text-gray-700"
+						}
+						variant="secondary"
+					>
+						{row.age}d
+					</Badge>
 				),
 			},
 			{
 				id: "actions",
 				header: "Actions",
-				className: "w-[80px]",
+				className: "w-[140px]",
 				align: "right",
 				cell: ({ row }) => (
 					<div className="flex justify-end gap-1">
@@ -168,26 +167,42 @@ export function PaymentHistoryTable({
 						)}
 						<Tooltip>
 							<TooltipTrigger asChild>
-								<Button asChild size="icon" variant="ghost">
-									<Link href={`/admin/bookings/${row.bookingId}`}>
-										<Eye className="size-4" />
-									</Link>
+								<Button
+									className="text-green-600 hover:bg-green-50 hover:text-green-700"
+									onClick={() => onVerify(row)}
+									size="icon"
+									variant="ghost"
+								>
+									<Check className="size-4" />
 								</Button>
 							</TooltipTrigger>
-							<TooltipContent>Open Booking</TooltipContent>
+							<TooltipContent>Verify Payment</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									className="text-red-600 hover:bg-red-50 hover:text-red-700"
+									onClick={() => onReject(row)}
+									size="icon"
+									variant="ghost"
+								>
+									<X className="size-4" />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent>Reject Payment</TooltipContent>
 						</Tooltip>
 					</div>
 				),
 			},
 		],
-		[onViewReceipt],
+		[onVerify, onReject, onViewReceipt],
 	);
 
 	return (
 		<DataTable
 			columns={columns}
 			data={data}
-			emptyMessage="No payment history"
+			emptyMessage="No pending payments"
 			getRowId={(row) => row.id}
 			isLoading={isLoading}
 			skeletonRowCount={10}

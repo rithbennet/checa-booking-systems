@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import type { SampleTrackingVM } from "@/entities/booking/model/command-center-types";
 import type { SampleStatus } from "@/entities/sample-tracking/model/types";
 import { BookingDocUploader } from "@/features/bookings/shared";
-import { useUpdateSampleStatus } from "@/features/sample-status-update/model/mutation";
+import { useUpdateSampleStatus } from "@/features/operations/sample-status/model/mutation";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
 	Select,

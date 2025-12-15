@@ -2,15 +2,16 @@
  * Finance feature public API
  */
 
-export { FormsReviewTable } from "./forms/ui/FormsReviewTable";
-export { InvoicesTable } from "./invoices/ui/InvoicesTable";
-// Helpers
-export * from "./lib/helpers";
-// Components
-export { FinanceOverviewTable } from "./overview/ui/FinanceOverviewTable";
-export { PaymentHistoryTable } from "./payments/ui/PaymentHistoryTable";
-export { PendingPaymentsTable } from "./payments/ui/PendingPaymentsTable";
-export { ResultsOnHoldTable } from "./results-on-hold/ui/ResultsOnHoldTable";
+// Admin features
+export { FormsReviewTable } from "./admin/forms/ui/FormsReviewTable";
+export { InvoicesTable } from "./admin/invoices/ui/InvoicesTable";
+export { FinanceOverviewTable } from "./admin/overview/ui/FinanceOverviewTable";
+export { PaymentHistoryTable } from "./admin/payments/ui/PaymentHistoryTable";
+export { PendingPaymentsTable } from "./admin/payments/ui/PendingPaymentsTable";
+export { ResultsOnHoldTable } from "./admin/results-on-hold/ui/ResultsOnHoldTable";
 
-// User Financials
-export * from "./user-financials";
+// Shared helpers
+export * from "./lib/helpers";
+
+// User features
+export * from "./user/financials";

@@ -11,15 +11,15 @@ import { useState } from "react";
 import {
 	AddOnFormSheet,
 	AddOnTable,
-} from "@/features/admin/service-management/addons";
+} from "@/features/services/admin/management/addons";
 import {
 	EquipmentFormSheet,
 	EquipmentTable,
-} from "@/features/admin/service-management/equipment";
+} from "@/features/services/admin/management/equipment";
 import {
 	ServiceFormSheet,
 	ServiceTable,
-} from "@/features/admin/service-management/services";
+} from "@/features/services/admin/management/services";
 import {
 	Tabs,
 	TabsContent,

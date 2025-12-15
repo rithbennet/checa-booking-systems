@@ -1,5 +1,5 @@
 /**
- * Admin Booking Review Feature
+ * Admin Booking List Feature
  * Exports for admin booking list and management
  */
 

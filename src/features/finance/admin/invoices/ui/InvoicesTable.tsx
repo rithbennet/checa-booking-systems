@@ -26,7 +26,7 @@ import {
 	getInvoiceStatusLabel,
 	getUserTypeBadgeClass,
 	getUserTypeLabel,
-} from "../../lib/helpers";
+} from "../../../lib/helpers";
 
 interface InvoicesTableProps {
 	data: InvoiceListVM[];

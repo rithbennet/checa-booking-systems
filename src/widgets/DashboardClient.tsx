@@ -10,7 +10,7 @@ import {
 	Plus,
 } from "lucide-react";
 import { useBookingStatusCounts } from "@/entities/booking/api";
-import { DashboardBookingsWidget } from "@/features/bookings/list/widgets/DashboardBookingsWidget";
+import { DashboardBookingsWidget } from "@/features/bookings/user/list/widgets/DashboardBookingsWidget";
 import RouterButton from "@/shared/ui/router-button";
 import {
 	Card,

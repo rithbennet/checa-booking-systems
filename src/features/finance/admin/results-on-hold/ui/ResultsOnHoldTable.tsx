@@ -17,7 +17,7 @@ import {
 	formatDate,
 	getUserTypeBadgeClass,
 	getUserTypeLabel,
-} from "../../lib/helpers";
+} from "../../../lib/helpers";
 
 interface ResultsOnHoldTableProps {
 	data: ResultsOnHoldVM[];

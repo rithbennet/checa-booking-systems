@@ -16,6 +16,44 @@ features/
     config/      # Feature configuration
 ```
 
+## Domain Organization
+
+For complex domains with multiple related features, organize by domain with role-based subfolders:
+
+```
+features/
+  bookings/
+    admin/
+      list/      # Admin booking list
+      details/   # Admin booking details
+    user/
+      list/      # User booking list
+      details/   # User booking details
+    form/        # Booking creation/editing form
+    shared/      # Shared booking components
+  services/
+    admin/
+      management/  # Admin service management
+        services/
+        equipment/
+        addons/
+    selection/   # Service selection components
+    ui/          # Service display components
+  finance/
+    admin/
+      overview/
+      forms/
+      invoices/
+      payments/
+      results-on-hold/
+    user/
+      financials/
+  users/
+    admin/
+      list/      # Admin user list
+    profile/     # User profile components
+```
+
 ## Example
 
 ```
@@ -26,17 +64,24 @@ features/
       SignUpForm.tsx
     model/
       types.ts
-      store.ts
-    api/
-      signIn.ts
-      signUp.ts
+      schemas.ts
     lib/
-      validateEmail.ts
-    config/
-      constants.ts
+      server-actions.ts
+      utils.ts
 ```
 
 ## Usage
 
 Features are self-contained and can use entities and shared code. They should not depend on other features directly.
+
+## Role-Based Organization
+
+When a feature has distinct admin and user variants, use `admin/` and `user/` subfolders:
+
+- `bookings/admin/list/` - Admin booking list
+- `bookings/user/list/` - User booking list
+- `finance/admin/overview/` - Admin finance overview
+- `finance/user/financials/` - User financials
+
+This makes it clear which features are role-specific and improves discoverability.
 

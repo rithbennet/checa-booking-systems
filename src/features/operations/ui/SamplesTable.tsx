@@ -3,7 +3,7 @@
 import { format } from "date-fns";
 import { Eye } from "lucide-react";
 import type { SampleOperationsRow } from "@/entities/sample-tracking/model/types";
-import { StatusCell } from "@/features/sample-status-update/ui/StatusCell";
+import { StatusCell } from "@/features/operations/sample-status/ui/StatusCell";
 import RouterButton from "@/shared/ui/router-button";
 import {
 	Table,

@@ -6,3 +6,4 @@
 export { NotificationBell } from "./ui/NotificationBell";
 export { NotificationNavBadge } from "./ui/NotificationNavBadge";
 export { NotificationsList } from "./ui/NotificationsList";
+export { NotificationsPage } from "./ui/NotificationsPage";
