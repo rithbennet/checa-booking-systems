@@ -2,7 +2,6 @@
 
 import { Building2, GraduationCap, Loader2, User } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useOnboardingOptions } from "@/entities/user";
 import { Button } from "@/shared/ui/shadcn/button";
@@ -48,6 +47,7 @@ interface FormState {
 	companyBranchId: string;
 	newCompanyName: string;
 	newCompanyAddress: string;
+	newCompanyBranchName: string;
 	newBranchName: string;
 	newBranchAddress: string;
 }
@@ -55,6 +55,7 @@ interface FormState {
 interface FormErrors {
 	firstName?: string;
 	lastName?: string;
+	phone?: string;
 	acceptedTerms?: string;
 	facultyId?: string;
 	departmentId?: string;
@@ -63,6 +64,10 @@ interface FormErrors {
 	userIdentifier?: string;
 	supervisorName?: string;
 	newCompanyName?: string;
+	newCompanyAddress?: string;
+	newCompanyBranchName?: string;
+	newBranchName?: string;
+	newBranchAddress?: string;
 }
 
 // ==============================================================
@@ -84,7 +89,6 @@ export function OnboardingWizard({
 	name,
 	image,
 }: OnboardingWizardProps) {
-	const router = useRouter();
 	const [error, setError] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -121,6 +125,7 @@ export function OnboardingWizard({
 		companyBranchId: "",
 		newCompanyName: "",
 		newCompanyAddress: "",
+		newCompanyBranchName: "",
 		newBranchName: "",
 		newBranchAddress: "",
 	});
@@ -197,6 +202,7 @@ export function OnboardingWizard({
 				companyBranchId: "",
 				newCompanyName: "",
 				newCompanyAddress: "",
+				newCompanyBranchName: "",
 				newBranchName: "",
 				newBranchAddress: "",
 			}));
@@ -230,6 +236,9 @@ export function OnboardingWizard({
 		if (!formState.lastName.trim()) {
 			errors.lastName = "Last name is required";
 		}
+		if (!formState.phone.trim()) {
+			errors.phone = "Phone number is required";
+		}
 		if (!formState.acceptedTerms) {
 			errors.acceptedTerms = "You must accept the Terms & Privacy";
 		}
@@ -238,14 +247,17 @@ export function OnboardingWizard({
 			if (!formState.facultyId) {
 				errors.facultyId = "Please select a faculty";
 			}
+			// Department is required for all faculties
+			if (formState.facultyId && !formState.departmentId) {
+				errors.departmentId = "Please select a department";
+			}
+			// iKohza is required for MJIIT
 			if (isMjiit && !formState.ikohzaId) {
 				errors.ikohzaId = "Please select an iKohza";
 			}
-			if (!isMjiit && formState.facultyId && !formState.departmentId) {
-				errors.departmentId = "Please select a department";
-			}
 			if (!formState.academicType) {
-				errors.academicType = "Please select your academic role";
+				errors.academicType =
+					"Please select whether you are a student or staff";
 			}
 			if (!formState.userIdentifier.trim()) {
 				errors.userIdentifier = "Matric number or staff ID is required";
@@ -257,9 +269,42 @@ export function OnboardingWizard({
 				errors.supervisorName = "Supervisor name is required for students";
 			}
 		} else {
-			// External user - need either existing company or new company name
+			// External user validation
 			if (!formState.companyId && !formState.newCompanyName.trim()) {
 				errors.newCompanyName = "Please select or enter a company name";
+			}
+			// Require branch name when creating new company
+			if (
+				!formState.companyId &&
+				formState.newCompanyName.trim() &&
+				!formState.newCompanyBranchName?.trim()
+			) {
+				errors.newCompanyBranchName =
+					"Branch name is required when creating a new company";
+			}
+			// Require address when creating new company
+			if (
+				!formState.companyId &&
+				formState.newCompanyName.trim() &&
+				!formState.newCompanyAddress?.trim()
+			) {
+				errors.newCompanyAddress =
+					"Branch address is required to create your organization record";
+			}
+			// Require branch selection/creation when company is selected
+			if (formState.companyId) {
+				if (!formState.companyBranchId && !formState.newBranchName.trim()) {
+					errors.newBranchName = "Please select a branch or create a new one";
+				}
+				// Require address when creating new branch
+				if (
+					!formState.companyBranchId &&
+					formState.newBranchName.trim() &&
+					!formState.newBranchAddress?.trim()
+				) {
+					errors.newBranchAddress =
+						"Branch address is required to create your branch record";
+				}
 			}
 		}
 
@@ -324,6 +369,9 @@ export function OnboardingWizard({
 				} else if (formState.newCompanyName) {
 					payload.newCompanyName = formState.newCompanyName;
 					payload.newCompanyAddress = formState.newCompanyAddress;
+					if (formState.newCompanyBranchName) {
+						payload.newCompanyBranchName = formState.newCompanyBranchName;
+					}
 				}
 			}
 
@@ -345,8 +393,8 @@ export function OnboardingWizard({
 			}
 
 			// Redirect to dashboard after successful onboarding
-			router.push("/dashboard");
-			router.refresh();
+			// Use window.location.href to force a full page reload and fetch fresh session
+			window.location.href = "/dashboard";
 		} catch {
 			setError("Unexpected error. Please try again.");
 		} finally {
@@ -443,22 +491,26 @@ export function OnboardingWizard({
 								</div>
 							</div>
 
-							{/* Phone (optional) */}
+							{/* Phone (required) */}
 							<div className="space-y-2">
 								<Label
 									className="font-medium text-gray-700 text-sm"
 									htmlFor="phone"
 								>
-									Phone Number
+									Phone Number <span className="text-red-500">*</span>
 								</Label>
 								<Input
+									aria-invalid={formErrors.phone ? "true" : "false"}
 									className="h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
 									id="phone"
 									onChange={(e) => handleChange("phone", e.target.value)}
-									placeholder="Enter your phone number (optional)"
+									placeholder="Enter your phone number"
 									type="tel"
 									value={formState.phone}
 								/>
+								{formErrors.phone && (
+									<p className="text-red-600 text-sm">{formErrors.phone}</p>
+								)}
 							</div>
 
 							{/* Email display (read-only) */}
@@ -498,13 +550,15 @@ export function OnboardingWizard({
 												onValueChange={handleFacultyChange}
 												value={formState.facultyId}
 											>
-												<SelectTrigger>
+												<SelectTrigger className="w-full">
 													<SelectValue placeholder="Select Faculty" />
 												</SelectTrigger>
 												<SelectContent>
 													{options?.faculties.map((faculty) => (
 														<SelectItem key={faculty.id} value={faculty.id}>
-															{faculty.name}
+															<span className="truncate" title={faculty.name}>
+																{faculty.name}
+															</span>
 														</SelectItem>
 													))}
 												</SelectContent>
@@ -516,92 +570,106 @@ export function OnboardingWizard({
 											)}
 										</div>
 
-										{/* Department (non-MJIIT) or Ikohza (MJIIT) */}
+										{/* Department (required for all faculties) */}
 										{formState.facultyId && (
 											<div className="space-y-2">
-												{isMjiit ? (
-													<>
-														<Label htmlFor="ikohza">
-															iKohza <span className="text-red-500">*</span>
-														</Label>
-														<Select
-															onValueChange={(value) =>
-																handleChange("ikohzaId", value)
-															}
-															value={formState.ikohzaId}
-														>
-															<SelectTrigger>
-																<SelectValue placeholder="Select iKohza" />
-															</SelectTrigger>
-															<SelectContent>
-																{filteredIkohzas.map((ikohza) => (
-																	<SelectItem key={ikohza.id} value={ikohza.id}>
-																		{ikohza.name}
-																	</SelectItem>
-																))}
-															</SelectContent>
-														</Select>
-														{formErrors.ikohzaId && (
-															<p className="text-red-600 text-sm">
-																{formErrors.ikohzaId}
-															</p>
-														)}
-													</>
-												) : (
-													<>
-														<Label htmlFor="department">
-															Department <span className="text-red-500">*</span>
-														</Label>
-														<Select
-															onValueChange={(value) =>
-																handleChange("departmentId", value)
-															}
-															value={formState.departmentId}
-														>
-															<SelectTrigger>
-																<SelectValue placeholder="Select Department" />
-															</SelectTrigger>
-															<SelectContent>
-																{filteredDepartments.map((dept) => (
-																	<SelectItem key={dept.id} value={dept.id}>
-																		{dept.name}
-																	</SelectItem>
-																))}
-															</SelectContent>
-														</Select>
-														{formErrors.departmentId && (
-															<p className="text-red-600 text-sm">
-																{formErrors.departmentId}
-															</p>
-														)}
-													</>
+												<Label htmlFor="department">
+													Department <span className="text-red-500">*</span>
+												</Label>
+												<Select
+													onValueChange={(value) =>
+														handleChange("departmentId", value)
+													}
+													value={formState.departmentId}
+												>
+													<SelectTrigger className="w-full">
+														<SelectValue placeholder="Select Department" />
+													</SelectTrigger>
+													<SelectContent>
+														{filteredDepartments.map((dept) => (
+															<SelectItem key={dept.id} value={dept.id}>
+																<span className="truncate" title={dept.name}>
+																	{dept.name}
+																</span>
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												{formErrors.departmentId && (
+													<p className="text-red-600 text-sm">
+														{formErrors.departmentId}
+													</p>
 												)}
 											</div>
 										)}
 
-										{/* Academic Role */}
+										{/* iKohza (required for MJIIT only) */}
+										{isMjiit && formState.facultyId && (
+											<div className="space-y-2">
+												<Label htmlFor="ikohza">
+													iKohza <span className="text-red-500">*</span>
+												</Label>
+												<Select
+													onValueChange={(value) =>
+														handleChange("ikohzaId", value)
+													}
+													value={formState.ikohzaId}
+												>
+													<SelectTrigger className="w-full">
+														<SelectValue placeholder="Select iKohza" />
+													</SelectTrigger>
+													<SelectContent>
+														{filteredIkohzas.map((ikohza) => (
+															<SelectItem key={ikohza.id} value={ikohza.id}>
+																<span className="truncate" title={ikohza.name}>
+																	{ikohza.name}
+																</span>
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												{formErrors.ikohzaId && (
+													<p className="text-red-600 text-sm">
+														{formErrors.ikohzaId}
+													</p>
+												)}
+											</div>
+										)}
+
+										{/* Academic Role - Radio-style selection for better visibility */}
 										<div className="space-y-2">
 											<Label>
 												Are you a Student or Staff?{" "}
 												<span className="text-red-500">*</span>
 											</Label>
-											<Select
-												onValueChange={(value) =>
-													handleChange(
-														"academicType",
-														value as "student" | "staff",
-													)
-												}
-												value={formState.academicType}
-											>
-												<SelectTrigger>
-													<SelectValue placeholder="Select your role" />
-												</SelectTrigger>
-												<SelectContent>
-													<SelectItem value="student">Student</SelectItem>
-													<SelectItem value="staff">Staff</SelectItem>
-												</SelectContent>
-											</Select>
+											<div className="grid grid-cols-2 gap-3">
+												<button
+													className={`flex items-center justify-center gap-2 rounded-lg border-2 p-4 transition-colors ${
+														formState.academicType === "student"
+															? "border-blue-500 bg-blue-50 text-blue-700"
+															: "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+													}`}
+													onClick={() =>
+														handleChange("academicType", "student")
+													}
+													type="button"
+												>
+													<GraduationCap className="h-5 w-5" />
+													<span className="font-medium">Student</span>
+												</button>
+												<button
+													className={`flex items-center justify-center gap-2 rounded-lg border-2 p-4 transition-colors ${
+														formState.academicType === "staff"
+															? "border-blue-500 bg-blue-50 text-blue-700"
+															: "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+													}`}
+													onClick={() => handleChange("academicType", "staff")}
+													type="button"
+												>
+													<User className="h-5 w-5" />
+													<span className="font-medium">Staff</span>
+												</button>
+											</div>
 											{formErrors.academicType && (
 												<p className="text-red-600 text-sm">
 													{formErrors.academicType}
@@ -681,14 +749,16 @@ export function OnboardingWizard({
 												onValueChange={handleCompanyChange}
 												value={formState.companyId || "new"}
 											>
-												<SelectTrigger>
+												<SelectTrigger className="w-full">
 													<SelectValue placeholder="Select or add company" />
 												</SelectTrigger>
 												<SelectContent>
 													<SelectItem value="new">+ Add New Company</SelectItem>
 													{options?.companies.map((company) => (
 														<SelectItem key={company.id} value={company.id}>
-															{company.name}
+															<span className="truncate" title={company.name}>
+																{company.name}
+															</span>
 														</SelectItem>
 													))}
 												</SelectContent>
@@ -718,18 +788,49 @@ export function OnboardingWizard({
 													)}
 												</div>
 												<div className="space-y-2">
+													<Label htmlFor="newCompanyBranchName">
+														Branch Name <span className="text-red-500">*</span>
+													</Label>
+													<Input
+														className="h-11"
+														id="newCompanyBranchName"
+														onChange={(e) =>
+															handleChange(
+																"newCompanyBranchName",
+																e.target.value,
+															)
+														}
+														placeholder="e.g., Main Office, Headquarters, KL Branch"
+														value={formState.newCompanyBranchName}
+													/>
+													{formErrors.newCompanyBranchName && (
+														<p className="text-red-600 text-sm">
+															{formErrors.newCompanyBranchName}
+														</p>
+													)}
+												</div>
+												<div className="space-y-2">
 													<Label htmlFor="newCompanyAddress">
-														Company Address
+														Branch Address{" "}
+														<span className="text-red-500">*</span>
 													</Label>
 													<Textarea
+														aria-invalid={
+															formErrors.newCompanyAddress ? "true" : "false"
+														}
 														id="newCompanyAddress"
 														onChange={(e) =>
 															handleChange("newCompanyAddress", e.target.value)
 														}
-														placeholder="Enter company address"
+														placeholder="Enter complete company address (required)"
 														rows={3}
 														value={formState.newCompanyAddress}
 													/>
+													{formErrors.newCompanyAddress && (
+														<p className="text-red-600 text-sm">
+															{formErrors.newCompanyAddress}
+														</p>
+													)}
 												</div>
 											</>
 										)}
@@ -743,19 +844,28 @@ export function OnboardingWizard({
 														onValueChange={handleBranchChange}
 														value={formState.companyBranchId || "new"}
 													>
-														<SelectTrigger>
+														<SelectTrigger className="w-full">
 															<SelectValue placeholder="Select or add branch" />
 														</SelectTrigger>
 														<SelectContent>
 															<SelectItem value="new">
 																+ Add New Branch
 															</SelectItem>
-															{filteredBranches.map((branch) => (
-																<SelectItem key={branch.id} value={branch.id}>
-																	{branch.name}
-																	{branch.city && ` - ${branch.city}`}
-																</SelectItem>
-															))}
+															{filteredBranches.map((branch) => {
+																const displayName = branch.city
+																	? `${branch.name} - ${branch.city}`
+																	: branch.name;
+																return (
+																	<SelectItem key={branch.id} value={branch.id}>
+																		<span
+																			className="truncate"
+																			title={displayName}
+																		>
+																			{displayName}
+																		</span>
+																	</SelectItem>
+																);
+															})}
 														</SelectContent>
 													</Select>
 												</div>
@@ -769,6 +879,9 @@ export function OnboardingWizard({
 																<span className="text-red-500">*</span>
 															</Label>
 															<Input
+																aria-invalid={
+																	formErrors.newBranchName ? "true" : "false"
+																}
 																className="h-11"
 																id="newBranchName"
 																onChange={(e) =>
@@ -777,12 +890,21 @@ export function OnboardingWizard({
 																placeholder="e.g., Main Office, KL Branch"
 																value={formState.newBranchName}
 															/>
+															{formErrors.newBranchName && (
+																<p className="text-red-600 text-sm">
+																	{formErrors.newBranchName}
+																</p>
+															)}
 														</div>
 														<div className="space-y-2">
 															<Label htmlFor="newBranchAddress">
-																Branch Address
+																Branch Address{" "}
+																<span className="text-red-500">*</span>
 															</Label>
 															<Textarea
+																aria-invalid={
+																	formErrors.newBranchAddress ? "true" : "false"
+																}
 																id="newBranchAddress"
 																onChange={(e) =>
 																	handleChange(
@@ -790,10 +912,15 @@ export function OnboardingWizard({
 																		e.target.value,
 																	)
 																}
-																placeholder="Enter branch address"
+																placeholder="Enter complete branch address (required)"
 																rows={2}
 																value={formState.newBranchAddress}
 															/>
+															{formErrors.newBranchAddress && (
+																<p className="text-red-600 text-sm">
+																	{formErrors.newBranchAddress}
+																</p>
+															)}
 														</div>
 													</>
 												)}

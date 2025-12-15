@@ -27,17 +27,87 @@ async function main() {
 		// Note: We'll primarily use authUserId for linking going forward
 		const existingUsers = await db.user.findMany({
 			where: { email: { in: seedEmails } },
-			select: { authUserId: true },
+			select: { id: true, authUserId: true },
 		});
 
+		const userIds = existingUsers.map((u) => u.id);
 		const authUserIds = existingUsers
 			.map((u) => u.authUserId)
 			.filter(Boolean) as string[];
 
+		// Delete related records that reference User first (in order of dependencies)
+		if (userIds.length > 0) {
+			// Delete sample modifications that reference users
+			await db.sampleModification.deleteMany({
+				where: {
+					OR: [{ createdBy: { in: userIds } }, { approvedBy: { in: userIds } }],
+				},
+			});
+
+			// Delete other related records (these should cascade, but being explicit)
+			await db.notification.deleteMany({
+				where: { userId: { in: userIds } },
+			});
+
+			await db.sampleTracking.deleteMany({
+				where: { updatedBy: { in: userIds } },
+			});
+
+			await db.bookingDocument.deleteMany({
+				where: {
+					OR: [
+						{ createdById: { in: userIds } },
+						{ verifiedBy: { in: userIds } },
+					],
+				},
+			});
+
+			await db.fileBlob.deleteMany({
+				where: { uploadedById: { in: userIds } },
+			});
+
+			await db.payment.deleteMany({
+				where: {
+					OR: [
+						{ uploadedBy: { in: userIds } },
+						{ verifiedBy: { in: userIds } },
+					],
+				},
+			});
+
+			await db.invoice.deleteMany({
+				where: { uploadedBy: { in: userIds } },
+			});
+
+			await db.analysisResult.deleteMany({
+				where: { uploadedBy: { in: userIds } },
+			});
+
+			await db.serviceForm.deleteMany({
+				where: { generatedBy: { in: userIds } },
+			});
+
+			await db.bookingRequest.deleteMany({
+				where: {
+					OR: [{ userId: { in: userIds } }, { reviewedBy: { in: userIds } }],
+				},
+			});
+
+			await db.auditLog.deleteMany({
+				where: { userId: { in: userIds } },
+			});
+
+			await db.authProvider.deleteMany({
+				where: { userId: { in: userIds } },
+			});
+		}
+
+		// Now delete users
 		await db.user.deleteMany({
 			where: { email: { in: seedEmails } },
 		});
 
+		// Finally delete Better Auth users
 		await db.betterAuthUser.deleteMany({
 			where: {
 				OR: [
@@ -90,7 +160,37 @@ async function main() {
 		},
 	});
 
+	// Create Faculty of Science
+	const scienceFaculty = await db.faculty.create({
+		data: {
+			code: "FKS",
+			name: "Faculty of Science",
+			isActive: true,
+		},
+	});
+
+	// Create Faculty of Management
+	const managementFaculty = await db.faculty.create({
+		data: {
+			code: "FKM",
+			name: "Faculty of Management",
+			isActive: true,
+		},
+	});
+
+	// Create Faculty of Computing
+	const computingFaculty = await db.faculty.create({
+		data: {
+			code: "FKP",
+			name: "Faculty of Computing",
+			isActive: true,
+		},
+	});
+
 	console.log(`✅ Created faculty: ${engineeringFaculty.name}`);
+	console.log(`✅ Created faculty: ${scienceFaculty.name}`);
+	console.log(`✅ Created faculty: ${managementFaculty.name}`);
+	console.log(`✅ Created faculty: ${computingFaculty.name}`);
 
 	// Create Departments under Faculty of Engineering (regular)
 	const chemEngDept = await db.department.create({
@@ -111,8 +211,104 @@ async function main() {
 		},
 	});
 
+	const electricalDept = await db.department.create({
+		data: {
+			facultyId: engineeringFaculty.id,
+			code: "JKE",
+			name: "Department of Electrical Engineering",
+			isActive: true,
+		},
+	});
+
+	const civilDept = await db.department.create({
+		data: {
+			facultyId: engineeringFaculty.id,
+			code: "JKA",
+			name: "Department of Civil Engineering",
+			isActive: true,
+		},
+	});
+
 	console.log(`✅ Created department: ${chemEngDept.name}`);
 	console.log(`✅ Created department: ${mechanicalDept.name}`);
+	console.log(`✅ Created department: ${electricalDept.name}`);
+	console.log(`✅ Created department: ${civilDept.name}`);
+
+	// Create Departments under Faculty of Science
+	const chemistryDept = await db.department.create({
+		data: {
+			facultyId: scienceFaculty.id,
+			code: "JKM",
+			name: "Department of Chemistry",
+			isActive: true,
+		},
+	});
+
+	const physicsDept = await db.department.create({
+		data: {
+			facultyId: scienceFaculty.id,
+			code: "JKP",
+			name: "Department of Physics",
+			isActive: true,
+		},
+	});
+
+	const mathDept = await db.department.create({
+		data: {
+			facultyId: scienceFaculty.id,
+			code: "JKMATH",
+			name: "Department of Mathematics",
+			isActive: true,
+		},
+	});
+
+	console.log(`✅ Created department: ${chemistryDept.name}`);
+	console.log(`✅ Created department: ${physicsDept.name}`);
+	console.log(`✅ Created department: ${mathDept.name}`);
+
+	// Create Departments under Faculty of Management
+	const businessDept = await db.department.create({
+		data: {
+			facultyId: managementFaculty.id,
+			code: "JKP",
+			name: "Department of Business Administration",
+			isActive: true,
+		},
+	});
+
+	const accountingDept = await db.department.create({
+		data: {
+			facultyId: managementFaculty.id,
+			code: "JKA",
+			name: "Department of Accounting",
+			isActive: true,
+		},
+	});
+
+	console.log(`✅ Created department: ${businessDept.name}`);
+	console.log(`✅ Created department: ${accountingDept.name}`);
+
+	// Create Departments under Faculty of Computing
+	const csDept = await db.department.create({
+		data: {
+			facultyId: computingFaculty.id,
+			code: "JKS",
+			name: "Department of Computer Science",
+			isActive: true,
+		},
+	});
+
+	const itDept = await db.department.create({
+		data: {
+			facultyId: computingFaculty.id,
+			code: "JKT",
+			name: "Department of Information Technology",
+			isActive: true,
+		},
+	});
+
+	console.log(`✅ Created department: ${csDept.name}`);
+	console.log(`✅ Created department: ${itDept.name}`);
 
 	// Create Departments under MJIIT
 	const mjiitChemEngDept = await db.department.create({
@@ -124,7 +320,37 @@ async function main() {
 		},
 	});
 
+	const mjiitMechEngDept = await db.department.create({
+		data: {
+			facultyId: mjiitFaculty.id,
+			code: "MJIIT-ME",
+			name: "MJIIT Mechanical Engineering Department",
+			isActive: true,
+		},
+	});
+
+	const mjiitElecEngDept = await db.department.create({
+		data: {
+			facultyId: mjiitFaculty.id,
+			code: "MJIIT-EE",
+			name: "MJIIT Electrical Engineering Department",
+			isActive: true,
+		},
+	});
+
+	const mjiitCivilDept = await db.department.create({
+		data: {
+			facultyId: mjiitFaculty.id,
+			code: "MJIIT-CE",
+			name: "MJIIT Civil Engineering Department",
+			isActive: true,
+		},
+	});
+
 	console.log(`✅ Created department: ${mjiitChemEngDept.name}`);
+	console.log(`✅ Created department: ${mjiitMechEngDept.name}`);
+	console.log(`✅ Created department: ${mjiitElecEngDept.name}`);
+	console.log(`✅ Created department: ${mjiitCivilDept.name}`);
 
 	// Create iKohza (only under MJIIT faculty)
 	const checaIkohza = await db.ikohza.create({
@@ -147,8 +373,41 @@ async function main() {
 		},
 	});
 
+	const ikohza1 = await db.ikohza.create({
+		data: {
+			facultyId: mjiitFaculty.id,
+			code: "IK1",
+			name: "iKohza 1",
+			description: "Research Group 1",
+			isActive: true,
+		},
+	});
+
+	const ikohza2 = await db.ikohza.create({
+		data: {
+			facultyId: mjiitFaculty.id,
+			code: "IK2",
+			name: "iKohza 2",
+			description: "Research Group 2",
+			isActive: true,
+		},
+	});
+
+	const ikohza3 = await db.ikohza.create({
+		data: {
+			facultyId: mjiitFaculty.id,
+			code: "IK3",
+			name: "iKohza 3",
+			description: "Research Group 3",
+			isActive: true,
+		},
+	});
+
 	console.log(`✅ Created iKohza: ${checaIkohza.name} (MJIIT only)`);
 	console.log(`✅ Created iKohza: ${materialIkohza.name} (MJIIT only)`);
+	console.log(`✅ Created iKohza: ${ikohza1.name} (MJIIT only)`);
+	console.log(`✅ Created iKohza: ${ikohza2.name} (MJIIT only)`);
+	console.log(`✅ Created iKohza: ${ikohza3.name} (MJIIT only)`);
 
 	// Seed External Organizations
 	console.log("\n🌱 Seeding external organizations...");
@@ -410,7 +669,10 @@ async function main() {
 	// Seed Services
 	console.log("\n🌱 Seeding services...");
 
-	// Clean up existing services
+	// Clean up existing services (delete in order of dependencies)
+	// ServicePricing has cascade, but BookingServiceItem doesn't
+	await db.bookingServiceItem.deleteMany({});
+	await db.serviceAddOnMapping.deleteMany({});
 	await db.servicePricing.deleteMany({});
 	await db.service.deleteMany({});
 

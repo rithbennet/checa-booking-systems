@@ -15,6 +15,22 @@ export const registrationSchema = z
 		acceptedTerms: z.boolean().refine((val) => val === true, {
 			message: "You must accept the Terms & Privacy",
 		}),
+		phone: z.string().min(1, "Phone number is required").trim(),
+		// Institutional fields (optional - can complete later)
+		facultyId: z.string().optional(),
+		departmentId: z.string().optional(),
+		ikohzaId: z.string().optional(),
+		academicType: z.enum(["student", "staff"]).optional(),
+		userIdentifier: z.string().optional(),
+		supervisorName: z.string().optional(),
+		// External fields (optional - can complete later)
+		companyId: z.string().optional(),
+		companyBranchId: z.string().optional(),
+		newCompanyName: z.string().optional(),
+		newCompanyAddress: z.string().optional(),
+		newCompanyBranchName: z.string().optional(),
+		newBranchName: z.string().optional(),
+		newBranchAddress: z.string().optional(),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
 		message: "Passwords do not match",

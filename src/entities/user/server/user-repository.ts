@@ -161,7 +161,11 @@ export async function updateUserStatus(
  */
 export async function updateUserType(
 	userId: string,
-	userType: "mjiit_member" | "utm_member" | "external_member" | "lab_administrator",
+	userType:
+		| "mjiit_member"
+		| "utm_member"
+		| "external_member"
+		| "lab_administrator",
 ) {
 	return db.user.update({
 		where: { id: userId },

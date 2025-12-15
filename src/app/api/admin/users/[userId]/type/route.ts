@@ -25,9 +25,12 @@ export const PATCH = createProtectedHandler(
 			const { userType } = body;
 
 			if (
-				!["mjiit_member", "utm_member", "external_member", "lab_administrator"].includes(
-					userType,
-				)
+				![
+					"mjiit_member",
+					"utm_member",
+					"external_member",
+					"lab_administrator",
+				].includes(userType)
 			) {
 				return Response.json(
 					{
@@ -50,4 +53,3 @@ export const PATCH = createProtectedHandler(
 		}
 	},
 );
-

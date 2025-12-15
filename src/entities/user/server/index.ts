@@ -24,6 +24,17 @@ export {
 	updateUserProfile,
 } from "./profile-repository";
 export {
+	type CreateUserInput,
+	createUser,
+	type FacultyLookupResult,
+	getActiveAdminIds,
+	lookupDepartmentById,
+	lookupFacultyById,
+	lookupIkohzaById,
+	userExistsByAuthId,
+	userExistsByEmail,
+} from "./user-registration-repository";
+export {
 	approveUser,
 	getUserListData,
 	getUserStatusCounts,

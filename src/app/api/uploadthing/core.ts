@@ -223,13 +223,20 @@ export const fileRouter = {
 					case "workspace_form_signed": {
 						// Notify admins that signed forms were uploaded
 						const formAdminIds = await getAdminIds();
-						await notifyAdminsSignedFormsUploaded({
-							adminIds: formAdminIds,
-							formId: document.id,
-							formNumber: metadata.bookingReference,
-							bookingReference: metadata.bookingReference,
-							customerName: metadata.customerName,
-						});
+						try {
+							await notifyAdminsSignedFormsUploaded({
+								adminIds: formAdminIds,
+								formId: document.id,
+								formNumber: metadata.bookingReference,
+								bookingReference: metadata.bookingReference,
+								customerName: metadata.customerName,
+							});
+						} catch (notifyError) {
+							console.error(
+								"[UploadThing] Failed to notify admins of signed forms upload:",
+								notifyError,
+							);
+						}
 						break;
 					}
 

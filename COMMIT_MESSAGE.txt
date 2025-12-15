@@ -1,26 +1,38 @@
-feat: add sample auto-creation and user type management
+feat: enhance user registration and onboarding flow
 
-- Add automatic sample creation on booking submission and approval
-  - Create samples for all service items requiring samples
-  - Handle missing samples gracefully with error logging
-  - Export createSamplesForBooking function for reuse
-  - Create one sample per quantity unit for each service item
+- Add comprehensive user registration support
+  - Add useRegistrationOptions hook for registration form dropdowns
+  - Add user registration repository with createUser function
+  - Add user existence checks (by email and auth ID)
+  - Add lookup functions for faculty, department, and ikohza validation
+  - Support optional institutional/external fields during registration
 
-- Add user type management feature
-  - Add updateUserType API endpoint and mutation hook
-  - Add user type dropdown menu in admin users table
-  - Allow admins to change user types (MJIIT/UTM/External/Admin)
-  - Add visual indicator for current user type in dropdown
+- Improve onboarding flow validation and UX
+  - Make phone number required in both registration and onboarding
+  - Add better validation for internal members (academicType, departmentId required)
+  - Require ikohzaId for MJIIT members during onboarding
+  - Improve company/branch creation with branch name requirement
+  - Add validation for branch selection/creation in external user flow
+  - Return branchId from createCompany when branch is created
 
-- Improve admin notification system
-  - Filter admin queries to only active admins
-  - Add email field to admin queries for better notification handling
-  - Add error handling for notification failures in upload handler
-  - Include customer name and email in booking notifications
+- Enhance onboarding options repository
+  - Improve MJIIT detection logic (check code and name patterns)
+  - Support branch name parameter in createCompany function
+  - Better error messages for missing required fields
 
-- Update email redirect documentation
-  - Add warnings about EMAIL_REDIRECT_TO usage in production
-  - Clarify that all emails are redirected when set
+- Update registration API to handle full profile creation
+  - Support institutional fields (faculty, department, ikohza, academic type)
+  - Support external fields (company, branch creation)
+  - Automatically determine userType based on faculty selection
+  - Handle company/branch creation during registration
 
-- Format package.json with tabs (cosmetic change)
+- Improve database seeding
+  - Add more faculties (Science, Management, Computing)
+  - Add departments across all faculties for better testing
+  - Add more iKohzas for MJIIT
+  - Fix seed cleanup to handle dependencies properly
+  - Delete related records before deleting users
 
+- Add error handling improvements
+  - Wrap notification calls in try-catch in upload handler
+  - Better error messages with field-specific validation details
