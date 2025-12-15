@@ -180,6 +180,59 @@ export async function findOrCreateSampleTracking(
 }
 
 /**
+ * Create SampleTracking records for all service items in a booking
+ * Creates one sample per quantity unit for each service item that requires samples
+ */
+export async function createSamplesForBooking(bookingId: string) {
+	// Get all service items for this booking
+	const serviceItems = await db.bookingServiceItem.findMany({
+		where: { bookingRequestId: bookingId },
+		include: {
+			service: {
+				select: {
+					requiresSample: true,
+					category: true,
+				},
+			},
+		},
+	});
+
+	const createdSamples = [];
+
+	for (const item of serviceItems) {
+		// Only create samples for services that require samples (exclude workspace)
+		if (
+			item.service.requiresSample &&
+			item.service.category !== "working_space"
+		) {
+			// Check existing samples for this service item
+			const existingCount = await db.sampleTracking.count({
+				where: { bookingServiceItemId: item.id },
+			});
+
+			// Create samples for each quantity unit (if not already created)
+			for (let i = existingCount; i < item.quantity; i++) {
+				const sampleIdentifier = item.sampleName
+					? `${item.sampleName}-${i + 1}`
+					: `SAMPLE-${item.id.substring(0, 8).toUpperCase()}-${i + 1}`;
+
+				const sample = await db.sampleTracking.create({
+					data: {
+						bookingServiceItemId: item.id,
+						sampleIdentifier,
+						status: "pending",
+					},
+				});
+
+				createdSamples.push(sample);
+			}
+		}
+	}
+
+	return createdSamples;
+}
+
+/**
  * Update sample status
  */
 export async function updateSampleStatus(

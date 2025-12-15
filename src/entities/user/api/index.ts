@@ -11,5 +11,6 @@ export {
 	useApproveUser,
 	useRejectUser,
 	useUpdateUserStatus,
+	useUpdateUserType,
 } from "./useUserMutations";
 export { useUpdateProfile, useUserProfile } from "./useUserProfile";

@@ -1,8 +1,16 @@
 "use client";
 
-import { Check, Eye, MoreHorizontal, UserCheck, UserX, X } from "lucide-react";
+import {
+	Check,
+	Eye,
+	MoreHorizontal,
+	UserCheck,
+	Users,
+	UserX,
+	X,
+} from "lucide-react";
 import { useMemo } from "react";
-import type { UserListItemVM } from "@/entities/user/model/types";
+import type { UserListItemVM, UserType } from "@/entities/user/model/types";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -10,6 +18,9 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/shared/ui/shadcn/dropdown-menu";
 import {
@@ -38,7 +49,15 @@ interface UsersTableProps {
 	onReject: (id: string) => void;
 	onSuspend: (id: string) => void;
 	onUnsuspend: (id: string) => void;
+	onChangeUserType: (id: string, userType: UserType) => void;
 }
+
+const USER_TYPE_OPTIONS: { value: UserType; label: string }[] = [
+	{ value: "mjiit_member", label: "MJIIT Member" },
+	{ value: "utm_member", label: "UTM Member" },
+	{ value: "external_member", label: "External User" },
+	{ value: "lab_administrator", label: "Administrator" },
+];
 
 export function UsersTable({
 	users,
@@ -51,6 +70,7 @@ export function UsersTable({
 	onReject,
 	onSuspend,
 	onUnsuspend,
+	onChangeUserType,
 }: UsersTableProps) {
 	// Define columns
 	const columns: ColumnDef<UserListItemVM>[] = useMemo(
@@ -234,6 +254,27 @@ export function UsersTable({
 											Reactivate
 										</DropdownMenuItem>
 									)}
+									<DropdownMenuSeparator />
+									<DropdownMenuSub>
+										<DropdownMenuSubTrigger>
+											<Users className="mr-2 size-4" />
+											Change Type
+										</DropdownMenuSubTrigger>
+										<DropdownMenuSubContent>
+											{USER_TYPE_OPTIONS.map((option) => (
+												<DropdownMenuItem
+													disabled={row.userType === option.value}
+													key={option.value}
+													onClick={() => onChangeUserType(row.id, option.value)}
+												>
+													{row.userType === option.value && (
+														<Check className="mr-2 size-4" />
+													)}
+													{option.label}
+												</DropdownMenuItem>
+											))}
+										</DropdownMenuSubContent>
+									</DropdownMenuSub>
 									{!isPending && (
 										<>
 											<DropdownMenuSeparator />
@@ -250,7 +291,7 @@ export function UsersTable({
 				},
 			},
 		],
-		[onView, onApprove, onReject, onSuspend, onUnsuspend],
+		[onView, onApprove, onReject, onSuspend, onUnsuspend, onChangeUserType],
 	);
 
 	// Only pending users can be selected for bulk actions

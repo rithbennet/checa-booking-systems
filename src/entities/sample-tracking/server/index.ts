@@ -4,6 +4,7 @@
 
 export * from "./actions";
 export {
+	createSamplesForBooking,
 	findOrCreateSampleTracking,
 	findSampleById,
 	findSampleTrackingList,

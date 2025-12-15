@@ -1,5 +1,6 @@
 import type { Decimal } from "@prisma/client/runtime/library";
 import type { ZodIssue } from "zod";
+import { createSamplesForBooking } from "@/entities/sample-tracking/server";
 import type { BookingSaveDraftDto, BookingSubmitDto } from "./booking.dto";
 import { bookingSubmitDto } from "./booking.dto";
 import { mapDtoToNormalized } from "./booking.mapper";
@@ -385,6 +386,18 @@ export async function submit(params: {
 		reviewedAt: null,
 	});
 
+	// Create samples for all service items (one per quantity unit)
+	// This ensures samples are available immediately after submission
+	try {
+		await createSamplesForBooking(bookingId);
+	} catch (sampleError) {
+		// Log but don't fail the submission if sample creation fails
+		console.error(
+			"[BookingService] Failed to create samples during submission:",
+			sampleError,
+		);
+	}
+
 	// Send notifications
 	await notifications.notifyUserBookingSubmitted({
 		userId,
@@ -401,6 +414,8 @@ export async function submit(params: {
 			bookingId,
 			referenceNumber: booking.referenceNumber,
 			status: newStatus,
+			customerName: `${booking.user.firstName} ${booking.user.lastName}`,
+			customerEmail: booking.user.email,
 		});
 	}
 
@@ -538,6 +553,18 @@ export async function adminApprove(params: {
 		reviewedBy: adminId,
 		reviewedAt: new Date(),
 	});
+
+	// Ensure samples exist for all service items (create if missing)
+	// This handles cases where samples weren't created during submission
+	try {
+		await createSamplesForBooking(bookingId);
+	} catch (sampleError) {
+		// Log but don't fail the approval if sample creation fails
+		console.error(
+			"[BookingService] Failed to create samples during approval:",
+			sampleError,
+		);
+	}
 
 	// Notify user
 	await notifications.notifyUserBookingApproved({
