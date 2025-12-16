@@ -19,3 +19,4 @@ export function useRegistrationOptions() {
 		staleTime: 10 * 60 * 1000, // 10 minutes - this data doesn't change often
 	});
 }
+
