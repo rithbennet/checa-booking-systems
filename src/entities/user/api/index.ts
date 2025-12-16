@@ -6,6 +6,7 @@ export {
 	useUnlinkAccount,
 } from "./useLinkedAccounts";
 export { useOnboardingOptions } from "./useOnboardingOptions";
+export { useRegistrationOptions } from "./useRegistrationOptions";
 export { useUserCounts, useUserList } from "./useUserList";
 export {
 	useApproveUser,

@@ -46,7 +46,7 @@ export function getReplyToEmail(): string | undefined {
 /**
  * Get the redirect email address for staging/testing
  * When set, all emails will be sent to this address instead of the intended recipient
- * 
+ *
  * IMPORTANT: Remove EMAIL_REDIRECT_TO from environment variables in production
  * to allow emails to be sent to actual recipients.
  */
@@ -56,7 +56,7 @@ export function getEmailRedirectTo(): string | undefined {
 
 /**
  * Check if emails should be redirected (for staging/testing)
- * 
+ *
  * IMPORTANT: This returns true if EMAIL_REDIRECT_TO is set, which will redirect
  * ALL emails (including admin notifications) to a single address.
  * Remove EMAIL_REDIRECT_TO from environment variables to disable redirection.

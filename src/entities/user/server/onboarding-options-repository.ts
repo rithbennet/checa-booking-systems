@@ -71,12 +71,22 @@ export async function getActiveFaculties(): Promise<FacultyOption[]> {
 		orderBy: { name: "asc" },
 	});
 
-	return faculties.map((f) => ({
-		id: f.id,
-		code: f.code,
-		name: f.name,
-		isMjiit: f.code.toUpperCase() === "MJIIT",
-	}));
+	return faculties.map((f) => {
+		const codeUpper = f.code.toUpperCase();
+		const nameUpper = f.name.toUpperCase();
+		// Check if faculty is MJIIT by code or name patterns
+		const isMjiit =
+			codeUpper === "MJIIT" ||
+			nameUpper.includes("MJIIT") ||
+			nameUpper.includes("MALAYSIA JAPANESE") ||
+			nameUpper.includes("JAPANESE INSTITUTE");
+		return {
+			id: f.id,
+			code: f.code,
+			name: f.name,
+			isMjiit,
+		};
+	});
 }
 
 /**
@@ -247,11 +257,13 @@ export async function getAllOnboardingOptions(): Promise<OnboardingOptionsVM> {
 
 /**
  * Create a new company (for external users who don't find their company)
+ * Returns company and branch ID if a branch was created
  */
 export async function createCompany(data: {
 	name: string;
 	address?: string;
-}): Promise<CompanyOption> {
+	branchName?: string;
+}): Promise<CompanyOption & { branchId?: string }> {
 	const company = await db.company.create({
 		data: {
 			name: data.name,
@@ -263,18 +275,26 @@ export async function createCompany(data: {
 		},
 	});
 
-	// If address provided, create a main branch
+	// If address provided, create a branch with the provided name or default to "Main Office"
+	let branchId: string | undefined;
 	if (data.address) {
-		await db.companyBranch.create({
+		const branch = await db.companyBranch.create({
 			data: {
 				companyId: company.id,
-				name: "Main Office",
+				name: data.branchName?.trim() || "Main Office",
 				address: data.address,
 			},
+			select: {
+				id: true,
+			},
 		});
+		branchId = branch.id;
 	}
 
-	return company;
+	return {
+		...company,
+		...(branchId && { branchId }),
+	};
 }
 
 /**
