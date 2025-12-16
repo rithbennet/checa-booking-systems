@@ -1,18 +1,26 @@
 import { NextResponse } from "next/server";
 import { sendUserWelcomeVerification } from "@/entities/notification/server";
 import {
-	createUser,
 	lookupDepartmentById,
 	lookupFacultyById,
 	lookupIkohzaById,
 } from "@/entities/user/server";
-import {
-	createCompany,
-	createCompanyBranch,
-} from "@/entities/user/server/onboarding-options-repository";
 import { env } from "@/env";
 import { auth } from "@/shared/server/better-auth/config";
 import { db } from "@/shared/server/db";
+
+/**
+ * Custom error class for validation errors that should return 400
+ */
+class ValidationError extends Error {
+	constructor(
+		public error: string,
+		public details?: Record<string, string[]>,
+	) {
+		super(error);
+		this.name = "ValidationError";
+	}
+}
 
 /**
  * Register a new user:
@@ -101,71 +109,7 @@ export async function POST(request: Request) {
 			);
 		}
 
-		// 2. Handle company/branch creation for external users
-		let finalCompanyId: string | undefined = companyId;
-		let finalBranchId: string | undefined = companyBranchId;
-
-		if (userType === "external_member") {
-			// Case 1: Creating a new company
-			if (!companyId && newCompanyName) {
-				if (!newCompanyBranchName?.trim()) {
-					return NextResponse.json(
-						{
-							error: "Branch name is required when creating a new company",
-							details: { newCompanyBranchName: ["Branch name is required"] },
-						},
-						{ status: 400 },
-					);
-				}
-				if (!newCompanyAddress?.trim()) {
-					return NextResponse.json(
-						{
-							error: "Branch address is required when creating a new company",
-							details: { newCompanyAddress: ["Branch address is required"] },
-						},
-						{ status: 400 },
-					);
-				}
-				const newCompany = await createCompany({
-					name: newCompanyName.trim(),
-					address: newCompanyAddress.trim(),
-					branchName: newCompanyBranchName.trim(),
-				});
-				finalCompanyId = newCompany.id;
-				// Branch ID is returned directly from createCompany if branch was created
-				finalBranchId = newCompany.branchId;
-			}
-			// Case 2: Existing company but adding a new branch
-			else if (companyId && !companyBranchId && newBranchName) {
-				if (!newBranchAddress?.trim()) {
-					return NextResponse.json(
-						{
-							error: "Branch address is required when creating a new branch",
-							details: { newBranchAddress: ["Branch address is required"] },
-						},
-						{ status: 400 },
-					);
-				}
-				const newBranch = await createCompanyBranch({
-					companyId,
-					name: newBranchName.trim(),
-					address: newBranchAddress.trim(),
-				});
-				finalBranchId = newBranch.id;
-			}
-			// Case 3: Existing company but no branch selected/created
-			else if (companyId && !companyBranchId && !newBranchName) {
-				return NextResponse.json(
-					{
-						error: "Please select an existing branch or create a new one",
-						details: { companyBranchId: ["Branch selection is required"] },
-					},
-					{ status: 400 },
-				);
-			}
-		}
-
-		// 3. Look up faculty/department/ikohza for institutional users
+		// 2. Look up faculty/department/ikohza for institutional users (before transaction)
 		let dbFacultyId: string | undefined;
 		let dbDepartmentId: string | undefined;
 		let dbIkohzaId: string | undefined;
@@ -202,7 +146,7 @@ export async function POST(request: Request) {
 			}
 		}
 
-		// 4. Determine academic type
+		// 3. Determine academic type
 		let finalAcademicType: "student" | "staff" | "none" = "none";
 		if (
 			(finalUserType === "mjiit_member" || finalUserType === "utm_member") &&
@@ -212,26 +156,161 @@ export async function POST(request: Request) {
 			finalAcademicType = academicType;
 		}
 
-		// 5. Create our User record (with pending status, NOT verified)
-		await createUser({
-			email,
-			firstName,
-			lastName,
-			phone: phone.trim(),
-			userType: finalUserType,
-			academicType: finalAcademicType,
-			userIdentifier: userIdentifier?.trim() || null,
-			supervisorName:
-				finalAcademicType === "student" ? supervisorName?.trim() || null : null,
-			authUserId: signUpResult.user.id,
-			facultyId: dbFacultyId,
-			departmentId: dbDepartmentId,
-			ikohzaId: dbIkohzaId,
-			companyId: finalCompanyId,
-			companyBranchId: finalBranchId,
+		// 4. Validate external user inputs before transaction
+		if (userType === "external_member") {
+			// Case 1: Creating a new company
+			if (!companyId && newCompanyName) {
+				if (!newCompanyBranchName?.trim()) {
+					return NextResponse.json(
+						{
+							error: "Branch name is required when creating a new company",
+							details: { newCompanyBranchName: ["Branch name is required"] },
+						},
+						{ status: 400 },
+					);
+				}
+				if (!newCompanyAddress?.trim()) {
+					return NextResponse.json(
+						{
+							error: "Branch address is required when creating a new company",
+							details: { newCompanyAddress: ["Branch address is required"] },
+						},
+						{ status: 400 },
+					);
+				}
+			}
+			// Case 2: Existing company but adding a new branch
+			else if (companyId && !companyBranchId && newBranchName) {
+				if (!newBranchAddress?.trim()) {
+					return NextResponse.json(
+						{
+							error: "Branch address is required when creating a new branch",
+							details: { newBranchAddress: ["Branch address is required"] },
+						},
+						{ status: 400 },
+					);
+				}
+			}
+			// Case 3: Existing company but no branch selected/created
+			else if (companyId && !companyBranchId && !newBranchName) {
+				return NextResponse.json(
+					{
+						error: "Please select an existing branch or create a new one",
+						details: { companyBranchId: ["Branch selection is required"] },
+					},
+					{ status: 400 },
+				);
+			}
+		}
+
+		// 5. Wrap company/branch/user creation in a transaction
+		let finalCompanyId: string | undefined = companyId;
+		let finalBranchId: string | undefined = companyBranchId;
+
+		await db.$transaction(async (tx) => {
+			// Handle company/branch creation for external users
+			if (userType === "external_member") {
+				// Case 1: Creating a new company
+				if (!companyId && newCompanyName) {
+					const newCompany = await tx.company.create({
+						data: {
+							name: newCompanyName.trim(),
+						},
+						select: {
+							id: true,
+							name: true,
+							legalName: true,
+						},
+					});
+					finalCompanyId = newCompany.id;
+
+					// Create branch with the provided name or default to "Main Office"
+					if (newCompanyAddress) {
+						const branch = await tx.companyBranch.create({
+							data: {
+								companyId: newCompany.id,
+								name: newCompanyBranchName?.trim() || "Main Office",
+								address: newCompanyAddress.trim(),
+							},
+							select: {
+								id: true,
+							},
+						});
+						finalBranchId = branch.id;
+					}
+				}
+				// Case 2: Existing company but adding a new branch
+				else if (companyId && !companyBranchId && newBranchName) {
+					// Verify company exists before creating branch
+					const existingCompany = await tx.company.findUnique({
+						where: { id: companyId },
+						select: { id: true },
+					});
+
+					if (!existingCompany) {
+						throw new ValidationError("Company not found", {
+							companyId: ["The selected company does not exist"],
+						});
+					}
+
+					const newBranch = await tx.companyBranch.create({
+						data: {
+							companyId,
+							name: newBranchName.trim(),
+							address: newBranchAddress?.trim() || null,
+						},
+						select: {
+							id: true,
+							name: true,
+							companyId: true,
+							address: true,
+							city: true,
+						},
+					});
+					finalBranchId = newBranch.id;
+				}
+			}
+
+			// Create User record (with pending status, NOT verified)
+			await tx.user.create({
+				data: {
+					email,
+					firstName,
+					lastName,
+					phone: phone.trim(),
+					userType: finalUserType,
+					academicType: finalAcademicType,
+					userIdentifier: userIdentifier?.trim() || null,
+					supervisorName:
+						finalAcademicType === "student"
+							? supervisorName?.trim() || null
+							: null,
+					status: "pending",
+					authUser: {
+						connect: { id: signUpResult.user.id },
+					},
+					// Academic organization (internal members)
+					...(dbFacultyId && {
+						facultyRelation: { connect: { id: dbFacultyId } },
+					}),
+					...(dbDepartmentId && {
+						departmentRelation: { connect: { id: dbDepartmentId } },
+					}),
+					...(dbIkohzaId && {
+						ikohza: { connect: { id: dbIkohzaId } },
+					}),
+					// External organization
+					...(finalCompanyId && {
+						companyRelation: { connect: { id: finalCompanyId } },
+					}),
+					...(finalBranchId && {
+						companyBranch: { connect: { id: finalBranchId } },
+					}),
+				},
+			});
 		});
 
-		// 6. Generate verification token and send email
+		// 6. Generate verification token and send email (after transaction commits)
 		const verificationToken = await db.betterAuthVerification.create({
 			data: {
 				identifier: email,
@@ -256,6 +335,17 @@ export async function POST(request: Request) {
 		});
 	} catch (error) {
 		console.error("Registration error:", error);
+
+		// Handle validation errors (return 400)
+		if (error instanceof ValidationError) {
+			return NextResponse.json(
+				{
+					error: error.error,
+					...(error.details && { details: error.details }),
+				},
+				{ status: 400 },
+			);
+		}
 
 		// If user already exists, clean up
 		const errObj = error as { code?: string } | undefined;
