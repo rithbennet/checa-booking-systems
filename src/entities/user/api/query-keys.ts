@@ -10,4 +10,5 @@ export const userKeys = {
 	linkedAccounts: () => [...userKeys.all, "linkedAccounts"] as const,
 	onboardingOptions: () => [...userKeys.all, "onboardingOptions"] as const,
 	registrationOptions: () => [...userKeys.all, "registrationOptions"] as const,
+	summary: (id: string) => [...userKeys.all, "summary", id] as const,
 };

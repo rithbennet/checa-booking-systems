@@ -82,6 +82,7 @@ function getNotificationColor(type: NotificationVM["type"]): string {
 		case "payment_verified":
 		case "results_available":
 		case "process_complete":
+		case "account_updated":
 			return "text-green-600";
 		case "booking_rejected":
 			return "text-red-600";
@@ -236,17 +237,14 @@ export function DashboardClient() {
 							</Link>
 						</div>
 
-					{/* My Bookings Widgets */}
-					<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-						<div>
+						{/* My Bookings Widgets */}
+						<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 							<DashboardBookingsWidget
 								limit={5}
 								preset="pending_review"
 								showViewAll
 								title="Pending Review"
 							/>
-						</div>
-						<div>
 							<DashboardBookingsWidget
 								limit={5}
 								preset="in_progress"
@@ -254,19 +252,18 @@ export function DashboardClient() {
 								title="In Progress"
 							/>
 						</div>
-					</div>
 
-					{/* Sample Tracker Widget */}
-					<UserSampleTracker />
+						{/* Sample Tracker Widget */}
+						<UserSampleTracker />
 
-					<div>
-						<DashboardBookingsWidget
-							limit={8}
-							preset="recent_completed"
-							showViewAll
-							title="Recently Completed"
-						/>
-					</div>
+						<div>
+							<DashboardBookingsWidget
+								limit={8}
+								preset="recent_completed"
+								showViewAll
+								title="Recently Completed"
+							/>
+						</div>
 
 						{/* Recent Notifications */}
 						<Card>

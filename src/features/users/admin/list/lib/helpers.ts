@@ -1,5 +1,9 @@
 import { format } from "date-fns";
-import type { UserStatus, UserType } from "@/entities/user/model/types";
+import type {
+	AcademicType,
+	UserStatus,
+	UserType,
+} from "@/entities/user/model/types";
 
 /**
  * Format user's full name
@@ -69,4 +73,16 @@ export function getUserStatusBadgeClass(status: UserStatus): string {
  */
 export function formatUserStatus(status: UserStatus): string {
 	return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+/**
+ * Format academic type for display
+ */
+export function formatAcademicType(academicType: AcademicType): string {
+	const labels: Record<AcademicType, string> = {
+		student: "Student",
+		staff: "Staff",
+		none: "N/A",
+	};
+	return labels[academicType];
 }

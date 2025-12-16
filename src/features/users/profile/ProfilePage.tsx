@@ -12,11 +12,16 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useUserProfile } from "@/entities/user";
+import type { AcademicType, UserType } from "@/entities/user/model/types";
 import {
 	LinkedAccountsCard,
 	ProfileEditDialog,
 	ProfileImageUpload,
 } from "@/features/users";
+import {
+	formatAcademicType,
+	formatUserType,
+} from "@/features/users/admin/list/lib/helpers";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import {
 	Card,
@@ -34,25 +39,6 @@ function formatDate(dateString: string | null): string {
 		month: "long",
 		day: "numeric",
 	});
-}
-
-function formatUserType(userType: string): string {
-	const types: Record<string, string> = {
-		mjiit_member: "MJIIT Member",
-		utm_member: "UTM Member",
-		external_member: "External Member",
-		lab_administrator: "Lab Administrator",
-	};
-	return types[userType] || userType;
-}
-
-function formatAcademicType(academicType: string): string {
-	const types: Record<string, string> = {
-		student: "Student",
-		staff: "Staff",
-		none: "N/A",
-	};
-	return types[academicType] || academicType;
 }
 
 function getStatusBadgeVariant(
@@ -203,7 +189,7 @@ export function ProfilePage() {
 											User Type
 										</p>
 										<p className="text-slate-600 text-sm">
-											{formatUserType(profile.userType)}
+											{formatUserType(profile.userType as UserType)}
 										</p>
 									</div>
 								</div>
@@ -214,7 +200,7 @@ export function ProfilePage() {
 											Academic Type
 										</p>
 										<p className="text-slate-600 text-sm">
-											{formatAcademicType(profile.academicType)}
+											{formatAcademicType(profile.academicType as AcademicType)}
 										</p>
 									</div>
 								</div>

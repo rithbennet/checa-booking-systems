@@ -16,7 +16,8 @@ export type NotificationType =
 	| "results_available"
 	| "sample_return_requested"
 	| "sample_returned"
-	| "process_complete";
+	| "process_complete"
+	| "account_updated";
 
 export interface NotificationVM {
 	id: string;

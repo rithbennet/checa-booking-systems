@@ -23,6 +23,7 @@ import {
 import {
 	AccountRejectedEmail,
 	AccountSuspendedEmail,
+	AccountUpdatedEmail,
 	AccountVerifiedEmail,
 	AdminNewUserRegisteredEmail,
 	AdminNotificationEmail,
@@ -356,6 +357,29 @@ export async function sendAccountVerifiedEmail(params: {
 		}),
 		context: {
 			template: "AccountVerified",
+			entityType: "user",
+			userId: params.userId,
+		},
+	});
+}
+
+export async function sendAccountUpdatedEmail(params: {
+	to: string;
+	customerName: string;
+	changedFields: string[];
+	userId?: string;
+}) {
+	const dashboardUrl = `${getBaseUrl()}/profile`;
+	return safeSendEmail({
+		to: params.to,
+		subject: "Your ChECA Lab Account Has Been Updated",
+		react: AccountUpdatedEmail({
+			customerName: params.customerName,
+			dashboardUrl,
+			changedFields: params.changedFields,
+		}),
+		context: {
+			template: "AccountUpdated",
 			entityType: "user",
 			userId: params.userId,
 		},

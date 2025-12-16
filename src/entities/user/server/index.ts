@@ -1,3 +1,4 @@
+export type { UpdateProfileInput } from "../model/schemas";
 export {
 	type CompanyBranchOption,
 	type CompanyOption,
@@ -23,7 +24,6 @@ export {
 	updateUserProfile,
 	updateUserProfileImage,
 } from "./profile-repository";
-export type { UpdateProfileInput } from "../model/schemas";
 export { syncGoogleProfileImage } from "./sync-profile-image";
 export {
 	type CreateUserInput,

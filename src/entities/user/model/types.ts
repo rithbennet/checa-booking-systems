@@ -89,3 +89,48 @@ export interface UserStatusCounts {
 	rejected: number;
 	suspended: number;
 }
+
+/**
+ * Admin update user input
+ * Type exported from schemas.ts (Zod-inferred type)
+ * @see ../model/schemas.ts
+ */
+
+/**
+ * User summary view model for admin view
+ * Contains comprehensive user activity and usage data
+ */
+export interface UserSummaryVM {
+	bookingOverview: {
+		total: number;
+		upcoming: number;
+		completed: number;
+		cancelled: number;
+		rejected: number;
+	};
+	recentBookings: Array<{
+		id: string;
+		referenceNumber: string;
+		status: string;
+		totalAmount: number;
+		createdAt: string;
+	}>;
+	financialSummary: {
+		totalSpent: number;
+		outstanding: number;
+		pending: number;
+		lastPaymentDate: string | null;
+		lastPaymentAmount: number | null;
+	};
+	usagePatterns: {
+		topServices: Array<{ name: string; count: number }>;
+		topEquipment: Array<{ name: string; count: number }>;
+		averageBookingFrequency: number | null; // bookings per month, null if insufficient data
+	};
+	documentStatus: {
+		totalDocuments: number;
+		verified: number;
+		pending: number;
+		rejected: number;
+	};
+}

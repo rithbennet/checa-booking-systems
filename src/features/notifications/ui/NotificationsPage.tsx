@@ -47,6 +47,7 @@ function getNotificationIcon(type: NotificationType) {
 		case "booking_pending_verification":
 		case "booking_approved":
 		case "booking_rejected":
+		case "account_updated":
 			return <FileText className="size-5" />;
 		case "invoice_uploaded":
 		case "payment_reminder":

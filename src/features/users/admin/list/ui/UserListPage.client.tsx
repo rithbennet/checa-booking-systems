@@ -2,6 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Loader2, RefreshCw, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -41,6 +42,7 @@ import { UsersTable } from "./UsersTable";
 
 export function UserListPage() {
 	const queryClient = useQueryClient();
+	const router = useRouter();
 	const { params, setParams, searchInput, setSearchInput } =
 		useUserListParams();
 
@@ -166,8 +168,7 @@ export function UserListPage() {
 	};
 
 	const handleView = (userId: string) => {
-		// TODO: Open user detail dialog or navigate to user profile
-		console.log("View user:", userId);
+		router.push(`/admin/users/${userId}`);
 	};
 
 	const handleChangeUserType = async (userId: string, userType: UserType) => {

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { createCompanyBranch } from "@/entities/user/server/onboarding-options-repository";
 import { updateProfileInputSchema } from "@/entities/user/model/schemas";
+import { createCompanyBranch } from "@/entities/user/server/onboarding-options-repository";
 import {
 	getUserProfile,
 	updateUserProfile,

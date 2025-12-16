@@ -744,6 +744,7 @@ enum notification_type_enum {
   sample_return_requested
   sample_returned
   process_complete
+  account_updated
 }
 
 model Notification {

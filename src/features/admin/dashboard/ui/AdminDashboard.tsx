@@ -166,9 +166,18 @@ export function AdminDashboard() {
 									requests awaiting approval.
 								</p>
 							</div>
-							<Button asChild className="ml-4" size="sm" variant="outline">
-								<Link href="/admin/users">Review Now</Link>
-							</Button>
+							<div className="ml-4 flex gap-2">
+								{metricsData.pendingVerifications > 0 && (
+									<Button asChild size="sm" variant="outline">
+										<Link href="/admin/users">Review Users</Link>
+									</Button>
+								)}
+								{metricsData.pendingApprovals > 0 && (
+									<Button asChild size="sm" variant="outline">
+										<Link href="/admin/bookings">Review Bookings</Link>
+									</Button>
+								)}
+							</div>
 						</div>
 					</div>
 				)}

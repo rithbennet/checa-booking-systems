@@ -189,17 +189,8 @@ export async function POST(request: Request) {
 			}
 		}
 
-		// Get Google profile picture from BetterAuth user record
-		// This ensures we always get Google's profile picture (including default) if available
-		let googleProfileImage: string | null = session.user.image || null;
-		if (!googleProfileImage) {
-			// Try to get it directly from BetterAuth user record
-			const authUser = await db.betterAuthUser.findUnique({
-				where: { id: authUserId },
-				select: { image: true },
-			});
-			googleProfileImage = authUser?.image || null;
-		}
+		// Get Google profile picture from session (sourced from BetterAuth)
+		const googleProfileImage: string | null = session.user.image || null;
 
 		// Create User record
 		const newUser = await createUser({
