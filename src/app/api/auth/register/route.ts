@@ -8,19 +8,7 @@ import {
 import { env } from "@/env";
 import { auth } from "@/shared/server/better-auth/config";
 import { db } from "@/shared/server/db";
-
-/**
- * Custom error class for validation errors that should return 400
- */
-class ValidationError extends Error {
-	constructor(
-		public error: string,
-		public details?: Record<string, string[]>,
-	) {
-		super(error);
-		this.name = "ValidationError";
-	}
-}
+import { ValidationError } from "@/shared/server/errors";
 
 /**
  * Register a new user:
@@ -153,10 +141,32 @@ export async function POST(request: Request) {
 				dbDepartmentId = dept.id;
 			}
 
-			// Look up ikohza if provided (for MJIIT)
-			if (ikohzaId && dbFacultyId) {
+			// Look up ikohza (required for MJIIT)
+			if (dbFacultyId && faculty.code.toUpperCase() === "MJIIT") {
+				// Require ikohzaId for MJIIT members
+				if (!ikohzaId) {
+					return NextResponse.json(
+						{
+							error: "iKohza selection is required for MJIIT members",
+							details: { ikohzaId: ["iKohza is required"] },
+						},
+						{ status: 400 },
+					);
+				}
+
+				// Validate ikohza exists
 				const ikohza = await lookupIkohzaById(ikohzaId, dbFacultyId);
-				if (ikohza) dbIkohzaId = ikohza.id;
+				if (!ikohza) {
+					return NextResponse.json(
+						{
+							error: "Invalid iKohza",
+							details: { ikohzaId: ["iKohza not found"] },
+						},
+						{ status: 400 },
+					);
+				}
+
+				dbIkohzaId = ikohza.id;
 			}
 		}
 
@@ -316,18 +326,6 @@ export async function POST(request: Request) {
 							companyBranchId: [
 								"The selected branch does not exist or does not belong to the selected company",
 							],
-						});
-					}
-
-					// Verify company exists
-					const existingCompany = await tx.company.findUnique({
-						where: { id: companyId },
-						select: { id: true },
-					});
-
-					if (!existingCompany) {
-						throw new ValidationError("Company not found", {
-							companyId: ["The selected company does not exist"],
 						});
 					}
 				}
