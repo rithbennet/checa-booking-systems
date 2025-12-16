@@ -238,22 +238,18 @@ export function DashboardClient() {
 
 						{/* My Bookings Widgets */}
 						<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-							<div>
-								<DashboardBookingsWidget
-									limit={5}
-									preset="pending_review"
-									showViewAll
-									title="Pending Review"
-								/>
-							</div>
-							<div>
-								<DashboardBookingsWidget
-									limit={5}
-									preset="in_progress"
-									showViewAll
-									title="In Progress"
-								/>
-							</div>
+							<DashboardBookingsWidget
+								limit={5}
+								preset="pending_review"
+								showViewAll
+								title="Pending Review"
+							/>
+							<DashboardBookingsWidget
+								limit={5}
+								preset="in_progress"
+								showViewAll
+								title="In Progress"
+							/>
 						</div>
 
 						{/* Sample Tracker Widget */}

@@ -16,7 +16,20 @@ import { Separator } from "@/shared/ui/shadcn/separator";
 
 function formatDate(dateString: string | null): string {
 	if (!dateString) return "Never";
-	return new Date(dateString).toLocaleDateString("en-US", {
+
+	// Validate and parse the date safely
+	const parsedDate = Date.parse(dateString);
+	if (Number.isNaN(parsedDate)) {
+		return "Invalid date";
+	}
+
+	const date = new Date(parsedDate);
+	// Check if the date is valid after construction
+	if (Number.isNaN(date.getTime())) {
+		return "Invalid date";
+	}
+
+	return date.toLocaleDateString("en-US", {
 		year: "numeric",
 		month: "long",
 		day: "numeric",

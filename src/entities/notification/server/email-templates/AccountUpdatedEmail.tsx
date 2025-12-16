@@ -34,9 +34,9 @@ export function AccountUpdatedEmail({
 		status: "Account Status",
 	};
 
-	const changedFieldLabels = changedFields
-		.map((field) => fieldLabels[field] || field)
-		.filter(Boolean);
+	const changedFieldLabels = changedFields.map(
+		(field) => fieldLabels[field] || field,
+	);
 
 	return (
 		<BaseLayout preview="Your ChECA Lab account information has been updated">

@@ -39,6 +39,7 @@ export function useLinkSocialAccount() {
 			await authClient.linkSocial({
 				provider: provider as "google",
 				callbackURL: "/profile?linked=success",
+				errorCallbackURL: "/profile?error=link_failed",
 			});
 		},
 		onSuccess: () => {

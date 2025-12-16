@@ -68,13 +68,19 @@ export function LinkedAccountsCard() {
 	const unlinkAccount = useUnlinkAccount();
 
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [unlinkingAccount, setUnlinkingAccount] =
 		useState<LinkedAccount | null>(null);
 
-	// Check for success message from OAuth callback
+	// Check for success or error messages from OAuth callback
 	useEffect(() => {
-		if (searchParams.get("linked") === "success") {
+		const linked = searchParams.get("linked");
+		const error = searchParams.get("error");
+		const errorCode = searchParams.get("error_code");
+
+		if (linked === "success") {
 			setSuccessMessage("Account linked successfully!");
+			setErrorMessage(null);
 			refetch(); // Refresh the accounts list
 
 			// Sync Google profile image if available
@@ -97,7 +103,38 @@ export function LinkedAccountsCard() {
 			const timeout = setTimeout(() => {
 				setSuccessMessage(null);
 				window.history.replaceState({}, "", "/profile");
-			}, 3000);
+			}, 5000);
+			return () => clearTimeout(timeout);
+		}
+
+		if (error === "link_failed" || errorCode) {
+			// Handle different error codes from Better Auth
+			let message = "Failed to link account. ";
+			
+			// Better Auth error codes (check both error_code param and error param)
+			const actualErrorCode = errorCode || error;
+			
+			if (actualErrorCode === "ACCOUNT_ALREADY_LINKED_TO_DIFFERENT_USER" || 
+			    actualErrorCode === "account_already_linked_to_different_user") {
+				message = "This Google account is already linked to another user account. Please log in with that account to unlink it first.";
+			} else if (actualErrorCode === "EMAIL_DOESNT_MATCH" || 
+			           actualErrorCode === "email_doesn't_match") {
+				message = "The email address on your Google account doesn't match your current account email. Please use a Google account with the same email address.";
+			} else if (actualErrorCode === "UNABLE_TO_LINK_ACCOUNT" || 
+			           actualErrorCode === "unable_to_link_account") {
+				message = "Unable to link account. The account may already be linked or there was a configuration issue.";
+			} else {
+				message = "Failed to link Google account. Please try again.";
+			}
+
+			setErrorMessage(message);
+			setSuccessMessage(null);
+
+			// Clear the URL param after showing the message
+			const timeout = setTimeout(() => {
+				setErrorMessage(null);
+				window.history.replaceState({}, "", "/profile");
+			}, 8000);
 			return () => clearTimeout(timeout);
 		}
 	}, [searchParams, refetch, queryClient]);
@@ -170,6 +207,15 @@ export function LinkedAccountsCard() {
 					{successMessage && (
 						<div className="rounded-md border border-green-200 bg-green-50 p-3 text-green-700 text-sm">
 							{successMessage}
+						</div>
+					)}
+
+					{errorMessage && (
+						<div className="rounded-md border border-red-200 bg-red-50 p-3 text-red-700 text-sm">
+							<div className="flex items-start gap-2">
+								<AlertCircle className="mt-0.5 size-4 shrink-0" />
+								<p>{errorMessage}</p>
+							</div>
 						</div>
 					)}
 

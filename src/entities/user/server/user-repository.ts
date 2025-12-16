@@ -232,10 +232,11 @@ export async function adminUpdateUser(
 	}
 
 	// Validation: MJIIT members must have MJIIT faculty
-	if (effectiveUserType === "mjiit_member" && input.facultyId !== undefined) {
-		if (input.facultyId !== null) {
+	if (effectiveUserType === "mjiit_member") {
+		const effectiveFacultyId = input.facultyId !== undefined ? input.facultyId : currentUser.facultyId;
+		if (effectiveFacultyId !== null) {
 			const faculty = await db.faculty.findUnique({
-				where: { id: input.facultyId },
+				where: { id: effectiveFacultyId },
 				select: { code: true },
 			});
 
@@ -254,8 +255,8 @@ export async function adminUpdateUser(
 		}
 	}
 
-	// Track changed fields
-	const changedFields: string[] = [];
+	// Track changed fields using Set to prevent duplicates
+	const changedFieldsSet = new Set<string>();
 
 	// Build update data with only provided fields
 	const updateData: Record<string, unknown> = {};
@@ -265,7 +266,7 @@ export async function adminUpdateUser(
 		input.firstName.trim() !== currentUser.firstName
 	) {
 		updateData.firstName = input.firstName.trim();
-		changedFields.push("firstName");
+		changedFieldsSet.add("firstName");
 	}
 
 	if (
@@ -273,22 +274,22 @@ export async function adminUpdateUser(
 		input.lastName.trim() !== currentUser.lastName
 	) {
 		updateData.lastName = input.lastName.trim();
-		changedFields.push("lastName");
+		changedFieldsSet.add("lastName");
 	}
 
 	if (input.phone !== undefined && input.phone !== currentUser.phone) {
 		updateData.phone = input.phone;
-		changedFields.push("phone");
+		changedFieldsSet.add("phone");
 	}
 
 	if (input.userType !== undefined && input.userType !== currentUser.userType) {
 		updateData.userType = input.userType;
-		changedFields.push("userType");
+		changedFieldsSet.add("userType");
 
 		// Clear ikohzaId when switching to UTM member
 		if (input.userType === "utm_member" && currentUser.ikohzaId) {
 			updateData.ikohzaId = null;
-			changedFields.push("ikohzaId");
+			changedFieldsSet.add("ikohzaId");
 		}
 	}
 
@@ -297,7 +298,7 @@ export async function adminUpdateUser(
 		input.academicType !== currentUser.academicType
 	) {
 		updateData.academicType = input.academicType;
-		changedFields.push("academicType");
+		changedFieldsSet.add("academicType");
 	}
 
 	if (
@@ -305,7 +306,7 @@ export async function adminUpdateUser(
 		input.userIdentifier !== currentUser.userIdentifier
 	) {
 		updateData.userIdentifier = input.userIdentifier;
-		changedFields.push("userIdentifier");
+		changedFieldsSet.add("userIdentifier");
 	}
 
 	if (
@@ -313,7 +314,7 @@ export async function adminUpdateUser(
 		input.supervisorName !== currentUser.supervisorName
 	) {
 		updateData.supervisorName = input.supervisorName;
-		changedFields.push("supervisorName");
+		changedFieldsSet.add("supervisorName");
 	}
 
 	if (
@@ -321,7 +322,7 @@ export async function adminUpdateUser(
 		input.facultyId !== currentUser.facultyId
 	) {
 		updateData.facultyId = input.facultyId;
-		changedFields.push("facultyId");
+		changedFieldsSet.add("facultyId");
 	}
 
 	if (
@@ -329,12 +330,15 @@ export async function adminUpdateUser(
 		input.departmentId !== currentUser.departmentId
 	) {
 		updateData.departmentId = input.departmentId;
-		changedFields.push("departmentId");
+		changedFieldsSet.add("departmentId");
 	}
 
 	if (input.ikohzaId !== undefined && input.ikohzaId !== currentUser.ikohzaId) {
 		updateData.ikohzaId = input.ikohzaId;
-		changedFields.push("ikohzaId");
+		// Only add if not already added (e.g., from userType change above)
+		if (!changedFieldsSet.has("ikohzaId")) {
+			changedFieldsSet.add("ikohzaId");
+		}
 	}
 
 	if (
@@ -342,7 +346,7 @@ export async function adminUpdateUser(
 		input.companyId !== currentUser.companyId
 	) {
 		updateData.companyId = input.companyId;
-		changedFields.push("companyId");
+		changedFieldsSet.add("companyId");
 	}
 
 	if (
@@ -350,13 +354,16 @@ export async function adminUpdateUser(
 		input.companyBranchId !== currentUser.companyBranchId
 	) {
 		updateData.companyBranchId = input.companyBranchId;
-		changedFields.push("companyBranchId");
+		changedFieldsSet.add("companyBranchId");
 	}
 
 	if (input.status !== undefined && input.status !== currentUser.status) {
 		updateData.status = input.status;
-		changedFields.push("status");
+		changedFieldsSet.add("status");
 	}
+
+	// Convert Set to array
+	const changedFields = Array.from(changedFieldsSet);
 
 	// Only update if there are changes
 	if (Object.keys(updateData).length === 0) {

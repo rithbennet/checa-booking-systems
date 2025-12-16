@@ -1,11 +1,9 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, Save } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useAdminUpdateUser, useOnboardingOptions } from "@/entities/user";
-import { userKeys } from "@/entities/user/api/query-keys";
 import type {
 	AcademicType,
 	UserStatus,
@@ -37,7 +35,6 @@ interface AdminUserEditFormProps {
 }
 
 export function AdminUserEditForm({ profile, userId }: AdminUserEditFormProps) {
-	const queryClient = useQueryClient();
 	const { data: options } = useOnboardingOptions();
 	const { mutateAsync: updateUser, isPending } = useAdminUpdateUser();
 
@@ -130,7 +127,7 @@ export function AdminUserEditForm({ profile, userId }: AdminUserEditFormProps) {
 			const ikohzaId =
 				formData.userType === "utm_member" ? null : formData.ikohzaId || null;
 
-			await updateUser({
+			const response = await updateUser({
 				userId,
 				input: {
 					firstName: formData.firstName,
@@ -149,14 +146,14 @@ export function AdminUserEditForm({ profile, userId }: AdminUserEditFormProps) {
 				},
 			});
 
-			toast.success("User updated successfully", {
-				description: "The user has been notified of the changes.",
-			});
-
-			// Refetch profile
-			queryClient.invalidateQueries({
-				queryKey: userKeys.detail(userId),
-			});
+			// Show toast based on whether fields were changed
+			if (response.changedFields && response.changedFields.length > 0) {
+				toast.success("User updated successfully", {
+					description: "The user has been notified of the changes.",
+				});
+			} else {
+				toast.success("User updated successfully");
+			}
 		} catch (error) {
 			toast.error("Failed to update user", {
 				description:

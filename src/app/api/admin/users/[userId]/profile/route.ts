@@ -91,17 +91,19 @@ export const PATCH = createProtectedHandler(
 				input,
 			);
 
-			if (!updatedUser) {
-				return Response.json({ error: "User not found" }, { status: 404 });
-			}
-
 			// Only send notification if there were actual changes
 			if (changedFields.length > 0) {
 				// Notify user (in-app notification + email)
-				await notifyUserAccountUpdated({
-					userId,
-					changedFields,
-				});
+				// Wrap in try-catch so notification failures don't affect the update response
+				try {
+					await notifyUserAccountUpdated({
+						userId,
+						changedFields,
+					});
+				} catch (notificationError) {
+					console.error("Failed to send notification:", notificationError);
+					// Continue execution - don't fail the request if notification fails
+				}
 			}
 
 			// Return updated profile

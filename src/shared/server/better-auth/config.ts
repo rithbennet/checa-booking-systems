@@ -39,6 +39,10 @@ export const auth = betterAuth({
 	},
 	account: {
 		modelName: "BetterAuthAccount",
+		accountLinking: {
+			enabled: true,
+			trustedProviders: ["google"], // Allow Google accounts to be linked automatically
+		},
 	},
 	verification: {
 		modelName: "BetterAuthVerification",
