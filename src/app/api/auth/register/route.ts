@@ -116,8 +116,7 @@ export async function POST(request: Request) {
 		let finalUserType = userType as
 			| "utm_member"
 			| "external_member"
-			| "mjiit_member"
-			| "lab_administrator";
+			| "mjiit_member";
 
 		if (
 			(userType === "utm_member" || userType === "mjiit_member") &&
@@ -125,18 +124,33 @@ export async function POST(request: Request) {
 		) {
 			// Look up faculty by ID
 			const faculty = await lookupFacultyById(facultyId);
-			if (faculty) {
-				dbFacultyId = faculty.id;
-				// If faculty is MJIIT, update userType
-				if (faculty.code.toUpperCase() === "MJIIT") {
-					finalUserType = "mjiit_member";
-				}
+			if (!faculty) {
+				return NextResponse.json(
+					{
+						error: "Invalid faculty",
+						details: { facultyId: ["Faculty not found"] },
+					},
+					{ status: 400 },
+				);
+			}
+			dbFacultyId = faculty.id;
+			if (faculty.code.toUpperCase() === "MJIIT") {
+				finalUserType = "mjiit_member";
 			}
 
 			// Look up department if provided
 			if (departmentId && dbFacultyId) {
 				const dept = await lookupDepartmentById(departmentId, dbFacultyId);
-				if (dept) dbDepartmentId = dept.id;
+				if (!dept) {
+					return NextResponse.json(
+						{
+							error: "Invalid department",
+							details: { departmentId: ["Department not found"] },
+						},
+						{ status: 400 },
+					);
+				}
+				dbDepartmentId = dept.id;
 			}
 
 			// Look up ikohza if provided (for MJIIT)
@@ -210,6 +224,20 @@ export async function POST(request: Request) {
 		await db.$transaction(async (tx) => {
 			// Handle company/branch creation for external users
 			if (userType === "external_member") {
+				//Case 0: No company provided at all
+				if (!companyId && !newCompanyName) {
+					return NextResponse.json(
+						{
+							error: "Company information is required for external members",
+							details: {
+								companyId: [
+									"Please select an existing company or create a new one",
+								],
+							},
+						},
+						{ status: 400 },
+					);
+				}
 				// Case 1: Creating a new company
 				if (!companyId && newCompanyName) {
 					const newCompany = await tx.company.create({
