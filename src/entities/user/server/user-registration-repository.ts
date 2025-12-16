@@ -26,7 +26,7 @@ export interface CreateUserInput {
 	userIdentifier?: string | null;
 	supervisorName?: string | null;
 	authUserId: string;
-	profileImageUrl?: Buffer | null; // Binary image data (BYTEA)
+	profileImageUrl?: string | null; // UploadThing URL
 	emailVerifiedAt?: Date | null;
 	facultyId?: string;
 	departmentId?: string;
@@ -151,17 +151,17 @@ export async function createUser(input: CreateUserInput) {
 			},
 			// Academic organization (internal members)
 			...(input.facultyId && {
-				facultyRelation: { connect: { id: input.facultyId } },
+				faculty: { connect: { id: input.facultyId } },
 			}),
 			...(input.departmentId && {
-				departmentRelation: { connect: { id: input.departmentId } },
+				department: { connect: { id: input.departmentId } },
 			}),
 			...(input.ikohzaId && {
 				ikohza: { connect: { id: input.ikohzaId } },
 			}),
 			// External organization
 			...(input.companyId && {
-				companyRelation: { connect: { id: input.companyId } },
+				company: { connect: { id: input.companyId } },
 			}),
 			...(input.companyBranchId && {
 				companyBranch: { connect: { id: input.companyBranchId } },
@@ -177,8 +177,22 @@ export async function createUser(input: CreateUserInput) {
 
 	// Sync Google profile image if available and profileImageUrl is null
 	// This handles the case where input.profileImageUrl was not provided
+	// Wrap in try-catch so registration continues even if image sync fails
 	if (!input.profileImageUrl) {
-		await syncGoogleProfileImage(input.authUserId);
+		try {
+			const synced = await syncGoogleProfileImage(input.authUserId);
+			if (!synced) {
+				console.warn(
+					`Failed to sync Google profile image for user ${input.authUserId}: image not available or already set`,
+				);
+			}
+		} catch (error) {
+			console.error(
+				`Error syncing Google profile image for user ${input.authUserId}:`,
+				error,
+			);
+			// Don't throw - registration should succeed even if image sync fails
+		}
 	}
 
 	return user;

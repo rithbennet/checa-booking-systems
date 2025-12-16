@@ -1,6 +1,4 @@
-import { NextResponse } from "next/server";
 import { syncGoogleProfileImage } from "@/entities/user/server";
-import { getSession } from "@/shared/server/better-auth/server";
 import { createProtectedHandler } from "@/shared/lib/api-factory";
 
 /**
@@ -9,14 +7,14 @@ import { createProtectedHandler } from "@/shared/lib/api-factory";
  * Only updates if profileImageUrl is currently NULL
  */
 export const POST = createProtectedHandler(
-	async (_req, user) => {
+	async (_req, user, ctx) => {
 		try {
-			const session = await getSession();
-			if (!session?.user?.id) {
+			const authUserId = (ctx as { authUserId?: string })?.authUserId;
+			if (!authUserId) {
 				return Response.json({ error: "Invalid session" }, { status: 401 });
 			}
 
-			const synced = await syncGoogleProfileImage(session.user.id);
+			const synced = await syncGoogleProfileImage(authUserId);
 
 			return Response.json({
 				success: true,

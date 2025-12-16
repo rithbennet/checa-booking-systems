@@ -56,7 +56,7 @@ export async function findBookingById(bookingId: string) {
 					academicType: true,
 				},
 			},
-			companyRelation: true,
+			company: true,
 			companyBranch: true,
 		},
 	});

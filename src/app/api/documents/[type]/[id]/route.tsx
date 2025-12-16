@@ -58,9 +58,9 @@ export async function GET(
 			include: {
 				user: {
 					include: {
-						facultyRelation: true,
-						departmentRelation: true,
-						companyRelation: true,
+						faculty: true,
+						department: true,
+						company: true,
 						companyBranch: true,
 					},
 				},
@@ -101,8 +101,8 @@ export async function GET(
 					email: booking.user.email,
 					address: booking.user.address ?? "N/A",
 					phone: booking.user.phone ?? undefined,
-					faculty: booking.user.facultyRelation?.name ?? undefined,
-					department: booking.user.departmentRelation?.name ?? undefined,
+					faculty: booking.user.faculty?.name ?? undefined,
+					department: booking.user.department?.name ?? undefined,
 				};
 
 				const items: InvoiceLineItem[] = booking.serviceItems.map((item) => ({
@@ -173,12 +173,12 @@ export async function GET(
 
 				pdfStream = await renderToStream(
 					<WorkAreaTemplate
-						department={booking.user.departmentRelation?.name}
+						department={booking.user.department?.name}
 						duration={duration}
 						endDate={endDate}
 						faculty={
-							booking.user.facultyRelation?.name ??
-							booking.user.companyRelation?.name ??
+							booking.user.faculty?.name ??
+							booking.user.company?.name ??
 							"N/A"
 						}
 						purpose={
@@ -218,8 +218,8 @@ export async function GET(
 						supervisorName={booking.user.supervisorName ?? "N/A"}
 						userEmail={booking.user.email}
 						userFaculty={
-							booking.user.facultyRelation?.name ??
-							booking.user.companyRelation?.name
+							booking.user.faculty?.name ??
+							booking.user.company?.name
 						}
 						userName={`${booking.user.firstName} ${booking.user.lastName}`}
 					/>,

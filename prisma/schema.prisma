@@ -231,16 +231,16 @@ model User {
   supervisorName  String?            @db.VarChar(200)
 
   // Academic organization (internal members)
-  facultyId          String?     @db.Uuid
-  facultyRelation    Faculty?    @relation("UsersByFaculty", fields: [facultyId], references: [id])
-  departmentId       String?     @db.Uuid
-  departmentRelation Department? @relation("UsersByDepartment", fields: [departmentId], references: [id])
-  ikohzaId           String?     @db.Uuid
-  ikohza             Ikohza?     @relation("UsersByIkohza", fields: [ikohzaId], references: [id])
+  facultyId    String?     @db.Uuid
+  faculty      Faculty?    @relation("UsersByFaculty", fields: [facultyId], references: [id])
+  departmentId String?     @db.Uuid
+  department   Department? @relation("UsersByDepartment", fields: [departmentId], references: [id])
+  ikohzaId     String?     @db.Uuid
+  ikohza       Ikohza?     @relation("UsersByIkohza", fields: [ikohzaId], references: [id])
 
   // External organization (external members)
   companyId       String?        @db.Uuid
-  companyRelation Company?       @relation("UsersByCompany", fields: [companyId], references: [id])
+  company         Company?       @relation("UsersByCompany", fields: [companyId], references: [id])
   companyBranchId String?        @db.Uuid
   companyBranch   CompanyBranch? @relation("UsersByBranch", fields: [companyBranchId], references: [id])
 
@@ -389,7 +389,7 @@ model BookingRequest {
 
   // For external attribution
   companyId       String?        @db.Uuid
-  companyRelation Company?       @relation(fields: [companyId], references: [id])
+  company         Company?       @relation(fields: [companyId], references: [id])
   companyBranchId String?        @db.Uuid
   companyBranch   CompanyBranch? @relation(fields: [companyBranchId], references: [id])
 
@@ -794,7 +794,7 @@ model GlobalAddOnCatalog {
   name            String                @unique @db.VarChar(150)
   description     String?               @db.Text
   defaultAmount   Decimal               @db.Decimal(10, 2)
-  applicableTo    String                @db.VarChar(50) // "sample", "workspace" or "both"
+  applicableTo   applicable_to_enum
   isActive        Boolean               @default(true)
   createdAt       DateTime              @default(now()) @db.Timestamp(6)
   updatedAt       DateTime              @updatedAt @db.Timestamp(6)
@@ -856,6 +856,7 @@ model FileBlob {
   bookingDocuments BookingDocument[]
 
   @@index([uploadedById])
+  @@index([url])
   @@map("file_blob")
 }
 
@@ -875,6 +876,12 @@ enum document_verification_status_enum {
   verified // Admin verified/approved
   rejected // Admin rejected, user needs to re-upload
   not_required // Document not required for this booking
+}
+
+enum applicable_to_enum {
+  sample
+  workspace
+  both
 }
 
 model BookingDocument {

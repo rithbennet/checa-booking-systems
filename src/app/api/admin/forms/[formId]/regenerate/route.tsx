@@ -43,9 +43,9 @@ export async function POST(
 					include: {
 						user: {
 							include: {
-								facultyRelation: true,
-								departmentRelation: true,
-								companyRelation: true,
+								faculty: true,
+								department: true,
+								company: true,
 								companyBranch: true,
 							},
 						},
@@ -99,8 +99,8 @@ export async function POST(
 		// Prepare common data
 		const userName = `${booking.user.firstName} ${booking.user.lastName}`;
 		const userFaculty =
-			booking.user.facultyRelation?.name ??
-			booking.user.companyRelation?.name ??
+			booking.user.faculty?.name ??
+			booking.user.company?.name ??
 			booking.user.companyBranch?.name ??
 			"N/A";
 		const supervisorName = booking.user.supervisorName ?? "N/A";
@@ -162,7 +162,7 @@ export async function POST(
 
 				const waPdfBuffer = await renderToBuffer(
 					<WorkAreaTemplate
-						department={booking.user.departmentRelation?.name}
+						department={booking.user.department?.name}
 						duration={duration}
 						endDate={endDate}
 						faculty={userFaculty}

@@ -24,7 +24,7 @@ import {
  */
 function validateImageFile(file: File): { valid: boolean; error?: string } {
 	// Check file type
-	const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+	const validTypes = ["image/jpeg", "image/png", "image/webp"];
 	if (!validTypes.includes(file.type)) {
 		return {
 			valid: false,
@@ -54,6 +54,7 @@ export function ProfileImageUpload({
 	const [open, setOpen] = useState(false);
 	const [preview, setPreview] = useState<string | null>(null);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
+	const [isRemoving, setIsRemoving] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const queryClient = useQueryClient();
 	const { refetch } = useUserProfile();
@@ -112,6 +113,7 @@ export function ProfileImageUpload({
 	const handleRemove = async () => {
 		if (!currentImageUrl) return;
 
+		setIsRemoving(true);
 		try {
 			const res = await fetch("/api/user/profile-image", {
 				method: "PATCH",
@@ -136,6 +138,8 @@ export function ProfileImageUpload({
 			toast.error(
 				error instanceof Error ? error.message : "Failed to remove image",
 			);
+		} finally {
+			setIsRemoving(false);
 		}
 	};
 
@@ -177,39 +181,42 @@ export function ProfileImageUpload({
 
 				<div className="space-y-4">
 					{/* Preview */}
-					{(preview || currentImageUrl) && (
-						<div className="flex justify-center">
-							<div className="relative">
-								<Image
-									alt="Profile preview"
-									className="size-32 rounded-full object-cover"
-									height={128}
-									src={preview || currentImageUrl || ""}
-									unoptimized
-									width={128}
-								/>
-								{preview && (
-									<Button
-										className="-right-2 -top-2 absolute size-6 rounded-full p-0"
-										onClick={() => {
-											if (preview.startsWith("blob:")) {
-												URL.revokeObjectURL(preview);
-											}
-											setPreview(null);
-											setSelectedFile(null);
-											if (fileInputRef.current) {
-												fileInputRef.current.value = "";
-											}
-										}}
-										size="icon"
-										variant="destructive"
-									>
-										<X className="h-3 w-3" />
-									</Button>
-								)}
+					{(() => {
+						const srcVar = preview ?? currentImageUrl ?? undefined;
+						return srcVar ? (
+							<div className="flex justify-center">
+								<div className="relative">
+									<Image
+										alt="Profile preview"
+										className="size-32 rounded-full object-cover"
+										height={128}
+										src={srcVar}
+										unoptimized
+										width={128}
+									/>
+									{preview && (
+										<Button
+											className="-right-2 -top-2 absolute size-6 rounded-full p-0"
+											onClick={() => {
+												if (preview.startsWith("blob:")) {
+													URL.revokeObjectURL(preview);
+												}
+												setPreview(null);
+												setSelectedFile(null);
+												if (fileInputRef.current) {
+													fileInputRef.current.value = "";
+												}
+											}}
+											size="icon"
+											variant="destructive"
+										>
+											<X className="h-3 w-3" />
+										</Button>
+									)}
+								</div>
 							</div>
-						</div>
-					)}
+						) : null;
+					})()}
 
 					{/* File Input */}
 					<div className="space-y-2">
@@ -226,7 +233,7 @@ export function ProfileImageUpload({
 							</p>
 						</label>
 						<input
-							accept="image/jpeg,image/jpg,image/png,image/webp"
+							accept="image/jpeg,image/png,image/webp"
 							className="hidden"
 							id="profile-image-input"
 							onChange={handleFileSelect}
@@ -239,16 +246,23 @@ export function ProfileImageUpload({
 				<DialogFooter>
 					{currentImageUrl && (
 						<Button
-							disabled={isUploading}
+							disabled={isUploading || isRemoving}
 							onClick={handleRemove}
 							type="button"
 							variant="destructive"
 						>
-							Remove Photo
+							{isRemoving ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Removing...
+								</>
+							) : (
+								"Remove Photo"
+							)}
 						</Button>
 					)}
 					<Button
-						disabled={isUploading || !selectedFile}
+						disabled={isUploading || isRemoving || !selectedFile}
 						onClick={handleUpload}
 						type="button"
 					>
@@ -262,7 +276,7 @@ export function ProfileImageUpload({
 						)}
 					</Button>
 					<Button
-						disabled={isUploading}
+						disabled={isUploading || isRemoving}
 						onClick={handleClose}
 						type="button"
 						variant="outline"

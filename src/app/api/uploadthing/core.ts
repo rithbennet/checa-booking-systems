@@ -351,25 +351,30 @@ export const fileRouter = {
 				}
 			}
 
-			// Create FileBlob record for new image
-			const blob = await db.fileBlob.create({
-				data: {
-					key: file.key,
-					url: file.ufsUrl,
-					mimeType: file.type,
-					fileName: file.name,
-					sizeBytes: file.size,
-					uploadedById: metadata.userId,
-				},
-			});
+			// Create FileBlob record and update user's profile image URL atomically
+			const blob = await db.$transaction(async (tx) => {
+				// Create FileBlob record for new image
+				const createdBlob = await tx.fileBlob.create({
+					data: {
+						key: file.key,
+						url: file.ufsUrl,
+						mimeType: file.type,
+						fileName: file.name,
+						sizeBytes: file.size,
+						uploadedById: metadata.userId,
+					},
+				});
 
-			// Update user's profile image URL
-			await db.user.update({
-				where: { id: metadata.userId },
-				data: {
-					profileImageUrl: file.ufsUrl,
-					updatedAt: new Date(),
-				},
+				// Update user's profile image URL
+				await tx.user.update({
+					where: { id: metadata.userId },
+					data: {
+						profileImageUrl: file.ufsUrl,
+						updatedAt: new Date(),
+					},
+				});
+
+				return createdBlob;
 			});
 
 			// Create audit log entry

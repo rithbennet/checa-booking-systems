@@ -12,9 +12,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useBookingStatusCounts } from "@/entities/booking/api";
+import { useUserFinancials } from "@/entities/booking/api/useUserFinancials";
 import { useNotifications } from "@/entities/notification/api";
 import type { NotificationVM } from "@/entities/notification/model/types";
 import { buildHref } from "@/features/bookings/user/list/model/list.routes";
+import type { FiltersState } from "@/features/bookings/user/list/model/filters.schema";
 import { DashboardBookingsWidget } from "@/features/bookings/user/list/widgets/DashboardBookingsWidget";
 import { cn } from "@/shared/lib/utils";
 import RouterButton from "@/shared/ui/router-button";
@@ -25,6 +27,34 @@ import {
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
 import { UserSampleTracker } from "@/widgets/user-sample-tracker";
+
+// Filter presets for booking list links
+const FILTER_PRESETS = {
+	inProgress: {
+		page: 1,
+		pageSize: 25,
+		sort: "updated_at:desc" as const,
+		q: "",
+		type: "all" as const,
+		status: ["in_progress"],
+	} satisfies FiltersState,
+	completed: {
+		page: 1,
+		pageSize: 25,
+		sort: "updated_at:desc" as const,
+		q: "",
+		type: "all" as const,
+		status: ["completed"],
+	} satisfies FiltersState,
+	pendingReview: {
+		page: 1,
+		pageSize: 25,
+		sort: "created_at:asc" as const,
+		q: "",
+		type: "all" as const,
+		status: ["pending_user_verification", "pending_approval"],
+	} satisfies FiltersState,
+} as const;
 
 // Helper function to get notification link
 function getNotificationLink(notification: NotificationVM): string | null {
@@ -82,7 +112,15 @@ export function DashboardClient() {
 	const totalBookings = counts?.all ?? 0;
 	const inProgress = counts?.in_progress ?? 0;
 	const completed = counts?.completed ?? 0;
-	const pendingPayment = 0; // TODO: Implement when payment system is ready
+
+	// Fetch financial data to get pending payment count
+	const { data: financialsData } = useUserFinancials();
+
+	// Derive pending payment count from financials data
+	const pendingPayment =
+		financialsData?.items.filter(
+			(item) => item.paymentStatus === "pending_verification",
+		).length ?? 0;
 
 	// Fetch real notifications
 	const { data: notificationsData, isLoading: isLoadingNotifications } =
@@ -157,16 +195,7 @@ export function DashboardClient() {
 									</CardContent>
 								</Card>
 							</Link>
-							<Link
-								href={buildHref("/bookings", {
-									page: 1,
-									pageSize: 25,
-									sort: "updated_at:desc",
-									q: "",
-									type: "all",
-									status: ["in_progress"],
-								})}
-							>
+							<Link href={buildHref("/bookings", FILTER_PRESETS.inProgress)}>
 								<Card className="cursor-pointer transition-shadow hover:shadow-md">
 									<CardContent className="p-4">
 										<div className="flex items-center justify-between">
@@ -179,16 +208,7 @@ export function DashboardClient() {
 									</CardContent>
 								</Card>
 							</Link>
-							<Link
-								href={buildHref("/bookings", {
-									page: 1,
-									pageSize: 25,
-									sort: "updated_at:desc",
-									q: "",
-									type: "all",
-									status: ["completed"],
-								})}
-							>
+							<Link href={buildHref("/bookings", FILTER_PRESETS.completed)}>
 								<Card className="cursor-pointer transition-shadow hover:shadow-md">
 									<CardContent className="p-4">
 										<div className="flex items-center justify-between">
@@ -220,14 +240,7 @@ export function DashboardClient() {
 						<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 							<Link
 								className="block"
-								href={buildHref("/bookings", {
-									page: 1,
-									pageSize: 25,
-									sort: "created_at:asc",
-									q: "",
-									type: "all",
-									status: ["pending_user_verification", "pending_approval"],
-								})}
+								href={buildHref("/bookings", FILTER_PRESETS.pendingReview)}
 							>
 								<div className="cursor-pointer transition-opacity hover:opacity-90">
 									<DashboardBookingsWidget
@@ -240,14 +253,7 @@ export function DashboardClient() {
 							</Link>
 							<Link
 								className="block"
-								href={buildHref("/bookings", {
-									page: 1,
-									pageSize: 25,
-									sort: "updated_at:desc",
-									q: "",
-									type: "all",
-									status: ["in_progress"],
-								})}
+								href={buildHref("/bookings", FILTER_PRESETS.inProgress)}
 							>
 								<div className="cursor-pointer transition-opacity hover:opacity-90">
 									<DashboardBookingsWidget
@@ -265,14 +271,7 @@ export function DashboardClient() {
 
 						<Link
 							className="block"
-							href={buildHref("/bookings", {
-								page: 1,
-								pageSize: 25,
-								sort: "updated_at:desc",
-								q: "",
-								type: "all",
-								status: ["completed"],
-							})}
+							href={buildHref("/bookings", FILTER_PRESETS.completed)}
 						>
 							<div className="cursor-pointer transition-opacity hover:opacity-90">
 								<DashboardBookingsWidget

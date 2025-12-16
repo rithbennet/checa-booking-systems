@@ -331,12 +331,6 @@ export async function POST(request: Request) {
 				}
 			}
 
-			// Get BetterAuth user's image for profile photo
-			const betterAuthUser = await tx.betterAuthUser.findUnique({
-				where: { id: signUpResult.user.id },
-				select: { image: true },
-			});
-
 			// Create User record (with pending status, NOT verified)
 			await tx.user.create({
 				data: {
@@ -361,17 +355,17 @@ export async function POST(request: Request) {
 					},
 					// Academic organization (internal members)
 					...(dbFacultyId && {
-						facultyRelation: { connect: { id: dbFacultyId } },
+						faculty: { connect: { id: dbFacultyId } },
 					}),
 					...(dbDepartmentId && {
-						departmentRelation: { connect: { id: dbDepartmentId } },
+						department: { connect: { id: dbDepartmentId } },
 					}),
 					...(dbIkohzaId && {
 						ikohza: { connect: { id: dbIkohzaId } },
 					}),
 					// External organization
 					...(finalCompanyId && {
-						companyRelation: { connect: { id: finalCompanyId } },
+						company: { connect: { id: finalCompanyId } },
 					}),
 					...(finalBranchId && {
 						companyBranch: { connect: { id: finalBranchId } },

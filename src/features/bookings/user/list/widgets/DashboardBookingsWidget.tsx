@@ -113,7 +113,7 @@ export function DashboardBookingsWidget({
 							<TableCell>{i.reference}</TableCell>
 							<TableCell>
 								<Badge
-									className={`${getStatusBadgeClassName(i.status)} ring-2 ${getStatusColors(i.status).ring}`}
+									className={`${getStatusColors(i.status).bg} ${getStatusColors(i.status).text} ring-2 ${getStatusColors(i.status).ring}`}
 								>
 									{getStatusLabel(i.status)}
 								</Badge>

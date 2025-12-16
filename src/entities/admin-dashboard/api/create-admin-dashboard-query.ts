@@ -1,6 +1,6 @@
 import { type UseQueryOptions, useQuery } from "@tanstack/react-query";
 
-interface CreateAdminDashboardQueryOptions<_T> {
+interface CreateAdminDashboardQueryOptions {
 	endpoint: string;
 	queryKey: readonly unknown[];
 	errorMessage: string;
@@ -14,7 +14,7 @@ export function createAdminDashboardQuery<T>({
 	errorMessage,
 	staleTime = 5 * 60_000,
 	refetchOnWindowFocus = false,
-}: CreateAdminDashboardQueryOptions<T>) {
+}: CreateAdminDashboardQueryOptions) {
 	async function fetchData(): Promise<T> {
 		const res = await fetch(endpoint, {
 			method: "GET",

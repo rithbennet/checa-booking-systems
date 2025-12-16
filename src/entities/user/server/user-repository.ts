@@ -58,10 +58,10 @@ export async function getUserListData(
 			skip: (page - 1) * pageSize,
 			take: pageSize,
 			include: {
-				facultyRelation: { select: { name: true } },
-				departmentRelation: { select: { name: true } },
+				faculty: { select: { name: true } },
+				department: { select: { name: true } },
 				ikohza: { select: { name: true } },
-				companyRelation: { select: { name: true } },
+				company: { select: { name: true } },
 				companyBranch: { select: { name: true } },
 			},
 		}),
@@ -85,13 +85,13 @@ export async function getUserListData(
 		organization:
 			user.userType === "external_member"
 				? {
-						company: user.companyRelation?.name,
+						company: user.company?.name,
 						branch: user.companyBranch?.name,
 					}
 				: user.userType === "mjiit_member" || user.userType === "utm_member"
 					? {
-							faculty: user.facultyRelation?.name,
-							department: user.departmentRelation?.name,
+							faculty: user.faculty?.name,
+							department: user.department?.name,
 							ikohza: user.ikohza?.name,
 						}
 					: null,

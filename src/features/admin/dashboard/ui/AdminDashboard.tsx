@@ -68,9 +68,6 @@ export function AdminDashboard() {
 		error: activityError,
 	} = useAdminDashboardActivity();
 
-	// Show loading state if any critical data is loading
-	const _isLoading = metricsLoading || statusLoading || activityLoading;
-
 	// Use default values if data is not available yet (only when not loading and no error)
 	const metricsData = metrics || {
 		pendingVerifications: 0,

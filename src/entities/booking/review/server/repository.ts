@@ -31,7 +31,7 @@ export async function repoAdminList(params: {
 						{ user: { lastName: { contains: query, mode: "insensitive" } } },
 						{ user: { email: { contains: query, mode: "insensitive" } } },
 						{
-							companyRelation: {
+							company: {
 								name: { contains: query, mode: "insensitive" },
 							},
 						},
@@ -65,11 +65,11 @@ export async function repoAdminList(params: {
 						email: true,
 						userType: true,
 						ikohza: { select: { name: true } },
-						facultyRelation: { select: { name: true } },
-						departmentRelation: { select: { name: true } },
+						faculty: { select: { name: true } },
+						department: { select: { name: true } },
 					},
 				},
-				companyRelation: true,
+				company: true,
 				companyBranch: true,
 				serviceItems: { include: { service: true } },
 				workspaceBookings: true,
@@ -89,7 +89,7 @@ export async function repoAdminDetail(id: string) {
 		where: { id },
 		include: {
 			user: true,
-			companyRelation: true,
+			company: true,
 			companyBranch: true,
 			serviceItems: {
 				include: {

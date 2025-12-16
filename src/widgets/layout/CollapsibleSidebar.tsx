@@ -257,7 +257,6 @@ export default function CollapsibleSidebar({
 										className="h-full w-full object-cover"
 										height={32}
 										src={profile.profileImageUrl}
-										unoptimized
 										width={32}
 									/>
 								) : (

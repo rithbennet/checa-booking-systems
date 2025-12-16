@@ -86,11 +86,17 @@ export const PATCH = createProtectedHandler(
 			});
 		} catch (error) {
 			console.error("Error updating profile image:", error);
+			if (error instanceof Error) {
+				console.error("Error details:", {
+					message: error.message,
+					stack: error.stack,
+					name: error.name,
+				});
+			} else {
+				console.error("Error details:", error);
+			}
 			return Response.json(
-				{
-					error: "Failed to update profile image",
-					message: error instanceof Error ? error.message : "Unknown error",
-				},
+				{ error: "Failed to update profile image" },
 				{ status: 500 },
 			);
 		}
