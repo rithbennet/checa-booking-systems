@@ -1,21 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
 import type { AdminDashboardStatusVM } from "../model/types";
 import { adminDashboardKeys } from "./query-keys";
+import { createAdminDashboardQuery } from "./create-admin-dashboard-query";
 
-async function fetchStatus(): Promise<AdminDashboardStatusVM> {
-	const res = await fetch("/api/admin/dashboard/status");
-	if (!res.ok) {
-		const err = await res.json().catch(() => ({}));
-		throw new Error(err.error || "Failed to fetch dashboard status");
-	}
-	return res.json();
-}
+const useAdminDashboardStatusQuery = createAdminDashboardQuery<AdminDashboardStatusVM>({
+	endpoint: "/api/admin/dashboard/status",
+	queryKey: adminDashboardKeys.status(),
+	errorMessage: "Failed to fetch dashboard status",
+	staleTime: 5 * 60_000, // 5 minutes
+	refetchOnWindowFocus: false,
+});
 
 export function useAdminDashboardStatus() {
-	return useQuery<AdminDashboardStatusVM>({
-		queryKey: adminDashboardKeys.status(),
-		queryFn: fetchStatus,
-		staleTime: 5 * 60_000, // 5 minutes
-		refetchOnWindowFocus: false,
-	});
+	return useAdminDashboardStatusQuery();
 }

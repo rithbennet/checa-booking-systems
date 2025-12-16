@@ -92,6 +92,14 @@ export async function getAdminDashboardActivity(): Promise<AdminDashboardActivit
 						timestamp: formatTimestamp(log.createdAt),
 					};
 
+				case "booking.return_for_revision":
+					return {
+						id: log.id,
+						type: "booking" as const,
+						action: `Booking #${metadata.bookingReference || log.entityId} returned for revision`,
+						timestamp: formatTimestamp(log.createdAt),
+					};
+
 				case "upload_payment_proof":
 					return {
 						id: log.id,
@@ -105,6 +113,14 @@ export async function getAdminDashboardActivity(): Promise<AdminDashboardActivit
 						id: log.id,
 						type: "payment" as const,
 						action: `Payment verified for Invoice #${metadata.invoiceNumber || log.entityId}`,
+						timestamp: formatTimestamp(log.createdAt),
+					};
+
+				case "payment.rejected":
+					return {
+						id: log.id,
+						type: "payment" as const,
+						action: `Payment rejected for Invoice #${metadata.invoiceNumber || log.entityId}`,
 						timestamp: formatTimestamp(log.createdAt),
 					};
 
@@ -158,7 +174,14 @@ export async function getAdminDashboardActivity(): Promise<AdminDashboardActivit
 
 function formatTimestamp(date: Date): string {
 	const now = new Date();
-	const diffMs = now.getTime() - date.getTime();
+	let diffMs = now.getTime() - date.getTime();
+	
+	// Handle future dates gracefully
+	if (diffMs < 0) {
+		diffMs = 0;
+		return "Just now";
+	}
+	
 	const diffMins = Math.floor(diffMs / (1000 * 60));
 	const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
 

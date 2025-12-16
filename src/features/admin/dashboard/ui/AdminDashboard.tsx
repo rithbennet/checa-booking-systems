@@ -32,6 +32,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
+import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/shadcn/alert";
+import { MetricCard } from "./MetricCard";
 
 function getActivityIcon(type: AdminDashboardActivityItemVM["type"]) {
 	switch (type) {
@@ -72,7 +74,7 @@ export function AdminDashboard() {
 	// Show loading state if any critical data is loading
 	const isLoading = metricsLoading || statusLoading || activityLoading;
 
-	// Use default values if data is not available yet
+	// Use default values if data is not available yet (only when not loading and no error)
 	const metricsData = metrics || {
 		pendingVerifications: 0,
 		pendingApprovals: 0,
@@ -178,97 +180,54 @@ export function AdminDashboard() {
 				)}
 
 				{/* Key Metrics */}
-				<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-					<Card>
-						<CardContent className="p-6">
-							{isLoading ? (
-								<div className="flex items-center justify-center py-4">
-									<Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-								</div>
-							) : (
-								<div className="flex items-center justify-between">
-									<div>
-										<p className="text-gray-600 text-sm">
-											Pending Verifications
-										</p>
-										<p className="font-bold text-3xl text-red-600">
-											{metricsData.pendingVerifications}
-										</p>
-									</div>
-									<div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
-										<Users className="h-6 w-6 text-red-600" />
-									</div>
-								</div>
-							)}
-						</CardContent>
-					</Card>
-
-					<Card>
-						<CardContent className="p-6">
-							{isLoading ? (
-								<div className="flex items-center justify-center py-4">
-									<Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-								</div>
-							) : (
-								<div className="flex items-center justify-between">
-									<div>
-										<p className="text-gray-600 text-sm">Pending Approvals</p>
-										<p className="font-bold text-3xl text-orange-600">
-											{metricsData.pendingApprovals}
-										</p>
-									</div>
-									<div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
-										<Clock className="h-6 w-6 text-orange-600" />
-									</div>
-								</div>
-							)}
-						</CardContent>
-					</Card>
-
-					<Card>
-						<CardContent className="p-6">
-							{isLoading ? (
-								<div className="flex items-center justify-center py-4">
-									<Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-								</div>
-							) : (
-								<div className="flex items-center justify-between">
-									<div>
-										<p className="text-gray-600 text-sm">Active Bookings</p>
-										<p className="font-bold text-3xl text-blue-600">
-											{metricsData.activeBookings}
-										</p>
-									</div>
-									<div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-										<FileText className="h-6 w-6 text-blue-600" />
-									</div>
-								</div>
-							)}
-						</CardContent>
-					</Card>
-
-					<Card>
-						<CardContent className="p-6">
-							{isLoading ? (
-								<div className="flex items-center justify-center py-4">
-									<Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-								</div>
-							) : (
-								<div className="flex items-center justify-between">
-									<div>
-										<p className="text-gray-600 text-sm">Monthly Revenue</p>
-										<p className="font-bold text-3xl text-green-600">
-											RM {metricsData.totalRevenue.toLocaleString()}
-										</p>
-									</div>
-									<div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-										<TrendingUp className="h-6 w-6 text-green-600" />
-									</div>
-								</div>
-							)}
-						</CardContent>
-					</Card>
-				</div>
+				{metricsError ? (
+					<div className="mb-8">
+						<Alert variant="destructive">
+							<AlertTriangle className="h-4 w-4" />
+							<AlertTitle>Failed to load metrics</AlertTitle>
+							<AlertDescription>
+								{metricsError instanceof Error
+									? metricsError.message
+									: "Failed to load dashboard metrics"}
+							</AlertDescription>
+						</Alert>
+					</div>
+				) : (
+					<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+						<MetricCard
+							label="Pending Verifications"
+							value={metricsData.pendingVerifications}
+							icon={Users}
+							color="text-red-600"
+							bgColor="bg-red-100"
+							isLoading={metricsLoading}
+						/>
+						<MetricCard
+							label="Pending Approvals"
+							value={metricsData.pendingApprovals}
+							icon={Clock}
+							color="text-orange-600"
+							bgColor="bg-orange-100"
+							isLoading={metricsLoading}
+						/>
+						<MetricCard
+							label="Active Bookings"
+							value={metricsData.activeBookings}
+							icon={FileText}
+							color="text-blue-600"
+							bgColor="bg-blue-100"
+							isLoading={metricsLoading}
+						/>
+						<MetricCard
+							label="Monthly Revenue"
+							value={`RM ${metricsData.totalRevenue.toLocaleString()}`}
+							icon={TrendingUp}
+							color="text-green-600"
+							bgColor="bg-green-100"
+							isLoading={metricsLoading}
+						/>
+					</div>
+				)}
 
 				<div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
 					{/* Administrative Actions */}
