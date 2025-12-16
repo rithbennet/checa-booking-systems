@@ -236,52 +236,37 @@ export function DashboardClient() {
 							</Link>
 						</div>
 
-						{/* My Bookings Widgets */}
-						<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-							<Link
-								className="block"
-								href={buildHref("/bookings", FILTER_PRESETS.pendingReview)}
-							>
-								<div className="cursor-pointer transition-opacity hover:opacity-90">
-									<DashboardBookingsWidget
-										limit={5}
-										preset="pending_review"
-										showViewAll
-										title="Pending Review"
-									/>
-								</div>
-							</Link>
-							<Link
-								className="block"
-								href={buildHref("/bookings", FILTER_PRESETS.inProgress)}
-							>
-								<div className="cursor-pointer transition-opacity hover:opacity-90">
-									<DashboardBookingsWidget
-										limit={5}
-										preset="in_progress"
-										showViewAll
-										title="In Progress"
-									/>
-								</div>
-							</Link>
+					{/* My Bookings Widgets */}
+					<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+						<div>
+							<DashboardBookingsWidget
+								limit={5}
+								preset="pending_review"
+								showViewAll
+								title="Pending Review"
+							/>
 						</div>
+						<div>
+							<DashboardBookingsWidget
+								limit={5}
+								preset="in_progress"
+								showViewAll
+								title="In Progress"
+							/>
+						</div>
+					</div>
 
-						{/* Sample Tracker Widget */}
-						<UserSampleTracker />
+					{/* Sample Tracker Widget */}
+					<UserSampleTracker />
 
-						<Link
-							className="block"
-							href={buildHref("/bookings", FILTER_PRESETS.completed)}
-						>
-							<div className="cursor-pointer transition-opacity hover:opacity-90">
-								<DashboardBookingsWidget
-									limit={8}
-									preset="recent_completed"
-									showViewAll
-									title="Recently Completed"
-								/>
-							</div>
-						</Link>
+					<div>
+						<DashboardBookingsWidget
+							limit={8}
+							preset="recent_completed"
+							showViewAll
+							title="Recently Completed"
+						/>
+					</div>
 
 						{/* Recent Notifications */}
 						<Card>
@@ -322,7 +307,7 @@ export function DashboardClient() {
 											const content = (
 												<div
 													className={cn(
-														"flex items-start gap-3 rounded-lg p-3 transition-colors",
+														"flex items-start gap-3 rounded-lg p-3 transition-colors hover:bg-gray-100",
 														notification.isRead
 															? "bg-gray-50"
 															: "bg-blue-50/50",
@@ -377,7 +362,7 @@ export function DashboardClient() {
 
 											return (
 												<div
-													className="block cursor-default hover:bg-gray-100"
+													className="block cursor-default"
 													key={notification.id}
 												>
 													{content}

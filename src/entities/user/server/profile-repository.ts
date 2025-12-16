@@ -4,6 +4,9 @@
  */
 
 import { db } from "@/shared/server/db";
+import { ValidationError } from "@/shared/server/errors";
+import type { UpdateProfileInput } from "../model/schemas";
+import { updateProfileInputSchema } from "../model/schemas";
 
 // ==============================================================
 // Types
@@ -38,18 +41,7 @@ export interface UserProfileVM {
 	lastLoginAt: string | null;
 }
 
-export interface UpdateProfileInput {
-	firstName?: string;
-	lastName?: string;
-	phone?: string | null;
-	userIdentifier?: string;
-	supervisorName?: string | null;
-	facultyId?: string | null;
-	departmentId?: string | null;
-	ikohzaId?: string | null;
-	companyId?: string | null;
-	companyBranchId?: string | null;
-}
+// UpdateProfileInput type is exported from ../model/schemas
 
 // ==============================================================
 // Helper Functions
@@ -122,46 +114,49 @@ export async function updateUserProfile(
 	userId: string,
 	input: UpdateProfileInput,
 ): Promise<UserProfileVM | null> {
-	// Server-side validation: ensure firstName and lastName are not empty
-	if (input.firstName !== undefined && !input.firstName.trim()) {
-		throw new Error("First name cannot be empty");
+	// Validate input using zod schema
+	const validationResult = updateProfileInputSchema.safeParse(input);
+	if (!validationResult.success) {
+		const fieldErrors = validationResult.error.flatten().fieldErrors;
+		const errorMessage =
+			validationResult.error.errors[0]?.message || "Validation failed";
+		throw new ValidationError(errorMessage, fieldErrors);
 	}
-	if (input.lastName !== undefined && !input.lastName.trim()) {
-		throw new Error("Last name cannot be empty");
-	}
+
+	const validatedInput = validationResult.data;
 
 	const user = await db.user.update({
 		where: { id: userId },
 		data: {
-			...(input.firstName !== undefined && {
-				firstName: input.firstName.trim(),
+			...(validatedInput.firstName !== undefined && {
+				firstName: validatedInput.firstName,
 			}),
-			...(input.lastName !== undefined && {
-				lastName: input.lastName.trim(),
+			...(validatedInput.lastName !== undefined && {
+				lastName: validatedInput.lastName,
 			}),
-			...(input.phone !== undefined && {
-				phone: input.phone,
+			...(validatedInput.phone !== undefined && {
+				phone: validatedInput.phone,
 			}),
-			...(input.userIdentifier !== undefined && {
-				userIdentifier: input.userIdentifier,
+			...(validatedInput.userIdentifier !== undefined && {
+				userIdentifier: validatedInput.userIdentifier,
 			}),
-			...(input.supervisorName !== undefined && {
-				supervisorName: input.supervisorName,
+			...(validatedInput.supervisorName !== undefined && {
+				supervisorName: validatedInput.supervisorName,
 			}),
-			...(input.facultyId !== undefined && {
-				facultyId: input.facultyId,
+			...(validatedInput.facultyId !== undefined && {
+				facultyId: validatedInput.facultyId,
 			}),
-			...(input.departmentId !== undefined && {
-				departmentId: input.departmentId,
+			...(validatedInput.departmentId !== undefined && {
+				departmentId: validatedInput.departmentId,
 			}),
-			...(input.ikohzaId !== undefined && {
-				ikohzaId: input.ikohzaId,
+			...(validatedInput.ikohzaId !== undefined && {
+				ikohzaId: validatedInput.ikohzaId,
 			}),
-			...(input.companyId !== undefined && {
-				companyId: input.companyId,
+			...(validatedInput.companyId !== undefined && {
+				companyId: validatedInput.companyId,
 			}),
-			...(input.companyBranchId !== undefined && {
-				companyBranchId: input.companyBranchId,
+			...(validatedInput.companyBranchId !== undefined && {
+				companyBranchId: validatedInput.companyBranchId,
 			}),
 			updatedAt: new Date(),
 		},

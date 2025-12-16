@@ -81,12 +81,16 @@ export function LinkedAccountsCard() {
 			fetch("/api/user/sync-profile-image", {
 				method: "POST",
 			})
-				.then(() => {
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error("Profile image sync failed");
+					}
 					// Invalidate profile query to refresh the UI with new image
 					queryClient.invalidateQueries({ queryKey: userKeys.profile() });
 				})
 				.catch((error) => {
 					console.error("Failed to sync profile image:", error);
+					// Optionally: setSuccessMessage("Account linked, but profile image sync failed");
 				});
 
 			// Clear the URL param after showing the message

@@ -5,6 +5,7 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { ValidationError } from "@/shared/server/errors";
 
 /**
  * POST /api/admin/finance/payments/[paymentId]/reject
@@ -36,6 +37,16 @@ export const POST = createProtectedHandler(
 			return Response.json(result);
 		} catch (error) {
 			console.error("Error rejecting payment:", error);
+			// Handle validation errors (return 400)
+			if (error instanceof ValidationError) {
+				return Response.json(
+					{
+						error: error.error,
+						...(error.details && { details: error.details }),
+					},
+					{ status: 400 },
+				);
+			}
 			if (error instanceof Error) {
 				return badRequest(error.message);
 			}

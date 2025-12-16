@@ -3,6 +3,7 @@ import { z } from "zod";
 import { updateUserProfileImage } from "@/entities/user/server/profile-repository";
 import { createProtectedHandler } from "@/shared/lib/api-factory";
 import { db } from "@/shared/server/db";
+import { ValidationError } from "@/shared/server/errors";
 import { utapi } from "@/shared/server/uploadthing";
 
 /**
@@ -100,6 +101,18 @@ export const PATCH = createProtectedHandler(
 			});
 		} catch (error) {
 			console.error("Error updating profile image:", error);
+
+			// Handle validation errors (return 400)
+			if (error instanceof ValidationError) {
+				return Response.json(
+					{
+						error: error.error,
+						...(error.details && { details: error.details }),
+					},
+					{ status: 400 },
+				);
+			}
+
 			if (error instanceof Error) {
 				console.error("Error details:", {
 					message: error.message,

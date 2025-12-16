@@ -1,8 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type {
-	UpdateProfileInput,
-	UserProfileVM,
-} from "../server/profile-repository";
+import type { UpdateProfileInput } from "../model/schemas";
+import type { UserProfileVM } from "../server/profile-repository";
 import { userKeys } from "./query-keys";
 
 /**

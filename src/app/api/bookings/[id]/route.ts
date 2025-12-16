@@ -8,6 +8,7 @@ import {
 	serverError,
 } from "@/shared/lib/api-factory";
 import { rateLimit } from "@/shared/server/api-middleware";
+import { ValidationError } from "@/shared/server/errors";
 
 /** GET /api/bookings/[id] — booking details (owner only) */
 export const GET = createProtectedHandler(
@@ -30,6 +31,17 @@ export const GET = createProtectedHandler(
 
 			return booking;
 		} catch (error) {
+			// Handle validation errors (return 400)
+			if (error instanceof ValidationError) {
+				return Response.json(
+					{
+						error: error.error,
+						...(error.details && { details: error.details }),
+					},
+					{ status: 400 },
+				);
+			}
+
 			if (error instanceof Error) {
 				if (error.message.includes("Forbidden")) return forbidden();
 			}
@@ -74,6 +86,17 @@ export const PATCH = createProtectedHandler(
 
 			return booking;
 		} catch (error) {
+			// Handle validation errors (return 400)
+			if (error instanceof ValidationError) {
+				return Response.json(
+					{
+						error: error.error,
+						...(error.details && { details: error.details }),
+					},
+					{ status: 400 },
+				);
+			}
+
 			if (error instanceof Error) {
 				if (error.message.includes("Forbidden")) return forbidden();
 				if (error.message.includes("not editable"))
@@ -99,6 +122,17 @@ export const DELETE = createProtectedHandler(
 
 			return NextResponse.json({ success: true });
 		} catch (error) {
+			// Handle validation errors (return 400)
+			if (error instanceof ValidationError) {
+				return Response.json(
+					{
+						error: error.error,
+						...(error.details && { details: error.details }),
+					},
+					{ status: 400 },
+				);
+			}
+
 			if (error instanceof Error) {
 				if (error.message.includes("Forbidden")) return forbidden();
 				if (error.message.includes("Can only delete"))

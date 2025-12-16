@@ -10,6 +10,7 @@ import type {
 } from "generated/prisma";
 import { notifyPaymentVerified } from "@/entities/notification/server/finance.notifications";
 import { db } from "@/shared/server/db";
+import { ValidationError } from "@/shared/server/errors";
 import type {
 	PaymentHistoryVM,
 	PaymentVM,
@@ -469,7 +470,9 @@ export async function rejectPayment(params: {
 	const { paymentId, verifierId, notes } = params;
 
 	if (!notes || notes.trim().length === 0) {
-		throw new Error("Rejection reason is required");
+		throw new ValidationError("Rejection reason is required", {
+			notes: ["Rejection reason is required"],
+		});
 	}
 
 	return db.$transaction(async (tx) => {

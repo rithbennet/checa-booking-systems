@@ -19,11 +19,11 @@ export {
 } from "./onboarding-options-repository";
 export {
 	getUserProfile,
-	type UpdateProfileInput,
 	type UserProfileVM,
 	updateUserProfile,
 	updateUserProfileImage,
 } from "./profile-repository";
+export type { UpdateProfileInput } from "../model/schemas";
 export { syncGoogleProfileImage } from "./sync-profile-image";
 export {
 	type CreateUserInput,
