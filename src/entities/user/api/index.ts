@@ -16,3 +16,4 @@ export {
 	useUpdateUserType,
 } from "./useUserMutations";
 export { useUpdateProfile, useUserProfile } from "./useUserProfile";
+export { useUserSummary } from "./useUserSummary";

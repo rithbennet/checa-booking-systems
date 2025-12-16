@@ -245,7 +245,7 @@ export async function notifyUserAccountUpdated(params: {
 	// Create in-app notification
 	await enqueueInApp({
 		userId: params.userId,
-		type: "booking_approved", // Reusing existing type
+		type: "account_updated",
 		relatedEntityType: "user",
 		relatedEntityId: params.userId,
 		title: "Account Updated",

@@ -1,8 +1,13 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import type { AcademicType, UserType } from "@/entities/user/model/types";
 import { getUserProfile } from "@/entities/user/server/profile-repository";
-import { AdminUserEditForm } from "@/features/users/admin/details/ui/AdminUserEditForm";
+import { AdminUserDetailsTabs } from "@/features/users/admin/details/ui/AdminUserDetailsTabs";
+import {
+	formatAcademicType,
+	formatUserType,
+} from "@/features/users/admin/list/lib/helpers";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -34,25 +39,6 @@ function formatDate(dateString: string | null): string {
 		month: "long",
 		day: "numeric",
 	});
-}
-
-function formatUserType(userType: string): string {
-	const types: Record<string, string> = {
-		mjiit_member: "MJIIT Member",
-		utm_member: "UTM Member",
-		external_member: "External Member",
-		lab_administrator: "Lab Administrator",
-	};
-	return types[userType] || userType;
-}
-
-function formatAcademicType(academicType: string): string {
-	const types: Record<string, string> = {
-		student: "Student",
-		staff: "Staff",
-		none: "N/A",
-	};
-	return types[academicType] || academicType;
 }
 
 function getStatusBadgeVariant(
@@ -128,12 +114,14 @@ export default async function AdminUserDetailsPage({
 						</div>
 						<div>
 							<p className="text-muted-foreground text-sm">User Type</p>
-							<p className="font-medium">{formatUserType(profile.userType)}</p>
+							<p className="font-medium">
+								{formatUserType(profile.userType as UserType)}
+							</p>
 						</div>
 						<div>
 							<p className="text-muted-foreground text-sm">Academic Type</p>
 							<p className="font-medium">
-								{formatAcademicType(profile.academicType)}
+								{formatAcademicType(profile.academicType as AcademicType)}
 							</p>
 						</div>
 						<Separator />
@@ -150,9 +138,9 @@ export default async function AdminUserDetailsPage({
 					</CardContent>
 				</Card>
 
-				{/* Edit Form */}
+				{/* Tabs: Profile and Summary */}
 				<div className="lg:col-span-2">
-					<AdminUserEditForm profile={profile} userId={userId} />
+					<AdminUserDetailsTabs profile={profile} userId={userId} />
 				</div>
 			</div>
 		</div>

@@ -109,3 +109,42 @@ export interface AdminUpdateUserInput {
 	companyBranchId?: string | null;
 	status?: UserStatus;
 }
+
+/**
+ * User summary view model for admin view
+ * Contains comprehensive user activity and usage data
+ */
+export interface UserSummaryVM {
+	bookingOverview: {
+		total: number;
+		upcoming: number;
+		completed: number;
+		cancelled: number;
+		rejected: number;
+	};
+	recentBookings: Array<{
+		id: string;
+		referenceNumber: string;
+		status: string;
+		totalAmount: number;
+		createdAt: string;
+	}>;
+	financialSummary: {
+		totalSpent: number;
+		outstanding: number;
+		pending: number;
+		lastPaymentDate: string | null;
+		lastPaymentAmount: number | null;
+	};
+	usagePatterns: {
+		topServices: Array<{ name: string; count: number }>;
+		topEquipment: Array<{ name: string; count: number }>;
+		averageBookingFrequency: number; // bookings per month
+	};
+	documentStatus: {
+		totalDocuments: number;
+		verified: number;
+		pending: number;
+		rejected: number;
+	};
+}

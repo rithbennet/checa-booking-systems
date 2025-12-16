@@ -82,6 +82,7 @@ function getNotificationColor(type: NotificationVM["type"]): string {
 		case "payment_verified":
 		case "results_available":
 		case "process_complete":
+		case "account_updated":
 			return "text-green-600";
 		case "booking_rejected":
 			return "text-red-600";

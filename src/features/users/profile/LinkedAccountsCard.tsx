@@ -75,7 +75,7 @@ export function LinkedAccountsCard() {
 	// Check for success or error messages from OAuth callback
 	useEffect(() => {
 		const linked = searchParams.get("linked");
-		const error = searchParams.get("error");
+		const queryError = searchParams.get("error");
 		const errorCode = searchParams.get("error_code");
 
 		if (linked === "success") {
@@ -107,22 +107,28 @@ export function LinkedAccountsCard() {
 			return () => clearTimeout(timeout);
 		}
 
-		if (error === "link_failed" || errorCode) {
+		if (queryError === "link_failed" || errorCode) {
 			// Handle different error codes from Better Auth
 			let message = "Failed to link account. ";
-			
+
 			// Better Auth error codes (check both error_code param and error param)
-			const actualErrorCode = errorCode || error;
-			
-			if (actualErrorCode === "ACCOUNT_ALREADY_LINKED_TO_DIFFERENT_USER" || 
-			    actualErrorCode === "account_already_linked_to_different_user") {
-				message = "This Google account is already linked to another user account. Please log in with that account to unlink it first.";
-			} else if (actualErrorCode === "EMAIL_DOESNT_MATCH" || 
-			           actualErrorCode === "email_doesn't_match") {
-				message = "The email address on your Google account doesn't match your current account email. Please use a Google account with the same email address.";
-			} else if (actualErrorCode === "UNABLE_TO_LINK_ACCOUNT" || 
-			           actualErrorCode === "unable_to_link_account") {
-				message = "Unable to link account. The account may already be linked or there was a configuration issue.";
+			const actualErrorCode = errorCode || queryError;
+
+			// Normalize error code: lowercase and replace both curly and straight apostrophes
+			const normalizedCode = actualErrorCode?.toLowerCase().replace(/['']/g, "'");
+
+			if (normalizedCode === "account_already_linked_to_different_user") {
+				message =
+					"This Google account is already linked to another user account. Please log in with that account to unlink it first.";
+			} else if (
+				normalizedCode === "email_doesn't_match" ||
+				normalizedCode === "email_doesnt_match"
+			) {
+				message =
+					"The email address on your Google account doesn't match your current account email. Please use a Google account with the same email address.";
+			} else if (normalizedCode === "unable_to_link_account") {
+				message =
+					"Unable to link account. The account may already be linked or there was a configuration issue.";
 			} else {
 				message = "Failed to link Google account. Please try again.";
 			}

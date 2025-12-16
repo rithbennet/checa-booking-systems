@@ -152,7 +152,9 @@ export function AdminUserEditForm({ profile, userId }: AdminUserEditFormProps) {
 					description: "The user has been notified of the changes.",
 				});
 			} else {
-				toast.success("User updated successfully");
+				toast.success("User updated successfully", {
+					description: "No changes were made.",
+				});
 			}
 		} catch (error) {
 			toast.error("Failed to update user", {

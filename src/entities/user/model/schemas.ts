@@ -46,12 +46,15 @@ export const adminUpdateUserInputSchema = updateProfileInputSchema
 	.refine(
 		(data) => {
 			// UTM members cannot have ikohzaId
-			if (
-				data.userType === "utm_member" &&
-				data.ikohzaId !== null &&
-				data.ikohzaId !== undefined
-			) {
-				return false;
+			if (data.userType === "utm_member") {
+				// Reject null, undefined, and empty strings
+				if (
+					data.ikohzaId !== null &&
+					data.ikohzaId !== undefined &&
+					data.ikohzaId !== ""
+				) {
+					return false;
+				}
 			}
 			return true;
 		},
@@ -59,6 +62,13 @@ export const adminUpdateUserInputSchema = updateProfileInputSchema
 			message: "UTM members cannot have an iKohza",
 			path: ["ikohzaId"],
 		},
-	);
+	)
+	.transform((data) => {
+		// Normalize empty strings to null for ikohzaId
+		if (data.ikohzaId === "") {
+			return { ...data, ikohzaId: null };
+		}
+		return data;
+	});
 
 export type AdminUpdateUserInput = z.infer<typeof adminUpdateUserInputSchema>;

@@ -224,7 +224,12 @@ export async function adminUpdateUser(
 	if (effectiveUserType === "utm_member") {
 		const effectiveIkohzaId =
 			input.ikohzaId !== undefined ? input.ikohzaId : currentUser.ikohzaId;
-		if (effectiveIkohzaId !== null && effectiveIkohzaId !== undefined) {
+		// Reject null, undefined, and empty strings
+		if (
+			effectiveIkohzaId !== null &&
+			effectiveIkohzaId !== undefined &&
+			effectiveIkohzaId !== ""
+		) {
 			throw new ValidationError("UTM members cannot have an iKohza", {
 				ikohzaId: ["UTM members cannot have an iKohza"],
 			});
@@ -233,7 +238,8 @@ export async function adminUpdateUser(
 
 	// Validation: MJIIT members must have MJIIT faculty
 	if (effectiveUserType === "mjiit_member") {
-		const effectiveFacultyId = input.facultyId !== undefined ? input.facultyId : currentUser.facultyId;
+		const effectiveFacultyId =
+			input.facultyId !== undefined ? input.facultyId : currentUser.facultyId;
 		if (effectiveFacultyId !== null) {
 			const faculty = await db.faculty.findUnique({
 				where: { id: effectiveFacultyId },
