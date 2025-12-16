@@ -5,6 +5,7 @@
 
 import { db } from "@/shared/server/db";
 import type { AcademicType, UserType } from "../model/types";
+import { syncGoogleProfileImage } from "./sync-profile-image";
 
 // ==============================================================
 // Types
@@ -25,7 +26,7 @@ export interface CreateUserInput {
 	userIdentifier?: string | null;
 	supervisorName?: string | null;
 	authUserId: string;
-	profileImageUrl?: string | null;
+	profileImageUrl?: Buffer | null; // Binary image data (BYTEA)
 	emailVerifiedAt?: Date | null;
 	facultyId?: string;
 	departmentId?: string;
@@ -173,6 +174,12 @@ export async function createUser(input: CreateUserInput) {
 			lastName: true,
 		},
 	});
+
+	// Sync Google profile image if available and profileImageUrl is null
+	// This handles the case where input.profileImageUrl was not provided
+	if (!input.profileImageUrl) {
+		await syncGoogleProfileImage(input.authUserId);
+	}
 
 	return user;
 }

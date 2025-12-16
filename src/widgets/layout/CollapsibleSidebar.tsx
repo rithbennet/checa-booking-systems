@@ -18,10 +18,12 @@ import {
 	User,
 	Users,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useUserProfile } from "@/entities/user";
 import { SignOutModal } from "@/features/authentication/ui/SignOutModal";
 import { NotificationNavBadge } from "@/features/notifications";
 import { cn } from "@/shared/lib/utils";
@@ -57,6 +59,9 @@ export default function CollapsibleSidebar({
 	const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const { toggleSidebar } = useSidebar();
+
+	// Get user profile to access profileImageUrl
+	const { data: profile } = useUserProfile();
 
 	const role = session?.role;
 	const isAdmin = role === "lab_administrator";
@@ -245,8 +250,19 @@ export default function CollapsibleSidebar({
 				{session && (
 					<div className="border-t px-2 py-2">
 						<div className="flex items-center gap-2 rounded-md px-2 py-1.5">
-							<div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
-								<User className="h-4 w-4 text-gray-700" />
+							<div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200">
+								{profile?.profileImageUrl ? (
+									<Image
+										alt={session.name ?? session.email ?? "User"}
+										className="h-full w-full object-cover"
+										height={32}
+										src={profile.profileImageUrl}
+										unoptimized
+										width={32}
+									/>
+								) : (
+									<User className="h-4 w-4 text-gray-700" />
+								)}
 							</div>
 							<div className="flex min-w-0 flex-1 flex-col">
 								<p className="truncate font-medium text-gray-900 text-sm">

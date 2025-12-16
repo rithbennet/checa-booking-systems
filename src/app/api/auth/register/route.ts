@@ -331,6 +331,12 @@ export async function POST(request: Request) {
 				}
 			}
 
+			// Get BetterAuth user's image for profile photo
+			const betterAuthUser = await tx.betterAuthUser.findUnique({
+				where: { id: signUpResult.user.id },
+				select: { image: true },
+			});
+
 			// Create User record (with pending status, NOT verified)
 			await tx.user.create({
 				data: {
@@ -346,6 +352,10 @@ export async function POST(request: Request) {
 							? supervisorName?.trim() || null
 							: null,
 					status: "pending",
+					// Note: Google images are URLs, not binary data
+					// We skip syncing them since we now use BYTEA
+					// Users can upload their profile image manually
+					profileImageUrl: null,
 					authUser: {
 						connect: { id: signUpResult.user.id },
 					},

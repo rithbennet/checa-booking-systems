@@ -1,6 +1,6 @@
 import { type UseQueryOptions, useQuery } from "@tanstack/react-query";
 
-interface CreateAdminDashboardQueryOptions<T> {
+interface CreateAdminDashboardQueryOptions<_T> {
 	endpoint: string;
 	queryKey: readonly unknown[];
 	errorMessage: string;

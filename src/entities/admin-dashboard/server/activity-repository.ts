@@ -175,13 +175,13 @@ export async function getAdminDashboardActivity(): Promise<AdminDashboardActivit
 function formatTimestamp(date: Date): string {
 	const now = new Date();
 	let diffMs = now.getTime() - date.getTime();
-	
+
 	// Handle future dates gracefully
 	if (diffMs < 0) {
 		diffMs = 0;
 		return "Just now";
 	}
-	
+
 	const diffMins = Math.floor(diffMs / (1000 * 60));
 	const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
 

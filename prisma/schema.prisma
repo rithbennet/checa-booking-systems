@@ -27,9 +27,9 @@ model BetterAuthUser {
   sessions      BetterAuthSession[]
   accounts      BetterAuthAccount[]
   verifications BetterAuthVerification[]
+  users         User[]
 
   @@map("better_auth_user")
-  users User[]
 }
 
 model BetterAuthSession {
@@ -49,19 +49,19 @@ model BetterAuthSession {
 }
 
 model BetterAuthAccount {
-  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  accountId         String   @db.VarChar(255)
-  providerId        String   @db.VarChar(50)
-  userId            String   @db.Uuid
-  accessToken       String?  @db.Text
-  refreshToken      String?  @db.Text
-  idToken           String?  @db.Text
-  accessTokenExpiresAt DateTime? @db.Timestamp(6)
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId             String    @db.VarChar(255)
+  providerId            String    @db.VarChar(50)
+  userId                String    @db.Uuid
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime? @db.Timestamp(6)
   refreshTokenExpiresAt DateTime? @db.Timestamp(6)
-  scope             String?  @db.VarChar(500)
-  password          String?  @db.VarChar(255)
-  createdAt         DateTime @default(now()) @db.Timestamp(6)
-  updatedAt         DateTime @updatedAt @db.Timestamp(6)
+  scope                 String?   @db.VarChar(500)
+  password              String?   @db.VarChar(255)
+  createdAt             DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt             DateTime  @updatedAt @db.Timestamp(6)
 
   user BetterAuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -94,31 +94,31 @@ model BetterAuthVerification {
 // ============================================
 
 model Faculty {
-  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code        String       @unique @db.VarChar(50)
-  name        String       @db.VarChar(200)
-  isActive    Boolean      @default(true)
-  createdAt   DateTime     @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime     @updatedAt @db.Timestamp(6)
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code      String   @unique @db.VarChar(50)
+  name      String   @db.VarChar(200)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 
   departments Department[]
-  ikohzas     Ikohza[]     // Only MJIIT faculty will have ikohzas
+  ikohzas     Ikohza[] // Only MJIIT faculty will have ikohzas
   users       User[]       @relation("UsersByFaculty")
 
   @@map("faculty")
 }
 
 model Department {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  facultyId String    @db.Uuid
-  faculty   Faculty   @relation(fields: [facultyId], references: [id], onDelete: Cascade)
-  code      String    @db.VarChar(50)
-  name      String    @db.VarChar(200)
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt DateTime  @updatedAt @db.Timestamp(6)
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  facultyId String   @db.Uuid
+  faculty   Faculty  @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  code      String   @db.VarChar(50)
+  name      String   @db.VarChar(200)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 
-  users     User[]    @relation("UsersByDepartment")
+  users User[] @relation("UsersByDepartment")
 
   @@unique([facultyId, code])
   @@index([facultyId])
@@ -126,24 +126,23 @@ model Department {
 }
 
 model Ikohza {
-  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  facultyId    String      @db.Uuid
-  faculty      Faculty     @relation(fields: [facultyId], references: [id], onDelete: Cascade)
-  code         String      @db.VarChar(50)
-  name         String      @db.VarChar(200)
-  description  String?     @db.Text
-  isActive     Boolean     @default(true)
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  facultyId   String   @db.Uuid
+  faculty     Faculty  @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  code        String   @db.VarChar(50)
+  name        String   @db.VarChar(200)
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
   // Leaders are stored as plain names because many leaders won't have
   // a user account in the system.
-  leaderName   String?     @db.VarChar(200)
-  createdAt    DateTime    @default(now()) @db.Timestamp(6)
-  updatedAt    DateTime    @updatedAt @db.Timestamp(6)
+  leaderName  String?  @db.VarChar(200)
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt @db.Timestamp(6)
 
-  users        User[]      @relation("UsersByIkohza")
+  users User[] @relation("UsersByIkohza")
 
   @@unique([facultyId, code])
   @@index([facultyId])
-  
   @@map("ikohza")
 }
 
@@ -152,39 +151,39 @@ model Ikohza {
 // ============================================
 
 model Company {
-  id        String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name      String          @db.VarChar(200)
-  legalName String?         @db.VarChar(300)
-  regNo     String?         @unique @db.VarChar(100)
-  isActive  Boolean         @default(true)
-  createdAt DateTime        @default(now()) @db.Timestamp(6)
-  updatedAt DateTime        @updatedAt @db.Timestamp(6)
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String   @db.VarChar(200)
+  legalName String?  @db.VarChar(300)
+  regNo     String?  @unique @db.VarChar(100)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 
-  branches  CompanyBranch[]
-  users     User[]          @relation("UsersByCompany")
-  bookings  BookingRequest[]
+  branches CompanyBranch[]
+  users    User[]           @relation("UsersByCompany")
+  bookings BookingRequest[]
 
   @@index([name])
   @@map("company")
 }
 
 model CompanyBranch {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId  String   @db.Uuid
-  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  name       String   @db.VarChar(200)
-  address    String?  @db.Text
-  city       String?  @db.VarChar(100)
-  state      String?  @db.VarChar(100)
-  postcode   String?  @db.VarChar(20)
-  country    String?  @db.VarChar(100)
-  phone      String?  @db.VarChar(20)
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now()) @db.Timestamp(6)
-  updatedAt  DateTime @updatedAt @db.Timestamp(6)
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId String   @db.Uuid
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name      String   @db.VarChar(200)
+  address   String?  @db.Text
+  city      String?  @db.VarChar(100)
+  state     String?  @db.VarChar(100)
+  postcode  String?  @db.VarChar(20)
+  country   String?  @db.VarChar(100)
+  phone     String?  @db.VarChar(20)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 
-  users      User[]   @relation("UsersByBranch")
-  bookings   BookingRequest[]
+  users    User[]           @relation("UsersByBranch")
+  bookings BookingRequest[]
 
   @@unique([companyId, name])
   @@index([companyId])
@@ -219,69 +218,68 @@ enum UTM {
 }
 
 model User {
-  id                String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  authUserId        String           @unique @db.Uuid
-  firstName         String           @db.VarChar(100)
-  lastName          String           @db.VarChar(100)
-  profileImageUrl   String?          @db.VarChar(500)
-  phone             String?          @db.VarChar(20)
-  userType          user_type_enum
-  status            user_status_enum  @default(pending)
-  academicType      academic_type_enum @default(none)
-  userIdentifier  String?           @db.VarChar(50)
-  supervisorName    String?          @db.VarChar(200)
-  
+  id              String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  authUserId      String             @unique @db.Uuid
+  firstName       String             @db.VarChar(100)
+  lastName        String             @db.VarChar(100)
+  profileImageUrl String?            @db.VarChar(500) // UploadThing URL
+  phone           String?            @db.VarChar(20)
+  userType        user_type_enum
+  status          user_status_enum   @default(pending)
+  academicType    academic_type_enum @default(none)
+  userIdentifier  String?            @db.VarChar(50)
+  supervisorName  String?            @db.VarChar(200)
+
   // Academic organization (internal members)
-  facultyId         String?          @db.Uuid
-  facultyRelation   Faculty?         @relation("UsersByFaculty", fields: [facultyId], references: [id])
-  departmentId      String?          @db.Uuid
-  departmentRelation Department?     @relation("UsersByDepartment", fields: [departmentId], references: [id])
-  ikohzaId          String?          @db.Uuid
-  ikohza            Ikohza?          @relation("UsersByIkohza", fields: [ikohzaId], references: [id])
-  
-  
+  facultyId          String?     @db.Uuid
+  facultyRelation    Faculty?    @relation("UsersByFaculty", fields: [facultyId], references: [id])
+  departmentId       String?     @db.Uuid
+  departmentRelation Department? @relation("UsersByDepartment", fields: [departmentId], references: [id])
+  ikohzaId           String?     @db.Uuid
+  ikohza             Ikohza?     @relation("UsersByIkohza", fields: [ikohzaId], references: [id])
+
   // External organization (external members)
-  companyId         String?          @db.Uuid
-  companyRelation   Company?         @relation("UsersByCompany", fields: [companyId], references: [id])
-  companyBranchId   String?          @db.Uuid
-  companyBranch     CompanyBranch?   @relation("UsersByBranch", fields: [companyBranchId], references: [id])
-  
+  companyId       String?        @db.Uuid
+  companyRelation Company?       @relation("UsersByCompany", fields: [companyId], references: [id])
+  companyBranchId String?        @db.Uuid
+  companyBranch   CompanyBranch? @relation("UsersByBranch", fields: [companyBranchId], references: [id])
+
   // NOTE: legacy plain-text org fields removed. Use the relations above
   // (facultyId, departmentId, companyId, companyBranchId, ikohzaId).
 
-    authUser     BetterAuthUser @relation(fields: [authUserId], references: [id])
-  
-  UTM               UTM?             @default(none)
-  address           String?
-  email             String           @unique @db.VarChar(255)
-  emailVerifiedAt   DateTime?        @db.Timestamp(6)
-  lastLoginAt       DateTime?        @db.Timestamp(6)
-  approvedAt        DateTime?        @db.Timestamp(6)
-  createdAt         DateTime         @default(now()) @db.Timestamp(6)
-  updatedAt         DateTime         @updatedAt @db.Timestamp(6)
-  
+  authUser BetterAuthUser @relation(fields: [authUserId], references: [id])
+
+  UTM             UTM?      @default(none)
+  address         String?
+  email           String    @unique @db.VarChar(255)
+  emailVerifiedAt DateTime? @db.Timestamp(6)
+  lastLoginAt     DateTime? @db.Timestamp(6)
+  approvedAt      DateTime? @db.Timestamp(6)
+  createdAt       DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime  @updatedAt @db.Timestamp(6)
+
   // approval self-relation
-  approvedBy        String?          @db.Uuid
-  approvedByUser    User?            @relation("UserApprovals", fields: [approvedBy], references: [id])
-  approvedUsers     User[]           @relation("UserApprovals")
-  
+  approvedBy     String? @db.Uuid
+  approvedByUser User?   @relation("UserApprovals", fields: [approvedBy], references: [id])
+  approvedUsers  User[]  @relation("UserApprovals")
+
   // relations
-  authProviders     AuthProvider[]
-  auditLogs         AuditLog[]
-  bookingRequests   BookingRequest[]
-  approvedBookings  BookingRequest[] @relation("BookingApprovals")
-  serviceForms      ServiceForm[]    @relation("FormGenerators")
-  uploadedInvoices  Invoice[]
-  verifiedPayments   Payment[]        @relation("PaymentVerifiers")
-  uploadedResults   AnalysisResult[]
-  notifications     Notification[]
-  sampleTracking    SampleTracking[]  @relation("SampleUpdaters")
-  createdModifications SampleModification[] @relation("ModificationCreators")
-  approvedModifications SampleModification[] @relation("ModificationApprovers")
-  uploadedPayments   Payment[] @relation("PaymentUploaders")
-  uploadedFileBlobs  FileBlob[] @relation("FileBlobUploaders")
-  createdBookingDocuments BookingDocument[] @relation("BookingDocumentCreators")
-  verifiedBookingDocuments BookingDocument[] @relation("BookingDocumentVerifiers")
+  authProviders            AuthProvider[]
+  auditLogs                AuditLog[]
+  bookingRequests          BookingRequest[]
+  approvedBookings         BookingRequest[]     @relation("BookingApprovals")
+  serviceForms             ServiceForm[]        @relation("FormGenerators")
+  uploadedInvoices         Invoice[]
+  verifiedPayments         Payment[]            @relation("PaymentVerifiers")
+  uploadedResults          AnalysisResult[]
+  notifications            Notification[]
+  sampleTracking           SampleTracking[]     @relation("SampleUpdaters")
+  createdModifications     SampleModification[] @relation("ModificationCreators")
+  approvedModifications    SampleModification[] @relation("ModificationApprovers")
+  uploadedPayments         Payment[]            @relation("PaymentUploaders")
+  uploadedFileBlobs        FileBlob[]           @relation("FileBlobUploaders")
+  createdBookingDocuments  BookingDocument[]    @relation("BookingDocumentCreators")
+  verifiedBookingDocuments BookingDocument[]    @relation("BookingDocumentVerifiers")
 
   @@index([userType])
   @@index([status])
@@ -296,16 +294,16 @@ model User {
 }
 
 model AuthProvider {
-  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId            String    @db.Uuid
-  provider          String    @db.VarChar(50)
-  providerAccountId String    @db.VarChar(100)
-  passwordHash      String?   @db.VarChar(255)
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String   @db.Uuid
+  provider          String   @db.VarChar(50)
+  providerAccountId String   @db.VarChar(100)
+  passwordHash      String?  @db.VarChar(255)
   oauthData         Json?
-  createdAt         DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt         DateTime  @updatedAt @db.Timestamp(6)
-  
+  createdAt         DateTime @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime @updatedAt @db.Timestamp(6)
+
   @@unique([provider, providerAccountId])
   @@index([userId])
   @@map("auth_provider")
@@ -322,21 +320,21 @@ enum service_category_enum {
 }
 
 model Service {
-  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code              String   @unique @db.VarChar(50)
-  name              String   @db.VarChar(200)
-  description       String?  @db.Text
-  category          service_category_enum
-  isActive          Boolean  @default(true)
-  requiresSample    Boolean  @default(true)
-  minSampleMass     Decimal? @db.Decimal(8, 3)
-  operatingHours    String?  @db.VarChar(100)
-  createdAt         DateTime @default(now()) @db.Timestamp(6)
-  updatedAt         DateTime @updatedAt @db.Timestamp(6)
+  id             String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code           String                @unique @db.VarChar(50)
+  name           String                @db.VarChar(200)
+  description    String?               @db.Text
+  category       service_category_enum
+  isActive       Boolean               @default(true)
+  requiresSample Boolean               @default(true)
+  minSampleMass  Decimal?              @db.Decimal(8, 3)
+  operatingHours String?               @db.VarChar(100)
+  createdAt      DateTime              @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime              @updatedAt @db.Timestamp(6)
 
-  pricing           ServicePricing[]
-  bookingItems      BookingServiceItem[]
-  addOnMappings     ServiceAddOnMapping[]
+  pricing       ServicePricing[]
+  bookingItems  BookingServiceItem[]
+  addOnMappings ServiceAddOnMapping[]
 
   @@index([category])
   @@index([isActive])
@@ -372,28 +370,28 @@ enum booking_status_enum {
 }
 
 model BookingRequest {
-  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId            String   @db.Uuid
-  user              User     @relation(fields: [userId], references: [id])
-  referenceNumber   String   @unique @db.VarChar(50)
-  projectDescription String? @db.Text
-  preferredStartDate DateTime? @db.Date     // overall project start
-  preferredEndDate   DateTime? @db.Date     // overall project end
-  totalAmount       Decimal  @default(0) @db.Decimal(10, 2)
-  status            booking_status_enum @default(draft)
-  notes             String?  @db.Text
-  createdAt         DateTime @default(now()) @db.Timestamp(6)
-  updatedAt         DateTime @updatedAt @db.Timestamp(6)
-  reviewedAt        DateTime? @db.Timestamp(6)
-  reviewedBy        String?  @db.Uuid
-  reviewedByUser    User?    @relation("BookingApprovals", fields: [reviewedBy], references: [id])
-  reviewNotes       String?  @db.Text
+  id                 String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String              @db.Uuid
+  user               User                @relation(fields: [userId], references: [id])
+  referenceNumber    String              @unique @db.VarChar(50)
+  projectDescription String?             @db.Text
+  preferredStartDate DateTime?           @db.Date // overall project start
+  preferredEndDate   DateTime?           @db.Date // overall project end
+  totalAmount        Decimal             @default(0) @db.Decimal(10, 2)
+  status             booking_status_enum @default(draft)
+  notes              String?             @db.Text
+  createdAt          DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt          DateTime            @updatedAt @db.Timestamp(6)
+  reviewedAt         DateTime?           @db.Timestamp(6)
+  reviewedBy         String?             @db.Uuid
+  reviewedByUser     User?               @relation("BookingApprovals", fields: [reviewedBy], references: [id])
+  reviewNotes        String?             @db.Text
 
   // For external attribution
-  companyId         String?        @db.Uuid
-  companyRelation   Company?       @relation(fields: [companyId], references: [id])
-  companyBranchId   String?        @db.Uuid
-  companyBranch     CompanyBranch? @relation(fields: [companyBranchId], references: [id])
+  companyId       String?        @db.Uuid
+  companyRelation Company?       @relation(fields: [companyId], references: [id])
+  companyBranchId String?        @db.Uuid
+  companyBranch   CompanyBranch? @relation(fields: [companyBranchId], references: [id])
 
   // Relationships
   serviceItems      BookingServiceItem[]
@@ -411,49 +409,49 @@ model BookingRequest {
 }
 
 model BookingServiceItem {
-  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingRequestId  String   @db.Uuid
-  bookingRequest    BookingRequest @relation(fields: [bookingRequestId], references: [id], onDelete: Cascade)
-  serviceId         String   @db.Uuid
-  service           Service  @relation(fields: [serviceId], references: [id])
+  id                      String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingRequestId        String                 @db.Uuid
+  bookingRequest          BookingRequest         @relation(fields: [bookingRequestId], references: [id], onDelete: Cascade)
+  serviceId               String                 @db.Uuid
+  service                 Service                @relation(fields: [serviceId], references: [id])
   // Basic info
-  quantity          Int      @default(1)
-  unitPrice         Decimal  @db.Decimal(10, 2)
-  totalPrice        Decimal  @db.Decimal(10, 2)
-  sampleName        String?  @db.VarChar(200)
-  sampleDetails     String?  @db.Text
-  sampleType        String?  @db.VarChar(100)
-  sampleHazard      String?  @db.VarChar(100)
-  testingMethod     String?  @db.VarChar(200)
-  degasConditions   String?  @db.Text
-  solventSystem     String?  @db.Text
-  solvents          String?  @db.Text
-  solventComposition String?  @db.Text
-  columnType        String?  @db.VarChar(100)
-  flowRate          Decimal? @db.Decimal(6, 2)
-  wavelength        Int?
-  expectedRetentionTime Decimal? @db.Decimal(6, 2)
-  samplePreparation String?  @db.Text
-  notes             String?  @db.Text
+  quantity                Int                    @default(1)
+  unitPrice               Decimal                @db.Decimal(10, 2)
+  totalPrice              Decimal                @db.Decimal(10, 2)
+  sampleName              String?                @db.VarChar(200)
+  sampleDetails           String?                @db.Text
+  sampleType              String?                @db.VarChar(100)
+  sampleHazard            String?                @db.VarChar(100)
+  testingMethod           String?                @db.VarChar(200)
+  degasConditions         String?                @db.Text
+  solventSystem           String?                @db.Text
+  solvents                String?                @db.Text
+  solventComposition      String?                @db.Text
+  columnType              String?                @db.VarChar(100)
+  flowRate                Decimal?               @db.Decimal(6, 2)
+  wavelength              Int?
+  expectedRetentionTime   Decimal?               @db.Decimal(6, 2)
+  samplePreparation       String?                @db.Text
+  notes                   String?                @db.Text
   // Timelines
-  expectedCompletionDate DateTime? @db.Timestamp(6)
-  actualCompletionDate   DateTime? @db.Timestamp(6)
-  turnaroundEstimate     String?   @db.VarChar(100)
+  expectedCompletionDate  DateTime?              @db.Timestamp(6)
+  actualCompletionDate    DateTime?              @db.Timestamp(6)
+  turnaroundEstimate      String?                @db.VarChar(100)
   // Handling
-  hplcPreparationRequired Boolean @default(false)
-  temperatureControlled   Boolean @default(false)
-  lightSensitive          Boolean @default(false)
-  hazardousMaterial       Boolean @default(false)
-  inertAtmosphere         Boolean @default(false)
+  hplcPreparationRequired Boolean                @default(false)
+  temperatureControlled   Boolean                @default(false)
+  lightSensitive          Boolean                @default(false)
+  hazardousMaterial       Boolean                @default(false)
+  inertAtmosphere         Boolean                @default(false)
   // Unified equipment system
-  equipmentUsages         SampleEquipmentUsage[]  // linked equipment
-  otherEquipmentRequests  Json?                   // custom ad-hoc requests
-  createdAt               DateTime @default(now()) @db.Timestamp(6)
-  updatedAt               DateTime @updatedAt @db.Timestamp(6)
+  equipmentUsages         SampleEquipmentUsage[] // linked equipment
+  otherEquipmentRequests  Json? // custom ad-hoc requests
+  createdAt               DateTime               @default(now()) @db.Timestamp(6)
+  updatedAt               DateTime               @updatedAt @db.Timestamp(6)
 
-  modifications     SampleModification[]
-  sampleTracking    SampleTracking[]
-  serviceAddOns     ServiceAddOn[]
+  modifications  SampleModification[]
+  sampleTracking SampleTracking[]
+  serviceAddOns  ServiceAddOn[]
 
   @@index([bookingRequestId])
   @@index([serviceId])
@@ -467,23 +465,23 @@ enum modification_status_enum {
 }
 
 model SampleModification {
-  id                    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingServiceItemId  String   @db.Uuid
-  bookingServiceItem    BookingServiceItem @relation(fields: [bookingServiceItemId], references: [id], onDelete: Cascade)
-  originalQuantity      Int
-  newQuantity           Int
-  originalDurationMonths Int      @default(0)
-  newDurationMonths     Int      @default(0)
-  originalTotalPrice    Decimal  @db.Decimal(10, 2)
-  newTotalPrice         Decimal  @db.Decimal(10, 2)
-  reason                String   @db.Text
-  status                modification_status_enum @default(pending)
-  createdBy             String   @db.Uuid
-  createdByUser         User     @relation("ModificationCreators", fields: [createdBy], references: [id])
-  createdAt             DateTime @default(now()) @db.Timestamp(6)
-  approvedAt            DateTime? @db.Timestamp(6)
-  approvedBy            String?   @db.Uuid
-  approvedByUser        User?    @relation("ModificationApprovers", fields: [approvedBy], references: [id])
+  id                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingServiceItemId   String                   @db.Uuid
+  bookingServiceItem     BookingServiceItem       @relation(fields: [bookingServiceItemId], references: [id], onDelete: Cascade)
+  originalQuantity       Int
+  newQuantity            Int
+  originalDurationMonths Int                      @default(0)
+  newDurationMonths      Int                      @default(0)
+  originalTotalPrice     Decimal                  @db.Decimal(10, 2)
+  newTotalPrice          Decimal                  @db.Decimal(10, 2)
+  reason                 String                   @db.Text
+  status                 modification_status_enum @default(pending)
+  createdBy              String                   @db.Uuid
+  createdByUser          User                     @relation("ModificationCreators", fields: [createdBy], references: [id])
+  createdAt              DateTime                 @default(now()) @db.Timestamp(6)
+  approvedAt             DateTime?                @db.Timestamp(6)
+  approvedBy             String?                  @db.Uuid
+  approvedByUser         User?                    @relation("ModificationApprovers", fields: [approvedBy], references: [id])
 
   @@index([bookingServiceItemId])
   @@index([status])
@@ -499,34 +497,34 @@ enum form_status_enum {
 }
 
 model ServiceForm {
-  id                              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingRequestId                String   @db.Uuid
-  bookingRequest                  BookingRequest @relation(fields: [bookingRequestId], references: [id])
-  formNumber                      String   @unique @db.VarChar(50)
-  costCentre                      String?  @db.VarChar(50)
-  facilityLab                     String   @default("ChECA iKohza") @db.VarChar(100)
-  staffPicName                    String?  @db.VarChar(200)
-  staffPicEmail                   String?  @db.VarChar(255)
-  staffPicPhone                   String?  @db.VarChar(20)
-  subtotal                        Decimal  @db.Decimal(10, 2)
-  totalAmount                     Decimal  @db.Decimal(10, 2)
-  validUntil                      DateTime @db.Date
-  status                          form_status_enum @default(generated)
-  serviceFormUnsignedPdfPath     String   @db.VarChar(500)
-  serviceFormSignedPdfPath       String?  @db.VarChar(500)
-  requiresWorkingAreaAgreement    Boolean  @default(false)
-  workingAreaAgreementUnsignedPdfPath String? @db.VarChar(500)
-  workingAreaAgreementSignedPdfPath   String? @db.VarChar(500)
-  generatedAt                     DateTime @default(now()) @db.Timestamp(6)
-  generatedBy                     String   @db.Uuid
-  generatedByUser                 User     @relation("FormGenerators", fields: [generatedBy], references: [id])
-  downloadedAt                    DateTime? @db.Timestamp(6)
-  signedFormsUploadedAt          DateTime? @db.Timestamp(6)
-  signedFormsUploadedBy           String?  @db.Uuid
-  createdAt                       DateTime @default(now()) @db.Timestamp(6)
-  updatedAt                       DateTime @updatedAt @db.Timestamp(6)
+  id                                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingRequestId                    String           @db.Uuid
+  bookingRequest                      BookingRequest   @relation(fields: [bookingRequestId], references: [id])
+  formNumber                          String           @unique @db.VarChar(50)
+  costCentre                          String?          @db.VarChar(50)
+  facilityLab                         String           @default("ChECA iKohza") @db.VarChar(100)
+  staffPicName                        String?          @db.VarChar(200)
+  staffPicEmail                       String?          @db.VarChar(255)
+  staffPicPhone                       String?          @db.VarChar(20)
+  subtotal                            Decimal          @db.Decimal(10, 2)
+  totalAmount                         Decimal          @db.Decimal(10, 2)
+  validUntil                          DateTime         @db.Date
+  status                              form_status_enum @default(generated)
+  serviceFormUnsignedPdfPath          String           @db.VarChar(500)
+  serviceFormSignedPdfPath            String?          @db.VarChar(500)
+  requiresWorkingAreaAgreement        Boolean          @default(false)
+  workingAreaAgreementUnsignedPdfPath String?          @db.VarChar(500)
+  workingAreaAgreementSignedPdfPath   String?          @db.VarChar(500)
+  generatedAt                         DateTime         @default(now()) @db.Timestamp(6)
+  generatedBy                         String           @db.Uuid
+  generatedByUser                     User             @relation("FormGenerators", fields: [generatedBy], references: [id])
+  downloadedAt                        DateTime?        @db.Timestamp(6)
+  signedFormsUploadedAt               DateTime?        @db.Timestamp(6)
+  signedFormsUploadedBy               String?          @db.Uuid
+  createdAt                           DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt                           DateTime         @updatedAt @db.Timestamp(6)
 
-  invoices                        Invoice[]
+  invoices Invoice[]
 
   @@index([formNumber])
   @@index([bookingRequestId])
@@ -544,22 +542,22 @@ enum invoice_status_enum {
 }
 
 model Invoice {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  serviceFormId String @db.Uuid
-  serviceForm ServiceForm @relation(fields: [serviceFormId], references: [id])
-  invoiceNumber String @unique @db.VarChar(50)
-  invoiceDate DateTime @default(now()) @db.Date
-  dueDate    DateTime @db.Date
-  amount     Decimal  @db.Decimal(10, 2)
-  status     invoice_status_enum @default(pending)
-  filePath   String   @db.VarChar(500)
-  uploadedBy String   @db.Uuid
-  uploadedByUser User  @relation(fields: [uploadedBy], references: [id])
-  uploadedAt DateTime @default(now()) @db.Timestamp(6)
-  createdAt  DateTime @default(now()) @db.Timestamp(6)
-  updatedAt  DateTime @updatedAt @db.Timestamp(6)
+  id             String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  serviceFormId  String              @db.Uuid
+  serviceForm    ServiceForm         @relation(fields: [serviceFormId], references: [id])
+  invoiceNumber  String              @unique @db.VarChar(50)
+  invoiceDate    DateTime            @default(now()) @db.Date
+  dueDate        DateTime            @db.Date
+  amount         Decimal             @db.Decimal(10, 2)
+  status         invoice_status_enum @default(pending)
+  filePath       String              @db.VarChar(500)
+  uploadedBy     String              @db.Uuid
+  uploadedByUser User                @relation(fields: [uploadedBy], references: [id])
+  uploadedAt     DateTime            @default(now()) @db.Timestamp(6)
+  createdAt      DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime            @updatedAt @db.Timestamp(6)
 
-  payments   Payment[]
+  payments Payment[]
 
   @@index([serviceFormId])
   @@index([status])
@@ -580,24 +578,24 @@ enum payment_status_enum {
 }
 
 model Payment {
-  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  invoiceId         String   @db.Uuid
-  invoice           Invoice  @relation(fields: [invoiceId], references: [id])
-  amount            Decimal  @db.Decimal(10, 2)
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  invoiceId         String              @db.Uuid
+  invoice           Invoice             @relation(fields: [invoiceId], references: [id])
+  amount            Decimal             @db.Decimal(10, 2)
   paymentMethod     payment_method_enum
-  paymentDate       DateTime @db.Date
-  referenceNumber   String?  @db.VarChar(100)
-  receiptFilePath   String   @db.VarChar(500)
+  paymentDate       DateTime            @db.Date
+  referenceNumber   String?             @db.VarChar(100)
+  receiptFilePath   String              @db.VarChar(500)
   status            payment_status_enum @default(pending)
-  uploadedBy        String   @db.Uuid
-  uploadedByUser    User     @relation("PaymentUploaders", fields: [uploadedBy], references: [id])
-  uploadedAt        DateTime @default(now()) @db.Timestamp(6)
-  verifiedAt        DateTime? @db.Timestamp(6)
-  verifiedBy        String?  @db.Uuid
-  verifiedByUser    User?    @relation("PaymentVerifiers", fields: [verifiedBy], references: [id])
-  verificationNotes String?  @db.Text
-  createdAt         DateTime @default(now()) @db.Timestamp(6)
-  updatedAt         DateTime @updatedAt @db.Timestamp(6)
+  uploadedBy        String              @db.Uuid
+  uploadedByUser    User                @relation("PaymentUploaders", fields: [uploadedBy], references: [id])
+  uploadedAt        DateTime            @default(now()) @db.Timestamp(6)
+  verifiedAt        DateTime?           @db.Timestamp(6)
+  verifiedBy        String?             @db.Uuid
+  verifiedByUser    User?               @relation("PaymentVerifiers", fields: [verifiedBy], references: [id])
+  verificationNotes String?             @db.Text
+  createdAt         DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime            @updatedAt @db.Timestamp(6)
 
   @@index([invoiceId])
   @@index([status])
@@ -615,23 +613,23 @@ enum sample_status_enum {
 }
 
 model SampleTracking {
-  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingServiceItemId String @db.Uuid
-  bookingServiceItem BookingServiceItem @relation(fields: [bookingServiceItemId], references: [id], onDelete: Cascade)
-  sampleIdentifier  String   @db.VarChar(100)
-  status            sample_status_enum @default(pending)
-  receivedAt        DateTime? @db.Timestamp(6)
-  analysisStartAt   DateTime? @db.Timestamp(6)
-  analysisCompleteAt DateTime? @db.Timestamp(6)
-  returnRequestedAt DateTime? @db.Timestamp(6)
-  returnedAt        DateTime? @db.Timestamp(6)
-  notes             String?  @db.Text
-  updatedBy         String?  @db.Uuid
-  updatedByUser     User?    @relation("SampleUpdaters", fields: [updatedBy], references: [id])
-  createdAt         DateTime @default(now()) @db.Timestamp(6)
-  updatedAt         DateTime @updatedAt @db.Timestamp(6)
+  id                   String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingServiceItemId String             @db.Uuid
+  bookingServiceItem   BookingServiceItem @relation(fields: [bookingServiceItemId], references: [id], onDelete: Cascade)
+  sampleIdentifier     String             @db.VarChar(100)
+  status               sample_status_enum @default(pending)
+  receivedAt           DateTime?          @db.Timestamp(6)
+  analysisStartAt      DateTime?          @db.Timestamp(6)
+  analysisCompleteAt   DateTime?          @db.Timestamp(6)
+  returnRequestedAt    DateTime?          @db.Timestamp(6)
+  returnedAt           DateTime?          @db.Timestamp(6)
+  notes                String?            @db.Text
+  updatedBy            String?            @db.Uuid
+  updatedByUser        User?              @relation("SampleUpdaters", fields: [updatedBy], references: [id])
+  createdAt            DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt            DateTime           @updatedAt @db.Timestamp(6)
 
-  analysisResults   AnalysisResult[]
+  analysisResults AnalysisResult[]
 
   @@index([bookingServiceItemId])
   @@index([status])
@@ -643,23 +641,23 @@ model SampleTracking {
 // ============================================
 
 model WorkspaceBooking {
-  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingRequestId String   @db.Uuid
-  bookingRequest   BookingRequest @relation(fields: [bookingRequestId], references: [id], onDelete: Cascade)
+  id                String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingRequestId  String                    @db.Uuid
+  bookingRequest    BookingRequest            @relation(fields: [bookingRequestId], references: [id], onDelete: Cascade)
   // Always Checa Lab
-  startDate        DateTime @db.Date
-  endDate          DateTime @db.Date
-  preferredTimeSlot String?  @db.VarChar(50)
+  startDate         DateTime                  @db.Date
+  endDate           DateTime                  @db.Date
+  preferredTimeSlot String?                   @db.VarChar(50)
   // Links to available lab equipment
-  equipmentUsages  WorkspaceEquipmentUsage[]
+  equipmentUsages   WorkspaceEquipmentUsage[]
   // Custom user-defined extras
-  specialEquipment Json?
-  purpose          String? @db.Text
-  notes            String? @db.Text
-  createdAt        DateTime @default(now()) @db.Timestamp(6)
-  updatedAt        DateTime @updatedAt @db.Timestamp(6)
+  specialEquipment  Json?
+  purpose           String?                   @db.Text
+  notes             String?                   @db.Text
+  createdAt         DateTime                  @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime                  @updatedAt @db.Timestamp(6)
 
-  serviceAddOns    ServiceAddOn[]
+  serviceAddOns ServiceAddOn[]
 
   @@index([bookingRequestId])
   @@map("workspace_booking")
@@ -670,28 +668,28 @@ model WorkspaceBooking {
 // ============================================
 
 model LabEquipment {
-  id                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                    String   @unique @db.VarChar(100)
-  description             String?  @db.Text
-  isAvailable             Boolean  @default(true)
-  maintenanceNotes        String?  @db.Text
-  expectedMaintenanceEnd  DateTime? @db.Timestamp(6)
-  createdAt               DateTime @default(now()) @db.Timestamp(6)
-  updatedAt               DateTime @updatedAt @db.Timestamp(6)
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                   String    @unique @db.VarChar(100)
+  description            String?   @db.Text
+  isAvailable            Boolean   @default(true)
+  maintenanceNotes       String?   @db.Text
+  expectedMaintenanceEnd DateTime? @db.Timestamp(6)
+  createdAt              DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt              DateTime  @updatedAt @db.Timestamp(6)
 
-  workspaceUsages         WorkspaceEquipmentUsage[]
-  sampleUsages            SampleEquipmentUsage[]
+  workspaceUsages WorkspaceEquipmentUsage[]
+  sampleUsages    SampleEquipmentUsage[]
 
   @@map("lab_equipment")
 }
 
 model WorkspaceEquipmentUsage {
-  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  workspaceBookingId String   @db.Uuid
+  id                 String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  workspaceBookingId String           @db.Uuid
   workspaceBooking   WorkspaceBooking @relation(fields: [workspaceBookingId], references: [id], onDelete: Cascade)
-  equipmentId        String   @db.Uuid
-  equipment          LabEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
-  createdAt          DateTime @default(now()) @db.Timestamp(6)
+  equipmentId        String           @db.Uuid
+  equipment          LabEquipment     @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  createdAt          DateTime         @default(now()) @db.Timestamp(6)
 
   @@index([workspaceBookingId])
   @@index([equipmentId])
@@ -699,12 +697,12 @@ model WorkspaceEquipmentUsage {
 }
 
 model SampleEquipmentUsage {
-  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingServiceItemId String @db.Uuid
-  bookedItem          BookingServiceItem @relation(fields: [bookingServiceItemId], references: [id], onDelete: Cascade)
-  equipmentId         String   @db.Uuid
-  equipment           LabEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
-  createdAt           DateTime @default(now()) @db.Timestamp(6)
+  id                   String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingServiceItemId String             @db.Uuid
+  bookedItem           BookingServiceItem @relation(fields: [bookingServiceItemId], references: [id], onDelete: Cascade)
+  equipmentId          String             @db.Uuid
+  equipment            LabEquipment       @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  createdAt            DateTime           @default(now()) @db.Timestamp(6)
 
   @@index([bookingServiceItemId])
   @@index([equipmentId])
@@ -712,19 +710,19 @@ model SampleEquipmentUsage {
 }
 
 model AnalysisResult {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  sampleTrackingId String  @db.Uuid
-  sampleTracking  SampleTracking @relation(fields: [sampleTrackingId], references: [id], onDelete: Cascade)
-  fileName        String   @db.VarChar(255)
-  filePath        String   @db.VarChar(500)
-  fileSize        Int
-  fileType        String   @db.VarChar(100)
-  description     String?  @db.Text
-  uploadedBy      String   @db.Uuid
-  uploadedByUser  User     @relation(fields: [uploadedBy], references: [id])
-  uploadedAt      DateTime @default(now()) @db.Timestamp(6)
-  createdAt       DateTime @default(now()) @db.Timestamp(6)
-  updatedAt       DateTime @updatedAt @db.Timestamp(6)
+  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sampleTrackingId String         @db.Uuid
+  sampleTracking   SampleTracking @relation(fields: [sampleTrackingId], references: [id], onDelete: Cascade)
+  fileName         String         @db.VarChar(255)
+  filePath         String         @db.VarChar(500)
+  fileSize         Int
+  fileType         String         @db.VarChar(100)
+  description      String?        @db.Text
+  uploadedBy       String         @db.Uuid
+  uploadedByUser   User           @relation(fields: [uploadedBy], references: [id])
+  uploadedAt       DateTime       @default(now()) @db.Timestamp(6)
+  createdAt        DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime       @updatedAt @db.Timestamp(6)
 
   @@index([sampleTrackingId])
   @@index([uploadedAt])
@@ -749,19 +747,19 @@ enum notification_type_enum {
 }
 
 model Notification {
-  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId            String   @db.Uuid
-  user              User     @relation(fields: [userId], references: [id])
+  id                String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String                 @db.Uuid
+  user              User                   @relation(fields: [userId], references: [id])
   type              notification_type_enum
-  relatedEntityType String?  @db.VarChar(50)
-  relatedEntityId   String?  @db.VarChar(255)
-  title             String   @db.VarChar(255)
-  message           String   @db.Text
-  emailSent         Boolean  @default(false)
-  emailSentAt       DateTime? @db.Timestamp(6)
-  readAt            DateTime? @db.Timestamp(6)
-  createdAt         DateTime @default(now()) @db.Timestamp(6)
-  updatedAt         DateTime @updatedAt @db.Timestamp(6)
+  relatedEntityType String?                @db.VarChar(50)
+  relatedEntityId   String?                @db.VarChar(255)
+  title             String                 @db.VarChar(255)
+  message           String                 @db.Text
+  emailSent         Boolean                @default(false)
+  emailSentAt       DateTime?              @db.Timestamp(6)
+  readAt            DateTime?              @db.Timestamp(6)
+  createdAt         DateTime               @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime               @updatedAt @db.Timestamp(6)
 
   @@index([userId])
   @@index([type])
@@ -792,14 +790,14 @@ model AuditLog {
 // ============================================
 
 model GlobalAddOnCatalog {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name         String   @unique @db.VarChar(150)
-  description  String?  @db.Text
-  defaultAmount Decimal  @db.Decimal(10, 2)
-  applicableTo String    @db.VarChar(50)     // "sample", "workspace" or "both"
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now()) @db.Timestamp(6)
-  updatedAt    DateTime  @updatedAt @db.Timestamp(6)
+  id              String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String                @unique @db.VarChar(150)
+  description     String?               @db.Text
+  defaultAmount   Decimal               @db.Decimal(10, 2)
+  applicableTo    String                @db.VarChar(50) // "sample", "workspace" or "both"
+  isActive        Boolean               @default(true)
+  createdAt       DateTime              @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime              @updatedAt @db.Timestamp(6)
   serviceMappings ServiceAddOnMapping[]
   serviceAddOns   ServiceAddOn[]
 
@@ -807,32 +805,32 @@ model GlobalAddOnCatalog {
 }
 
 model ServiceAddOnMapping {
-  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  serviceId      String   @db.Uuid
-  service        Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  addOnId        String   @db.Uuid
-  addOnCatalog   GlobalAddOnCatalog @relation(fields: [addOnId], references: [id], onDelete: Cascade)
-  isEnabled      Boolean  @default(true)
-  customAmount   Decimal? @db.Decimal(10, 2)   // price override per service
-  createdAt      DateTime @default(now()) @db.Timestamp(6)
+  id           String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  serviceId    String             @db.Uuid
+  service      Service            @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  addOnId      String             @db.Uuid
+  addOnCatalog GlobalAddOnCatalog @relation(fields: [addOnId], references: [id], onDelete: Cascade)
+  isEnabled    Boolean            @default(true)
+  customAmount Decimal?           @db.Decimal(10, 2) // price override per service
+  createdAt    DateTime           @default(now()) @db.Timestamp(6)
 
   @@unique([serviceId, addOnId])
   @@map("service_add_on_mapping")
 }
 
 model ServiceAddOn {
-  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingServiceItemId String?  @db.Uuid
+  id                   String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingServiceItemId String?             @db.Uuid
   bookingServiceItem   BookingServiceItem? @relation(fields: [bookingServiceItemId], references: [id], onDelete: Cascade)
-  workspaceBookingId   String?  @db.Uuid
-  workspaceBooking     WorkspaceBooking? @relation(fields: [workspaceBookingId], references: [id], onDelete: Cascade)
-  addOnCatalogId       String   @db.Uuid
-  addOnCatalog         GlobalAddOnCatalog @relation(fields: [addOnCatalogId], references: [id], onDelete: Cascade)
-  name                 String   @db.VarChar(150)
-  amount               Decimal  @db.Decimal(10, 2)
-  taxable              Boolean  @default(true)
-  description          String?  @db.Text
-  createdAt            DateTime @default(now()) @db.Timestamp(6)
+  workspaceBookingId   String?             @db.Uuid
+  workspaceBooking     WorkspaceBooking?   @relation(fields: [workspaceBookingId], references: [id], onDelete: Cascade)
+  addOnCatalogId       String              @db.Uuid
+  addOnCatalog         GlobalAddOnCatalog  @relation(fields: [addOnCatalogId], references: [id], onDelete: Cascade)
+  name                 String              @db.VarChar(150)
+  amount               Decimal             @db.Decimal(10, 2)
+  taxable              Boolean             @default(true)
+  description          String?             @db.Text
+  createdAt            DateTime            @default(now()) @db.Timestamp(6)
 
   @@index([bookingServiceItemId])
   @@index([workspaceBookingId])
@@ -846,8 +844,8 @@ model ServiceAddOn {
 
 model FileBlob {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  key          String   @db.VarChar(255)  // uploadthing file key
-  url          String   @db.VarChar(500)  // public URL or signed route result
+  key          String   @db.VarChar(255) // uploadthing file key
+  url          String   @db.VarChar(500) // public URL or signed route result
   mimeType     String   @db.VarChar(100)
   fileName     String   @db.VarChar(255)
   sizeBytes    Int
@@ -872,34 +870,33 @@ enum upload_document_type_enum {
 }
 
 enum document_verification_status_enum {
-  pending_upload      // Generated/available but not yet uploaded by user
+  pending_upload // Generated/available but not yet uploaded by user
   pending_verification // Uploaded by user, awaiting admin review
-  verified            // Admin verified/approved
-  rejected            // Admin rejected, user needs to re-upload
-  not_required        // Document not required for this booking
+  verified // Admin verified/approved
+  rejected // Admin rejected, user needs to re-upload
+  not_required // Document not required for this booking
 }
 
 model BookingDocument {
-  id            String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingId     String                   @db.Uuid
-  booking       BookingRequest           @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  type          upload_document_type_enum
-  blobId        String                   @db.Uuid
-  blob          FileBlob                 @relation(fields: [blobId], references: [id])
-  note          String?                  @db.Text
+  id                 String                            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingId          String                            @db.Uuid
+  booking            BookingRequest                    @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  type               upload_document_type_enum
+  blobId             String                            @db.Uuid
+  blob               FileBlob                          @relation(fields: [blobId], references: [id])
+  note               String?                           @db.Text
   // New verification status field
   verificationStatus document_verification_status_enum @default(pending_verification)
-  rejectionReason   String?              @db.Text
-  verifiedAt        DateTime?            @db.Timestamp(6)
-  verifiedBy        String?              @db.Uuid
-  verifiedByUser    User?                @relation("BookingDocumentVerifiers", fields: [verifiedBy], references: [id])
-  createdAt     DateTime                 @default(now()) @db.Timestamp(6)
-  createdById   String                   @db.Uuid
-  createdBy     User                     @relation("BookingDocumentCreators", fields: [createdById], references: [id])
+  rejectionReason    String?                           @db.Text
+  verifiedAt         DateTime?                         @db.Timestamp(6)
+  verifiedBy         String?                           @db.Uuid
+  verifiedByUser     User?                             @relation("BookingDocumentVerifiers", fields: [verifiedBy], references: [id])
+  createdAt          DateTime                          @default(now()) @db.Timestamp(6)
+  createdById        String                            @db.Uuid
+  createdBy          User                              @relation("BookingDocumentCreators", fields: [createdById], references: [id])
 
   @@index([bookingId, type])
   @@index([createdById])
   @@index([verificationStatus])
   @@map("booking_document")
 }
-

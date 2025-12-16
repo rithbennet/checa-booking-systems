@@ -15,7 +15,7 @@ export interface UserProfileVM {
 	lastName: string;
 	email: string;
 	phone: string | null;
-	profileImageUrl: string | null;
+	profileImageUrl: string | null; // UploadThing URL
 	userType: string;
 	academicType: string;
 	userIdentifier: string | null;
@@ -122,19 +122,47 @@ export async function updateUserProfile(
 	userId: string,
 	input: UpdateProfileInput,
 ): Promise<UserProfileVM | null> {
+	// Server-side validation: ensure firstName and lastName are not empty
+	if (input.firstName !== undefined && !input.firstName.trim()) {
+		throw new Error("First name cannot be empty");
+	}
+	if (input.lastName !== undefined && !input.lastName.trim()) {
+		throw new Error("Last name cannot be empty");
+	}
+
 	const user = await db.user.update({
 		where: { id: userId },
 		data: {
-			firstName: input.firstName,
-			lastName: input.lastName,
-			phone: input.phone,
-			userIdentifier: input.userIdentifier,
-			supervisorName: input.supervisorName,
-			facultyId: input.facultyId,
-			departmentId: input.departmentId,
-			ikohzaId: input.ikohzaId,
-			companyId: input.companyId,
-			companyBranchId: input.companyBranchId,
+			...(input.firstName !== undefined && {
+				firstName: input.firstName.trim(),
+			}),
+			...(input.lastName !== undefined && {
+				lastName: input.lastName.trim(),
+			}),
+			...(input.phone !== undefined && {
+				phone: input.phone,
+			}),
+			...(input.userIdentifier !== undefined && {
+				userIdentifier: input.userIdentifier,
+			}),
+			...(input.supervisorName !== undefined && {
+				supervisorName: input.supervisorName,
+			}),
+			...(input.facultyId !== undefined && {
+				facultyId: input.facultyId,
+			}),
+			...(input.departmentId !== undefined && {
+				departmentId: input.departmentId,
+			}),
+			...(input.ikohzaId !== undefined && {
+				ikohzaId: input.ikohzaId,
+			}),
+			...(input.companyId !== undefined && {
+				companyId: input.companyId,
+			}),
+			...(input.companyBranchId !== undefined && {
+				companyBranchId: input.companyBranchId,
+			}),
 			updatedAt: new Date(),
 		},
 		include: {
@@ -173,5 +201,31 @@ export async function updateUserProfile(
 		},
 		createdAt: user.createdAt.toISOString(),
 		lastLoginAt: user.lastLoginAt?.toISOString() ?? null,
+	};
+}
+
+/**
+ * Update user profile image
+ * @param userId - User ID
+ * @param imageUrl - UploadThing URL, or null to remove
+ * @returns Updated profile image URL, or null
+ */
+export async function updateUserProfileImage(
+	userId: string,
+	imageUrl: string | null,
+): Promise<{ profileImageUrl: string | null } | null> {
+	const user = await db.user.update({
+		where: { id: userId },
+		data: {
+			profileImageUrl: imageUrl,
+			updatedAt: new Date(),
+		},
+		select: {
+			profileImageUrl: true,
+		},
+	});
+
+	return {
+		profileImageUrl: user.profileImageUrl,
 	};
 }

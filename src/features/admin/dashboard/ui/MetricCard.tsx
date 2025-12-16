@@ -31,7 +31,9 @@ export function MetricCard({
                             <p className="text-gray-600 text-sm">{label}</p>
                             <p className={`font-bold text-3xl ${color}`}>{value}</p>
                         </div>
-                        <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${bgColor}`}>
+                        <div
+                            className={`flex h-12 w-12 items-center justify-center rounded-lg ${bgColor}`}
+                        >
                             <Icon className={`h-6 w-6 ${color}`} />
                         </div>
                     </div>
@@ -40,4 +42,3 @@ export function MetricCard({
         </Card>
     );
 }
-

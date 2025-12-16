@@ -2,18 +2,15 @@
 
 import {
 	AlertTriangle,
-	Bell,
 	CheckCircle,
 	Clock,
 	CreditCard,
 	FileText,
 	FlaskConical,
 	Loader2,
-	LogOut,
 	Settings,
 	TestTube,
 	TrendingUp,
-	User,
 	Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -23,6 +20,7 @@ import {
 	useAdminDashboardStatus,
 } from "@/entities/admin-dashboard/api";
 import type { AdminDashboardActivityItemVM } from "@/entities/admin-dashboard/model/types";
+import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/shadcn/alert";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -32,7 +30,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
-import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/shadcn/alert";
 import { MetricCard } from "./MetricCard";
 
 function getActivityIcon(type: AdminDashboardActivityItemVM["type"]) {
@@ -72,7 +69,7 @@ export function AdminDashboard() {
 	} = useAdminDashboardActivity();
 
 	// Show loading state if any critical data is loading
-	const isLoading = metricsLoading || statusLoading || activityLoading;
+	const _isLoading = metricsLoading || statusLoading || activityLoading;
 
 	// Use default values if data is not available yet (only when not loading and no error)
 	const metricsData = metrics || {
@@ -159,25 +156,25 @@ export function AdminDashboard() {
 				{/* Alert Banner */}
 				{(metricsData.pendingVerifications > 0 ||
 					metricsData.pendingApprovals > 0) && (
-					<div className="mb-8 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-						<div className="flex items-center">
-							<AlertTriangle className="mr-3 h-5 w-5 text-yellow-600" />
-							<div className="flex-1">
-								<h3 className="font-medium text-sm text-yellow-800">
-									Attention Required
-								</h3>
-								<p className="mt-1 text-sm text-yellow-700">
-									You have {metricsData.pendingVerifications} pending user
-									verifications and {metricsData.pendingApprovals} booking
-									requests awaiting approval.
-								</p>
+						<div className="mb-8 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+							<div className="flex items-center">
+								<AlertTriangle className="mr-3 h-5 w-5 text-yellow-600" />
+								<div className="flex-1">
+									<h3 className="font-medium text-sm text-yellow-800">
+										Attention Required
+									</h3>
+									<p className="mt-1 text-sm text-yellow-700">
+										You have {metricsData.pendingVerifications} pending user
+										verifications and {metricsData.pendingApprovals} booking
+										requests awaiting approval.
+									</p>
+								</div>
+								<Button asChild className="ml-4" size="sm" variant="outline">
+									<Link href="/admin/users">Review Now</Link>
+								</Button>
 							</div>
-							<Button asChild className="ml-4" size="sm" variant="outline">
-								<Link href="/admin/users">Review Now</Link>
-							</Button>
 						</div>
-					</div>
-				)}
+					)}
 
 				{/* Key Metrics */}
 				{metricsError ? (
@@ -195,36 +192,36 @@ export function AdminDashboard() {
 				) : (
 					<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 						<MetricCard
+							bgColor="bg-red-100"
+							color="text-red-600"
+							icon={Users}
+							isLoading={metricsLoading}
 							label="Pending Verifications"
 							value={metricsData.pendingVerifications}
-							icon={Users}
-							color="text-red-600"
-							bgColor="bg-red-100"
-							isLoading={metricsLoading}
 						/>
 						<MetricCard
+							bgColor="bg-orange-100"
+							color="text-orange-600"
+							icon={Clock}
+							isLoading={metricsLoading}
 							label="Pending Approvals"
 							value={metricsData.pendingApprovals}
-							icon={Clock}
-							color="text-orange-600"
-							bgColor="bg-orange-100"
-							isLoading={metricsLoading}
 						/>
 						<MetricCard
+							bgColor="bg-blue-100"
+							color="text-blue-600"
+							icon={FileText}
+							isLoading={metricsLoading}
 							label="Active Bookings"
 							value={metricsData.activeBookings}
-							icon={FileText}
-							color="text-blue-600"
-							bgColor="bg-blue-100"
-							isLoading={metricsLoading}
 						/>
 						<MetricCard
+							bgColor="bg-green-100"
+							color="text-green-600"
+							icon={TrendingUp}
+							isLoading={metricsLoading}
 							label="Monthly Revenue"
 							value={`RM ${metricsData.totalRevenue.toLocaleString()}`}
-							icon={TrendingUp}
-							color="text-green-600"
-							bgColor="bg-green-100"
-							isLoading={metricsLoading}
 						/>
 					</div>
 				)}

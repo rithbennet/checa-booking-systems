@@ -12,7 +12,11 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useUserProfile } from "@/entities/user";
-import { LinkedAccountsCard, ProfileEditDialog } from "@/features/users";
+import {
+	LinkedAccountsCard,
+	ProfileEditDialog,
+	ProfileImageUpload,
+} from "@/features/users";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import {
 	Card,
@@ -111,13 +115,14 @@ export function ProfilePage() {
 				{/* Profile Summary Card */}
 				<Card className="lg:col-span-1">
 					<CardHeader className="text-center">
-						<div className="mx-auto flex size-20 items-center justify-center rounded-full bg-slate-100">
+						<div className="mx-auto flex size-20 items-center justify-center overflow-hidden rounded-full bg-slate-100">
 							{profile.profileImageUrl ? (
 								<Image
 									alt={`${profile.firstName} ${profile.lastName}`}
 									className="size-20 rounded-full object-cover"
 									height={80}
 									src={profile.profileImageUrl}
+									unoptimized
 									width={80}
 								/>
 							) : (
@@ -133,6 +138,9 @@ export function ProfilePage() {
 								{profile.status.charAt(0).toUpperCase() +
 									profile.status.slice(1)}
 							</Badge>
+						</div>
+						<div className="mt-4">
+							<ProfileImageUpload currentImageUrl={profile.profileImageUrl} />
 						</div>
 					</CardHeader>
 					<CardContent>

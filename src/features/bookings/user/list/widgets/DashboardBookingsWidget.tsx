@@ -2,7 +2,13 @@
 
 import { useMemo } from "react";
 import { useBookingsList } from "@/entities/booking/api/use-bookings-list";
+import {
+	getStatusBadgeClassName,
+	getStatusColors,
+	getStatusLabel,
+} from "@/shared/lib/status-utils";
 import RouterButton from "@/shared/ui/router-button";
+import { Badge } from "@/shared/ui/shadcn/badge";
 import {
 	Table,
 	TableBody,
@@ -105,7 +111,13 @@ export function DashboardBookingsWidget({
 					{items.map((i) => (
 						<TableRow key={i.id}>
 							<TableCell>{i.reference}</TableCell>
-							<TableCell>{i.status}</TableCell>
+							<TableCell>
+								<Badge
+									className={`${getStatusBadgeClassName(i.status)} ring-2 ${getStatusColors(i.status).ring}`}
+								>
+									{getStatusLabel(i.status)}
+								</Badge>
+							</TableCell>
 							<TableCell>
 								{new Date(i.createdAt).toLocaleDateString(undefined, {
 									year: "numeric",

@@ -22,6 +22,7 @@ export {
 	type UpdateProfileInput,
 	type UserProfileVM,
 	updateUserProfile,
+	updateUserProfileImage,
 } from "./profile-repository";
 export {
 	type CreateUserInput,
@@ -41,3 +42,4 @@ export {
 	rejectUser,
 	updateUserStatus,
 } from "./user-repository";
+export { syncGoogleProfileImage } from "./sync-profile-image";

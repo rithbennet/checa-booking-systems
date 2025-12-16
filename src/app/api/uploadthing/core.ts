@@ -1,9 +1,9 @@
 /**
  * UploadThing File Router
  *
- * Handles file uploads for booking documents:
- * - Admin: upload invoice PDFs, sample results
- * - Users: upload signed service forms, workspace forms, and payment receipts
+ * Handles file uploads for:
+ * - Booking documents: Admin uploads invoice PDFs, sample results; Users upload signed service forms, workspace forms, and payment receipts
+ * - Profile images: Users upload their profile pictures
  */
 
 import type {
@@ -17,6 +17,7 @@ import { notifyAdminsSignedFormsUploaded } from "@/entities/notification/server/
 import { notifyResultsAvailable } from "@/entities/notification/server/sample.notifications";
 import { auth } from "@/shared/server/auth";
 import { db } from "@/shared/server/db";
+import { utapi } from "@/shared/server/uploadthing";
 
 const f = createUploadthing();
 
@@ -296,6 +297,100 @@ export const fileRouter = {
 				documentId: document.id,
 				blobId: blob.id,
 				url: file.ufsUrl,
+			};
+		}),
+
+	/**
+	 * Profile Image Uploader
+	 *
+	 * Accepts images (up to 2MB) for user profile pictures
+	 * Users can only upload their own profile image
+	 */
+	profileImage: f({
+		image: { maxFileSize: "2MB", maxFileCount: 1 },
+	})
+		.middleware(async () => {
+			// Get session using our auth wrapper
+			const session = await auth();
+
+			if (!session?.user?.appUserId) {
+				throw new Error("Unauthorized: Please sign in to upload profile image");
+			}
+
+			const userId = session.user.appUserId;
+
+			// Return metadata to be used in onUploadComplete
+			return {
+				userId,
+			};
+		})
+		.onUploadComplete(async ({ metadata, file }) => {
+			// Get current user to check for existing profile image
+			const currentUser = await db.user.findUnique({
+				where: { id: metadata.userId },
+				select: { profileImageUrl: true },
+			});
+
+			// Delete old profile image if it exists and is an UploadThing URL
+			if (currentUser?.profileImageUrl) {
+				try {
+					// Find FileBlob with the old URL
+					const oldBlob = await db.fileBlob.findFirst({
+						where: { url: currentUser.profileImageUrl },
+					});
+
+					if (oldBlob) {
+						// Delete from UploadThing storage
+						await utapi.deleteFiles(oldBlob.key);
+						// Delete FileBlob record
+						await db.fileBlob.delete({ where: { id: oldBlob.id } });
+					}
+				} catch (error) {
+					// Log but don't fail - old image deletion is not critical
+					console.error("Failed to delete old profile image:", error);
+				}
+			}
+
+			// Create FileBlob record for new image
+			const blob = await db.fileBlob.create({
+				data: {
+					key: file.key,
+					url: file.ufsUrl,
+					mimeType: file.type,
+					fileName: file.name,
+					sizeBytes: file.size,
+					uploadedById: metadata.userId,
+				},
+			});
+
+			// Update user's profile image URL
+			await db.user.update({
+				where: { id: metadata.userId },
+				data: {
+					profileImageUrl: file.ufsUrl,
+					updatedAt: new Date(),
+				},
+			});
+
+			// Create audit log entry
+			await db.auditLog.create({
+				data: {
+					userId: metadata.userId,
+					action: "profile_image_uploaded",
+					entity: "User",
+					entityId: metadata.userId,
+					metadata: {
+						fileName: file.name,
+						fileSize: file.size,
+						url: file.ufsUrl,
+					},
+				},
+			});
+
+			// Return data that will be available on the client
+			return {
+				url: file.ufsUrl,
+				blobId: blob.id,
 			};
 		}),
 } satisfies FileRouter;

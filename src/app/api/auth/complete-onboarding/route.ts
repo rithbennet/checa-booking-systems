@@ -201,7 +201,10 @@ export async function POST(request: Request) {
 			supervisorName:
 				academicType === "student" ? data.supervisorName || null : null,
 			authUserId,
-			profileImageUrl: sessionImage || null,
+			// Note: sessionImage from Google OAuth is a URL, not binary data
+			// We skip syncing it since we now use BYTEA
+			// Users can upload their profile image manually
+			profileImageUrl: null,
 			emailVerifiedAt: new Date(), // OAuth emails are verified by the provider
 			facultyId: data.facultyId,
 			departmentId: data.departmentId,

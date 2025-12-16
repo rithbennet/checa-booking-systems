@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDistanceToNow } from "date-fns";
 import {
 	Bell,
 	BookOpen,
@@ -9,8 +10,13 @@ import {
 	FlaskConical,
 	Plus,
 } from "lucide-react";
+import Link from "next/link";
 import { useBookingStatusCounts } from "@/entities/booking/api";
+import { useNotifications } from "@/entities/notification/api";
+import type { NotificationVM } from "@/entities/notification/model/types";
+import { buildHref } from "@/features/bookings/user/list/model/list.routes";
 import { DashboardBookingsWidget } from "@/features/bookings/user/list/widgets/DashboardBookingsWidget";
+import { cn } from "@/shared/lib/utils";
 import RouterButton from "@/shared/ui/router-button";
 import {
 	Card,
@@ -18,14 +24,54 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/shared/ui/shadcn/select";
 import { UserSampleTracker } from "@/widgets/user-sample-tracker";
+
+// Helper function to get notification link
+function getNotificationLink(notification: NotificationVM): string | null {
+	if (!notification.relatedEntityId) return null;
+
+	switch (notification.relatedEntityType) {
+		case "booking":
+			return `/bookings/${notification.relatedEntityId}`;
+		case "user":
+			return "/profile";
+		case "sample":
+			return "/samples";
+		case "invoice":
+		case "payment":
+			return "/financials";
+		default:
+			return null;
+	}
+}
+
+// Helper function to get notification color
+function getNotificationColor(type: NotificationVM["type"]): string {
+	switch (type) {
+		case "booking_approved":
+		case "payment_verified":
+		case "results_available":
+		case "process_complete":
+			return "text-green-600";
+		case "booking_rejected":
+			return "text-red-600";
+		case "booking_submitted":
+		case "booking_pending_verification":
+			return "text-blue-600";
+		case "service_modification_requested":
+		case "payment_reminder":
+			return "text-amber-600";
+		case "invoice_uploaded":
+		case "service_form_ready":
+		case "forms_signed_uploaded":
+			return "text-purple-600";
+		case "sample_return_requested":
+		case "sample_returned":
+			return "text-cyan-600";
+		default:
+			return "text-gray-600";
+	}
+}
 
 export function DashboardClient() {
 	// Fetch real counts
@@ -38,13 +84,11 @@ export function DashboardClient() {
 	const completed = counts?.completed ?? 0;
 	const pendingPayment = 0; // TODO: Implement when payment system is ready
 
-	const notifications = [
-		"Booking #BK003 results are ready for download",
-		"Payment reminder for Booking #BK001",
-		"Booking #BK002 has been approved",
-		"New service available: Mass Spectrometry",
-		"Maintenance scheduled for Lab A on Jan 25",
-	];
+	// Fetch real notifications
+	const { data: notificationsData, isLoading: isLoadingNotifications } =
+		useNotifications();
+	const recentNotifications = notificationsData?.items.slice(0, 5) ?? [];
+	const unreadCount = notificationsData?.unreadCount ?? 0;
 
 	return (
 		<div className="min-h-screen bg-gray-50">
@@ -58,89 +102,31 @@ export function DashboardClient() {
 									Quick Actions
 								</CardTitle>
 							</CardHeader>
-							<CardContent className="space-y-3">
+							<CardContent className="flex flex-col gap-3">
 								<RouterButton
 									className="w-full justify-start bg-blue-600 text-white hover:bg-blue-700"
 									href="/services"
 									variant="default"
 								>
-									<BookOpen className="mr-2 h-4 w-4" />
-									Browse Services
+									<BookOpen className="mr-2 h-4 w-4 shrink-0" />
+									<span className="truncate">Browse Services</span>
 								</RouterButton>
 								<RouterButton
 									className="w-full justify-start border-gray-300 text-gray-700 hover:bg-gray-50"
 									href="/bookings/new"
 									variant="outline"
 								>
-									<Plus className="mr-2 h-4 w-4" />
-									New Booking Request
+									<Plus className="mr-2 h-4 w-4 shrink-0" />
+									<span className="truncate">New Booking Request</span>
 								</RouterButton>
 								<RouterButton
 									className="w-full justify-start border-gray-300 text-gray-700 hover:bg-gray-50"
 									href="/bookings"
 									variant="outline"
 								>
-									<FileText className="mr-2 h-4 w-4" />
-									View All My Bookings
+									<FileText className="mr-2 h-4 w-4 shrink-0" />
+									<span className="truncate">View All My Bookings</span>
 								</RouterButton>
-							</CardContent>
-						</Card>
-
-						<Card className="mt-6 border-0 shadow-sm">
-							<CardHeader className="pb-4">
-								<CardTitle className="font-semibold text-gray-900 text-lg">
-									Filters
-								</CardTitle>
-							</CardHeader>
-							<CardContent className="space-y-4">
-								<div>
-									<label
-										className="mb-2 block font-medium text-gray-700 text-sm"
-										htmlFor="service-category"
-									>
-										Service Category
-									</label>
-									<Select>
-										<SelectTrigger
-											className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-											id="service-category"
-										>
-											<SelectValue placeholder="All Categories" />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="all">All Categories</SelectItem>
-											<SelectItem value="analysis">
-												Analysis Services
-											</SelectItem>
-											<SelectItem value="workspace">Working Space</SelectItem>
-										</SelectContent>
-									</Select>
-								</div>
-								<div>
-									<label
-										className="mb-2 block font-medium text-gray-700 text-sm"
-										htmlFor="booking-status"
-									>
-										Booking Status
-									</label>
-									<Select defaultValue="all">
-										<SelectTrigger
-											className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-											id="booking-status"
-										>
-											<SelectValue />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="all">All Status</SelectItem>
-											<SelectItem value="draft">Draft</SelectItem>
-											<SelectItem value="pending">Pending</SelectItem>
-											<SelectItem value="approved">Approved</SelectItem>
-											<SelectItem value="in-progress">In Progress</SelectItem>
-											<SelectItem value="completed">Completed</SelectItem>
-											<SelectItem value="rejected">Rejected</SelectItem>
-										</SelectContent>
-									</Select>
-								</div>
 							</CardContent>
 						</Card>
 					</div>
@@ -158,95 +144,242 @@ export function DashboardClient() {
 
 						{/* Quick Stats */}
 						<div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-							<Card>
-								<CardContent className="p-4">
-									<div className="flex items-center justify-between">
-										<div>
-											<p className="text-gray-600 text-sm">Total Bookings</p>
-											<p className="font-bold text-2xl">{totalBookings}</p>
+							<Link href="/bookings">
+								<Card className="cursor-pointer transition-shadow hover:shadow-md">
+									<CardContent className="p-4">
+										<div className="flex items-center justify-between">
+											<div>
+												<p className="text-gray-600 text-sm">Total Bookings</p>
+												<p className="font-bold text-2xl">{totalBookings}</p>
+											</div>
+											<FileText className="h-8 w-8 text-blue-500" />
 										</div>
-										<FileText className="h-8 w-8 text-blue-500" />
-									</div>
-								</CardContent>
-							</Card>
-							<Card>
-								<CardContent className="p-4">
-									<div className="flex items-center justify-between">
-										<div>
-											<p className="text-gray-600 text-sm">In Progress</p>
-											<p className="font-bold text-2xl">{inProgress}</p>
+									</CardContent>
+								</Card>
+							</Link>
+							<Link
+								href={buildHref("/bookings", {
+									page: 1,
+									pageSize: 25,
+									sort: "updated_at:desc",
+									q: "",
+									type: "all",
+									status: ["in_progress"],
+								})}
+							>
+								<Card className="cursor-pointer transition-shadow hover:shadow-md">
+									<CardContent className="p-4">
+										<div className="flex items-center justify-between">
+											<div>
+												<p className="text-gray-600 text-sm">In Progress</p>
+												<p className="font-bold text-2xl">{inProgress}</p>
+											</div>
+											<Calendar className="h-8 w-8 text-orange-500" />
 										</div>
-										<Calendar className="h-8 w-8 text-orange-500" />
-									</div>
-								</CardContent>
-							</Card>
-							<Card>
-								<CardContent className="p-4">
-									<div className="flex items-center justify-between">
-										<div>
-											<p className="text-gray-600 text-sm">Completed</p>
-											<p className="font-bold text-2xl">{completed}</p>
+									</CardContent>
+								</Card>
+							</Link>
+							<Link
+								href={buildHref("/bookings", {
+									page: 1,
+									pageSize: 25,
+									sort: "updated_at:desc",
+									q: "",
+									type: "all",
+									status: ["completed"],
+								})}
+							>
+								<Card className="cursor-pointer transition-shadow hover:shadow-md">
+									<CardContent className="p-4">
+										<div className="flex items-center justify-between">
+											<div>
+												<p className="text-gray-600 text-sm">Completed</p>
+												<p className="font-bold text-2xl">{completed}</p>
+											</div>
+											<FlaskConical className="h-8 w-8 text-green-500" />
 										</div>
-										<FlaskConical className="h-8 w-8 text-green-500" />
-									</div>
-								</CardContent>
-							</Card>
-							<Card>
-								<CardContent className="p-4">
-									<div className="flex items-center justify-between">
-										<div>
-											<p className="text-gray-600 text-sm">Pending Payment</p>
-											<p className="font-bold text-2xl">{pendingPayment}</p>
+									</CardContent>
+								</Card>
+							</Link>
+							<Link href="/financials">
+								<Card className="cursor-pointer transition-shadow hover:shadow-md">
+									<CardContent className="p-4">
+										<div className="flex items-center justify-between">
+											<div>
+												<p className="text-gray-600 text-sm">Pending Payment</p>
+												<p className="font-bold text-2xl">{pendingPayment}</p>
+											</div>
+											<CreditCard className="h-8 w-8 text-red-500" />
 										</div>
-										<CreditCard className="h-8 w-8 text-red-500" />
-									</div>
-								</CardContent>
-							</Card>
+									</CardContent>
+								</Card>
+							</Link>
 						</div>
 
 						{/* My Bookings Widgets */}
 						<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-							<DashboardBookingsWidget
-								limit={5}
-								preset="pending_review"
-								showViewAll
-								title="Pending Review"
-							/>
-							<DashboardBookingsWidget
-								limit={5}
-								preset="in_progress"
-								showViewAll
-								title="In Progress"
-							/>
+							<Link
+								className="block"
+								href={buildHref("/bookings", {
+									page: 1,
+									pageSize: 25,
+									sort: "created_at:asc",
+									q: "",
+									type: "all",
+									status: ["pending_user_verification", "pending_approval"],
+								})}
+							>
+								<div className="cursor-pointer transition-opacity hover:opacity-90">
+									<DashboardBookingsWidget
+										limit={5}
+										preset="pending_review"
+										showViewAll
+										title="Pending Review"
+									/>
+								</div>
+							</Link>
+							<Link
+								className="block"
+								href={buildHref("/bookings", {
+									page: 1,
+									pageSize: 25,
+									sort: "updated_at:desc",
+									q: "",
+									type: "all",
+									status: ["in_progress"],
+								})}
+							>
+								<div className="cursor-pointer transition-opacity hover:opacity-90">
+									<DashboardBookingsWidget
+										limit={5}
+										preset="in_progress"
+										showViewAll
+										title="In Progress"
+									/>
+								</div>
+							</Link>
 						</div>
 
 						{/* Sample Tracker Widget */}
 						<UserSampleTracker />
 
-						<DashboardBookingsWidget
-							limit={8}
-							preset="recent_completed"
-							showViewAll
-							title="Recently Completed"
-						/>
+						<Link
+							className="block"
+							href={buildHref("/bookings", {
+								page: 1,
+								pageSize: 25,
+								sort: "updated_at:desc",
+								q: "",
+								type: "all",
+								status: ["completed"],
+							})}
+						>
+							<div className="cursor-pointer transition-opacity hover:opacity-90">
+								<DashboardBookingsWidget
+									limit={8}
+									preset="recent_completed"
+									showViewAll
+									title="Recently Completed"
+								/>
+							</div>
+						</Link>
 
-						{/* Recent Notifications - TODO: Implement when notifications are ready */}
+						{/* Recent Notifications */}
 						<Card>
-							<CardHeader>
-								<CardTitle>Recent Notifications</CardTitle>
+							<CardHeader className="flex flex-row items-center justify-between">
+								<div className="flex items-center gap-2">
+									<CardTitle>Recent Notifications</CardTitle>
+									{unreadCount > 0 && (
+										<span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-blue-600 px-1.5 font-medium text-white text-xs">
+											{unreadCount > 9 ? "9+" : unreadCount}
+										</span>
+									)}
+								</div>
+								<Link
+									className="text-blue-600 text-sm hover:underline"
+									href="/notifications"
+								>
+									View all →
+								</Link>
 							</CardHeader>
 							<CardContent>
-								<div className="space-y-3">
-									{notifications.slice(0, 5).map((notification) => (
-										<div
-											className="flex items-start space-x-3 rounded-lg bg-gray-50 p-3"
-											key={notification}
-										>
-											<Bell className="mt-0.5 h-4 w-4 text-blue-500" />
-											<p className="text-gray-700 text-sm">{notification}</p>
-										</div>
-									))}
-								</div>
+								{isLoadingNotifications ? (
+									<div className="flex items-center justify-center py-6">
+										<div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+									</div>
+								) : recentNotifications.length === 0 ? (
+									<div className="flex flex-col items-center justify-center py-6">
+										<Bell className="mb-2 h-8 w-8 text-gray-300" />
+										<p className="text-gray-500 text-sm">No notifications</p>
+									</div>
+								) : (
+									<div className="space-y-3">
+										{recentNotifications.map((notification) => {
+											const link = getNotificationLink(notification);
+											const colorClass = getNotificationColor(
+												notification.type,
+											);
+
+											const content = (
+												<div
+													className={cn(
+														"flex items-start gap-3 rounded-lg p-3 transition-colors",
+														notification.isRead
+															? "bg-gray-50"
+															: "bg-blue-50/50",
+													)}
+												>
+													<Bell
+														className={cn(
+															"mt-0.5 h-4 w-4 shrink-0",
+															colorClass,
+														)}
+													/>
+													<div className="min-w-0 flex-1">
+														<div className="flex items-start justify-between gap-2">
+															<p
+																className={cn(
+																	"text-sm",
+																	notification.isRead
+																		? "font-normal text-gray-700"
+																		: "font-medium text-gray-900",
+																)}
+															>
+																{notification.title}
+															</p>
+															{!notification.isRead && (
+																<span className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />
+															)}
+														</div>
+														<p className="mt-1 line-clamp-1 text-gray-500 text-sm">
+															{notification.message}
+														</p>
+														<p className="mt-1 text-gray-400 text-xs">
+															{formatDistanceToNow(
+																new Date(notification.createdAt),
+																{ addSuffix: true },
+															)}
+														</p>
+													</div>
+												</div>
+											);
+
+											if (link) {
+												return (
+													<Link
+														className="block"
+														href={link}
+														key={notification.id}
+													>
+														{content}
+													</Link>
+												);
+											}
+
+											return <div key={notification.id}>{content}</div>;
+										})}
+									</div>
+								)}
 							</CardContent>
 						</Card>
 					</div>
