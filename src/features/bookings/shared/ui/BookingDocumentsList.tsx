@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { Download, FileText, Image, Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { bookingKeys } from "@/entities/booking/api/query-keys";
 import {
 	type BookingDocumentVM,
 	bookingDocumentKeys,
@@ -198,8 +199,14 @@ export function BookingDocumentsList({
 			return res.json();
 		},
 		onSuccess: () => {
+			// Invalidate document queries
 			queryClient.invalidateQueries({
 				queryKey: bookingDocumentKeys.byBooking(bookingId),
+			});
+			// Also invalidate booking queries so form data refreshes
+			// This ensures the "Generate Forms" button shows correctly when documents are deleted
+			queryClient.invalidateQueries({
+				queryKey: bookingKeys.all,
 			});
 			toast.success("Document deleted");
 			setDeleteDialogOpen(false);

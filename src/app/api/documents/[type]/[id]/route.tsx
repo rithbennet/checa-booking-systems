@@ -196,37 +196,133 @@ export async function GET(
 			}
 
 			case "service-form": {
-				// Get the first service item for equipment info
-				const serviceItem = booking.serviceItems[0];
-
-				if (!serviceItem) {
+				// Check if booking has service items or workspace bookings
+				if (
+					booking.serviceItems.length === 0 &&
+					booking.workspaceBookings.length === 0
+				) {
 					return NextResponse.json(
-						{ error: "No service items found for this booking" },
+						{
+							error:
+								"No service items or workspace bookings found for this booking",
+						},
 						{ status: 400 },
 					);
 				}
 
 				const refNo = `TOR-${booking.referenceNumber}`;
 				const userName = `${booking.user.firstName} ${booking.user.lastName}`;
-				const _userFaculty =
-					booking.user.faculty?.name ??
-					booking.user.company?.name ??
-					booking.user.companyBranch?.name;
+
+				// Fetch service pricing to get units for service items
+				const serviceIds = booking.serviceItems.map((item) => item.serviceId);
+				const servicePricings =
+					serviceIds.length > 0
+						? await db.servicePricing.findMany({
+								where: {
+									serviceId: { in: serviceIds },
+									userType: booking.user.userType as
+										| "mjiit_member"
+										| "utm_member"
+										| "external_member"
+										| "lab_administrator",
+									effectiveFrom: {
+										lte: new Date(),
+									},
+									OR: [
+										{ effectiveTo: null },
+										{ effectiveTo: { gte: new Date() } },
+									],
+								},
+								orderBy: {
+									effectiveFrom: "desc",
+								},
+							})
+						: [];
+
+				// Create a map of serviceId -> unit (get most recent pricing for each service)
+				const unitMap = new Map<string, string>();
+				for (const pricing of servicePricings) {
+					if (!unitMap.has(pricing.serviceId)) {
+						unitMap.set(pricing.serviceId, pricing.unit);
+					}
+				}
+
+				// Fetch workspace service pricing for unit
+				const workspaceService = await db.service.findFirst({
+					where: { category: "working_space" },
+					include: {
+						pricing: {
+							where: {
+								userType: booking.user.userType as
+									| "mjiit_member"
+									| "utm_member"
+									| "external_member"
+									| "lab_administrator",
+								effectiveFrom: {
+									lte: new Date(),
+								},
+								OR: [
+									{ effectiveTo: null },
+									{ effectiveTo: { gte: new Date() } },
+								],
+							},
+							orderBy: {
+								effectiveFrom: "desc",
+							},
+							take: 1,
+						},
+					},
+				});
+				const workspaceUnit = workspaceService?.pricing[0]?.unit ?? "month";
+
+				// Map service items
+				const mappedServiceItems = booking.serviceItems.map((item) => ({
+					service: {
+						name: item.service.name,
+						code: item.service.code ?? undefined,
+					},
+					quantity: item.quantity,
+					unitPrice: Number(item.unitPrice),
+					totalPrice: Number(item.totalPrice),
+					sampleName: item.sampleName ?? undefined,
+					unit: unitMap.get(item.serviceId) ?? "samples",
+				}));
+
+				// Map workspace bookings to service items format
+				const workspaceItems = booking.workspaceBookings.map((workspace) => {
+					const startDate = new Date(workspace.startDate);
+					const endDate = new Date(workspace.endDate);
+					const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+					const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // inclusive
+					const months = Math.max(1, Math.ceil(diffDays / 30));
+
+					// Calculate price (assuming monthly rate from workspace service pricing)
+					const monthlyRate = workspaceService?.pricing[0]
+						? Number(workspaceService.pricing[0].price)
+						: 0;
+					const totalPrice = monthlyRate * months;
+
+					return {
+						service: {
+							name: workspaceService?.name ?? "Working Space",
+							code: workspaceService?.code ?? "WS",
+						},
+						quantity: months,
+						unitPrice: monthlyRate,
+						totalPrice,
+						sampleName: undefined,
+						unit: workspaceUnit,
+					};
+				});
+
+				// Combine service items and workspace bookings
+				const allServiceItems = [...mappedServiceItems, ...workspaceItems];
 
 				pdfStream = await renderToStream(
 					<TORTemplate
 						date={new Date()}
 						refNo={refNo}
-						serviceItems={booking.serviceItems.map((item) => ({
-							service: {
-								name: item.service.name,
-								code: item.service.code ?? undefined,
-							},
-							quantity: item.quantity,
-							unitPrice: Number(item.unitPrice),
-							totalPrice: Number(item.totalPrice),
-							sampleName: item.sampleName ?? undefined,
-						}))}
+						serviceItems={allServiceItems}
 						supervisorName={booking.user.supervisorName ?? "N/A"}
 						userAddress={booking.user.address ?? ""}
 						userDepartment={booking.user.department?.name ?? undefined}

@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { bookingKeys } from "@/entities/booking/api/query-keys";
 import type { BookingCommandCenterVM } from "@/entities/booking/model/command-center-types";
 import {
+	bookingDocumentKeys,
 	type DocumentType,
 	getVerifiableDocumentTypes,
 	useBookingDocuments,
@@ -67,9 +68,46 @@ export function UnifiedDocumentManager({
 		) ?? [];
 
 	// Service Forms Logic
-	const serviceForms = booking.serviceForms;
+	// Filter out service forms whose related documents have been deleted (for display only)
+	// A form should only be shown if its required documents still exist
+	// Match forms to documents by URL, not just by type
+	const serviceForms = booking.serviceForms.filter((form) => {
+		// Check if the specific service_form_unsigned document exists (match by URL)
+		const hasServiceFormDoc = documents?.some(
+			(doc) =>
+				doc.type === "service_form_unsigned" &&
+				doc.blob.url === form.serviceFormUnsignedPdfPath,
+		);
+
+		if (!hasServiceFormDoc) {
+			return false;
+		}
+
+		// If form requires working area agreement, also check for the specific workspace_form_unsigned document
+		if (form.requiresWorkingAreaAgreement) {
+			if (!form.workingAreaAgreementUnsignedPdfPath) {
+				return false;
+			}
+			const hasWorkspaceFormDoc = documents?.some(
+				(doc) =>
+					doc.type === "workspace_form_unsigned" &&
+					doc.blob.url === form.workingAreaAgreementUnsignedPdfPath,
+			);
+			return hasWorkspaceFormDoc;
+		}
+
+		return true;
+	});
+
+	// Check if forms exist (for generation logic) - use filtered list
+	// This ensures the button shows when all forms are filtered out due to deleted documents
 	const hasServiceForm = serviceForms.length > 0;
+	const hasBackendForms = booking.serviceForms.length > 0;
 	const canGenerateForms = booking.status === "approved" && !hasServiceForm;
+
+	// If forms exist in backend but are filtered out (documents deleted), allow regenerating
+	const shouldShowRegenerateAll =
+		!hasServiceForm && hasBackendForms && booking.status === "approved";
 
 	// Mutations
 	const regenerateForm = useMutation({
@@ -85,6 +123,9 @@ export function UnifiedDocumentManager({
 		},
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: bookingKeys.all });
+			queryClient.invalidateQueries({
+				queryKey: bookingDocumentKeys.byBooking(booking.id),
+			});
 			toast.success("Form regenerated successfully", {
 				description: `New form number: ${data.serviceForm.formNumber}`,
 			});
@@ -110,6 +151,15 @@ export function UnifiedDocumentManager({
 				});
 			},
 		});
+	};
+
+	// Handle regenerating all forms when documents are deleted
+	const handleRegenerateAllForms = () => {
+		// Regenerate the first form (most recent)
+		const firstForm = booking.serviceForms[0];
+		if (firstForm) {
+			regenerateForm.mutate(firstForm.id);
+		}
 	};
 
 	const handlePreviewForm = (url: string | null | undefined, name: string) => {
@@ -188,21 +238,36 @@ export function UnifiedDocumentManager({
 								<Upload className="h-3.5 w-3.5" />
 								Upload Invoice
 							</Button>
-							{!hasServiceForm && (
-								<Button
-									className="h-8 gap-2 text-xs"
-									disabled={!canGenerateForms || generateForms.isPending}
-									onClick={handleGenerateForms}
-									size="sm"
-								>
-									{generateForms.isPending ? (
-										<Loader2 className="h-3.5 w-3.5 animate-spin" />
-									) : (
-										<FilePlus className="h-3.5 w-3.5" />
-									)}
-									Generate Forms
-								</Button>
-							)}
+							{!hasServiceForm &&
+								(shouldShowRegenerateAll ? (
+									<Button
+										className="h-8 gap-2 text-xs"
+										disabled={regenerateForm.isPending}
+										onClick={handleRegenerateAllForms}
+										size="sm"
+									>
+										{regenerateForm.isPending ? (
+											<Loader2 className="h-3.5 w-3.5 animate-spin" />
+										) : (
+											<RefreshCw className="h-3.5 w-3.5" />
+										)}
+										Regenerate Forms
+									</Button>
+								) : (
+									<Button
+										className="h-8 gap-2 text-xs"
+										disabled={!canGenerateForms || generateForms.isPending}
+										onClick={handleGenerateForms}
+										size="sm"
+									>
+										{generateForms.isPending ? (
+											<Loader2 className="h-3.5 w-3.5 animate-spin" />
+										) : (
+											<FilePlus className="h-3.5 w-3.5" />
+										)}
+										Generate Forms
+									</Button>
+								))}
 						</div>
 					</div>
 				</CardHeader>

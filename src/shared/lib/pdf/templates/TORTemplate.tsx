@@ -32,10 +32,10 @@ function generateTORAddress({
 	utmLocation,
 }: {
 	userType:
-	| "mjiit_member"
-	| "utm_member"
-	| "external_member"
-	| "lab_administrator";
+		| "mjiit_member"
+		| "utm_member"
+		| "external_member"
+		| "lab_administrator";
 	userAddress?: string | null;
 	department?: string | null;
 	faculty?: string | null;
@@ -423,6 +423,7 @@ export interface LineItem {
 	description: string;
 	quantity: number;
 	unitCharge: number;
+	unit?: string;
 }
 
 export interface InvoiceFormProps {
@@ -475,12 +476,13 @@ export interface TORTemplateProps {
 		unitPrice: number | string;
 		totalPrice: number | string;
 		sampleName?: string;
+		unit?: string;
 	}>;
 	userType?:
-	| "mjiit_member"
-	| "utm_member"
-	| "external_member"
-	| "lab_administrator";
+		| "mjiit_member"
+		| "utm_member"
+		| "external_member"
+		| "lab_administrator";
 }
 
 export function InvoiceRequestForm({
@@ -680,7 +682,7 @@ export function InvoiceRequestForm({
 							</View>
 							<View style={invoiceStyles.colQty}>
 								<Text style={{ textAlign: "center" }}>
-									{item.quantity} samples
+									{item.quantity} {item.unit ?? "samples"}
 								</Text>
 							</View>
 							<View style={invoiceStyles.colUnit}>
@@ -1076,18 +1078,19 @@ export function TORTemplate({
 			typeof item.unitPrice === "string"
 				? parseFloat(item.unitPrice)
 				: Number(item.unitPrice),
+		unit: item.unit,
 	}));
 
 	// Generate address based on user type
 	const generatedAddress = userType
 		? generateTORAddress({
-			userType,
-			userAddress,
-			department: userDepartment,
-			faculty: userFaculty,
-			ikohza: userIkohza,
-			utmLocation,
-		})
+				userType,
+				userAddress,
+				department: userDepartment,
+				faculty: userFaculty,
+				ikohza: userIkohza,
+				utmLocation,
+			})
 		: userAddress || "N/A";
 
 	// Use InvoiceRequestForm with mapped props

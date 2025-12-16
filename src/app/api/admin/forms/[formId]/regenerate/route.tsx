@@ -205,6 +205,60 @@ export async function POST(
 			}
 		}
 
+		// Find and delete old documents before creating new ones
+		const oldDocuments = await db.bookingDocument.findMany({
+			where: {
+				bookingId: booking.id,
+				type: {
+					in: ["service_form_unsigned", "workspace_form_unsigned"],
+				},
+			},
+			include: {
+				blob: true,
+			},
+		});
+
+		// Delete old files from UploadThing and database
+		const filesToDelete: string[] = [];
+		for (const doc of oldDocuments) {
+			if (doc.blob.key) {
+				filesToDelete.push(doc.blob.key);
+			}
+		}
+
+		// Delete from UploadThing storage
+		if (filesToDelete.length > 0) {
+			try {
+				await utapi.deleteFiles(filesToDelete);
+			} catch (error) {
+				console.error("Failed to delete old files from UploadThing:", error);
+				// Continue with DB deletion even if UploadThing delete fails
+			}
+		}
+
+		// Delete old BookingDocument and FileBlob records
+		if (oldDocuments.length > 0) {
+			await db.$transaction(async (tx) => {
+				// Delete BookingDocument records
+				await tx.bookingDocument.deleteMany({
+					where: {
+						id: {
+							in: oldDocuments.map((d) => d.id),
+						},
+					},
+				});
+
+				// Delete FileBlob records
+				await tx.fileBlob.deleteMany({
+					where: {
+						id: {
+							in: oldDocuments.map((d) => d.blobId),
+						},
+					},
+				});
+			});
+		}
+
 		// Update the existing form with new paths
 		const updatedForm = await db.$transaction(async (tx) => {
 			const form = await tx.serviceForm.update({
