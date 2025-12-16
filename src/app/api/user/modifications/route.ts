@@ -14,6 +14,7 @@ import {
 	serverError,
 } from "@/shared/lib/api-factory";
 import { db } from "@/shared/server/db";
+import { ValidationError } from "@/shared/server/errors";
 
 const CreateRequestSchema = z.object({
 	bookingServiceItemId: z.string().uuid("Invalid service item ID"),
@@ -180,6 +181,18 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 		});
 	} catch (error) {
 		console.error("[user/modifications POST]", error);
+
+		// Handle validation errors (return 400)
+		if (error instanceof ValidationError) {
+			return Response.json(
+				{
+					error: error.error,
+					...(error.details && { details: error.details }),
+				},
+				{ status: 400 },
+			);
+		}
+
 		return serverError("Failed to create modification request");
 	}
 });

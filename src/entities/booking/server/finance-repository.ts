@@ -402,9 +402,9 @@ export async function getFinanceOverview(
 			user: {
 				include: {
 					ikohza: { select: { name: true } },
-					facultyRelation: { select: { name: true } },
-					departmentRelation: { select: { name: true } },
-					companyRelation: { select: { name: true } },
+					faculty: { select: { name: true } },
+					department: { select: { name: true } },
+					company: { select: { name: true } },
 					companyBranch: { select: { name: true } },
 				},
 			},
@@ -440,10 +440,10 @@ export async function getFinanceOverview(
 		// Determine organization
 		const isExternal = user.userType === "external_member";
 		const organization = isExternal
-			? (user.companyRelation?.name ?? user.companyBranch?.name ?? null)
+			? (user.company?.name ?? user.companyBranch?.name ?? null)
 			: (user.ikohza?.name ??
-				user.facultyRelation?.name ??
-				user.departmentRelation?.name ??
+				user.faculty?.name ??
+				user.department?.name ??
 				null);
 
 		// Get forms status
@@ -575,9 +575,9 @@ export async function getResultsOnHold(params: {
 			user: {
 				include: {
 					ikohza: { select: { name: true } },
-					facultyRelation: { select: { name: true } },
-					departmentRelation: { select: { name: true } },
-					companyRelation: { select: { name: true } },
+					faculty: { select: { name: true } },
+					department: { select: { name: true } },
+					company: { select: { name: true } },
 					companyBranch: { select: { name: true } },
 				},
 			},
@@ -644,10 +644,10 @@ export async function getResultsOnHold(params: {
 		// Determine organization
 		const isExternal = user.userType === "external_member";
 		const organization = isExternal
-			? (user.companyRelation?.name ?? user.companyBranch?.name ?? null)
+			? (user.company?.name ?? user.companyBranch?.name ?? null)
 			: (user.ikohza?.name ??
-				user.facultyRelation?.name ??
-				user.departmentRelation?.name ??
+				user.faculty?.name ??
+				user.department?.name ??
 				null);
 
 		// Count completed samples and find earliest completion

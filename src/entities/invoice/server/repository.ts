@@ -141,9 +141,9 @@ export async function listInvoices(
 								user: {
 									include: {
 										ikohza: { select: { name: true } },
-										facultyRelation: { select: { name: true } },
-										departmentRelation: { select: { name: true } },
-										companyRelation: { select: { name: true } },
+										faculty: { select: { name: true } },
+										department: { select: { name: true } },
+										company: { select: { name: true } },
 										companyBranch: { select: { name: true } },
 									},
 								},
@@ -167,10 +167,10 @@ export async function listInvoices(
 		// Determine organization
 		const isExternal = user.userType === "external_member";
 		const organization = isExternal
-			? (user.companyRelation?.name ?? user.companyBranch?.name ?? null)
+			? (user.company?.name ?? user.companyBranch?.name ?? null)
 			: (user.ikohza?.name ??
-				user.facultyRelation?.name ??
-				user.departmentRelation?.name ??
+				user.faculty?.name ??
+				user.department?.name ??
 				null);
 
 		// Calculate payment info

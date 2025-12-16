@@ -346,22 +346,26 @@ export async function POST(request: Request) {
 							? supervisorName?.trim() || null
 							: null,
 					status: "pending",
+					// Note: Google images are URLs, not binary data
+					// We skip syncing them since we now use BYTEA
+					// Users can upload their profile image manually
+					profileImageUrl: null,
 					authUser: {
 						connect: { id: signUpResult.user.id },
 					},
 					// Academic organization (internal members)
 					...(dbFacultyId && {
-						facultyRelation: { connect: { id: dbFacultyId } },
+						faculty: { connect: { id: dbFacultyId } },
 					}),
 					...(dbDepartmentId && {
-						departmentRelation: { connect: { id: dbDepartmentId } },
+						department: { connect: { id: dbDepartmentId } },
 					}),
 					...(dbIkohzaId && {
 						ikohza: { connect: { id: dbIkohzaId } },
 					}),
 					// External organization
 					...(finalCompanyId && {
-						companyRelation: { connect: { id: finalCompanyId } },
+						company: { connect: { id: finalCompanyId } },
 					}),
 					...(finalBranchId && {
 						companyBranch: { connect: { id: finalBranchId } },

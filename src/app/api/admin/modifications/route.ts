@@ -15,6 +15,7 @@ import {
 	serverError,
 } from "@/shared/lib/api-factory";
 import { db } from "@/shared/server/db";
+import { ValidationError } from "@/shared/server/errors";
 
 export const POST = createProtectedHandler(async (request: Request, user) => {
 	try {
@@ -125,6 +126,18 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 		});
 	} catch (error) {
 		console.error("[admin/modifications POST]", error);
+
+		// Handle validation errors (return 400)
+		if (error instanceof ValidationError) {
+			return Response.json(
+				{
+					error: error.error,
+					...(error.details && { details: error.details }),
+				},
+				{ status: 400 },
+			);
+		}
+
 		return serverError("Failed to create modification request");
 	}
 });
@@ -177,6 +190,18 @@ export const GET = createProtectedHandler(async (request: Request) => {
 		);
 	} catch (error) {
 		console.error("[admin/modifications GET]", error);
+
+		// Handle validation errors (return 400)
+		if (error instanceof ValidationError) {
+			return Response.json(
+				{
+					error: error.error,
+					...(error.details && { details: error.details }),
+				},
+				{ status: 400 },
+			);
+		}
+
 		return serverError("Failed to fetch modifications");
 	}
 });

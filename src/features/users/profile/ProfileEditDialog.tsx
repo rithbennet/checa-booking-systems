@@ -327,6 +327,10 @@ export function ProfileEditDialog() {
 											))}
 										</SelectContent>
 									</Select>
+									<p className="text-muted-foreground text-xs">
+										Changing your organization may affect service pricing and
+										eligibility.
+									</p>
 								</div>
 
 								{/* Department or Ikohza based on faculty type */}
@@ -452,6 +456,10 @@ export function ProfileEditDialog() {
 											))}
 										</SelectContent>
 									</Select>
+									<p className="text-muted-foreground text-xs">
+										Changing your organization may affect service pricing and
+										eligibility.
+									</p>
 								</div>
 
 								{/* Branch Selection */}

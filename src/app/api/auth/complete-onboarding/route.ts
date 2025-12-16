@@ -13,6 +13,7 @@ import {
 import { invalidateUserSessionCache } from "@/shared/server/better-auth/config";
 import { getSession } from "@/shared/server/better-auth/server";
 import { db } from "@/shared/server/db";
+import { ValidationError } from "@/shared/server/errors";
 
 // Schema for validating onboarding request body
 const onboardingRequestSchema = z.object({
@@ -49,7 +50,6 @@ export async function POST(request: Request) {
 
 		const authUserId = session.user.id;
 		const email = session.user.email;
-		const sessionImage = session.user.image;
 
 		if (!authUserId || !email) {
 			return NextResponse.json({ error: "Invalid session" }, { status: 400 });
@@ -189,6 +189,18 @@ export async function POST(request: Request) {
 			}
 		}
 
+		// Get Google profile picture from BetterAuth user record
+		// This ensures we always get Google's profile picture (including default) if available
+		let googleProfileImage: string | null = session.user.image || null;
+		if (!googleProfileImage) {
+			// Try to get it directly from BetterAuth user record
+			const authUser = await db.betterAuthUser.findUnique({
+				where: { id: authUserId },
+				select: { image: true },
+			});
+			googleProfileImage = authUser?.image || null;
+		}
+
 		// Create User record
 		const newUser = await createUser({
 			email,
@@ -201,7 +213,7 @@ export async function POST(request: Request) {
 			supervisorName:
 				academicType === "student" ? data.supervisorName || null : null,
 			authUserId,
-			profileImageUrl: sessionImage || null,
+			profileImageUrl: googleProfileImage,
 			emailVerifiedAt: new Date(), // OAuth emails are verified by the provider
 			facultyId: data.facultyId,
 			departmentId: data.departmentId,
@@ -241,6 +253,17 @@ export async function POST(request: Request) {
 		});
 	} catch (error) {
 		console.error("Onboarding error:", error);
+
+		// Handle validation errors (return 400)
+		if (error instanceof ValidationError) {
+			return NextResponse.json(
+				{
+					error: error.error,
+					...(error.details && { details: error.details }),
+				},
+				{ status: 400 },
+			);
+		}
 
 		// Handle unique constraint violation
 		const errObj = error as { code?: string } | undefined;

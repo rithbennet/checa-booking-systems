@@ -13,10 +13,10 @@ type BookingWithRelations = BookingRequest & {
 		email: string;
 		userType?: string | null;
 		ikohza?: { name: string } | null;
-		facultyRelation?: { name: string } | null;
-		departmentRelation?: { name: string } | null;
+		faculty?: { name: string } | null;
+		department?: { name: string } | null;
 	};
-	companyRelation?: { name: string } | null;
+	company?: { name: string } | null;
 	companyBranch?: { name: string } | null;
 	serviceItems: Array<{
 		id: string;
@@ -51,19 +51,17 @@ export function mapToBookingListItemVM(
 			name: `${booking.user.firstName} ${booking.user.lastName}`,
 			email: booking.user.email,
 		},
-		requesterType: booking.companyRelation ? "external" : "internal",
-		organization: booking.companyRelation
+		requesterType: booking.company ? "external" : "internal",
+		organization: booking.company
 			? {
-					company: booking.companyRelation.name,
+					company: booking.company.name,
 					branch: booking.companyBranch?.name,
 				}
-			: booking.user.ikohza ||
-					booking.user.facultyRelation ||
-					booking.user.departmentRelation
+			: booking.user.ikohza || booking.user.faculty || booking.user.department
 				? {
 						ikohza: booking.user.ikohza?.name,
-						faculty: booking.user.facultyRelation?.name,
-						department: booking.user.departmentRelation?.name,
+						faculty: booking.user.faculty?.name,
+						department: booking.user.department?.name,
 					}
 				: undefined,
 		totalAmount: booking.totalAmount.toString(),

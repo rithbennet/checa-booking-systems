@@ -25,13 +25,13 @@ export async function getBookingCommandCenterData(
 			user: {
 				include: {
 					ikohza: { select: { name: true } },
-					facultyRelation: { select: { name: true } },
-					departmentRelation: { select: { name: true } },
-					companyRelation: { select: { name: true } },
+					faculty: { select: { name: true } },
+					department: { select: { name: true } },
+					company: { select: { name: true } },
 					companyBranch: { select: { name: true } },
 				},
 			},
-			companyRelation: { select: { name: true } },
+			company: { select: { name: true } },
 			companyBranch: { select: { name: true } },
 			serviceItems: {
 				include: {
@@ -132,16 +132,12 @@ export async function getBookingCommandCenterData(
 	}
 
 	// Determine organization name
-	const isExternal = Boolean(
-		booking.companyRelation || booking.user.companyRelation,
-	);
+	const isExternal = Boolean(booking.company || booking.user.company);
 	const organizationName = isExternal
-		? (booking.companyRelation?.name ??
-			booking.user.companyRelation?.name ??
-			null)
+		? (booking.company?.name ?? booking.user.company?.name ?? null)
 		: (booking.user.ikohza?.name ??
-			booking.user.facultyRelation?.name ??
-			booking.user.departmentRelation?.name ??
+			booking.user.faculty?.name ??
+			booking.user.department?.name ??
 			null);
 
 	return {
@@ -166,13 +162,13 @@ export async function getBookingCommandCenterData(
 			phone: booking.user.phone,
 			userType: booking.user.userType,
 			ikohza: booking.user.ikohza,
-			facultyRelation: booking.user.facultyRelation,
-			departmentRelation: booking.user.departmentRelation,
-			companyRelation: booking.user.companyRelation,
+			faculty: booking.user.faculty,
+			department: booking.user.department,
+			company: booking.user.company,
 			companyBranch: booking.user.companyBranch,
 		},
 
-		companyRelation: booking.companyRelation,
+		company: booking.company,
 		companyBranch: booking.companyBranch,
 
 		serviceItems: booking.serviceItems.map((item) => ({

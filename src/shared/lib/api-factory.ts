@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/shared/server/auth";
 
 type User = { id: string; role?: string | null; status?: string | null };
-type HandlerCtx = { params?: Record<string, string> };
+type HandlerCtx = { params?: Record<string, string>; authUserId?: string };
 
 type ProtectedHandlerFn = (
 	req: Request,
@@ -61,7 +61,10 @@ export function createProtectedHandler(
 				}
 			}
 
-			const handlerCtx: HandlerCtx = { params: resolvedParams ?? undefined };
+			const handlerCtx: HandlerCtx = {
+				params: resolvedParams ?? undefined,
+				authUserId: session.user.id,
+			};
 
 			const result = await fn(req, user, handlerCtx);
 

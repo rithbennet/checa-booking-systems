@@ -185,9 +185,9 @@ export interface BookingUserVM {
 		| "lab_administrator";
 	// Organization info
 	ikohza: { name: string } | null;
-	facultyRelation: { name: string } | null;
-	departmentRelation: { name: string } | null;
-	companyRelation: { name: string } | null;
+	faculty: { name: string } | null;
+	department: { name: string } | null;
+	company: { name: string } | null;
 	companyBranch: { name: string } | null;
 }
 
@@ -213,7 +213,7 @@ export interface BookingCommandCenterVM {
 	user: BookingUserVM;
 
 	// Organization (for external)
-	companyRelation: { name: string } | null;
+	company: { name: string } | null;
 	companyBranch: { name: string } | null;
 
 	// Service items

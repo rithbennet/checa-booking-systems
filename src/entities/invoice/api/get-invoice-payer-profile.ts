@@ -29,9 +29,9 @@ export async function getInvoicePayerProfile(
 			academicType: true,
 			supervisorName: true,
 			// relational fields - use the relation names added to the schema
-			departmentRelation: { select: { name: true } },
-			facultyRelation: { select: { name: true } },
-			companyRelation: { select: { name: true } },
+			department: { select: { name: true } },
+			faculty: { select: { name: true } },
+			company: { select: { name: true } },
 			UTM: true,
 			address: true,
 		},
@@ -55,10 +55,10 @@ export async function getInvoicePayerProfile(
 		phone: user.phone,
 		academicType: user.academicType ?? null,
 		supervisorName: user.supervisorName ?? null,
-		department: user.departmentRelation?.name ?? null,
-		faculty: user.facultyRelation?.name ?? null,
+		department: user.department?.name ?? null,
+		faculty: user.faculty?.name ?? null,
 		utmCampus,
 		organizationAddress: user.address ?? null,
-		organizationName: user.companyRelation?.name ?? null,
+		organizationName: user.company?.name ?? null,
 	};
 }
