@@ -1,3 +1,4 @@
+import { Prisma } from "generated/prisma";
 import { z } from "zod";
 import { updateUserProfileImage } from "@/entities/user/server/profile-repository";
 import { createProtectedHandler } from "@/shared/lib/api-factory";
@@ -61,10 +62,10 @@ export const PATCH = createProtectedHandler(
 						});
 
 						if (oldBlob) {
-							// Delete from UploadThing storage
-							await utapi.deleteFiles(oldBlob.key);
-							// Delete FileBlob record
+							// Delete FileBlob record first, then remove from storage
 							await db.fileBlob.delete({ where: { id: oldBlob.id } });
+							// Delete from UploadThing storage after DB delete succeeds
+							await utapi.deleteFiles(oldBlob.key);
 						}
 					} catch (error) {
 						// Log but don't fail - old image deletion is not critical
@@ -74,7 +75,20 @@ export const PATCH = createProtectedHandler(
 			}
 
 			// Update profile image (null is allowed to remove image)
-			const updated = await updateUserProfileImage(user.id, imageUrl ?? null);
+			let updated: { profileImageUrl: string | null } | null;
+			try {
+				updated = await updateUserProfileImage(user.id, imageUrl ?? null);
+			} catch (error) {
+				// Handle Prisma record not found error (P2025) as 404
+				if (
+					error instanceof Prisma.PrismaClientKnownRequestError &&
+					error.code === "P2025"
+				) {
+					return Response.json({ error: "Profile not found" }, { status: 404 });
+				}
+				// Re-throw other errors to be handled by outer catch
+				throw error;
+			}
 
 			if (!updated) {
 				return Response.json({ error: "Profile not found" }, { status: 404 });

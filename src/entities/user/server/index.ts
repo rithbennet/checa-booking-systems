@@ -24,6 +24,7 @@ export {
 	updateUserProfile,
 	updateUserProfileImage,
 } from "./profile-repository";
+export { syncGoogleProfileImage } from "./sync-profile-image";
 export {
 	type CreateUserInput,
 	createUser,
@@ -42,4 +43,3 @@ export {
 	rejectUser,
 	updateUserStatus,
 } from "./user-repository";
-export { syncGoogleProfileImage } from "./sync-profile-image";

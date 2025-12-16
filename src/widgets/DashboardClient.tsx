@@ -15,8 +15,8 @@ import { useBookingStatusCounts } from "@/entities/booking/api";
 import { useUserFinancials } from "@/entities/booking/api/useUserFinancials";
 import { useNotifications } from "@/entities/notification/api";
 import type { NotificationVM } from "@/entities/notification/model/types";
-import { buildHref } from "@/features/bookings/user/list/model/list.routes";
 import type { FiltersState } from "@/features/bookings/user/list/model/filters.schema";
+import { buildHref } from "@/features/bookings/user/list/model/list.routes";
 import { DashboardBookingsWidget } from "@/features/bookings/user/list/widgets/DashboardBookingsWidget";
 import { cn } from "@/shared/lib/utils";
 import RouterButton from "@/shared/ui/router-button";
@@ -375,7 +375,14 @@ export function DashboardClient() {
 												);
 											}
 
-											return <div key={notification.id}>{content}</div>;
+											return (
+												<div
+													className="block cursor-default hover:bg-gray-100"
+													key={notification.id}
+												>
+													{content}
+												</div>
+											);
 										})}
 									</div>
 								)}

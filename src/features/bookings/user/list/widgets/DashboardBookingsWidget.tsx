@@ -2,11 +2,7 @@
 
 import { useMemo } from "react";
 import { useBookingsList } from "@/entities/booking/api/use-bookings-list";
-import {
-	getStatusBadgeClassName,
-	getStatusColors,
-	getStatusLabel,
-} from "@/shared/lib/status-utils";
+import { getStatusColors, getStatusLabel } from "@/shared/lib/status-utils";
 import RouterButton from "@/shared/ui/router-button";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import {

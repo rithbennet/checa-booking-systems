@@ -177,9 +177,7 @@ export async function GET(
 						duration={duration}
 						endDate={endDate}
 						faculty={
-							booking.user.faculty?.name ??
-							booking.user.company?.name ??
-							"N/A"
+							booking.user.faculty?.name ?? booking.user.company?.name ?? "N/A"
 						}
 						purpose={
 							booking.projectDescription ??
@@ -218,8 +216,7 @@ export async function GET(
 						supervisorName={booking.user.supervisorName ?? "N/A"}
 						userEmail={booking.user.email}
 						userFaculty={
-							booking.user.faculty?.name ??
-							booking.user.company?.name
+							booking.user.faculty?.name ?? booking.user.company?.name
 						}
 						userName={`${booking.user.firstName} ${booking.user.lastName}`}
 					/>,

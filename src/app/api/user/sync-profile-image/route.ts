@@ -7,7 +7,7 @@ import { createProtectedHandler } from "@/shared/lib/api-factory";
  * Only updates if profileImageUrl is currently NULL
  */
 export const POST = createProtectedHandler(
-	async (_req, user, ctx) => {
+	async (_req, _user, ctx) => {
 		try {
 			const authUserId = (ctx as { authUserId?: string })?.authUserId;
 			if (!authUserId) {
@@ -33,4 +33,3 @@ export const POST = createProtectedHandler(
 	},
 	{ requireActive: false }, // Allow pending users to sync their image
 );
-

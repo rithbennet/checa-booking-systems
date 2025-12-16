@@ -1,16 +1,16 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, Link as LinkIcon, Loader2, Unlink } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { FcGoogle } from "react-icons/fc";
 import {
 	type LinkedAccount,
 	useLinkedAccounts,
 	useLinkSocialAccount,
-	useUnlinkAccount,
 	userKeys,
+	useUnlinkAccount,
 } from "@/entities/user";
 import {
 	AlertDialog,
@@ -76,7 +76,7 @@ export function LinkedAccountsCard() {
 		if (searchParams.get("linked") === "success") {
 			setSuccessMessage("Account linked successfully!");
 			refetch(); // Refresh the accounts list
-			
+
 			// Sync Google profile image if available
 			fetch("/api/user/sync-profile-image", {
 				method: "POST",
@@ -88,7 +88,7 @@ export function LinkedAccountsCard() {
 				.catch((error) => {
 					console.error("Failed to sync profile image:", error);
 				});
-			
+
 			// Clear the URL param after showing the message
 			const timeout = setTimeout(() => {
 				setSuccessMessage(null);

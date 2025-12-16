@@ -153,25 +153,25 @@ export function AdminDashboard() {
 				{/* Alert Banner */}
 				{(metricsData.pendingVerifications > 0 ||
 					metricsData.pendingApprovals > 0) && (
-						<div className="mb-8 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-							<div className="flex items-center">
-								<AlertTriangle className="mr-3 h-5 w-5 text-yellow-600" />
-								<div className="flex-1">
-									<h3 className="font-medium text-sm text-yellow-800">
-										Attention Required
-									</h3>
-									<p className="mt-1 text-sm text-yellow-700">
-										You have {metricsData.pendingVerifications} pending user
-										verifications and {metricsData.pendingApprovals} booking
-										requests awaiting approval.
-									</p>
-								</div>
-								<Button asChild className="ml-4" size="sm" variant="outline">
-									<Link href="/admin/users">Review Now</Link>
-								</Button>
+					<div className="mb-8 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+						<div className="flex items-center">
+							<AlertTriangle className="mr-3 h-5 w-5 text-yellow-600" />
+							<div className="flex-1">
+								<h3 className="font-medium text-sm text-yellow-800">
+									Attention Required
+								</h3>
+								<p className="mt-1 text-sm text-yellow-700">
+									You have {metricsData.pendingVerifications} pending user
+									verifications and {metricsData.pendingApprovals} booking
+									requests awaiting approval.
+								</p>
 							</div>
+							<Button asChild className="ml-4" size="sm" variant="outline">
+								<Link href="/admin/users">Review Now</Link>
+							</Button>
 						</div>
-					)}
+					</div>
+				)}
 
 				{/* Key Metrics */}
 				{metricsError ? (

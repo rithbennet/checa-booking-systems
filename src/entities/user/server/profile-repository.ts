@@ -208,12 +208,22 @@ export async function updateUserProfile(
  * Update user profile image
  * @param userId - User ID
  * @param imageUrl - UploadThing URL, or null to remove
- * @returns Updated profile image URL, or null
+ * @returns Updated profile image URL, or null if user not found
  */
 export async function updateUserProfileImage(
 	userId: string,
 	imageUrl: string | null,
 ): Promise<{ profileImageUrl: string | null } | null> {
+	// Check if user exists first
+	const existingUser = await db.user.findUnique({
+		where: { id: userId },
+		select: { id: true },
+	});
+
+	if (!existingUser) {
+		return null;
+	}
+
 	const user = await db.user.update({
 		where: { id: userId },
 		data: {

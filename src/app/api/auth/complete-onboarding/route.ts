@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 
 		const authUserId = session.user.id;
 		const email = session.user.email;
-		const sessionImage = session.user.image;
+		const _sessionImage = session.user.image;
 
 		if (!authUserId || !email) {
 			return NextResponse.json({ error: "Invalid session" }, { status: 400 });

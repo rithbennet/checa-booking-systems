@@ -57,9 +57,7 @@ export function mapToBookingListItemVM(
 					company: booking.company.name,
 					branch: booking.companyBranch?.name,
 				}
-			: booking.user.ikohza ||
-					booking.user.faculty ||
-					booking.user.department
+			: booking.user.ikohza || booking.user.faculty || booking.user.department
 				? {
 						ikohza: booking.user.ikohza?.name,
 						faculty: booking.user.faculty?.name,
