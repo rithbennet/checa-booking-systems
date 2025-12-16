@@ -35,12 +35,13 @@ export type SystemUserType = z.infer<typeof userTypeEnum>;
 /**
  * Schema for MJIIT members (internal users from MJIIT faculty)
  * - Faculty is always MJIIT
- * - Shows Ikohza selection instead of Department
+ * - Requires both Department and iKohza selection
  * - Student requires supervisor name
  */
 export const mjiitMemberSchema = baseOnboardingSchema.extend({
 	userType: z.literal("mjiit_member"),
 	facultyId: z.string().uuid("Please select a faculty"),
+	departmentId: z.string().uuid("Please select a department"),
 	ikohzaId: z.string().uuid("Please select an iKohza"),
 	academicType: academicTypeEnum,
 	userIdentifier: z.string().min(1, "Matric number or staff ID is required"),

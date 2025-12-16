@@ -45,6 +45,7 @@ export async function POST(
 							include: {
 								faculty: true,
 								department: true,
+								ikohza: true,
 								company: true,
 								companyBranch: true,
 							},
@@ -106,19 +107,32 @@ export async function POST(
 		const supervisorName = booking.user.supervisorName ?? "N/A";
 
 		// Generate Service Form (TOR) PDF
-		const serviceItem = booking.serviceItems[0];
 		const torRefNo = `TOR-${newFormNumber}`;
 
 		const torPdfBuffer = await renderToBuffer(
 			<TORTemplate
 				date={new Date()}
-				equipmentCode={serviceItem?.service.code}
-				equipmentName={serviceItem?.service.name}
 				refNo={torRefNo}
+				serviceItems={booking.serviceItems.map((item) => ({
+					service: {
+						name: item.service.name,
+						code: item.service.code ?? undefined,
+					},
+					quantity: item.quantity,
+					unitPrice: Number(item.unitPrice),
+					totalPrice: Number(item.totalPrice),
+					sampleName: item.sampleName ?? undefined,
+				}))}
 				supervisorName={supervisorName}
+				userAddress={booking.user.address ?? ""}
+				userDepartment={booking.user.department?.name ?? undefined}
 				userEmail={booking.user.email}
-				userFaculty={userFaculty}
+				userFaculty={booking.user.faculty?.name ?? undefined}
+				userIkohza={booking.user.ikohza?.name ?? undefined}
 				userName={userName}
+				userTel={booking.user.phone ?? ""}
+				userType={booking.user.userType}
+				utmLocation={booking.user.UTM ?? undefined}
 			/>,
 		);
 
@@ -139,7 +153,7 @@ export async function POST(
 				{ status: 500 },
 			);
 		}
-		const torUrl = torUploadResult[0].data.url;
+		const torUrl = torUploadResult[0].data.ufsUrl;
 		const torKey = torUploadResult[0].data.key;
 
 		// Generate Working Area Agreement PDF (if applicable)
@@ -185,7 +199,7 @@ export async function POST(
 
 				const waUploadResult = await utapi.uploadFiles([waFile]);
 				if (!waUploadResult[0]?.error && waUploadResult[0]?.data) {
-					waUrl = waUploadResult[0].data.url;
+					waUrl = waUploadResult[0].data.ufsUrl;
 					waKey = waUploadResult[0].data.key;
 				}
 			}

@@ -17,6 +17,7 @@ import { UTFile } from "uploadthing/server";
 import { notifyServiceFormReady } from "@/entities/notification/server/form.notifications";
 import { requireAdmin } from "@/shared/lib/api-factory";
 import { TORTemplate, WorkAreaTemplate } from "@/shared/lib/pdf";
+import { facilityConfig } from "@/shared/lib/pdf/config/facility-config";
 import { db } from "@/shared/server/db";
 import { utapi } from "@/shared/server/uploadthing";
 
@@ -43,6 +44,7 @@ export async function POST(
 					include: {
 						faculty: true,
 						department: true,
+						ikohza: true,
 						company: true,
 						companyBranch: true,
 					},
@@ -119,19 +121,32 @@ export async function POST(
 		const supervisorName = booking.user.supervisorName ?? "N/A";
 
 		// 1. Generate Service Form (TOR) PDF
-		const serviceItem = booking.serviceItems[0];
 		const torRefNo = `TOR-${formNumber}`;
 
 		const torPdfBuffer = await renderToBuffer(
 			<TORTemplate
 				date={new Date()}
-				equipmentCode={serviceItem?.service.code}
-				equipmentName={serviceItem?.service.name}
 				refNo={torRefNo}
+				serviceItems={booking.serviceItems.map((item) => ({
+					service: {
+						name: item.service.name,
+						code: item.service.code ?? undefined,
+					},
+					quantity: item.quantity,
+					unitPrice: Number(item.unitPrice),
+					totalPrice: Number(item.totalPrice),
+					sampleName: item.sampleName ?? undefined,
+				}))}
 				supervisorName={supervisorName}
+				userAddress={booking.user.address ?? ""}
+				userDepartment={booking.user.department?.name ?? undefined}
 				userEmail={booking.user.email}
-				userFaculty={userFaculty}
+				userFaculty={booking.user.faculty?.name ?? undefined}
+				userIkohza={booking.user.ikohza?.name ?? undefined}
 				userName={userName}
+				userTel={booking.user.phone ?? ""}
+				userType={booking.user.userType}
+				utmLocation={booking.user.UTM ?? undefined}
 			/>,
 		);
 
@@ -152,7 +167,7 @@ export async function POST(
 				{ status: 500 },
 			);
 		}
-		const torUrl = torUploadResult[0].data.url;
+		const torUrl = torUploadResult[0].data.ufsUrl;
 		const torKey = torUploadResult[0].data.key;
 
 		// 2. Generate Working Area Agreement PDF (if applicable)
@@ -204,7 +219,7 @@ export async function POST(
 					);
 					// Don't fail entirely - service form was uploaded successfully
 				} else {
-					waUrl = waUploadResult[0].data.url;
+					waUrl = waUploadResult[0].data.ufsUrl;
 					waKey = waUploadResult[0].data.key;
 				}
 			}
@@ -217,7 +232,7 @@ export async function POST(
 				data: {
 					bookingRequestId: bookingId,
 					formNumber,
-					facilityLab: "ChECA iKohza",
+					facilityLab: facilityConfig.facilityName,
 					subtotal,
 					totalAmount,
 					validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now

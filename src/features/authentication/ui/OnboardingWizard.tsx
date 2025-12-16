@@ -247,11 +247,11 @@ export function OnboardingWizard({
 			if (!formState.facultyId) {
 				errors.facultyId = "Please select a faculty";
 			}
-			// Department is required for all faculties
+			// Department is required for all internal members
 			if (formState.facultyId && !formState.departmentId) {
 				errors.departmentId = "Please select a department";
 			}
-			// iKohza is required for MJIIT
+			// iKohza is required for MJIIT members (in addition to department)
 			if (isMjiit && !formState.ikohzaId) {
 				errors.ikohzaId = "Please select an iKohza";
 			}
@@ -350,10 +350,14 @@ export function OnboardingWizard({
 					payload.supervisorName = formState.supervisorName;
 				}
 
+				// Department is required for all internal members
+				if (formState.departmentId) {
+					payload.departmentId = formState.departmentId;
+				}
+
+				// iKohza is required for MJIIT members (in addition to department)
 				if (isMjiit && formState.ikohzaId) {
 					payload.ikohzaId = formState.ikohzaId;
-				} else if (!isMjiit && formState.departmentId) {
-					payload.departmentId = formState.departmentId;
 				}
 			} else {
 				// External user
@@ -570,7 +574,7 @@ export function OnboardingWizard({
 											)}
 										</div>
 
-										{/* Department (required for all faculties) */}
+										{/* Department (required for all internal members) */}
 										{formState.facultyId && (
 											<div className="space-y-2">
 												<Label htmlFor="department">

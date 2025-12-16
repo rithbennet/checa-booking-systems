@@ -3,6 +3,7 @@
  * Generates an official invoice document for ChECA Lab services
  */
 
+import path from "node:path";
 import {
 	Document,
 	Image,
@@ -11,12 +12,18 @@ import {
 	Text,
 	View,
 } from "@react-pdf/renderer";
+import { facilityConfig } from "@/shared/lib/pdf/config/facility-config";
 import {
 	styles as baseStyles,
 	formatCurrency,
 	formatDate,
 	pdfColors,
 } from "@/shared/lib/pdf/pdf-styles";
+
+// Get file system path for images (react-pdf needs absolute paths)
+const getImagePath = (imageName: string) => {
+	return path.join(process.cwd(), "public", "images", imageName);
+};
 
 // Invoice-specific styles
 const invoiceStyles = StyleSheet.create({
@@ -341,7 +348,10 @@ export function InvoiceTemplate({
 				{/* Header */}
 				<View style={invoiceStyles.header}>
 					<View style={invoiceStyles.headerLeft}>
-						<Image src="/images/utm-logo.png" style={invoiceStyles.logo} />
+						<Image
+							src={getImagePath("utm-logo.png")}
+							style={invoiceStyles.logo}
+						/>
 						<Text style={invoiceStyles.companyName}>
 							Financial Unit / MJIIT
 						</Text>
@@ -529,7 +539,10 @@ export function InvoiceTemplate({
 					<Text>
 						This is a computer-generated invoice. No signature is required.
 					</Text>
-					<Text>ChECA iKohza | MJIIT | Universiti Teknologi Malaysia</Text>
+					<Text>
+						{facilityConfig.facilityName} | MJIIT | Universiti Teknologi
+						Malaysia
+					</Text>
 				</View>
 			</Page>
 
@@ -600,7 +613,10 @@ export function InvoiceTemplate({
 				{/* Footer */}
 				<View fixed style={invoiceStyles.footer}>
 					<Text>Page 2 of 2 | Verification Form</Text>
-					<Text>ChECA iKohza | MJIIT | Universiti Teknologi Malaysia</Text>
+					<Text>
+						{facilityConfig.facilityName} | MJIIT | Universiti Teknologi
+						Malaysia
+					</Text>
 				</View>
 			</Page>
 		</Document>

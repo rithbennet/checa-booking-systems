@@ -60,6 +60,7 @@ export async function GET(
 					include: {
 						faculty: true,
 						department: true,
+						ikohza: true,
 						company: true,
 						companyBranch: true,
 					},
@@ -206,19 +207,36 @@ export async function GET(
 				}
 
 				const refNo = `TOR-${booking.referenceNumber}`;
+				const userName = `${booking.user.firstName} ${booking.user.lastName}`;
+				const _userFaculty =
+					booking.user.faculty?.name ??
+					booking.user.company?.name ??
+					booking.user.companyBranch?.name;
 
 				pdfStream = await renderToStream(
 					<TORTemplate
 						date={new Date()}
-						equipmentCode={serviceItem.service.code}
-						equipmentName={serviceItem.service.name}
 						refNo={refNo}
+						serviceItems={booking.serviceItems.map((item) => ({
+							service: {
+								name: item.service.name,
+								code: item.service.code ?? undefined,
+							},
+							quantity: item.quantity,
+							unitPrice: Number(item.unitPrice),
+							totalPrice: Number(item.totalPrice),
+							sampleName: item.sampleName ?? undefined,
+						}))}
 						supervisorName={booking.user.supervisorName ?? "N/A"}
+						userAddress={booking.user.address ?? ""}
+						userDepartment={booking.user.department?.name ?? undefined}
 						userEmail={booking.user.email}
-						userFaculty={
-							booking.user.faculty?.name ?? booking.user.company?.name
-						}
-						userName={`${booking.user.firstName} ${booking.user.lastName}`}
+						userFaculty={booking.user.faculty?.name ?? undefined}
+						userIkohza={booking.user.ikohza?.name ?? undefined}
+						userName={userName}
+						userTel={booking.user.phone ?? ""}
+						userType={booking.user.userType}
+						utmLocation={booking.user.UTM ?? undefined}
 					/>,
 				);
 				filename = `service-form-${refNo}.pdf`;

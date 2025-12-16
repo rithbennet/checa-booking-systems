@@ -115,7 +115,9 @@ export function LinkedAccountsCard() {
 			const actualErrorCode = errorCode || queryError;
 
 			// Normalize error code: lowercase and replace both curly and straight apostrophes
-			const normalizedCode = actualErrorCode?.toLowerCase().replace(/['']/g, "'");
+			const normalizedCode = actualErrorCode
+				?.toLowerCase()
+				.replace(/['']/g, "'");
 
 			if (normalizedCode === "account_already_linked_to_different_user") {
 				message =

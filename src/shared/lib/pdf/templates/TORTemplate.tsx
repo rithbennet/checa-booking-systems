@@ -1,8 +1,9 @@
 /**
- * Terms of Reference (TOR) / Service Form Template
- * Generates a service agreement document for equipment usage
+ * Invoice Request Form Template
+ * Replicates the UTM MJIIT Invoice Request Form
  */
 
+import path from "node:path";
 import {
 	Document,
 	Image,
@@ -11,566 +12,1099 @@ import {
 	Text,
 	View,
 } from "@react-pdf/renderer";
-import {
-	styles as baseStyles,
-	formatDate,
-	pdfColors,
-} from "@/shared/lib/pdf/pdf-styles";
+import { facilityConfig } from "@/shared/lib/pdf/config/facility-config";
+import { formatDate } from "@/shared/lib/pdf/pdf-styles";
 
-// TOR-specific styles
-const torStyles = StyleSheet.create({
+// Get file system path for images (react-pdf needs absolute paths)
+const getImagePath = (imageName: string) => {
+	return path.join(process.cwd(), "public", "images", imageName);
+};
+
+/**
+ * Generate address for TOR template based on user type and organization data
+ */
+function generateTORAddress({
+	userType,
+	userAddress,
+	department,
+	faculty,
+	ikohza,
+	utmLocation,
+}: {
+	userType:
+	| "mjiit_member"
+	| "utm_member"
+	| "external_member"
+	| "lab_administrator";
+	userAddress?: string | null;
+	department?: string | null;
+	faculty?: string | null;
+	ikohza?: string | null;
+	utmLocation?: "johor_bahru" | "kuala_lumpur" | "none" | null;
+}): string {
+	// External members use their provided address
+	if (userType === "external_member") {
+		return userAddress?.trim() || "";
+	}
+
+	// For UTM and MJIIT members, build address from organization data
+	const parts: string[] = [];
+
+	// Add department if available
+	if (department?.trim()) {
+		parts.push(department.trim());
+	}
+
+	// Add ikohza for MJIIT members if available
+	if (userType === "mjiit_member" && ikohza?.trim()) {
+		parts.push(ikohza.trim());
+	}
+
+	// Add faculty if available
+	if (faculty?.trim()) {
+		parts.push(faculty.trim());
+	}
+
+	// Add UTM location
+	if (userType === "mjiit_member") {
+		// MJIIT is always in KL
+		parts.push("UTM KL");
+	} else if (userType === "utm_member") {
+		// UTM members use their specified location
+		if (utmLocation === "kuala_lumpur") {
+			parts.push("UTM KL");
+		} else if (utmLocation === "johor_bahru") {
+			parts.push("UTM JB");
+		}
+	}
+
+	return parts.filter(Boolean).join(", ") || userAddress?.trim() || "";
+}
+
+// Specific styles for the Invoice Form
+const invoiceStyles = StyleSheet.create({
+	page: {
+		padding: 30,
+		fontSize: 10,
+		fontFamily: "Helvetica",
+	},
+	// Header Section
 	header: {
 		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "flex-start",
 		marginBottom: 20,
-		paddingBottom: 15,
-		borderBottomWidth: 2,
-		borderBottomColor: pdfColors.primary,
+		borderBottomWidth: 1,
+		borderBottomColor: "#000",
+		paddingBottom: 10,
 	},
-	headerLeft: {
-		width: "30%",
-	},
-	headerCenter: {
-		width: "40%",
-		alignItems: "center",
-	},
-	headerRight: {
-		width: "30%",
-		alignItems: "flex-end",
+	logoSection: {
+		width: "35%",
 	},
 	logo: {
-		width: 80,
-		height: 40,
-		marginBottom: 5,
+		width: 200,
+		height: "auto", // Maintain aspect ratio
 	},
-	documentTitle: {
-		fontSize: 16,
-		fontWeight: 700,
-		color: pdfColors.primary,
-		textAlign: "center",
-		marginBottom: 5,
+	headerTextSection: {
+		width: "65%",
+		paddingLeft: 20,
 	},
-	documentSubtitle: {
-		fontSize: 11,
-		fontWeight: 700,
-		color: pdfColors.secondary,
-		textAlign: "center",
-		marginBottom: 3,
-	},
-	refNo: {
-		fontSize: 9,
-		color: pdfColors.secondary,
-	},
-	equipmentTitle: {
+	headerTitle: {
 		fontSize: 14,
-		fontWeight: 700,
-		color: pdfColors.primary,
+		fontWeight: "bold",
+		color: "#bfbfbf", // Light gray title as per image (looks like watermark or header)
 		textAlign: "center",
-		marginTop: 20,
+		marginBottom: 10,
+		textTransform: "uppercase",
+	},
+	addressBox: {
+		fontSize: 9,
 		marginBottom: 5,
-		paddingVertical: 10,
-		backgroundColor: pdfColors.lightBg,
-		borderRadius: 4,
 	},
-	equipmentSubtitle: {
-		fontSize: 10,
-		color: pdfColors.secondary,
-		textAlign: "center",
-		marginBottom: 20,
-	},
-	sectionBox: {
-		marginBottom: 15,
-		padding: 12,
+
+	// General Table/Grid Utils
+	tableBorder: {
 		borderWidth: 1,
-		borderColor: pdfColors.border,
-		borderRadius: 4,
+		borderColor: "#000",
 	},
-	sectionTitle: {
-		fontSize: 11,
-		fontWeight: 700,
-		color: pdfColors.primary,
-		marginBottom: 10,
-		paddingBottom: 5,
+	row: {
+		flexDirection: "row",
 		borderBottomWidth: 1,
-		borderBottomColor: pdfColors.border,
+		borderBottomColor: "#000",
+		alignItems: "stretch", // Ensure equal height
 	},
-	sectionText: {
-		fontSize: 10,
-		lineHeight: 1.6,
-		color: pdfColors.black,
-		marginBottom: 8,
+	lastRow: {
+		borderBottomWidth: 0,
 	},
-	bulletPoint: {
-		flexDirection: "row",
-		marginBottom: 6,
-		paddingLeft: 10,
+	cellLabel: {
+		backgroundColor: "#f3f4f6", // Light gray for labels? Optional, white in PDF
+		padding: 4,
+		fontSize: 9,
+		width: "25%", // Adjust label width
+		borderRightWidth: 1,
+		borderRightColor: "#000",
 	},
-	bullet: {
-		width: 15,
-		fontSize: 10,
-		color: pdfColors.secondary,
-	},
-	bulletText: {
+	cellValue: {
+		padding: 4,
+		fontSize: 9,
 		flex: 1,
-		fontSize: 10,
-		lineHeight: 1.5,
-		color: pdfColors.black,
 	},
-	userInfoSection: {
-		flexDirection: "row",
+
+	// Info Grid Specifics
+	infoGrid: {
+		borderWidth: 1,
+		borderColor: "#000",
 		marginBottom: 20,
 	},
-	userInfoBox: {
-		flex: 1,
-		padding: 12,
-		backgroundColor: pdfColors.lightBg,
-		borderRadius: 4,
-		marginRight: 10,
-	},
-	userInfoBoxLast: {
-		flex: 1,
-		padding: 12,
-		backgroundColor: pdfColors.lightBg,
-		borderRadius: 4,
-	},
-	userInfoLabel: {
-		fontSize: 8,
-		fontWeight: 700,
-		color: pdfColors.secondary,
-		marginBottom: 3,
-	},
-	userInfoValue: {
-		fontSize: 10,
-		color: pdfColors.black,
-	},
-	acknowledgementBox: {
-		marginTop: 20,
-		padding: 15,
-		borderWidth: 2,
-		borderColor: pdfColors.primary,
-		borderRadius: 4,
-		backgroundColor: "#f8fafc",
-	},
-	acknowledgementTitle: {
-		fontSize: 11,
-		fontWeight: 700,
-		color: pdfColors.primary,
-		marginBottom: 10,
-		textAlign: "center",
-	},
-	acknowledgementText: {
-		fontSize: 10,
-		lineHeight: 1.6,
-		color: pdfColors.black,
-		marginBottom: 10,
-	},
-	checkboxRow: {
+	infoRow: {
 		flexDirection: "row",
-		alignItems: "flex-start",
-		marginBottom: 8,
-		paddingLeft: 10,
+		borderBottomWidth: 1,
+		borderBottomColor: "#000",
+		minHeight: 20,
+	},
+	infoRowLast: {
+		flexDirection: "row",
+		minHeight: 20,
+	},
+	// Left cell (label + value)
+	infoCellLeft: {
+		width: "60%",
+		flexDirection: "row",
+		borderRightWidth: 1,
+		borderRightColor: "#000",
+	},
+	// Right cell (label + value)
+	infoCellRight: {
+		width: "40%",
+		flexDirection: "row",
+	},
+	infoLabel: {
+		width: 100,
+		padding: 4,
+		fontSize: 9,
+		fontWeight: "bold",
+		borderRightWidth: 1,
+		borderRightColor: "#000",
+	},
+	infoLabelWide: {
+		width: 100,
+		padding: 4,
+		fontSize: 9,
+		fontWeight: "bold",
+		borderRightWidth: 1,
+		borderRightColor: "#000",
+	},
+	infoValue: {
+		flex: 1,
+		padding: 4,
+		fontSize: 9,
+	},
+
+	// Content Text
+	letterBody: {
+		marginBottom: 15,
+		fontSize: 10,
+		lineHeight: 1.4,
+	},
+
+	// Pricing Table
+	pricingTable: {
+		borderWidth: 1,
+		borderColor: "#000",
+		marginBottom: 5,
+	},
+	pricingHeader: {
+		flexDirection: "row",
+		backgroundColor: "#fff", // Header is white in screenshot
+		borderBottomWidth: 1,
+		borderBottomColor: "#000",
+	},
+	pricingRow: {
+		flexDirection: "row",
+		borderBottomWidth: 1,
+		borderBottomColor: "#000",
+		minHeight: 20,
+		alignItems: "stretch",
+	},
+	colNo: {
+		width: "8%",
+		borderRightWidth: 1,
+		borderRightColor: "#000",
+		padding: 4,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	colDesc: {
+		width: "47%",
+		borderRightWidth: 1,
+		borderRightColor: "#000",
+		padding: 4,
+		alignItems: "center",
+	},
+	colQty: {
+		width: "15%",
+		borderRightWidth: 1,
+		borderRightColor: "#000",
+		padding: 4,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	colUnit: {
+		width: "15%",
+		borderRightWidth: 1,
+		borderRightColor: "#000",
+		padding: 4,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	colTotal: {
+		width: "15%",
+		padding: 4,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+
+	// Terms Section
+	termsContainer: {
+		marginTop: 10,
+		borderWidth: 1,
+		borderColor: "#000",
+		backgroundColor: "#e5e7eb", // Gray background for header
+		padding: 5,
+		marginBottom: 0,
+	},
+	termsTitle: {
+		fontWeight: "bold",
+		textAlign: "center",
+		fontSize: 10,
+	},
+	termsBody: {
+		paddingTop: 10,
+		paddingBottom: 10,
+	},
+	termItem: {
+		flexDirection: "row",
+		marginBottom: 4,
+		paddingLeft: 5,
+		paddingRight: 5,
+	},
+	termBullet: {
+		width: 25,
+		fontSize: 9,
+	},
+	termText: {
+		flex: 1,
+		fontSize: 9,
+		lineHeight: 1.3,
+		textAlign: "justify",
+	},
+	bankDetails: {
+		marginLeft: 25,
+		marginTop: 5,
+		marginBottom: 5,
+	},
+	bankRow: {
+		flexDirection: "row",
+		marginBottom: 2,
+	},
+	bankLabel: {
+		width: 120,
+		fontSize: 9,
+	},
+
+	// Page 2: Verification
+	verificationSection: {
+		flexDirection: "row",
+		borderWidth: 1,
+		borderColor: "#000",
+		marginTop: 20,
+		marginBottom: 15,
+	},
+	verifCol: {
+		width: "50%",
+		padding: 0,
+	},
+	verifHeader: {
+		backgroundColor: "#d1d5db", // Gray
+		padding: 5,
+		textAlign: "center",
+		fontWeight: "bold",
+		borderBottomWidth: 1,
+		borderBottomColor: "#000",
+		fontSize: 10,
+	},
+	verifContent: {
+		padding: 10,
+		height: 120, // Fixed height for signature area
+		justifyContent: "space-between",
+	},
+	borderRight: {
+		borderRightWidth: 1,
+		borderRightColor: "#000",
+	},
+
+	// Payment Checkboxes
+	paymentRow: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginBottom: 15,
+		marginTop: 5,
 	},
 	checkbox: {
 		width: 12,
 		height: 12,
 		borderWidth: 1,
-		borderColor: pdfColors.black,
-		marginRight: 8,
-		marginTop: 2,
+		borderColor: "#000",
+		marginRight: 5,
+		marginLeft: 15,
 	},
-	checkboxText: {
+
+	// Checklist Gray Box
+	grayBoxHeader: {
+		backgroundColor: "#d1d5db",
+		borderWidth: 1,
+		borderColor: "#000",
+		padding: 5,
+		textAlign: "center",
+		fontWeight: "bold",
+		fontSize: 10,
+	},
+	checklistBody: {
+		borderLeftWidth: 1,
+		borderRightWidth: 1,
+		borderBottomWidth: 1,
+		borderColor: "#000",
+		padding: 10,
+		marginBottom: 15,
+	},
+	checkItem: {
+		flexDirection: "row",
+		marginBottom: 8,
+		alignItems: "flex-start",
+	},
+	checkLabel: {
 		flex: 1,
 		fontSize: 9,
-		lineHeight: 1.5,
-		color: pdfColors.black,
+		marginRight: 10,
 	},
-	signatureSection: {
-		marginTop: 30,
-	},
-	signatureRow: {
+	checkOptions: {
 		flexDirection: "row",
-		justifyContent: "space-between",
+		minWidth: 100,
 	},
-	signatureBox: {
-		width: "45%",
-	},
-	signatureLine: {
-		borderBottomWidth: 1,
-		borderBottomColor: pdfColors.black,
-		marginTop: 50,
-		marginBottom: 5,
-	},
-	signatureLabel: {
-		fontSize: 9,
-		color: pdfColors.secondary,
-		marginBottom: 3,
-	},
-	signatureUnderline: {
-		borderBottomWidth: 1,
-		borderBottomColor: pdfColors.black,
-		marginTop: 25,
-		marginBottom: 5,
-	},
-	statusSection: {
-		marginTop: 30,
-		padding: 12,
-		backgroundColor: pdfColors.lightBg,
-		borderRadius: 4,
-	},
-	statusTitle: {
-		fontSize: 10,
-		fontWeight: 700,
-		color: pdfColors.primary,
-		marginBottom: 8,
-	},
-	statusText: {
-		fontSize: 10,
-		color: pdfColors.black,
-	},
-	statusOptions: {
-		flexDirection: "row",
-		flexWrap: "wrap",
-		marginTop: 5,
-	},
-	statusOption: {
-		flexDirection: "row",
-		alignItems: "center",
-		marginRight: 15,
-		marginBottom: 5,
-	},
-	statusCircle: {
-		width: 12,
-		height: 12,
+	smallCheck: {
+		width: 10,
+		height: 10,
 		borderWidth: 1,
-		borderColor: pdfColors.black,
-		borderRadius: 6,
-		marginRight: 5,
+		borderColor: "#000",
+		marginRight: 3,
 	},
-	statusOptionText: {
+	smallCheckLabel: {
 		fontSize: 9,
-		color: pdfColors.black,
+		marginRight: 8,
 	},
-	footer: {
-		position: "absolute",
-		bottom: 30,
-		left: 40,
-		right: 40,
-		textAlign: "center",
-		fontSize: 8,
-		color: pdfColors.secondary,
-		borderTopWidth: 1,
-		borderTopColor: pdfColors.border,
-		paddingTop: 10,
+
+	// Declaration
+	declarationBody: {
+		borderLeftWidth: 1,
+		borderRightWidth: 1,
+		borderBottomWidth: 1,
+		borderColor: "#000",
+		padding: 10,
+	},
+	sigLine: {
+		borderBottomWidth: 1,
+		borderBottomColor: "#000",
+		borderStyle: "dotted",
+		flex: 1,
+		marginLeft: 5,
+		marginTop: 8,
 	},
 });
 
-// Equipment-specific TOR content
-interface EquipmentTorContent {
-	title: string;
-	terms: string[];
+export interface LineItem {
+	description: string;
+	quantity: number;
+	unitCharge: number;
 }
 
-const DEFAULT_TOR: EquipmentTorContent = {
-	title: "Laboratory Equipment",
-	terms: [
-		"Read and understand the equipment operating manual before use.",
-		"Check equipment condition before starting operation.",
-		"Follow all safety guidelines and standard operating procedures.",
-		"Report any malfunction or abnormal operation immediately.",
-		"Clean the equipment after use as per guidelines.",
-		"Log all equipment usage in the designated logbook.",
-	],
-};
-
-const EQUIPMENT_TOR: Record<string, EquipmentTorContent> = {
-	"ftir-atr": {
-		title: "FTIR-ATR Spectrometer",
-		terms: [
-			"Clean the ATR crystal before and after each measurement using appropriate solvents.",
-			"Apply even pressure when placing samples on the ATR crystal.",
-			"Do not use corrosive or abrasive samples that may damage the crystal.",
-			"Allow the instrument to warm up for at least 15 minutes before measurements.",
-			"Record background spectrum before each sample measurement session.",
-			"Report any unusual instrument behavior or error messages immediately.",
-		],
-	},
-	"ftir-kbr": {
-		title: "FTIR-KBr Spectrometer",
-		terms: [
-			"Prepare KBr pellets in a clean, dry environment to avoid moisture contamination.",
-			"Use the correct KBr to sample ratio as specified in the protocol.",
-			"Handle KBr pellets carefully to avoid fingerprint contamination.",
-			"Store unused KBr in a desiccator to prevent moisture absorption.",
-			"Clean the pellet holder after each use.",
-			"Dispose of used KBr pellets in the designated waste container.",
-		],
-	},
-	"uv-vis": {
-		title: "UV-Vis Spectrophotometer",
-		terms: [
-			"Use appropriate cuvettes for the measurement wavelength range.",
-			"Handle cuvettes by the frosted sides only to avoid fingerprint contamination.",
-			"Rinse cuvettes with the sample solution before final measurement.",
-			"Run baseline correction with the appropriate blank solution.",
-			"Do not exceed the maximum absorbance limit of the instrument.",
-			"Clean cuvettes thoroughly after use with appropriate solvents.",
-		],
-	},
-	bet: {
-		title: "BET Surface Area Analyzer",
-		terms: [
-			"Properly degas samples according to the specified protocol before analysis.",
-			"Use the correct sample tube size for the amount of sample.",
-			"Record the exact sample mass used for analysis.",
-			"Monitor liquid nitrogen levels throughout the analysis.",
-			"Do not interrupt the analysis once started.",
-			"Clean sample tubes thoroughly before reuse.",
-		],
-	},
-	hplc: {
-		title: "HPLC System",
-		terms: [
-			"Filter all mobile phases and samples through appropriate filters before use.",
-			"Prime the system with mobile phase before connecting the column.",
-			"Follow proper column equilibration procedures.",
-			"Monitor system pressure throughout the run.",
-			"Flush the system with appropriate solvents after use.",
-			"Store columns according to manufacturer recommendations.",
-		],
-	},
-};
-
-// Types
-export interface TORTemplateProps {
-	equipmentName?: string;
-	equipmentCode?: string;
-	userName: string;
-	userEmail?: string;
-	userFaculty?: string;
-	supervisorName: string;
+export interface InvoiceFormProps {
+	// User/Client Info
+	name: string;
+	address: string;
+	tel: string;
+	email: string;
+	supervisorName?: string;
 	supervisorEmail?: string;
-	refNo?: string;
-	date?: Date | string;
+
+	// Facility/Admin Info
+	facility: string;
+	date: Date | string;
+	staffPic: string;
+	staffPicEmail: string;
+	costCentre?: string;
+	refNo: string;
+
+	// Line Items
+	items: LineItem[];
+
+	// Verification Data (Optional - for pre-filling)
+	providerName?: string;
+	providerDate?: Date | string;
 }
 
-export function TORTemplate({
-	equipmentCode,
-	userName,
-	userEmail,
-	userFaculty,
-	supervisorName,
-	supervisorEmail,
+// TORTemplate Props - simplified interface for document generation
+export interface TORTemplateProps {
+	userName: string;
+	userEmail: string;
+	userFaculty?: string;
+	userDepartment?: string;
+	userIkohza?: string;
+	utmLocation?: "johor_bahru" | "kuala_lumpur" | "none" | null;
+	supervisorName?: string;
+	equipmentCode?: string;
+	equipmentName?: string;
+	refNo: string;
+	date: Date | string;
+	// Additional optional props for full data
+	userAddress?: string;
+	userTel?: string;
+	serviceItems?: Array<{
+		service: {
+			name: string;
+			code?: string;
+		};
+		quantity: number;
+		unitPrice: number | string;
+		totalPrice: number | string;
+		sampleName?: string;
+	}>;
+	userType?:
+	| "mjiit_member"
+	| "utm_member"
+	| "external_member"
+	| "lab_administrator";
+}
+
+export function InvoiceRequestForm({
+	name,
+	address,
+	tel,
+	email,
+	supervisorName = "",
+	supervisorEmail = "",
+	facility,
+	date,
+	staffPic,
+	staffPicEmail,
+	costCentre = "",
 	refNo,
-	date = new Date(),
-}: TORTemplateProps) {
-	// Get equipment-specific terms - guaranteed to have default fallback
-	const normalizedCode =
-		equipmentCode?.toLowerCase().replace(/[_\s]/g, "-") ?? "default";
-	const equipmentTor = EQUIPMENT_TOR[normalizedCode] ?? DEFAULT_TOR;
+	items = [],
+	providerName = facilityConfig.staffPic.fullName,
+	providerDate,
+}: InvoiceFormProps) {
+	const formattedDate = typeof date === "string" ? date : formatDate(date);
+	const subTotal = items.reduce(
+		(acc, item) => acc + item.quantity * item.unitCharge,
+		0,
+	);
+
+	// Fill empty rows to make the table look standard height if needed
+	const minRows = 4;
+	const emptyRows = Math.max(0, minRows - items.length);
 
 	return (
 		<Document>
-			<Page size="A4" style={baseStyles.page}>
-				{/* Header */}
-				<View style={torStyles.header}>
-					<View style={torStyles.headerLeft}>
-						<Image src="/images/utm-logo.png" style={torStyles.logo} />
-					</View>
-					<View style={torStyles.headerCenter}>
-						<Text style={torStyles.documentTitle}>
-							TERMS OF REFERENCE (TOR)
-						</Text>
-						<Text style={torStyles.documentSubtitle}>
-							ChECA iKohza Laboratory
-						</Text>
-					</View>
-					<View style={torStyles.headerRight}>
-						<Image src="/images/checa-logo.png" style={torStyles.logo} />
-					</View>
-				</View>
-
-				{/* Reference Number */}
-				{refNo && (
-					<Text
-						style={[torStyles.refNo, { textAlign: "right", marginBottom: 10 }]}
-					>
-						Ref: {refNo} | Date: {formatDate(date)}
-					</Text>
-				)}
-
-				{/* Equipment Title */}
-				<Text style={torStyles.equipmentTitle}>{equipmentTor.title}</Text>
-				<Text style={torStyles.equipmentSubtitle}>
-					[SPECIFIC ACCORDING TO THE EQUIPMENT]
+			{/* Page 1: Header, Info Grid, Salutation, and Pricing Table */}
+			<Page size="A4" style={invoiceStyles.page} wrap={false}>
+				{/* Header Title Layer */}
+				<Text
+					style={[
+						invoiceStyles.headerTitle,
+						{ position: "absolute", top: 30, left: 0, right: 0 },
+					]}
+				>
+					REQUEST FORM FOR INVOICE
 				</Text>
 
-				{/* User Information Section */}
-				<View style={torStyles.userInfoSection}>
-					<View style={torStyles.userInfoBox}>
-						<Text style={torStyles.userInfoLabel}>USER NAME</Text>
-						<Text style={torStyles.userInfoValue}>{userName}</Text>
-						{userEmail && (
-							<>
-								<Text style={[torStyles.userInfoLabel, { marginTop: 8 }]}>
-									EMAIL
-								</Text>
-								<Text style={torStyles.userInfoValue}>{userEmail}</Text>
-							</>
-						)}
-						{userFaculty && (
-							<>
-								<Text style={[torStyles.userInfoLabel, { marginTop: 8 }]}>
-									FACULTY
-								</Text>
-								<Text style={torStyles.userInfoValue}>{userFaculty}</Text>
-							</>
-						)}
+				{/* Header Content */}
+				<View style={[invoiceStyles.header, { marginTop: 25 }]}>
+					<View style={invoiceStyles.logoSection}>
+						<Image
+							src={getImagePath("utm-logo.png")}
+							style={invoiceStyles.logo}
+						/>
 					</View>
-					<View style={torStyles.userInfoBoxLast}>
-						<Text style={torStyles.userInfoLabel}>SUPERVISOR NAME</Text>
-						<Text style={torStyles.userInfoValue}>{supervisorName}</Text>
-						{supervisorEmail && (
-							<>
-								<Text style={[torStyles.userInfoLabel, { marginTop: 8 }]}>
-									SUPERVISOR EMAIL
-								</Text>
-								<Text style={torStyles.userInfoValue}>{supervisorEmail}</Text>
-							</>
-						)}
+					<View style={invoiceStyles.headerTextSection}>
+						<Text style={{ fontSize: 10, fontWeight: "bold" }}>
+							Financial Unit
+						</Text>
+						<Text style={{ fontSize: 9 }}>
+							Malaysia - Japan International Institute of Technology (MJIIT)
+						</Text>
+						<Text style={{ fontSize: 9 }}>Jalan Sultan Yahya Petra,</Text>
+						<Text style={{ fontSize: 9 }}>54100 Kuala Lumpur</Text>
 					</View>
 				</View>
 
-				{/* Terms Section */}
-				<View style={torStyles.sectionBox}>
-					<Text style={torStyles.sectionTitle}>
-						TERMS AND CONDITIONS OF USE
+				{/* User & Facility Information Grid */}
+				<View style={invoiceStyles.infoGrid}>
+					{/* Row 1: Name | Facility/Lab */}
+					<View style={invoiceStyles.infoRow}>
+						<View style={invoiceStyles.infoCellLeft}>
+							<Text style={invoiceStyles.infoLabel}>Name:</Text>
+							<Text style={invoiceStyles.infoValue}>{name}</Text>
+						</View>
+						<View style={invoiceStyles.infoCellRight}>
+							<Text style={invoiceStyles.infoLabel}>Facility/Lab:</Text>
+							<Text style={invoiceStyles.infoValue}>{facility}</Text>
+						</View>
+					</View>
+
+					{/* Row 2: Address | Date */}
+					<View style={invoiceStyles.infoRow}>
+						<View style={[invoiceStyles.infoCellLeft, { minHeight: 40 }]}>
+							<Text style={invoiceStyles.infoLabel}>Address:</Text>
+							<Text style={invoiceStyles.infoValue}>{address}</Text>
+						</View>
+						<View style={invoiceStyles.infoCellRight}>
+							<Text style={invoiceStyles.infoLabel}>Date:</Text>
+							<Text style={invoiceStyles.infoValue}>{formattedDate}</Text>
+						</View>
+					</View>
+
+					{/* Row 3: (empty left for address continuation visually) | Staff PIC */}
+					<View style={invoiceStyles.infoRow}>
+						<View style={invoiceStyles.infoCellLeft}>
+							<Text style={invoiceStyles.infoLabel}>Tel:</Text>
+							<Text style={invoiceStyles.infoValue}>{tel}</Text>
+						</View>
+						<View style={invoiceStyles.infoCellRight}>
+							<Text style={invoiceStyles.infoLabel}>Staff PIC:</Text>
+							<Text style={invoiceStyles.infoValue}>{staffPic}</Text>
+						</View>
+					</View>
+
+					{/* Row 4: Tel | Email PIC */}
+					<View style={invoiceStyles.infoRow}>
+						<View style={invoiceStyles.infoCellLeft}>
+							<Text style={invoiceStyles.infoLabel}>Email:</Text>
+							<Text style={invoiceStyles.infoValue}>{email}</Text>
+						</View>
+						<View style={invoiceStyles.infoCellRight}>
+							<Text style={invoiceStyles.infoLabel}>Email PIC:</Text>
+							<Text style={[invoiceStyles.infoValue, { fontSize: 8 }]}>
+								{staffPicEmail}
+							</Text>
+						</View>
+					</View>
+
+					{/* Row 5: Email | Cost Centre */}
+					<View style={invoiceStyles.infoRow}>
+						<View style={[invoiceStyles.infoCellLeft, { minHeight: 35 }]}>
+							<Text style={invoiceStyles.infoLabelWide}>
+								Supervisor's Name & Email (if necessary)
+							</Text>
+							<View style={invoiceStyles.infoValue}>
+								<Text>{supervisorName}</Text>
+								<Text>{supervisorEmail}</Text>
+							</View>
+						</View>
+						<View style={invoiceStyles.infoCellRight}>
+							<Text style={invoiceStyles.infoLabel}>Cost Centre:</Text>
+							<Text style={invoiceStyles.infoValue}>{costCentre}</Text>
+						</View>
+					</View>
+
+					{/* Row 6: Supervisor | Ref */}
+					<View style={invoiceStyles.infoRowLast}>
+						<View style={invoiceStyles.infoCellLeft}>
+							<Text style={invoiceStyles.infoLabel} />
+							<Text style={invoiceStyles.infoValue} />
+						</View>
+						<View style={invoiceStyles.infoCellRight}>
+							<Text style={invoiceStyles.infoLabel}>Ref</Text>
+							<Text style={invoiceStyles.infoValue}>{refNo}</Text>
+						</View>
+					</View>
+				</View>
+
+				{/* Salutation */}
+				<Text style={invoiceStyles.letterBody}>
+					Dear Sir,{"\n\n"}
+					<Text style={{ fontWeight: "bold", textDecoration: "underline" }}>
+						RE: Charge of Service
 					</Text>
-					<Text style={torStyles.sectionText}>
-						The following terms and conditions must be adhered to when using the{" "}
-						{equipmentTor.title}:
-					</Text>
-					{equipmentTor.terms.map((term, idx) => (
+					{"\n\n"}
+					With refer to the above, we would like to quote you the price as
+					below:
+				</Text>
+
+				{/* Pricing Table */}
+				<View style={invoiceStyles.pricingTable}>
+					{/* Table Header */}
+					<View style={invoiceStyles.pricingHeader}>
+						<View style={invoiceStyles.colNo}>
+							<Text style={{ fontWeight: "bold", textAlign: "center" }}>
+								No
+							</Text>
+						</View>
+						<View style={invoiceStyles.colDesc}>
+							<Text style={{ fontWeight: "bold" }}>Description</Text>
+						</View>
+						<View style={invoiceStyles.colQty}>
+							<Text style={{ fontWeight: "bold", textAlign: "center" }}>
+								Quantity
+							</Text>
+						</View>
+						<View style={invoiceStyles.colUnit}>
+							<Text style={{ fontWeight: "bold", textAlign: "center" }}>
+								Unit Charge
+							</Text>
+						</View>
+						<View style={invoiceStyles.colTotal}>
+							<Text style={{ fontWeight: "bold", textAlign: "center" }}>
+								Total
+							</Text>
+						</View>
+					</View>
+
+					{/* Items */}
+					{items.map((item, idx) => (
 						<View
-							key={`term-${term.substring(0, 20)}-${idx}`}
-							style={torStyles.bulletPoint}
+							key={`item-${item.description}-${item.quantity}-${item.unitCharge}-${idx}`}
+							style={invoiceStyles.pricingRow}
 						>
-							<Text style={torStyles.bullet}>{idx + 1}.</Text>
-							<Text style={torStyles.bulletText}>{term}</Text>
+							<View style={invoiceStyles.colNo}>
+								<Text style={{ textAlign: "center" }}>{idx + 1}</Text>
+							</View>
+							<View style={invoiceStyles.colDesc}>
+								<Text>{item.description}</Text>
+							</View>
+							<View style={invoiceStyles.colQty}>
+								<Text style={{ textAlign: "center" }}>
+									{item.quantity} samples
+								</Text>
+							</View>
+							<View style={invoiceStyles.colUnit}>
+								<Text style={{ textAlign: "center" }}>{item.unitCharge}</Text>
+							</View>
+							<View style={invoiceStyles.colTotal}>
+								<Text style={{ textAlign: "center" }}>
+									{item.quantity * item.unitCharge}
+								</Text>
+							</View>
 						</View>
 					))}
+
+					{/* Empty Rows for spacing */}
+					{Array.from({ length: emptyRows }).map((_, idx) => (
+						<View
+							key={`empty-row-${items.length}-${idx}`}
+							style={invoiceStyles.pricingRow}
+						>
+							<View style={invoiceStyles.colNo}>
+								<Text></Text>
+							</View>
+							<View style={invoiceStyles.colDesc}>
+								<Text></Text>
+							</View>
+							<View style={invoiceStyles.colQty}>
+								<Text></Text>
+							</View>
+							<View style={invoiceStyles.colUnit}>
+								<Text></Text>
+							</View>
+							<View style={invoiceStyles.colTotal}>
+								<Text></Text>
+							</View>
+						</View>
+					))}
+
+					{/* Subtotal */}
+					<View style={invoiceStyles.pricingRow}>
+						<View style={[invoiceStyles.colNo, { borderRightWidth: 0 }]}>
+							<Text></Text>
+						</View>
+						<View style={[invoiceStyles.colDesc, { borderRightWidth: 0 }]}>
+							<Text></Text>
+						</View>
+						<View style={[invoiceStyles.colQty, { borderRightWidth: 0 }]}>
+							<Text></Text>
+						</View>
+						<View
+							style={[
+								invoiceStyles.colUnit,
+								{ borderRightWidth: 1, paddingRight: 5 },
+							]}
+						>
+							<Text style={{ textAlign: "right" }}>SUB TOTAL</Text>
+						</View>
+						<View style={invoiceStyles.colTotal}>
+							<Text style={{ textAlign: "center" }}>{subTotal}</Text>
+						</View>
+					</View>
+
+					{/* Total */}
+					<View style={[invoiceStyles.pricingRow, { borderBottomWidth: 0 }]}>
+						<View style={[invoiceStyles.colNo, { borderRightWidth: 0 }]}>
+							<Text></Text>
+						</View>
+						<View style={[invoiceStyles.colDesc, { borderRightWidth: 0 }]}>
+							<Text></Text>
+						</View>
+						<View style={[invoiceStyles.colQty, { borderRightWidth: 0 }]}>
+							<Text></Text>
+						</View>
+						<View
+							style={[
+								invoiceStyles.colUnit,
+								{
+									borderRightWidth: 1,
+									paddingRight: 5,
+								},
+							]}
+						>
+							<Text style={{ textAlign: "right", fontWeight: "bold" }}>
+								Total (RM)
+							</Text>
+						</View>
+						<View style={invoiceStyles.colTotal}>
+							<Text style={{ textAlign: "center", fontWeight: "bold" }}>
+								{subTotal}
+							</Text>
+						</View>
+					</View>
 				</View>
+			</Page>
 
-				{/* Acknowledgement Box */}
-				<View style={torStyles.acknowledgementBox}>
-					<Text style={torStyles.acknowledgementTitle}>
-						ACKNOWLEDGEMENT & DECLARATION
-					</Text>
-					<Text style={torStyles.acknowledgementText}>
-						I have read, understood, and will work in accordance with the terms
-						and conditions stated above. I acknowledge that failure to comply
-						with these terms may result in restricted access to equipment and/or
-						disciplinary action.
-					</Text>
-
-					<View style={torStyles.checkboxRow}>
-						<View style={torStyles.checkbox} />
-						<Text style={torStyles.checkboxText}>
-							I have received proper training for this equipment
+			{/* Page 2: Terms & Conditions, Verification, Payment Methods, Checklist, Declaration */}
+			<Page size="A4" style={invoiceStyles.page}>
+				{/* Terms & Conditions Box */}
+				<View style={invoiceStyles.termsContainer}>
+					<Text style={invoiceStyles.termsTitle}>TERMS & CONDITIONS</Text>
+				</View>
+				<View
+					style={{
+						borderLeftWidth: 1,
+						borderRightWidth: 1,
+						borderBottomWidth: 1,
+						borderColor: "#000",
+						padding: 5,
+					}}
+				>
+					<View style={invoiceStyles.termItem}>
+						<Text style={invoiceStyles.termBullet}>xiii)</Text>
+						<Text style={invoiceStyles.termText}>
+							This service form only valid for 30 days from the date of issuance
 						</Text>
 					</View>
-					<View style={torStyles.checkboxRow}>
-						<View style={torStyles.checkbox} />
-						<Text style={torStyles.checkboxText}>
-							I understand the safety hazards associated with this equipment
+					<View style={invoiceStyles.termItem}>
+						<Text style={invoiceStyles.termBullet}>xiv)</Text>
+						<Text style={invoiceStyles.termText}>
+							Comply with the rules that have been enforced by the faculty and
+							university.
 						</Text>
 					</View>
-					<View style={torStyles.checkboxRow}>
-						<View style={torStyles.checkbox} />
-						<Text style={torStyles.checkboxText}>
-							I agree to report any equipment malfunction immediately
+					<View style={invoiceStyles.termItem}>
+						<Text style={invoiceStyles.termBullet}>xv)</Text>
+						<Text style={invoiceStyles.termText}>
+							For analysis sampling purposes, the client is responsible in the
+							preparation of research materials.
+						</Text>
+					</View>
+					<View style={invoiceStyles.termItem}>
+						<Text style={invoiceStyles.termBullet}>xvi)</Text>
+						<Text style={invoiceStyles.termText}>
+							For equipment rental, penalty will be added IF the
+							equipment/machine used is not in good condition after the rental
+							period. It is client's responsibility to ensure the experimental
+							material is suitable with the equipment.
+						</Text>
+					</View>
+					<View style={invoiceStyles.termItem}>
+						<Text style={invoiceStyles.termBullet}>xvii)</Text>
+						<Text style={invoiceStyles.termText}>
+							The payment MUST be made within{" "}
+							<Text style={{ fontWeight: "bold" }}>14 days AFTER</Text> the
+							official invoice issued. Payment should be made to the following
+							account:
+						</Text>
+					</View>
+
+					<View style={invoiceStyles.bankDetails}>
+						<View style={invoiceStyles.bankRow}>
+							<Text style={invoiceStyles.bankLabel}>ACCOUNT NAME</Text>
+							<Text style={{ fontSize: 9 }}>Bendahari UTM</Text>
+						</View>
+						<View style={invoiceStyles.bankRow}>
+							<Text style={invoiceStyles.bankLabel}>BANK</Text>
+							<Text style={{ fontSize: 9 }}>BANK ISLAM MALAYSIA BERHAD</Text>
+						</View>
+						<View style={invoiceStyles.bankRow}>
+							<Text style={invoiceStyles.bankLabel}>ACCOUNT NUMBER</Text>
+							<Text style={{ fontSize: 9 }}>1403 2010 035 630</Text>
+						</View>
+					</View>
+
+					<View style={invoiceStyles.termItem}>
+						<Text style={invoiceStyles.termBullet}>xviii)</Text>
+						<Text style={invoiceStyles.termText}>
+							After the payment made, proof of payment must be send to the PIC's
+							email as above.
 						</Text>
 					</View>
 				</View>
 
-				{/* Signatures Section */}
-				<View style={torStyles.signatureSection}>
-					<View style={torStyles.signatureRow}>
-						{/* User Signature */}
-						<View style={torStyles.signatureBox}>
-							<Text style={torStyles.signatureLabel}>User Signature:</Text>
-							<View style={torStyles.signatureLine} />
-							<Text style={torStyles.signatureLabel}>
-								Signed: _________________
+				{/* Verification Section */}
+				<View style={invoiceStyles.verificationSection}>
+					{/* Customer Side */}
+					<View style={[invoiceStyles.verifCol, invoiceStyles.borderRight]}>
+						<Text style={invoiceStyles.verifHeader}>
+							Customer Authorized Verification
+						</Text>
+						<View style={invoiceStyles.verifContent}>
+							<Text style={{ fontSize: 9, marginBottom: 15 }}>
+								I hereby declare that the price offered in this service form is
+								accepted and payment will be made on time.
 							</Text>
-							<View style={torStyles.signatureUnderline} />
-							<Text style={torStyles.signatureLabel}>Name: {userName}</Text>
-							<View style={torStyles.signatureUnderline} />
-							<Text style={torStyles.signatureLabel}>
-								Date: _________________
-							</Text>
+							<View
+								style={{
+									borderBottomWidth: 1,
+									borderColor: "#000",
+									marginBottom: 5,
+								}}
+							/>
+							<View style={{ flexDirection: "row", marginBottom: 2 }}>
+								<Text style={{ width: 60, fontSize: 9 }}>Nama/ Name:</Text>
+								<Text style={{ fontSize: 9 }}>{name}</Text>
+							</View>
+							<View style={{ flexDirection: "row", marginBottom: 2 }}>
+								<Text style={{ width: 60, fontSize: 9 }}>IC No.:</Text>
+							</View>
+							<View style={{ flexDirection: "row", marginBottom: 2 }}>
+								<Text style={{ width: 60, fontSize: 9 }}>Date:</Text>
+							</View>
+							<View style={{ flexDirection: "row" }}>
+								<Text style={{ width: 60, fontSize: 9 }}>Email:</Text>
+								<Text style={{ fontSize: 9 }}>{email}</Text>
+							</View>
 						</View>
+					</View>
 
-						{/* Supervisor Signature */}
-						<View style={torStyles.signatureBox}>
-							<Text style={torStyles.signatureLabel}>
-								Supervisor Signature:
-							</Text>
-							<View style={torStyles.signatureLine} />
-							<Text style={torStyles.signatureLabel}>
-								Signed: _________________
-							</Text>
-							<View style={torStyles.signatureUnderline} />
-							<Text style={torStyles.signatureLabel}>
-								Name: {supervisorName}
-							</Text>
-							<View style={torStyles.signatureUnderline} />
-							<Text style={torStyles.signatureLabel}>
-								Date: _________________
-							</Text>
+					{/* Service Provider Side */}
+					<View style={invoiceStyles.verifCol}>
+						<Text style={invoiceStyles.verifHeader}>
+							Service Provider Verification
+						</Text>
+						<View style={invoiceStyles.verifContent}>
+							<View style={{ flexDirection: "row", alignItems: "center" }}>
+								<Text style={{ width: 40, fontSize: 9 }}>Name</Text>
+								<Text style={{ fontSize: 9 }}>{providerName}</Text>
+							</View>
+
+							<View style={{ height: 40, marginTop: 10 }}>
+								<Text style={{ fontSize: 9, marginBottom: 30 }}>
+									Sign & Official stamp
+								</Text>
+								{/* Space for signature */}
+							</View>
+
+							<View
+								style={{
+									flexDirection: "row",
+									alignItems: "center",
+									marginTop: 10,
+								}}
+							>
+								<Text style={{ width: 40, fontSize: 9 }}>Date</Text>
+								<Text style={{ fontSize: 9 }}>
+									{providerDate ? formatDate(providerDate) : formattedDate}
+								</Text>
+							</View>
 						</View>
 					</View>
 				</View>
 
-				{/* Status Section */}
-				<View style={torStyles.statusSection}>
-					<Text style={torStyles.statusTitle}>Circle appropriate status:</Text>
-					<View style={torStyles.statusOptions}>
-						<View style={torStyles.statusOption}>
-							<View style={torStyles.statusCircle} />
-							<Text style={torStyles.statusOptionText}>Undergraduate</Text>
+				{/* Payment Methods */}
+				<View style={invoiceStyles.paymentRow}>
+					<Text style={{ fontSize: 9 }}>Method of Payment:</Text>
+					<View style={{ flexDirection: "row", alignItems: "center" }}>
+						<Text style={{ fontSize: 9, marginLeft: 20 }}>
+							Electric Fund Transfer (EFT)
+						</Text>
+						<View style={invoiceStyles.checkbox} />
+					</View>
+					<View style={{ flexDirection: "row", alignItems: "center" }}>
+						<Text style={{ fontSize: 9, marginLeft: 20 }}>Vote Transfer</Text>
+						<View style={invoiceStyles.checkbox} />
+					</View>
+					<View style={{ flexDirection: "row", alignItems: "center" }}>
+						<Text style={{ fontSize: 9, marginLeft: 20 }}>
+							Local Order (LO)
+						</Text>
+						<View style={invoiceStyles.checkbox} />
+					</View>
+				</View>
+
+				{/* Checklist */}
+				<View>
+					<Text style={invoiceStyles.grayBoxHeader}>CHECK LIST</Text>
+					<View style={invoiceStyles.checklistBody}>
+						<View style={invoiceStyles.checkItem}>
+							<Text style={{ width: 25, fontSize: 9 }}>xix)</Text>
+							<Text style={invoiceStyles.checkLabel}>
+								Company registration by MJIIT(UTM) has been completed: (please
+								include proof that registration has been completed or is not
+								required, either via email or WhatsApp)
+							</Text>
+							<View style={invoiceStyles.checkOptions}>
+								<View style={invoiceStyles.smallCheck} />
+								<Text style={invoiceStyles.smallCheckLabel}>Yes</Text>
+								<View style={invoiceStyles.smallCheck} />
+								<Text style={invoiceStyles.smallCheckLabel}>No</Text>
+								<View style={invoiceStyles.smallCheck} />
+								<Text style={invoiceStyles.smallCheckLabel}>N/A</Text>
+							</View>
 						</View>
-						<View style={torStyles.statusOption}>
-							<View style={torStyles.statusCircle} />
-							<Text style={torStyles.statusOptionText}>Masters</Text>
+
+						<View style={invoiceStyles.checkItem}>
+							<Text style={{ width: 25, fontSize: 9 }}>xx)</Text>
+							<Text style={invoiceStyles.checkLabel}>
+								The quotation has been accepted by the customer:
+							</Text>
+							<View style={invoiceStyles.checkOptions}>
+								<View style={invoiceStyles.smallCheck} />
+								<Text style={invoiceStyles.smallCheckLabel}>Yes</Text>
+								<View style={invoiceStyles.smallCheck} />
+								<Text style={invoiceStyles.smallCheckLabel}>No</Text>
+								<View style={invoiceStyles.smallCheck} />
+								<Text style={invoiceStyles.smallCheckLabel}>N/A</Text>
+							</View>
 						</View>
-						<View style={torStyles.statusOption}>
-							<View style={torStyles.statusCircle} />
-							<Text style={torStyles.statusOptionText}>PhD</Text>
-						</View>
-						<View style={torStyles.statusOption}>
-							<View style={torStyles.statusCircle} />
-							<Text style={torStyles.statusOptionText}>Staff</Text>
-						</View>
-						<View style={torStyles.statusOption}>
-							<View style={torStyles.statusCircle} />
-							<Text style={torStyles.statusOptionText}>External</Text>
+
+						<View style={invoiceStyles.checkItem}>
+							<Text style={{ width: 25, fontSize: 9 }}>xxi)</Text>
+							<Text style={invoiceStyles.checkLabel}>
+								A Purchase Order(PO) or a Local Order(LO) has been given by the
+								customer: (please attach PO or LO documents)
+							</Text>
+							<View style={invoiceStyles.checkOptions}>
+								<View style={invoiceStyles.smallCheck} />
+								<Text style={invoiceStyles.smallCheckLabel}>Yes</Text>
+								<View style={invoiceStyles.smallCheck} />
+								<Text style={invoiceStyles.smallCheckLabel}>No</Text>
+								<View style={invoiceStyles.smallCheck} />
+								<Text style={invoiceStyles.smallCheckLabel}>N/A</Text>
+							</View>
 						</View>
 					</View>
 				</View>
 
-				{/* Footer */}
-				<View fixed style={torStyles.footer}>
-					<Text>
-						Terms of Reference | ChECA iKohza | MJIIT | Universiti Teknologi
-						Malaysia
-					</Text>
-					<Text>
-						This form must be signed and returned before equipment access is
-						granted.
-					</Text>
+				{/* Declaration */}
+				<View>
+					<Text style={invoiceStyles.grayBoxHeader}>DECLARATION</Text>
+					<View style={invoiceStyles.declarationBody}>
+						<Text
+							style={{
+								fontSize: 10,
+								textAlign: "center",
+								marginBottom: 15,
+								fontStyle: "italic",
+							}}
+						>
+							As a billing PIC, I will claim my client's debt until it is
+							settled.
+						</Text>
+
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "flex-end",
+								marginBottom: 5,
+							}}
+						>
+							<Text style={{ width: 120, fontSize: 9 }}>Name :</Text>
+							<View style={invoiceStyles.sigLine} />
+						</View>
+						<View
+							style={{
+								flexDirection: "row",
+								alignItems: "flex-end",
+								marginBottom: 5,
+							}}
+						>
+							<Text style={{ width: 120, fontSize: 9 }}>
+								Sign & Official Stamps :
+							</Text>
+							<View style={invoiceStyles.sigLine} />
+						</View>
+						<View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+							<Text style={{ width: 120, fontSize: 9 }}>Date :</Text>
+							<Text style={{ marginLeft: 5, fontSize: 9 }}>
+								{formattedDate}
+							</Text>
+							<View style={invoiceStyles.sigLine} />
+						</View>
+					</View>
 				</View>
 			</Page>
 		</Document>
+	);
+}
+
+// TORTemplate wrapper component that maps route props to InvoiceRequestForm
+export function TORTemplate({
+	userName,
+	userEmail,
+	userFaculty,
+	userDepartment,
+	userIkohza,
+	utmLocation,
+	supervisorName = "",
+	refNo,
+	date,
+	userAddress = "",
+	userTel = "",
+	serviceItems = [],
+	userType,
+}: TORTemplateProps) {
+	// Map service items to line items format
+	const items: LineItem[] = serviceItems.map((item) => ({
+		description: item.sampleName
+			? `${item.service.name} - ${item.sampleName}`
+			: item.service.name,
+		quantity: item.quantity,
+		unitCharge:
+			typeof item.unitPrice === "string"
+				? parseFloat(item.unitPrice)
+				: Number(item.unitPrice),
+	}));
+
+	// Generate address based on user type
+	const generatedAddress = userType
+		? generateTORAddress({
+			userType,
+			userAddress,
+			department: userDepartment,
+			faculty: userFaculty,
+			ikohza: userIkohza,
+			utmLocation,
+		})
+		: userAddress || "N/A";
+
+	// Use InvoiceRequestForm with mapped props
+	return (
+		<InvoiceRequestForm
+			address={generatedAddress || "N/A"}
+			date={date}
+			email={userEmail}
+			facility={facilityConfig.facilityName}
+			items={items}
+			name={userName}
+			providerName={facilityConfig.staffPic.fullName}
+			refNo={refNo}
+			staffPic={facilityConfig.staffPic.name}
+			staffPicEmail={facilityConfig.staffPic.email}
+			supervisorName={supervisorName}
+			tel={userTel || "N/A"}
+		/>
 	);
 }

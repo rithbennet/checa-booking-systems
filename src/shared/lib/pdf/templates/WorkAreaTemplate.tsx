@@ -3,6 +3,7 @@
  * Generates a formal approval letter with laboratory usage agreement (Appendix A)
  */
 
+import path from "node:path";
 import {
 	Document,
 	Image,
@@ -11,11 +12,17 @@ import {
 	Text,
 	View,
 } from "@react-pdf/renderer";
+import { facilityConfig } from "@/shared/lib/pdf/config/facility-config";
 import {
 	styles as baseStyles,
 	formatDate,
 	pdfColors,
 } from "@/shared/lib/pdf/pdf-styles";
+
+// Get file system path for images (react-pdf needs absolute paths)
+const getImagePath = (imageName: string) => {
+	return path.join(process.cwd(), "public", "images", imageName);
+};
 
 // Work Area specific styles
 const workAreaStyles = StyleSheet.create({
@@ -293,7 +300,7 @@ export function WorkAreaTemplate({
 	endDate,
 	refNo,
 	approverName = "Assoc. Prof. Dr. Mohd Firdaus Abd Wahab",
-	approverTitle = "Head, ChECA iKohza",
+	approverTitle = `Head, ${facilityConfig.facilityName}`,
 	purpose,
 }: WorkAreaTemplateProps) {
 	const currentDate = formatDate(new Date());
@@ -305,10 +312,15 @@ export function WorkAreaTemplate({
 				{/* Header */}
 				<View style={workAreaStyles.header}>
 					<View style={workAreaStyles.headerLeft}>
-						<Image src="/images/checa-logo.png" style={workAreaStyles.logo} />
+						<Image
+							src={getImagePath("utm-logo.png")}
+							style={workAreaStyles.logo}
+						/>
 					</View>
 					<View style={workAreaStyles.headerRight}>
-						<Text style={workAreaStyles.instituteName}>ChECA iKohza</Text>
+						<Text style={workAreaStyles.instituteName}>
+							{facilityConfig.facilityName}
+						</Text>
 						<Text style={workAreaStyles.instituteUnit}>
 							Chemical Engineering & Clean Air
 						</Text>
@@ -342,8 +354,9 @@ export function WorkAreaTemplate({
 				{/* Body */}
 				<Text style={workAreaStyles.bodyText}>
 					With reference to your application for laboratory working space at
-					ChECA iKohza, we are pleased to inform you that your request has been
-					approved. The details of your approval are as follows:
+					{facilityConfig.facilityName}, we are pleased to inform you that your
+					request has been approved. The details of your approval are as
+					follows:
 				</Text>
 
 				{/* Details Section */}
