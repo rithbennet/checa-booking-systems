@@ -89,3 +89,23 @@ export interface UserStatusCounts {
 	rejected: number;
 	suspended: number;
 }
+
+/**
+ * Admin update user input
+ * Allows admins to update all user fields except email
+ */
+export interface AdminUpdateUserInput {
+	firstName?: string;
+	lastName?: string;
+	phone?: string | null;
+	userType?: UserType;
+	academicType?: AcademicType;
+	userIdentifier?: string | null;
+	supervisorName?: string | null;
+	facultyId?: string | null;
+	departmentId?: string | null;
+	ikohzaId?: string | null;
+	companyId?: string | null;
+	companyBranchId?: string | null;
+	status?: UserStatus;
+}

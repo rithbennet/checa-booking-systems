@@ -5,6 +5,7 @@
 
 export { AccountRejectedEmail } from "./AccountRejectedEmail";
 export { AccountSuspendedEmail } from "./AccountSuspendedEmail";
+export { AccountUpdatedEmail } from "./AccountUpdatedEmail";
 export { AccountVerifiedEmail } from "./AccountVerifiedEmail";
 export { AdminNewUserRegisteredEmail } from "./AdminNewUserRegisteredEmail";
 export { AdminNotificationEmail } from "./AdminNotificationEmail";

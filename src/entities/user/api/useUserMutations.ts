@@ -1,7 +1,11 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { UserStatus, UserType } from "../model/types";
+import type {
+	AdminUpdateUserInput,
+	UserStatus,
+	UserType,
+} from "../model/types";
 import { userKeys } from "./query-keys";
 
 /**
@@ -158,6 +162,40 @@ export function useUpdateUserType() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: userKeys.all });
+		},
+	});
+}
+
+interface AdminUpdateUserParams {
+	userId: string;
+	input: AdminUpdateUserInput;
+}
+
+export function useAdminUpdateUser() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async (params: AdminUpdateUserParams) => {
+			const res = await fetch(`/api/admin/users/${params.userId}/profile`, {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(params.input),
+			});
+
+			if (!res.ok) {
+				const json = await res.json().catch(() => ({}));
+				const errorMessage = extractErrorMessage(json, "Failed to update user");
+				throw new Error(errorMessage);
+			}
+
+			return res.json();
+		},
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({ queryKey: userKeys.all });
+			// Also invalidate the specific user's profile if they have a query key for it
+			queryClient.invalidateQueries({
+				queryKey: userKeys.detail(variables.userId),
+			});
 		},
 	});
 }

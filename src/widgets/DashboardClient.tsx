@@ -236,37 +236,37 @@ export function DashboardClient() {
 							</Link>
 						</div>
 
-					{/* My Bookings Widgets */}
-					<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+						{/* My Bookings Widgets */}
+						<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+							<div>
+								<DashboardBookingsWidget
+									limit={5}
+									preset="pending_review"
+									showViewAll
+									title="Pending Review"
+								/>
+							</div>
+							<div>
+								<DashboardBookingsWidget
+									limit={5}
+									preset="in_progress"
+									showViewAll
+									title="In Progress"
+								/>
+							</div>
+						</div>
+
+						{/* Sample Tracker Widget */}
+						<UserSampleTracker />
+
 						<div>
 							<DashboardBookingsWidget
-								limit={5}
-								preset="pending_review"
+								limit={8}
+								preset="recent_completed"
 								showViewAll
-								title="Pending Review"
+								title="Recently Completed"
 							/>
 						</div>
-						<div>
-							<DashboardBookingsWidget
-								limit={5}
-								preset="in_progress"
-								showViewAll
-								title="In Progress"
-							/>
-						</div>
-					</div>
-
-					{/* Sample Tracker Widget */}
-					<UserSampleTracker />
-
-					<div>
-						<DashboardBookingsWidget
-							limit={8}
-							preset="recent_completed"
-							showViewAll
-							title="Recently Completed"
-						/>
-					</div>
 
 						{/* Recent Notifications */}
 						<Card>

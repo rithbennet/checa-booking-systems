@@ -9,6 +9,7 @@ export { useOnboardingOptions } from "./useOnboardingOptions";
 export { useRegistrationOptions } from "./useRegistrationOptions";
 export { useUserCounts, useUserList } from "./useUserList";
 export {
+	useAdminUpdateUser,
 	useApproveUser,
 	useRejectUser,
 	useUpdateUserStatus,

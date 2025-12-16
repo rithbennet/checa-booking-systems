@@ -8,6 +8,7 @@ import type { notification_type_enum } from "../../../../generated/prisma";
 import {
 	sendAccountRejectedEmail,
 	sendAccountSuspendedEmail,
+	sendAccountUpdatedEmail,
 	sendAccountVerifiedEmail,
 	sendAdminNewUserRegisteredEmail,
 	sendWelcomeVerificationEmail,
@@ -202,5 +203,60 @@ export async function notifyUserAccountStatusChanged(params: {
 		customerName: userDetails.name,
 		status: params.status,
 		reason: params.reason,
+	});
+}
+
+/**
+ * Notify user when their account information is updated by an admin
+ */
+export async function notifyUserAccountUpdated(params: {
+	userId: string;
+	changedFields: string[];
+}) {
+	const userDetails = await getUserEmailDetails(params.userId);
+	if (!userDetails) return;
+
+	// Map field names to user-friendly labels
+	const fieldLabels: Record<string, string> = {
+		firstName: "First Name",
+		lastName: "Last Name",
+		phone: "Phone Number",
+		userType: "Account Type",
+		academicType: "Academic Type",
+		userIdentifier: "User Identifier",
+		supervisorName: "Supervisor Name",
+		facultyId: "Faculty",
+		departmentId: "Department",
+		ikohzaId: "iKohza",
+		companyId: "Company",
+		companyBranchId: "Company Branch",
+		status: "Account Status",
+	};
+
+	const changedFieldLabels = params.changedFields
+		.map((field) => fieldLabels[field] || field)
+		.filter(Boolean);
+
+	const changedFieldsText =
+		changedFieldLabels.length > 0
+			? changedFieldLabels.join(", ")
+			: "account information";
+
+	// Create in-app notification
+	await enqueueInApp({
+		userId: params.userId,
+		type: "booking_approved", // Reusing existing type
+		relatedEntityType: "user",
+		relatedEntityId: params.userId,
+		title: "Account Updated",
+		message: `Your account information has been updated by an administrator. The following details were changed: ${changedFieldsText}.`,
+	});
+
+	// Send email
+	await sendAccountUpdatedEmail({
+		to: userDetails.email,
+		customerName: userDetails.name,
+		changedFields: params.changedFields,
+		userId: params.userId,
 	});
 }

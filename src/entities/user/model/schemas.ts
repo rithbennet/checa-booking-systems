@@ -23,3 +23,42 @@ export const updateProfileInputSchema = z.object({
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileInputSchema>;
+
+/**
+ * Schema for validating admin update user input
+ * Extends base schema with userType and status fields
+ */
+export const adminUpdateUserInputSchema = updateProfileInputSchema
+	.extend({
+		userType: z
+			.enum([
+				"mjiit_member",
+				"utm_member",
+				"external_member",
+				"lab_administrator",
+			])
+			.optional(),
+		academicType: z.enum(["student", "staff", "none"]).optional(),
+		status: z
+			.enum(["pending", "active", "inactive", "rejected", "suspended"])
+			.optional(),
+	})
+	.refine(
+		(data) => {
+			// UTM members cannot have ikohzaId
+			if (
+				data.userType === "utm_member" &&
+				data.ikohzaId !== null &&
+				data.ikohzaId !== undefined
+			) {
+				return false;
+			}
+			return true;
+		},
+		{
+			message: "UTM members cannot have an iKohza",
+			path: ["ikohzaId"],
+		},
+	);
+
+export type AdminUpdateUserInput = z.infer<typeof adminUpdateUserInputSchema>;
