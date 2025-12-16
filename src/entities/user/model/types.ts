@@ -92,23 +92,9 @@ export interface UserStatusCounts {
 
 /**
  * Admin update user input
- * Allows admins to update all user fields except email
+ * Type exported from schemas.ts (Zod-inferred type)
+ * @see ../model/schemas.ts
  */
-export interface AdminUpdateUserInput {
-	firstName?: string;
-	lastName?: string;
-	phone?: string | null;
-	userType?: UserType;
-	academicType?: AcademicType;
-	userIdentifier?: string | null;
-	supervisorName?: string | null;
-	facultyId?: string | null;
-	departmentId?: string | null;
-	ikohzaId?: string | null;
-	companyId?: string | null;
-	companyBranchId?: string | null;
-	status?: UserStatus;
-}
 
 /**
  * User summary view model for admin view
@@ -139,7 +125,7 @@ export interface UserSummaryVM {
 	usagePatterns: {
 		topServices: Array<{ name: string; count: number }>;
 		topEquipment: Array<{ name: string; count: number }>;
-		averageBookingFrequency: number; // bookings per month
+		averageBookingFrequency: number | null; // bookings per month, null if insufficient data
 	};
 	documentStatus: {
 		totalDocuments: number;

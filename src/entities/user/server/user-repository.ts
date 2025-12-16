@@ -1,7 +1,7 @@
 import { db } from "@/shared/server/db";
 import { ValidationError } from "@/shared/server/errors";
+import type { AdminUpdateUserInput } from "../model/schemas";
 import type {
-	AdminUpdateUserInput,
 	UserListFilters,
 	UserListItemVM,
 	UserStatusCounts,

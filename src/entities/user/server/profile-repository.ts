@@ -246,7 +246,7 @@ export async function updateUserProfileImage(
 export async function getUserSummary(
 	userId: string,
 ): Promise<UserSummaryVM | null> {
-	// Check if user exists
+	// Check if user exists (must be sequential - needed for userId and createdAt)
 	const user = await db.user.findUnique({
 		where: { id: userId },
 		select: { id: true, createdAt: true },
@@ -254,13 +254,89 @@ export async function getUserSummary(
 
 	if (!user) return null;
 
-	// Get booking counts
-	const bookingCounts = await db.bookingRequest.groupBy({
-		by: ["status"],
-		where: { userId },
-		_count: { _all: true },
-	});
+	// Run all independent queries in parallel
+	const [
+		bookingCounts,
+		recentBookings,
+		invoices,
+		serviceUsage,
+		sampleEquipmentUsage,
+		workspaceEquipmentUsage,
+		documents,
+	] = await Promise.all([
+		// Get booking counts
+		db.bookingRequest.groupBy({
+			by: ["status"],
+			where: { userId },
+			_count: { _all: true },
+		}),
+		// Get recent bookings (last 10)
+		db.bookingRequest.findMany({
+			where: { userId },
+			orderBy: { createdAt: "desc" },
+			take: 10,
+			select: {
+				id: true,
+				referenceNumber: true,
+				status: true,
+				totalAmount: true,
+				createdAt: true,
+			},
+		}),
+		// Get financial data
+		db.invoice.findMany({
+			where: {
+				serviceForm: {
+					bookingRequest: { userId },
+				},
+				status: { not: "cancelled" },
+			},
+			include: {
+				payments: {
+					orderBy: { uploadedAt: "desc" },
+				},
+			},
+		}),
+		// Get usage patterns - top services
+		db.bookingServiceItem.groupBy({
+			by: ["serviceId"],
+			where: {
+				bookingRequest: { userId },
+			},
+			_count: { _all: true },
+		}),
+		// Get top equipment - sample equipment usage
+		db.sampleEquipmentUsage.groupBy({
+			by: ["equipmentId"],
+			where: {
+				bookedItem: {
+					bookingRequest: { userId },
+				},
+			},
+			_count: { _all: true },
+		}),
+		// Get top equipment - workspace equipment usage
+		db.workspaceEquipmentUsage.groupBy({
+			by: ["equipmentId"],
+			where: {
+				workspaceBooking: {
+					bookingRequest: { userId },
+				},
+			},
+			_count: { _all: true },
+		}),
+		// Get document status
+		db.bookingDocument.findMany({
+			where: {
+				booking: { userId },
+			},
+			select: {
+				verificationStatus: true,
+			},
+		}),
+	]);
 
+	// Process booking counts
 	const statusCounts: Record<string, number> = {};
 	bookingCounts.forEach((item) => {
 		statusCounts[item.status] = item._count._all;
@@ -273,35 +349,7 @@ export async function getUserSummary(
 	const cancelled = statusCounts.cancelled || 0;
 	const rejected = statusCounts.rejected || 0;
 
-	// Get recent bookings (last 10)
-	const recentBookings = await db.bookingRequest.findMany({
-		where: { userId },
-		orderBy: { createdAt: "desc" },
-		take: 10,
-		select: {
-			id: true,
-			referenceNumber: true,
-			status: true,
-			totalAmount: true,
-			createdAt: true,
-		},
-	});
-
-	// Get financial data
-	const invoices = await db.invoice.findMany({
-		where: {
-			serviceForm: {
-				bookingRequest: { userId },
-			},
-			status: { not: "cancelled" },
-		},
-		include: {
-			payments: {
-				orderBy: { uploadedAt: "desc" },
-			},
-		},
-	});
-
+	// Process financial data
 	let totalSpent = 0;
 	let outstanding = 0;
 	let pending = 0;
@@ -339,21 +387,13 @@ export async function getUserSummary(
 		}
 	}
 
-	// Get usage patterns - top services
-	const serviceUsage = await db.bookingServiceItem.groupBy({
-		by: ["serviceId"],
-		where: {
-			bookingRequest: { userId },
-		},
-		_count: true,
-	});
-
-	// Sort by count descending and take top 3
+	// Process service usage - sort by count descending and take top 3
 	const sortedServiceUsage = serviceUsage
-		.sort((a, b) => (b._count || 0) - (a._count || 0))
+		.sort((a, b) => (b._count?._all || 0) - (a._count?._all || 0))
 		.slice(0, 3);
 
 	const serviceIds = sortedServiceUsage.map((s) => s.serviceId);
+	// Get services lookup (depends on serviceUsage results)
 	const services = await db.service.findMany({
 		where: { id: { in: serviceIds } },
 		select: { id: true, name: true },
@@ -363,40 +403,19 @@ export async function getUserSummary(
 		const service = services.find((s) => s.id === usage.serviceId);
 		return {
 			name: service?.name || "Unknown",
-			count: usage._count || 0,
+			count: usage._count?._all || 0,
 		};
 	});
 
-	// Get top equipment - need to query both SampleEquipmentUsage and WorkspaceEquipmentUsage
-	const sampleEquipmentUsage = await db.sampleEquipmentUsage.groupBy({
-		by: ["equipmentId"],
-		where: {
-			bookedItem: {
-				bookingRequest: { userId },
-			},
-		},
-		_count: true,
-	});
-
-	const workspaceEquipmentUsage = await db.workspaceEquipmentUsage.groupBy({
-		by: ["equipmentId"],
-		where: {
-			workspaceBooking: {
-				bookingRequest: { userId },
-			},
-		},
-		_count: true,
-	});
-
-	// Combine and aggregate counts by equipmentId
+	// Combine and aggregate equipment counts by equipmentId
 	const equipmentCounts = new Map<string, number>();
 	for (const usage of sampleEquipmentUsage) {
 		const current = equipmentCounts.get(usage.equipmentId) || 0;
-		equipmentCounts.set(usage.equipmentId, current + (usage._count || 0));
+		equipmentCounts.set(usage.equipmentId, current + (usage._count?._all || 0));
 	}
 	for (const usage of workspaceEquipmentUsage) {
 		const current = equipmentCounts.get(usage.equipmentId) || 0;
-		equipmentCounts.set(usage.equipmentId, current + (usage._count || 0));
+		equipmentCounts.set(usage.equipmentId, current + (usage._count?._all || 0));
 	}
 
 	// Sort by count and take top 3
@@ -405,6 +424,7 @@ export async function getUserSummary(
 		.slice(0, 3)
 		.map(([id]) => id);
 
+	// Get equipment lookup (depends on equipment usage results)
 	const equipment = await db.labEquipment.findMany({
 		where: { id: { in: topEquipmentIds } },
 		select: { id: true, name: true },
@@ -421,20 +441,11 @@ export async function getUserSummary(
 	// Calculate average booking frequency (bookings per month)
 	const monthsSinceRegistration =
 		(Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24 * 30);
+	const minimumThreshold = 1; // minimum 1 month for reliable frequency calculation
 	const averageBookingFrequency =
-		monthsSinceRegistration > 0
+		monthsSinceRegistration >= minimumThreshold
 			? totalBookings / monthsSinceRegistration
-			: totalBookings;
-
-	// Get document status
-	const documents = await db.bookingDocument.findMany({
-		where: {
-			booking: { userId },
-		},
-		select: {
-			verificationStatus: true,
-		},
-	});
+			: null; // Return null for insufficient data
 
 	const documentStatus = {
 		totalDocuments: documents.length,
@@ -472,7 +483,10 @@ export async function getUserSummary(
 		usagePatterns: {
 			topServices,
 			topEquipment,
-			averageBookingFrequency: Math.round(averageBookingFrequency * 10) / 10,
+			averageBookingFrequency:
+				averageBookingFrequency !== null
+					? Math.round(averageBookingFrequency * 10) / 10
+					: null,
 		},
 		documentStatus,
 	};

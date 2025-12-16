@@ -1,11 +1,8 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type {
-	AdminUpdateUserInput,
-	UserStatus,
-	UserType,
-} from "../model/types";
+import type { AdminUpdateUserInput } from "../model/schemas";
+import type { UserStatus, UserType } from "../model/types";
 import { userKeys } from "./query-keys";
 
 /**
