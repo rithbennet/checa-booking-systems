@@ -215,6 +215,20 @@ export async function POST(request: Request) {
 					{ status: 400 },
 				);
 			}
+			// Case 0: No company provided at all
+			else if (!companyId && !newCompanyName) {
+				return NextResponse.json(
+					{
+						error: "Company information is required for external members",
+						details: {
+							companyId: [
+								"Please select an existing company or create a new one",
+							],
+						},
+					},
+					{ status: 400 },
+				);
+			}
 		}
 
 		// 5. Wrap company/branch/user creation in a transaction
@@ -224,20 +238,6 @@ export async function POST(request: Request) {
 		await db.$transaction(async (tx) => {
 			// Handle company/branch creation for external users
 			if (userType === "external_member") {
-				//Case 0: No company provided at all
-				if (!companyId && !newCompanyName) {
-					return NextResponse.json(
-						{
-							error: "Company information is required for external members",
-							details: {
-								companyId: [
-									"Please select an existing company or create a new one",
-								],
-							},
-						},
-						{ status: 400 },
-					);
-				}
 				// Case 1: Creating a new company
 				if (!companyId && newCompanyName) {
 					const newCompany = await tx.company.create({
@@ -296,6 +296,40 @@ export async function POST(request: Request) {
 						},
 					});
 					finalBranchId = newBranch.id;
+				}
+				// Case 3: Existing company with existing branch
+				else if (companyId && companyBranchId) {
+					// Verify the branch exists and belongs to the company
+					const existingBranch = await tx.companyBranch.findFirst({
+						where: {
+							id: companyBranchId,
+							companyId: companyId,
+						},
+						select: {
+							id: true,
+							companyId: true,
+						},
+					});
+
+					if (!existingBranch) {
+						throw new ValidationError("Invalid branch", {
+							companyBranchId: [
+								"The selected branch does not exist or does not belong to the selected company",
+							],
+						});
+					}
+
+					// Verify company exists
+					const existingCompany = await tx.company.findUnique({
+						where: { id: companyId },
+						select: { id: true },
+					});
+
+					if (!existingCompany) {
+						throw new ValidationError("Company not found", {
+							companyId: ["The selected company does not exist"],
+						});
+					}
 				}
 			}
 
