@@ -2,6 +2,10 @@
  * Facility Configuration
  * Centralized configuration for PDF templates and facility information
  * Update these values to change facility details across all PDF documents
+ *
+ * TODO: Migrate this configuration to a database entry for system settings.
+ * This will allow administrators to easily adjust global configs for file generation
+ * without requiring code changes or deployments.
  */
 
 export const facilityConfig = {

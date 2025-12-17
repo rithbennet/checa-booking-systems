@@ -243,14 +243,26 @@ export function WorkAreaTemplate({
 	supervisorName,
 	duration,
 	refNo,
-	startDate: _startDate,
-	endDate: _endDate,
-	department: _department,
-	purpose: _purpose,
+	startDate,
+	endDate,
+	department,
+	purpose,
 	address,
 	dateStr,
 }: WorkAreaTemplateProps) {
-	const displayDate = dateStr || new Date().toLocaleDateString();
+	// Compute display date: use dateStr if provided, otherwise compute from startDate/endDate, or fallback to current date
+	let displayDate: string;
+	if (dateStr) {
+		displayDate = dateStr;
+	} else if (startDate && endDate) {
+		const startStr = startDate.toLocaleDateString();
+		const endStr = endDate.toLocaleDateString();
+		displayDate = `${startStr} - ${endStr}`;
+	} else if (startDate) {
+		displayDate = startDate.toLocaleDateString();
+	} else {
+		displayDate = new Date().toLocaleDateString();
+	}
 	const config = facilityConfig.workArea;
 	const displayAddress = address || config.address.university;
 
@@ -309,6 +321,13 @@ export function WorkAreaTemplate({
 						<Text style={styles.infoSeparator}>:</Text>
 						<Text style={styles.infoValue}>{faculty}</Text>
 					</View>
+					{department && (
+						<View style={styles.infoRow}>
+							<Text style={styles.infoLabel}>Department</Text>
+							<Text style={styles.infoSeparator}>:</Text>
+							<Text style={styles.infoValue}>{department}</Text>
+						</View>
+					)}
 					<View style={styles.infoRow}>
 						<Text style={styles.infoLabel}>Supervisor</Text>
 						<Text style={styles.infoSeparator}>:</Text>
@@ -319,6 +338,13 @@ export function WorkAreaTemplate({
 						<Text style={styles.infoSeparator}>:</Text>
 						<Text style={styles.infoValue}>{duration}</Text>
 					</View>
+					{purpose && (
+						<View style={styles.infoRow}>
+							<Text style={styles.infoLabel}>Purpose</Text>
+							<Text style={styles.infoSeparator}>:</Text>
+							<Text style={styles.infoValue}>{purpose}</Text>
+						</View>
+					)}
 				</View>
 
 				{/* Numbered Paragraphs */}
@@ -816,7 +842,9 @@ export function WorkAreaTemplate({
 				</View>
 
 				<View style={styles.signatureRow}>
-					<Text style={{ marginRight: 5 }}>Supervisor signature and cop:</Text>
+					<Text style={{ marginRight: 5 }}>
+						Supervisor signature and stamp:
+					</Text>
 					<View style={styles.signatureLine} />
 				</View>
 

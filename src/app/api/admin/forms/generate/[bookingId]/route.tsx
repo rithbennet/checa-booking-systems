@@ -173,6 +173,7 @@ export async function POST(
 		// 2. Generate Working Area Agreement PDF (if applicable)
 		let waUrl: string | null = null;
 		let waKey: string | null = null;
+		let waPdfBuffer: Buffer | null = null;
 
 		if (hasWorkspace) {
 			const workspaceBooking = booking.workspaceBookings[0];
@@ -188,7 +189,7 @@ export async function POST(
 
 				const waRefNo = `WA-${formNumber}`;
 
-				const waPdfBuffer = await renderToBuffer(
+				waPdfBuffer = await renderToBuffer(
 					<WorkAreaTemplate
 						department={booking.user.department?.name}
 						duration={duration}
@@ -266,14 +267,14 @@ export async function POST(
 			});
 
 			// Create FileBlob and BookingDocument for Working Area if applicable
-			if (waUrl && waKey) {
+			if (waUrl && waKey && waPdfBuffer) {
 				const waBlob = await tx.fileBlob.create({
 					data: {
 						key: waKey,
 						url: waUrl,
 						mimeType: "application/pdf",
 						fileName: `working-area-WA-${formNumber}.pdf`,
-						sizeBytes: 0, // We don't have the size easily
+						sizeBytes: waPdfBuffer.byteLength,
 						uploadedById: adminUser.adminId,
 					},
 				});

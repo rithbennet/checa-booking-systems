@@ -159,6 +159,7 @@ export async function POST(
 		// Generate Working Area Agreement PDF (if applicable)
 		let waUrl: string | null = null;
 		let waKey: string | null = null;
+		let waPdfBuffer: Buffer | null = null;
 
 		if (hasWorkspace) {
 			const workspaceBooking = booking.workspaceBookings[0];
@@ -174,7 +175,7 @@ export async function POST(
 
 				const waRefNo = `WA-${newFormNumber}`;
 
-				const waPdfBuffer = await renderToBuffer(
+				waPdfBuffer = await renderToBuffer(
 					<WorkAreaTemplate
 						department={booking.user.department?.name}
 						duration={duration}
@@ -205,7 +206,7 @@ export async function POST(
 			}
 		}
 
-		// Find and delete old documents before creating new ones
+		// Find old documents and collect blob keys for external deletion
 		const oldDocuments = await db.bookingDocument.findMany({
 			where: {
 				bookingId: booking.id,
@@ -218,27 +219,18 @@ export async function POST(
 			},
 		});
 
-		// Delete old files from UploadThing and database
-		const filesToDelete: string[] = [];
+		// Collect old blob keys for external deletion (after DB transaction commits)
+		const oldBlobKeys: string[] = [];
 		for (const doc of oldDocuments) {
 			if (doc.blob.key) {
-				filesToDelete.push(doc.blob.key);
+				oldBlobKeys.push(doc.blob.key);
 			}
 		}
 
-		// Delete from UploadThing storage
-		if (filesToDelete.length > 0) {
-			try {
-				await utapi.deleteFiles(filesToDelete);
-			} catch (error) {
-				console.error("Failed to delete old files from UploadThing:", error);
-				// Continue with DB deletion even if UploadThing delete fails
-			}
-		}
-
-		// Delete old BookingDocument and FileBlob records
-		if (oldDocuments.length > 0) {
-			await db.$transaction(async (tx) => {
+		// Update the existing form with new paths and delete old records atomically
+		const updatedForm = await db.$transaction(async (tx) => {
+			// Delete old BookingDocument and FileBlob records first
+			if (oldDocuments.length > 0) {
 				// Delete BookingDocument records
 				await tx.bookingDocument.deleteMany({
 					where: {
@@ -256,11 +248,7 @@ export async function POST(
 						},
 					},
 				});
-			});
-		}
-
-		// Update the existing form with new paths
-		const updatedForm = await db.$transaction(async (tx) => {
+			}
 			const form = await tx.serviceForm.update({
 				where: { id: formId },
 				data: {
@@ -302,14 +290,14 @@ export async function POST(
 				},
 			});
 
-			if (waUrl && waKey) {
+			if (waUrl && waKey && waPdfBuffer) {
 				const waBlob = await tx.fileBlob.create({
 					data: {
 						key: waKey,
 						url: waUrl,
 						mimeType: "application/pdf",
 						fileName: `working-area-WA-${newFormNumber}.pdf`,
-						sizeBytes: 0,
+						sizeBytes: waPdfBuffer.byteLength,
 						uploadedById: adminUser.adminId,
 					},
 				});
@@ -341,6 +329,19 @@ export async function POST(
 
 			return form;
 		});
+
+		// Delete old files from UploadThing storage after successful DB transaction
+		if (oldBlobKeys.length > 0) {
+			try {
+				await utapi.deleteFiles(oldBlobKeys);
+			} catch (error) {
+				console.error(
+					"[FormRegeneration] Failed to delete old files from UploadThing:",
+					error,
+				);
+				// Log error but don't rollback - DB transaction already committed
+			}
+		}
 
 		// Notify user
 		try {

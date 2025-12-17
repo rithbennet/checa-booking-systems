@@ -153,8 +153,8 @@ export function UnifiedDocumentManager({
 		});
 	};
 
-	// Handle regenerating all forms when documents are deleted
-	const handleRegenerateAllForms = () => {
+	// Handle regenerating the most recent form when documents are deleted
+	const handleRegenerateMostRecentForm = () => {
 		// Regenerate the first form (most recent)
 		const firstForm = booking.serviceForms[0];
 		if (firstForm) {
@@ -243,7 +243,7 @@ export function UnifiedDocumentManager({
 									<Button
 										className="h-8 gap-2 text-xs"
 										disabled={regenerateForm.isPending}
-										onClick={handleRegenerateAllForms}
+										onClick={handleRegenerateMostRecentForm}
 										size="sm"
 									>
 										{regenerateForm.isPending ? (

@@ -354,7 +354,7 @@ export function OnboardingWizard({
 				payload.departmentId = formState.departmentId;
 
 				// iKohza is required for MJIIT members (in addition to department)
-				if (isMjiit && formState.ikohzaId) {
+				if (isMjiit) {
 					payload.ikohzaId = formState.ikohzaId;
 				}
 			} else {

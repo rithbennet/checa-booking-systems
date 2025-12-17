@@ -275,6 +275,74 @@ export async function GET(
 				});
 				const workspaceUnit = workspaceService?.pricing[0]?.unit ?? "month";
 
+				// Validate workspace service pricing before mapping workspace bookings
+				let validatedWorkspaceService = workspaceService;
+				let validatedWorkspacePricing: { price: string | number } | undefined;
+
+				if (booking.workspaceBookings.length > 0) {
+					const firstWorkspace = booking.workspaceBookings[0];
+					if (!firstWorkspace) {
+						return NextResponse.json(
+							{ error: "Workspace booking data not found" },
+							{ status: 400 },
+						);
+					}
+
+					if (!workspaceService) {
+						const startDate = new Date(firstWorkspace.startDate);
+						const endDate = new Date(firstWorkspace.endDate);
+						const dateRange = `${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}`;
+						console.warn(
+							`[documents/[type]/[id]] Missing workspace service pricing for booking ${booking.id}, workspace ${firstWorkspace.id}, date range: ${dateRange}, userType: ${booking.user.userType}`,
+						);
+						return NextResponse.json(
+							{
+								error:
+									"Cannot generate document: workspace service pricing not found. Please configure workspace pricing for this user type.",
+								details: {
+									bookingId: booking.id,
+									workspaceId: firstWorkspace.id,
+									dateRange,
+									userType: booking.user.userType,
+								},
+							},
+							{ status: 400 },
+						);
+					}
+
+					if (
+						!workspaceService.pricing ||
+						workspaceService.pricing.length === 0
+					) {
+						const startDate = new Date(firstWorkspace.startDate);
+						const endDate = new Date(firstWorkspace.endDate);
+						const dateRange = `${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}`;
+						console.warn(
+							`[documents/[type]/[id]] Missing workspace service pricing entry for booking ${booking.id}, workspace ${firstWorkspace.id}, date range: ${dateRange}, userType: ${booking.user.userType}, serviceId: ${workspaceService.id}`,
+						);
+						return NextResponse.json(
+							{
+								error:
+									"Cannot generate document: workspace pricing not configured for this user type and date range. Please configure pricing.",
+								details: {
+									bookingId: booking.id,
+									workspaceId: firstWorkspace.id,
+									dateRange,
+									userType: booking.user.userType,
+									serviceId: workspaceService.id,
+								},
+							},
+							{ status: 400 },
+						);
+					}
+
+					// Store validated values for use in map function
+					validatedWorkspaceService = workspaceService;
+					validatedWorkspacePricing = workspaceService.pricing[0]?.price
+						? { price: workspaceService.pricing[0]?.price.toNumber() }
+						: undefined;
+				}
+
 				// Map service items
 				const mappedServiceItems = booking.serviceItems.map((item) => ({
 					service: {
@@ -296,16 +364,18 @@ export async function GET(
 					const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // inclusive
 					const months = Math.max(1, Math.ceil(diffDays / 30));
 
-					// Calculate price (assuming monthly rate from workspace service pricing)
-					const monthlyRate = workspaceService?.pricing[0]
-						? Number(workspaceService.pricing[0].price)
-						: 0;
+					// Calculate price using monthly rate from workspace service pricing
+					// At this point we know validatedWorkspaceService and validatedWorkspacePricing exist due to validation above
+					if (!validatedWorkspaceService || !validatedWorkspacePricing) {
+						throw new Error("Workspace service pricing is missing");
+					}
+					const monthlyRate = Number(validatedWorkspacePricing.price);
 					const totalPrice = monthlyRate * months;
 
 					return {
 						service: {
-							name: workspaceService?.name ?? "Working Space",
-							code: workspaceService?.code ?? "WS",
+							name: validatedWorkspaceService.name ?? "Working Space",
+							code: validatedWorkspaceService.code ?? "WS",
 						},
 						quantity: months,
 						unitPrice: monthlyRate,

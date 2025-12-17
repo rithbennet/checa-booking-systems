@@ -62,9 +62,6 @@ export const DELETE = createProtectedHandler(async (_req, user, { params }) => {
 		document.type === "workspace_form_unsigned";
 	const documentUrl = document.blob.url;
 
-	// Store deleted forms for audit logging (outside transaction)
-	const deletedForms: Array<{ id: string; formNumber: string }> = [];
-
 	// Delete the document and blob in a transaction
 	await db.$transaction(async (tx) => {
 		// Delete the booking document first (references blob)
@@ -112,11 +109,24 @@ export const DELETE = createProtectedHandler(async (_req, user, { params }) => {
 
 				// If service form doc is missing, form is orphaned
 				if (!hasServiceFormDoc) {
-					// Store form details before deletion for audit log
-					deletedForms.push({ id: form.id, formNumber: form.formNumber });
 					// Delete the orphaned form
 					await tx.serviceForm.delete({
 						where: { id: form.id },
+					});
+					// Create audit log entry within the same transaction
+					await tx.auditLog.create({
+						data: {
+							userId: user.id,
+							action: "form_deleted_orphaned",
+							entity: "ServiceForm",
+							entityId: form.id,
+							metadata: {
+								bookingId: document.bookingId,
+								formNumber: form.formNumber,
+								reason: "Associated document deleted",
+								documentType: document.type,
+							},
+						},
 					});
 					continue;
 				}
@@ -125,9 +135,23 @@ export const DELETE = createProtectedHandler(async (_req, user, { params }) => {
 				if (form.requiresWorkingAreaAgreement) {
 					if (!form.workingAreaAgreementUnsignedPdfPath) {
 						// Form requires WA but doesn't have path - delete it
-						deletedForms.push({ id: form.id, formNumber: form.formNumber });
 						await tx.serviceForm.delete({
 							where: { id: form.id },
+						});
+						// Create audit log entry within the same transaction
+						await tx.auditLog.create({
+							data: {
+								userId: user.id,
+								action: "form_deleted_orphaned",
+								entity: "ServiceForm",
+								entityId: form.id,
+								metadata: {
+									bookingId: document.bookingId,
+									formNumber: form.formNumber,
+									reason: "Associated document deleted",
+									documentType: document.type,
+								},
+							},
 						});
 						continue;
 					}
@@ -144,35 +168,29 @@ export const DELETE = createProtectedHandler(async (_req, user, { params }) => {
 
 					// If workspace form doc is missing, form is orphaned
 					if (!hasWorkspaceFormDoc) {
-						deletedForms.push({ id: form.id, formNumber: form.formNumber });
 						await tx.serviceForm.delete({
 							where: { id: form.id },
+						});
+						// Create audit log entry within the same transaction
+						await tx.auditLog.create({
+							data: {
+								userId: user.id,
+								action: "form_deleted_orphaned",
+								entity: "ServiceForm",
+								entityId: form.id,
+								metadata: {
+									bookingId: document.bookingId,
+									formNumber: form.formNumber,
+									reason: "Associated document deleted",
+									documentType: document.type,
+								},
+							},
 						});
 					}
 				}
 			}
 		}
 	});
-
-	// Log form deletions for audit trail (after transaction completes)
-	if (deletedForms.length > 0) {
-		for (const form of deletedForms) {
-			await db.auditLog.create({
-				data: {
-					userId: user.id,
-					action: "form_deleted_orphaned",
-					entity: "ServiceForm",
-					entityId: form.id,
-					metadata: {
-						bookingId: document.bookingId,
-						formNumber: form.formNumber,
-						reason: "Associated document deleted",
-						documentType: document.type,
-					},
-				},
-			});
-		}
-	}
 
 	// Create audit log entry for the deletion
 	await db.auditLog.create({
