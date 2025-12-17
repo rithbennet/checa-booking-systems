@@ -136,10 +136,7 @@ export async function POST(
 							effectiveFrom: {
 								lte: new Date(),
 							},
-							OR: [
-								{ effectiveTo: null },
-								{ effectiveTo: { gte: new Date() } },
-							],
+							OR: [{ effectiveTo: null }, { effectiveTo: { gte: new Date() } }],
 						},
 						orderBy: {
 							effectiveFrom: "desc",
@@ -153,7 +150,7 @@ export async function POST(
 				workspaceServiceInfo = {
 					name: workspaceService.name,
 					code: workspaceService.code,
-					unit: workspaceService.pricing[0].unit ?? "month",
+					unit: "months", // Workarea is always billed in months
 				};
 			}
 		}

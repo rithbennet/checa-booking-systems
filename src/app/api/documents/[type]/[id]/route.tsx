@@ -164,11 +164,12 @@ export async function GET(
 					);
 				}
 
-				// Calculate duration
+				// Calculate duration (inclusive: includes both start and end dates)
+				// Example: Jan 1 to Jan 3 = 3 days (Jan 1, Jan 2, Jan 3)
 				const startDate = new Date(workspaceBooking.startDate);
 				const endDate = new Date(workspaceBooking.endDate);
 				const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 				const duration =
 					diffDays > 30
 						? `${Math.ceil(diffDays / 30)} month(s)`
@@ -222,25 +223,25 @@ export async function GET(
 				const servicePricings =
 					serviceIds.length > 0
 						? await db.servicePricing.findMany({
-								where: {
-									serviceId: { in: serviceIds },
-									userType: booking.user.userType as
-										| "mjiit_member"
-										| "utm_member"
-										| "external_member"
-										| "lab_administrator",
-									effectiveFrom: {
-										lte: new Date(),
-									},
-									OR: [
-										{ effectiveTo: null },
-										{ effectiveTo: { gte: new Date() } },
-									],
+							where: {
+								serviceId: { in: serviceIds },
+								userType: booking.user.userType as
+									| "mjiit_member"
+									| "utm_member"
+									| "external_member"
+									| "lab_administrator",
+								effectiveFrom: {
+									lte: new Date(),
 								},
-								orderBy: {
-									effectiveFrom: "desc",
-								},
-							})
+								OR: [
+									{ effectiveTo: null },
+									{ effectiveTo: { gte: new Date() } },
+								],
+							},
+							orderBy: {
+								effectiveFrom: "desc",
+							},
+						})
 						: [];
 
 				// Create a map of serviceId -> unit (get most recent pricing for each service)
@@ -277,7 +278,7 @@ export async function GET(
 						},
 					},
 				});
-				const workspaceUnit = workspaceService?.pricing[0]?.unit ?? "month";
+				const workspaceUnit = "months"; // Workarea is always billed in months
 
 				// Validate workspace service pricing before mapping workspace bookings
 				let validatedWorkspaceService = workspaceService;
@@ -349,23 +350,47 @@ export async function GET(
 							: undefined;
 				}
 
-				// Map service items
+				// Map service items and add unit
+				// Call mapServiceItemsForTOR once with entire array for efficiency
 				const mappedServiceItems = mapServiceItemsForTOR(booking.serviceItems);
-				// Add unit to service items
-				const serviceItemsWithUnit = mappedServiceItems.map((item, index) => {
-					const serviceId = booking.serviceItems[index]?.serviceId;
-					const unit = serviceId ? unitMap.get(serviceId) : undefined;
+
+				// Map over original items and merge with mapped results and unit
+				// Since mapServiceItemsForTOR preserves order, we can match by index
+				const serviceItemsWithUnit = booking.serviceItems.map((serviceItem, index) => {
+					const mapped = mappedServiceItems[index];
+					const unit = unitMap.get(serviceItem.serviceId);
+
+					// Handle missing mapped entry gracefully (shouldn't happen, but safe guard)
+					if (!mapped) {
+						// Fallback: create basic mapped entry if missing
+						return {
+							service: {
+								name: serviceItem.service.name,
+								code: serviceItem.service.code ?? undefined,
+							},
+							quantity: serviceItem.quantity,
+							unitPrice:
+								typeof serviceItem.unitPrice === "object" && "toNumber" in serviceItem.unitPrice
+									? serviceItem.unitPrice.toNumber()
+									: Number(serviceItem.unitPrice),
+							totalPrice:
+								typeof serviceItem.totalPrice === "object" && "toNumber" in serviceItem.totalPrice
+									? serviceItem.totalPrice.toNumber()
+									: Number(serviceItem.totalPrice),
+							sampleName: serviceItem.sampleName ?? undefined,
+							unit: unit ?? "samples",
+						};
+					}
+
 					return {
-						...item,
+						...mapped,
 						unit: unit ?? "samples",
 					};
 				});
 
 				// Map workspace bookings to service items format
 				// Use stored pricing if available (new bookings), otherwise calculate (backward compatibility)
-				let workspaceItems: Array<
-					ServiceItemOutput & { unit: string }
-				> = [];
+				let workspaceItems: ServiceItemOutput[] = [];
 				if (booking.workspaceBookings.length > 0 && validatedWorkspaceService) {
 					// Check if workspace bookings have stored pricing (new schema)
 					const hasStoredPricing = booking.workspaceBookings.some(
@@ -387,22 +412,28 @@ export async function GET(
 								code: validatedWorkspaceService.code,
 								unit: workspaceUnit,
 							},
-						) as Array<ServiceItemOutput & { unit: string }>;
+						);
 					} else if (validatedWorkspacePricing) {
 						// Fallback: calculate pricing for old bookings without stored pricing
 						workspaceItems = mapWorkspaceBookingsForTOR(
 							booking.workspaceBookings.map((ws) => {
-								// Calculate months
+								// Calculate months (inclusive: includes both start and end dates)
+								// Example: Jan 1 to Jan 3 = 3 days, Jan 1 to Jan 31 = 31 days = 2 months
 								const startDate = new Date(ws.startDate);
 								const endDate = new Date(ws.endDate);
-								const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-								const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+								const diffTime = Math.abs(
+									endDate.getTime() - startDate.getTime(),
+								);
+								const diffDays =
+									Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+								// Ensure minimum 1 month for pricing (handles same-day bookings)
 								const months = Math.max(1, Math.ceil(diffDays / 30));
 								const monthlyRate = Number(validatedWorkspacePricing.price);
 								const addOnsTotal = (ws.serviceAddOns || []).reduce(
 									(sum, addon) =>
 										sum +
-										(typeof addon.amount === "object" && "toNumber" in addon.amount
+										(typeof addon.amount === "object" &&
+											"toNumber" in addon.amount
 											? addon.amount.toNumber()
 											: Number(addon.amount)),
 									0,
@@ -421,7 +452,7 @@ export async function GET(
 								code: validatedWorkspaceService.code,
 								unit: workspaceUnit,
 							},
-						) as Array<ServiceItemOutput & { unit: string }>;
+						);
 					}
 				}
 
@@ -432,7 +463,14 @@ export async function GET(
 					<TORTemplate
 						date={new Date()}
 						refNo={refNo}
-						serviceItems={allServiceItems}
+						serviceItems={allServiceItems as Array<{
+							service: { name: string; code?: string };
+							quantity: number;
+							unitPrice: number | string;
+							totalPrice: number | string;
+							sampleName?: string;
+							unit?: string;
+						}>}
 						supervisorName={booking.user.supervisorName ?? "N/A"}
 						userAddress={booking.user.address ?? ""}
 						userDepartment={booking.user.department?.name ?? undefined}

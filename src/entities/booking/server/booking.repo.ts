@@ -293,7 +293,14 @@ export async function upsertWorkspaceBookings(params: {
 	// Upsert workspace bookings
 	const results = [];
 	for (const item of items) {
-		const { id, equipmentIds, specialEquipment, unitPrice, totalPrice, ...itemData } = item;
+		const {
+			id,
+			equipmentIds,
+			specialEquipment,
+			unitPrice,
+			totalPrice,
+			...itemData
+		} = item;
 
 		// Never pass add-on arrays to Prisma (handled separately via upsertAddOns)
 		const wsItemDataAny = itemData as Record<string, unknown>;

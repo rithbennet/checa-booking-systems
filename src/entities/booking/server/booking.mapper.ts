@@ -190,7 +190,10 @@ export function mapDtoToNormalized(
 
 			// Calculate addons total
 			let addOnsTotal = new Decimal(0);
-			if (workspace.addOnCatalogIds && Array.isArray(workspace.addOnCatalogIds)) {
+			if (
+				workspace.addOnCatalogIds &&
+				Array.isArray(workspace.addOnCatalogIds)
+			) {
 				for (const addOnId of workspace.addOnCatalogIds) {
 					const addOn = addOnsMap.get(addOnId);
 					if (addOn) {

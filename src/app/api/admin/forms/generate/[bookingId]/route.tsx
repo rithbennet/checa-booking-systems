@@ -150,10 +150,7 @@ export async function POST(
 							effectiveFrom: {
 								lte: new Date(),
 							},
-							OR: [
-								{ effectiveTo: null },
-								{ effectiveTo: { gte: new Date() } },
-							],
+							OR: [{ effectiveTo: null }, { effectiveTo: { gte: new Date() } }],
 						},
 						orderBy: {
 							effectiveFrom: "desc",
@@ -167,8 +164,19 @@ export async function POST(
 				workspaceServiceInfo = {
 					name: workspaceService.name,
 					code: workspaceService.code,
-					unit: workspaceService.pricing[0].unit ?? "month",
+					unit: "months", // Workarea is always billed in months
 				};
+			} else {
+				// Workspace bookings exist but pricing configuration is missing
+				const workspaceServiceName = workspaceService?.name ?? "Working Space";
+				const workspaceServiceCode = workspaceService?.code ?? "N/A";
+				const errorMessage = `Workspace pricing configuration missing for workspace service. Booking ID: ${bookingId}, Service: ${workspaceServiceName} (${workspaceServiceCode}), User Type: ${booking.user.userType}`;
+
+				console.error("[FormGeneration] " + errorMessage);
+				return NextResponse.json(
+					{ error: errorMessage },
+					{ status: 500 },
+				);
 			}
 		}
 
