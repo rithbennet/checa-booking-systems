@@ -15,6 +15,9 @@ import {
 	type CustomerDetails,
 	type InvoiceLineItem,
 	InvoiceTemplate,
+	mapServiceItemsForTOR,
+	mapWorkspaceBookingsForTOR,
+	type ServiceItemOutput,
 	TORTemplate,
 	WorkAreaTemplate,
 } from "@/shared/lib/pdf";
@@ -77,6 +80,7 @@ export async function GET(
 								equipment: true,
 							},
 						},
+						serviceAddOns: true,
 					},
 				},
 				serviceForms: {
@@ -338,55 +342,91 @@ export async function GET(
 
 					// Store validated values for use in map function
 					validatedWorkspaceService = workspaceService;
-					validatedWorkspacePricing = workspaceService.pricing[0]?.price
-						? { price: workspaceService.pricing[0]?.price.toNumber() }
-						: undefined;
+					const firstPricing = workspaceService.pricing[0];
+					validatedWorkspacePricing =
+						firstPricing?.price != null
+							? { price: firstPricing.price.toNumber() }
+							: undefined;
 				}
 
 				// Map service items
-				const mappedServiceItems = booking.serviceItems.map((item) => ({
-					service: {
-						name: item.service.name,
-						code: item.service.code ?? undefined,
-					},
-					quantity: item.quantity,
-					unitPrice: Number(item.unitPrice),
-					totalPrice: Number(item.totalPrice),
-					sampleName: item.sampleName ?? undefined,
-					unit: unitMap.get(item.serviceId) ?? "samples",
-				}));
-
-				// Map workspace bookings to service items format
-				const workspaceItems = booking.workspaceBookings.map((workspace) => {
-					const startDate = new Date(workspace.startDate);
-					const endDate = new Date(workspace.endDate);
-					const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-					const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // inclusive
-					const months = Math.max(1, Math.ceil(diffDays / 30));
-
-					// Calculate price using monthly rate from workspace service pricing
-					// At this point we know validatedWorkspaceService and validatedWorkspacePricing exist due to validation above
-					if (!validatedWorkspaceService || !validatedWorkspacePricing) {
-						throw new Error("Workspace service pricing is missing");
-					}
-					const monthlyRate = Number(validatedWorkspacePricing.price);
-					const totalPrice = monthlyRate * months;
-
+				const mappedServiceItems = mapServiceItemsForTOR(booking.serviceItems);
+				// Add unit to service items
+				const serviceItemsWithUnit = mappedServiceItems.map((item, index) => {
+					const serviceId = booking.serviceItems[index]?.serviceId;
+					const unit = serviceId ? unitMap.get(serviceId) : undefined;
 					return {
-						service: {
-							name: validatedWorkspaceService.name ?? "Working Space",
-							code: validatedWorkspaceService.code ?? "WS",
-						},
-						quantity: months,
-						unitPrice: monthlyRate,
-						totalPrice,
-						sampleName: undefined,
-						unit: workspaceUnit,
+						...item,
+						unit: unit ?? "samples",
 					};
 				});
 
+				// Map workspace bookings to service items format
+				// Use stored pricing if available (new bookings), otherwise calculate (backward compatibility)
+				let workspaceItems: Array<
+					ServiceItemOutput & { unit: string }
+				> = [];
+				if (booking.workspaceBookings.length > 0 && validatedWorkspaceService) {
+					// Check if workspace bookings have stored pricing (new schema)
+					const hasStoredPricing = booking.workspaceBookings.some(
+						(ws) => ws.unitPrice && ws.totalPrice,
+					);
+
+					if (hasStoredPricing) {
+						// Use stored pricing
+						workspaceItems = mapWorkspaceBookingsForTOR(
+							booking.workspaceBookings.map((ws) => ({
+								startDate: ws.startDate,
+								endDate: ws.endDate,
+								unitPrice: ws.unitPrice,
+								totalPrice: ws.totalPrice,
+								serviceAddOns: ws.serviceAddOns,
+							})),
+							{
+								name: validatedWorkspaceService.name,
+								code: validatedWorkspaceService.code,
+								unit: workspaceUnit,
+							},
+						) as Array<ServiceItemOutput & { unit: string }>;
+					} else if (validatedWorkspacePricing) {
+						// Fallback: calculate pricing for old bookings without stored pricing
+						workspaceItems = mapWorkspaceBookingsForTOR(
+							booking.workspaceBookings.map((ws) => {
+								// Calculate months
+								const startDate = new Date(ws.startDate);
+								const endDate = new Date(ws.endDate);
+								const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+								const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+								const months = Math.max(1, Math.ceil(diffDays / 30));
+								const monthlyRate = Number(validatedWorkspacePricing.price);
+								const addOnsTotal = (ws.serviceAddOns || []).reduce(
+									(sum, addon) =>
+										sum +
+										(typeof addon.amount === "object" && "toNumber" in addon.amount
+											? addon.amount.toNumber()
+											: Number(addon.amount)),
+									0,
+								);
+
+								return {
+									startDate: ws.startDate,
+									endDate: ws.endDate,
+									unitPrice: monthlyRate,
+									totalPrice: monthlyRate * months + addOnsTotal,
+									serviceAddOns: ws.serviceAddOns,
+								};
+							}),
+							{
+								name: validatedWorkspaceService.name,
+								code: validatedWorkspaceService.code,
+								unit: workspaceUnit,
+							},
+						) as Array<ServiceItemOutput & { unit: string }>;
+					}
+				}
+
 				// Combine service items and workspace bookings
-				const allServiceItems = [...mappedServiceItems, ...workspaceItems];
+				const allServiceItems = [...serviceItemsWithUnit, ...workspaceItems];
 
 				pdfStream = await renderToStream(
 					<TORTemplate

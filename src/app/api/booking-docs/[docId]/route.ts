@@ -94,18 +94,63 @@ export const DELETE = createProtectedHandler(async (_req, user, { params }) => {
 				},
 			});
 
+			// Fetch all bookingDocuments for this booking once (avoiding N+1 queries)
+			const allBookingDocuments = await tx.bookingDocument.findMany({
+				where: {
+					bookingId: document.bookingId,
+					type: {
+						in: ["service_form_unsigned", "workspace_form_unsigned"],
+					},
+				},
+				include: {
+					blob: true,
+				},
+			});
+
+			// Build lookup sets keyed by blob.url for O(1) checks
+			const serviceFormUrls = new Set<string>();
+			const workspaceFormUrls = new Set<string>();
+
+			for (const doc of allBookingDocuments) {
+				if (doc.blob.url) {
+					if (doc.type === "service_form_unsigned") {
+						serviceFormUrls.add(doc.blob.url);
+					} else if (doc.type === "workspace_form_unsigned") {
+						workspaceFormUrls.add(doc.blob.url);
+					}
+				}
+			}
+
 			// For each form, check if all required documents still exist
 			for (const form of formsToCheck) {
-				// Check if service_form_unsigned document still exists
-				const hasServiceFormDoc = await tx.bookingDocument.findFirst({
-					where: {
-						bookingId: document.bookingId,
-						type: "service_form_unsigned",
-						blob: {
-							url: form.serviceFormUnsignedPdfPath,
+				// Check if serviceFormUnsignedPdfPath is null/undefined before querying
+				if (!form.serviceFormUnsignedPdfPath) {
+					// Form has no service form path - delete it as orphaned
+					await tx.serviceForm.delete({
+						where: { id: form.id },
+					});
+					// Create audit log entry within the same transaction
+					await tx.auditLog.create({
+						data: {
+							userId: user.id,
+							action: "form_deleted_orphaned",
+							entity: "ServiceForm",
+							entityId: form.id,
+							metadata: {
+								bookingId: document.bookingId,
+								formNumber: form.formNumber,
+								reason: "Associated document deleted",
+								documentType: document.type,
+							},
 						},
-					},
-				});
+					});
+					continue;
+				}
+
+				// Check if service_form_unsigned document still exists using in-memory lookup
+				const hasServiceFormDoc = serviceFormUrls.has(
+					form.serviceFormUnsignedPdfPath,
+				);
 
 				// If service form doc is missing, form is orphaned
 				if (!hasServiceFormDoc) {
@@ -156,15 +201,10 @@ export const DELETE = createProtectedHandler(async (_req, user, { params }) => {
 						continue;
 					}
 
-					const hasWorkspaceFormDoc = await tx.bookingDocument.findFirst({
-						where: {
-							bookingId: document.bookingId,
-							type: "workspace_form_unsigned",
-							blob: {
-								url: form.workingAreaAgreementUnsignedPdfPath,
-							},
-						},
-					});
+					// Check if workspace form doc exists using in-memory lookup
+					const hasWorkspaceFormDoc = workspaceFormUrls.has(
+						form.workingAreaAgreementUnsignedPdfPath,
+					);
 
 					// If workspace form doc is missing, form is orphaned
 					if (!hasWorkspaceFormDoc) {

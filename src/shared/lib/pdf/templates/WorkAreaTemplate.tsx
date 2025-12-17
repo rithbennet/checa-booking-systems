@@ -250,18 +250,15 @@ export function WorkAreaTemplate({
 	address,
 	dateStr,
 }: WorkAreaTemplateProps) {
-	// Compute display date: use dateStr if provided, otherwise compute from startDate/endDate, or fallback to current date
+	// Compute display date: use dateStr if provided, otherwise compute from startDate/endDate
+	// startDate and endDate are always required for workspaces
 	let displayDate: string;
 	if (dateStr) {
 		displayDate = dateStr;
-	} else if (startDate && endDate) {
+	} else {
 		const startStr = startDate.toLocaleDateString();
 		const endStr = endDate.toLocaleDateString();
 		displayDate = `${startStr} - ${endStr}`;
-	} else if (startDate) {
-		displayDate = startDate.toLocaleDateString();
-	} else {
-		displayDate = new Date().toLocaleDateString();
 	}
 	const config = facilityConfig.workArea;
 	const displayAddress = address || config.address.university;
@@ -388,10 +385,15 @@ export function WorkAreaTemplate({
 				</View>
 
 				{/* CC */}
-				<View style={styles.ccBlock}>
-					<Text>c.c : {config.ccRecipients[0]}</Text>
-					<Text style={{ marginLeft: 18 }}>: {config.ccRecipients[1]}</Text>
-				</View>
+				{config.ccRecipients && config.ccRecipients.length > 0 && (
+					<View style={styles.ccBlock}>
+						{config.ccRecipients.map((recipient, index) => (
+							<Text key={recipient}>
+								{index === 0 ? `c.c : ${recipient}` : `   : ${recipient}`}
+							</Text>
+						))}
+					</View>
+				)}
 			</Page>
 
 			{/* ================= PAGE 2: APPENDIX A (General) ================= */}

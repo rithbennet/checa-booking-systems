@@ -16,7 +16,12 @@ import { NextResponse } from "next/server";
 import { UTFile } from "uploadthing/server";
 import { notifyServiceFormReady } from "@/entities/notification/server/form.notifications";
 import { requireAdmin } from "@/shared/lib/api-factory";
-import { TORTemplate, WorkAreaTemplate } from "@/shared/lib/pdf";
+import {
+	mapServiceItemsForTOR,
+	mapWorkspaceBookingsForTOR,
+	TORTemplate,
+	WorkAreaTemplate,
+} from "@/shared/lib/pdf";
 import { facilityConfig } from "@/shared/lib/pdf/config/facility-config";
 import { db } from "@/shared/server/db";
 import { utapi } from "@/shared/server/uploadthing";
@@ -61,6 +66,7 @@ export async function POST(
 								equipment: true,
 							},
 						},
+						serviceAddOns: true,
 					},
 				},
 				serviceForms: {
@@ -120,6 +126,73 @@ export async function POST(
 			"N/A";
 		const supervisorName = booking.user.supervisorName ?? "N/A";
 
+		// Fetch workspace service info (name, code, unit) if workspace bookings exist
+		// Pricing is already stored in workspace bookings, so we only need service metadata
+		let workspaceServiceInfo:
+			| {
+				name: string | null;
+				code: string | null;
+				unit: string;
+			}
+			| undefined;
+
+		if (hasWorkspace) {
+			const workspaceService = await db.service.findFirst({
+				where: { category: "working_space" },
+				include: {
+					pricing: {
+						where: {
+							userType: booking.user.userType as
+								| "mjiit_member"
+								| "utm_member"
+								| "external_member"
+								| "lab_administrator",
+							effectiveFrom: {
+								lte: new Date(),
+							},
+							OR: [
+								{ effectiveTo: null },
+								{ effectiveTo: { gte: new Date() } },
+							],
+						},
+						orderBy: {
+							effectiveFrom: "desc",
+						},
+						take: 1,
+					},
+				},
+			});
+
+			if (workspaceService?.pricing?.[0]) {
+				workspaceServiceInfo = {
+					name: workspaceService.name,
+					code: workspaceService.code,
+					unit: workspaceService.pricing[0].unit ?? "month",
+				};
+			}
+		}
+
+		// Map service items
+		const mappedServiceItems = mapServiceItemsForTOR(booking.serviceItems);
+
+		// Map workspace bookings if available (using stored pricing)
+		let workspaceItems: typeof mappedServiceItems = [];
+		if (hasWorkspace && workspaceServiceInfo) {
+			workspaceItems = mapWorkspaceBookingsForTOR(
+				booking.workspaceBookings.map((ws) => ({
+					startDate: ws.startDate,
+					endDate: ws.endDate,
+					unitPrice: ws.unitPrice,
+					totalPrice: ws.totalPrice,
+					serviceAddOns: ws.serviceAddOns,
+				})),
+				workspaceServiceInfo,
+			);
+		}
+
+		// Combine service items and workspace bookings
+		const allServiceItems = [...mappedServiceItems, ...workspaceItems];
+
 		// 1. Generate Service Form (TOR) PDF
 		const torRefNo = `TOR-${formNumber}`;
 
@@ -127,16 +200,7 @@ export async function POST(
 			<TORTemplate
 				date={new Date()}
 				refNo={torRefNo}
-				serviceItems={booking.serviceItems.map((item) => ({
-					service: {
-						name: item.service.name,
-						code: item.service.code ?? undefined,
-					},
-					quantity: item.quantity,
-					unitPrice: Number(item.unitPrice),
-					totalPrice: Number(item.totalPrice),
-					sampleName: item.sampleName ?? undefined,
-				}))}
+				serviceItems={allServiceItems}
 				supervisorName={supervisorName}
 				userAddress={booking.user.address ?? ""}
 				userDepartment={booking.user.department?.name ?? undefined}

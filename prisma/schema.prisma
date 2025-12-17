@@ -648,6 +648,9 @@ model WorkspaceBooking {
   startDate         DateTime                  @db.Date
   endDate           DateTime                  @db.Date
   preferredTimeSlot String?                   @db.VarChar(50)
+  // Pricing (stored at booking time, includes addons in totalPrice)
+  unitPrice         Decimal                   @db.Decimal(10, 2) // Monthly rate
+  totalPrice        Decimal                   @db.Decimal(10, 2) // Base price + addons
   // Links to available lab equipment
   equipmentUsages   WorkspaceEquipmentUsage[]
   // Custom user-defined extras
