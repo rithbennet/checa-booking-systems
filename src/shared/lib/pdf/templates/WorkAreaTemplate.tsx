@@ -211,12 +211,18 @@ export interface WorkAreaTemplateProps {
 	dateStr?: string;
 }
 
+type TextContent =
+	| string
+	| number
+	| React.ReactElement
+	| Array<string | number | React.ReactElement>;
+
 const BulletItem = ({
 	label,
 	children,
 }: {
 	label: string;
-	children: React.ReactNode;
+	children: TextContent;
 }) => (
 	<View style={styles.listItem}>
 		<Text style={styles.bullet}>{label}</Text>
@@ -229,7 +235,7 @@ const SubBulletItem = ({
 	children,
 }: {
 	label: string;
-	children: React.ReactNode;
+	children: TextContent;
 }) => (
 	<View style={styles.subListItem}>
 		<Text style={styles.subBullet}>{label}</Text>

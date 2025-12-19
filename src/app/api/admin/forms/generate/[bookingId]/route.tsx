@@ -130,10 +130,10 @@ export async function POST(
 		// Pricing is already stored in workspace bookings, so we only need service metadata
 		let workspaceServiceInfo:
 			| {
-				name: string | null;
-				code: string | null;
-				unit: string;
-			}
+					name: string | null;
+					code: string | null;
+					unit: string;
+			  }
 			| undefined;
 
 		if (hasWorkspace) {
@@ -168,14 +168,39 @@ export async function POST(
 				};
 			} else {
 				// Workspace bookings exist but pricing configuration is missing
+				const firstWorkspace = booking.workspaceBookings[0];
+				if (!firstWorkspace) {
+					return NextResponse.json(
+						{ error: "Workspace booking data not found" },
+						{ status: 400 },
+					);
+				}
+
+				const startDate = new Date(firstWorkspace.startDate);
+				const endDate = new Date(firstWorkspace.endDate);
+				const dateRange = `${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}`;
 				const workspaceServiceName = workspaceService?.name ?? "Working Space";
 				const workspaceServiceCode = workspaceService?.code ?? "N/A";
-				const errorMessage = `Workspace pricing configuration missing for workspace service. Booking ID: ${bookingId}, Service: ${workspaceServiceName} (${workspaceServiceCode}), User Type: ${booking.user.userType}`;
 
-				console.error("[FormGeneration] " + errorMessage);
+				console.warn(
+					`[admin/forms/generate/[bookingId]] Missing workspace service pricing for booking ${bookingId}, workspace ${firstWorkspace.id}, date range: ${dateRange}, userType: ${booking.user.userType}, serviceId: ${workspaceService?.id ?? "N/A"}`,
+				);
+
 				return NextResponse.json(
-					{ error: errorMessage },
-					{ status: 500 },
+					{
+						error:
+							"Cannot generate document: workspace pricing not configured for this user type and date range. Please configure pricing.",
+						details: {
+							bookingId,
+							workspaceId: firstWorkspace.id,
+							dateRange,
+							userType: booking.user.userType,
+							serviceId: workspaceService?.id ?? null,
+							serviceName: workspaceServiceName,
+							serviceCode: workspaceServiceCode,
+						},
+					},
+					{ status: 400 },
 				);
 			}
 		}

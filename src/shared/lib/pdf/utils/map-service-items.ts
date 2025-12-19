@@ -80,7 +80,18 @@ export function mapWorkspaceBookingsForTOR(
 			"toNumber" in workspace.unitPrice
 				? workspace.unitPrice.toNumber()
 				: Number(workspace.unitPrice);
-		const basePrice = unitPrice * months;
+
+		// Use provided totalPrice if available (handles prorated/adjusted pricing),
+		// otherwise calculate from unitPrice * months
+		const storedTotalPrice =
+			typeof workspace.totalPrice === "object" &&
+			"toNumber" in workspace.totalPrice
+				? workspace.totalPrice.toNumber()
+				: workspace.totalPrice != null
+					? Number(workspace.totalPrice)
+					: null;
+		const calculatedBasePrice = unitPrice * months;
+		const basePrice = storedTotalPrice ?? calculatedBasePrice;
 
 		// Base workspace item
 		const items: ServiceItemOutput[] = [

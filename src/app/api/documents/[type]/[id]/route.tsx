@@ -223,25 +223,25 @@ export async function GET(
 				const servicePricings =
 					serviceIds.length > 0
 						? await db.servicePricing.findMany({
-							where: {
-								serviceId: { in: serviceIds },
-								userType: booking.user.userType as
-									| "mjiit_member"
-									| "utm_member"
-									| "external_member"
-									| "lab_administrator",
-								effectiveFrom: {
-									lte: new Date(),
+								where: {
+									serviceId: { in: serviceIds },
+									userType: booking.user.userType as
+										| "mjiit_member"
+										| "utm_member"
+										| "external_member"
+										| "lab_administrator",
+									effectiveFrom: {
+										lte: new Date(),
+									},
+									OR: [
+										{ effectiveTo: null },
+										{ effectiveTo: { gte: new Date() } },
+									],
 								},
-								OR: [
-									{ effectiveTo: null },
-									{ effectiveTo: { gte: new Date() } },
-								],
-							},
-							orderBy: {
-								effectiveFrom: "desc",
-							},
-						})
+								orderBy: {
+									effectiveFrom: "desc",
+								},
+							})
 						: [];
 
 				// Create a map of serviceId -> unit (get most recent pricing for each service)
@@ -356,37 +356,41 @@ export async function GET(
 
 				// Map over original items and merge with mapped results and unit
 				// Since mapServiceItemsForTOR preserves order, we can match by index
-				const serviceItemsWithUnit = booking.serviceItems.map((serviceItem, index) => {
-					const mapped = mappedServiceItems[index];
-					const unit = unitMap.get(serviceItem.serviceId);
+				const serviceItemsWithUnit = booking.serviceItems.map(
+					(serviceItem, index) => {
+						const mapped = mappedServiceItems[index];
+						const unit = unitMap.get(serviceItem.serviceId);
 
-					// Handle missing mapped entry gracefully (shouldn't happen, but safe guard)
-					if (!mapped) {
-						// Fallback: create basic mapped entry if missing
+						// Handle missing mapped entry gracefully (shouldn't happen, but safe guard)
+						if (!mapped) {
+							// Fallback: create basic mapped entry if missing
+							return {
+								service: {
+									name: serviceItem.service.name,
+									code: serviceItem.service.code ?? undefined,
+								},
+								quantity: serviceItem.quantity,
+								unitPrice:
+									typeof serviceItem.unitPrice === "object" &&
+									"toNumber" in serviceItem.unitPrice
+										? serviceItem.unitPrice.toNumber()
+										: Number(serviceItem.unitPrice),
+								totalPrice:
+									typeof serviceItem.totalPrice === "object" &&
+									"toNumber" in serviceItem.totalPrice
+										? serviceItem.totalPrice.toNumber()
+										: Number(serviceItem.totalPrice),
+								sampleName: serviceItem.sampleName ?? undefined,
+								unit: unit ?? "samples",
+							};
+						}
+
 						return {
-							service: {
-								name: serviceItem.service.name,
-								code: serviceItem.service.code ?? undefined,
-							},
-							quantity: serviceItem.quantity,
-							unitPrice:
-								typeof serviceItem.unitPrice === "object" && "toNumber" in serviceItem.unitPrice
-									? serviceItem.unitPrice.toNumber()
-									: Number(serviceItem.unitPrice),
-							totalPrice:
-								typeof serviceItem.totalPrice === "object" && "toNumber" in serviceItem.totalPrice
-									? serviceItem.totalPrice.toNumber()
-									: Number(serviceItem.totalPrice),
-							sampleName: serviceItem.sampleName ?? undefined,
+							...mapped,
 							unit: unit ?? "samples",
 						};
-					}
-
-					return {
-						...mapped,
-						unit: unit ?? "samples",
-					};
-				});
+					},
+				);
 
 				// Map workspace bookings to service items format
 				// Use stored pricing if available (new bookings), otherwise calculate (backward compatibility)
@@ -433,7 +437,7 @@ export async function GET(
 									(sum, addon) =>
 										sum +
 										(typeof addon.amount === "object" &&
-											"toNumber" in addon.amount
+										"toNumber" in addon.amount
 											? addon.amount.toNumber()
 											: Number(addon.amount)),
 									0,
@@ -463,14 +467,7 @@ export async function GET(
 					<TORTemplate
 						date={new Date()}
 						refNo={refNo}
-						serviceItems={allServiceItems as Array<{
-							service: { name: string; code?: string };
-							quantity: number;
-							unitPrice: number | string;
-							totalPrice: number | string;
-							sampleName?: string;
-							unit?: string;
-						}>}
+						serviceItems={allServiceItems}
 						supervisorName={booking.user.supervisorName ?? "N/A"}
 						userAddress={booking.user.address ?? ""}
 						userDepartment={booking.user.department?.name ?? undefined}

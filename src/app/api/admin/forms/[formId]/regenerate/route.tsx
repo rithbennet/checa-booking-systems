@@ -116,10 +116,10 @@ export async function POST(
 		// Pricing is already stored in workspace bookings, so we only need service metadata
 		let workspaceServiceInfo:
 			| {
-				name: string | null;
-				code: string | null;
-				unit: string;
-			}
+					name: string | null;
+					code: string | null;
+					unit: string;
+			  }
 			| undefined;
 
 		if (hasWorkspace) {
@@ -267,29 +267,29 @@ export async function POST(
 			}
 		}
 
-		// Find old documents and collect blob keys for external deletion
-		const oldDocuments = await db.bookingDocument.findMany({
-			where: {
-				bookingId: booking.id,
-				type: {
-					in: ["service_form_unsigned", "workspace_form_unsigned"],
-				},
-			},
-			include: {
-				blob: true,
-			},
-		});
-
-		// Collect old blob keys for external deletion (after DB transaction commits)
-		const oldBlobKeys: string[] = [];
-		for (const doc of oldDocuments) {
-			if (doc.blob.key) {
-				oldBlobKeys.push(doc.blob.key);
-			}
-		}
-
 		// Update the existing form with new paths and delete old records atomically
-		const updatedForm = await db.$transaction(async (tx) => {
+		const { updatedForm, oldBlobKeys } = await db.$transaction(async (tx) => {
+			// Find old documents and collect blob keys inside transaction
+			const oldDocuments = await tx.bookingDocument.findMany({
+				where: {
+					bookingId: booking.id,
+					type: {
+						in: ["service_form_unsigned", "workspace_form_unsigned"],
+					},
+				},
+				include: {
+					blob: true,
+				},
+			});
+
+			// Collect old blob keys for external deletion (after transaction commits)
+			const blobKeys: string[] = [];
+			for (const doc of oldDocuments) {
+				if (doc.blob?.key) {
+					blobKeys.push(doc.blob.key);
+				}
+			}
+
 			// Delete old BookingDocument and FileBlob records first
 			if (oldDocuments.length > 0) {
 				// Delete BookingDocument records
@@ -388,7 +388,7 @@ export async function POST(
 				},
 			});
 
-			return form;
+			return { updatedForm: form, oldBlobKeys: blobKeys };
 		});
 
 		// Delete old files from UploadThing storage after successful DB transaction
