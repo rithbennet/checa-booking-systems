@@ -544,37 +544,10 @@ export function WorkAreaTemplate({
 				<BulletItem label="•">
 					Facilities that can be used are
 					{"\n"}
-					{"    "}- Oven
+					{facilityConfig.workArea.facilities
+						.map((facility) => `    - ${facility}`)
+						.join("\n")}
 					{"\n"}
-					{"    "}- Hot plate stirrer
-					{"\n"}
-					{"    "}- Centrifuge
-					{"\n"}
-					{"    "}- pH meter
-					{"\n"}
-					{"    "}- Rotary evaporator
-					{"\n"}
-					{"    "}- Bath sonicator
-					{"\n"}
-					{"    "}- Refrigerator
-					{"\n"}
-					{"    "}- Furnace
-					{"\n"}
-					{"    "}- Homogenizer
-					{"\n"}
-					{"    "}- Water bath
-					{"\n"}
-					{"    "}- Overhead stirrer
-					{"\n"}
-					{"    "}- Deionized water
-					{"\n"}
-					{"    "}- Weighing balance
-					{"\n"}
-					{"    "}- Fume hood
-					{"\n"}
-					{"    "}- Deep freezer
-					{"\n"}
-					{"    "}- Glassware
 				</BulletItem>
 				<BulletItem label="•">
 					Glassware <Text style={styles.bold}>CANNOT</Text> be removed from the

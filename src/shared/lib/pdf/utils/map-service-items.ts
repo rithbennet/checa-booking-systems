@@ -72,7 +72,7 @@ export function mapWorkspaceBookingsForTOR(
 		const endDate = new Date(workspace.endDate);
 		const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
 		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // inclusive
-		const months = Math.max(1, Math.ceil(diffDays / 30));
+		const months = Math.max(1, Math.ceil((diffDays - 1) / 30));
 
 		// Calculate base workspace price (without addons)
 		const unitPrice =
