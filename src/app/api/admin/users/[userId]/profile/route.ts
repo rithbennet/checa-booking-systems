@@ -86,10 +86,7 @@ export const PATCH = createProtectedHandler(
 			const input = result.data;
 
 			// Update user
-			const { user: updatedUser, changedFields } = await adminUpdateUser(
-				userId,
-				input,
-			);
+			const { changedFields } = await adminUpdateUser(userId, input);
 
 			// Only send notification if there were actual changes
 			if (changedFields.length > 0) {

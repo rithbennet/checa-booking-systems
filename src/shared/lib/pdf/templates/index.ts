@@ -3,6 +3,8 @@
  * Export all PDF document templates
  */
 
+// Configuration
+export { facilityConfig } from "../config/facility-config";
 export type {
 	CustomerDetails,
 	InvoiceLineItem,

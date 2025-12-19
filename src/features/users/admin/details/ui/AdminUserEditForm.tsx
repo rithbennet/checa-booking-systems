@@ -135,7 +135,7 @@ export function AdminUserEditForm({ profile, userId }: AdminUserEditFormProps) {
 					phone: formData.phone || null,
 					userType: formData.userType,
 					academicType: formData.academicType,
-					userIdentifier: formData.userIdentifier || null,
+					userIdentifier: formData.userIdentifier || undefined,
 					supervisorName: formData.supervisorName || null,
 					facultyId: formData.facultyId || null,
 					departmentId: formData.departmentId || null,

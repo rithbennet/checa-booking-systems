@@ -15,6 +15,9 @@ import {
 	type CustomerDetails,
 	type InvoiceLineItem,
 	InvoiceTemplate,
+	mapServiceItemsForTOR,
+	mapWorkspaceBookingsForTOR,
+	type ServiceItemOutput,
 	TORTemplate,
 	WorkAreaTemplate,
 } from "@/shared/lib/pdf";
@@ -60,6 +63,7 @@ export async function GET(
 					include: {
 						faculty: true,
 						department: true,
+						ikohza: true,
 						company: true,
 						companyBranch: true,
 					},
@@ -76,6 +80,7 @@ export async function GET(
 								equipment: true,
 							},
 						},
+						serviceAddOns: true,
 					},
 				},
 				serviceForms: {
@@ -159,11 +164,12 @@ export async function GET(
 					);
 				}
 
-				// Calculate duration
+				// Calculate duration (inclusive: includes both start and end dates)
+				// Example: Jan 1 to Jan 3 = 3 days (Jan 1, Jan 2, Jan 3)
 				const startDate = new Date(workspaceBooking.startDate);
 				const endDate = new Date(workspaceBooking.endDate);
 				const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 				const duration =
 					diffDays > 30
 						? `${Math.ceil(diffDays / 30)} month(s)`
@@ -195,30 +201,283 @@ export async function GET(
 			}
 
 			case "service-form": {
-				// Get the first service item for equipment info
-				const serviceItem = booking.serviceItems[0];
-
-				if (!serviceItem) {
+				// Check if booking has service items or workspace bookings
+				if (
+					booking.serviceItems.length === 0 &&
+					booking.workspaceBookings.length === 0
+				) {
 					return NextResponse.json(
-						{ error: "No service items found for this booking" },
+						{
+							error:
+								"No service items or workspace bookings found for this booking",
+						},
 						{ status: 400 },
 					);
 				}
 
 				const refNo = `TOR-${booking.referenceNumber}`;
+				const userName = `${booking.user.firstName} ${booking.user.lastName}`;
+
+				// Fetch service pricing to get units for service items
+				const serviceIds = booking.serviceItems.map((item) => item.serviceId);
+				const servicePricings =
+					serviceIds.length > 0
+						? await db.servicePricing.findMany({
+								where: {
+									serviceId: { in: serviceIds },
+									userType: booking.user.userType as
+										| "mjiit_member"
+										| "utm_member"
+										| "external_member"
+										| "lab_administrator",
+									effectiveFrom: {
+										lte: new Date(),
+									},
+									OR: [
+										{ effectiveTo: null },
+										{ effectiveTo: { gte: new Date() } },
+									],
+								},
+								orderBy: {
+									effectiveFrom: "desc",
+								},
+							})
+						: [];
+
+				// Create a map of serviceId -> unit (get most recent pricing for each service)
+				const unitMap = new Map<string, string>();
+				for (const pricing of servicePricings) {
+					if (!unitMap.has(pricing.serviceId)) {
+						unitMap.set(pricing.serviceId, pricing.unit);
+					}
+				}
+
+				// Fetch workspace service pricing for unit
+				const workspaceService = await db.service.findFirst({
+					where: { category: "working_space" },
+					include: {
+						pricing: {
+							where: {
+								userType: booking.user.userType as
+									| "mjiit_member"
+									| "utm_member"
+									| "external_member"
+									| "lab_administrator",
+								effectiveFrom: {
+									lte: new Date(),
+								},
+								OR: [
+									{ effectiveTo: null },
+									{ effectiveTo: { gte: new Date() } },
+								],
+							},
+							orderBy: {
+								effectiveFrom: "desc",
+							},
+							take: 1,
+						},
+					},
+				});
+				const workspaceUnit = "months"; // Workarea is always billed in months
+
+				// Validate workspace service pricing before mapping workspace bookings
+				let validatedWorkspaceService = workspaceService;
+				let validatedWorkspacePricing: { price: string | number } | undefined;
+
+				if (booking.workspaceBookings.length > 0) {
+					const firstWorkspace = booking.workspaceBookings[0];
+					if (!firstWorkspace) {
+						return NextResponse.json(
+							{ error: "Workspace booking data not found" },
+							{ status: 400 },
+						);
+					}
+
+					if (!workspaceService) {
+						const startDate = new Date(firstWorkspace.startDate);
+						const endDate = new Date(firstWorkspace.endDate);
+						const dateRange = `${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}`;
+						console.warn(
+							`[documents/[type]/[id]] Missing workspace service pricing for booking ${booking.id}, workspace ${firstWorkspace.id}, date range: ${dateRange}, userType: ${booking.user.userType}`,
+						);
+						return NextResponse.json(
+							{
+								error:
+									"Cannot generate document: workspace service pricing not found. Please configure workspace pricing for this user type.",
+								details: {
+									bookingId: booking.id,
+									workspaceId: firstWorkspace.id,
+									dateRange,
+									userType: booking.user.userType,
+								},
+							},
+							{ status: 400 },
+						);
+					}
+
+					if (
+						!workspaceService.pricing ||
+						workspaceService.pricing.length === 0
+					) {
+						const startDate = new Date(firstWorkspace.startDate);
+						const endDate = new Date(firstWorkspace.endDate);
+						const dateRange = `${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}`;
+						console.warn(
+							`[documents/[type]/[id]] Missing workspace service pricing entry for booking ${booking.id}, workspace ${firstWorkspace.id}, date range: ${dateRange}, userType: ${booking.user.userType}, serviceId: ${workspaceService.id}`,
+						);
+						return NextResponse.json(
+							{
+								error:
+									"Cannot generate document: workspace pricing not configured for this user type and date range. Please configure pricing.",
+								details: {
+									bookingId: booking.id,
+									workspaceId: firstWorkspace.id,
+									dateRange,
+									userType: booking.user.userType,
+									serviceId: workspaceService.id,
+								},
+							},
+							{ status: 400 },
+						);
+					}
+
+					// Store validated values for use in map function
+					validatedWorkspaceService = workspaceService;
+					const firstPricing = workspaceService.pricing[0];
+					validatedWorkspacePricing =
+						firstPricing?.price != null
+							? { price: firstPricing.price.toNumber() }
+							: undefined;
+				}
+
+				// Map service items and add unit
+				// Call mapServiceItemsForTOR once with entire array for efficiency
+				const mappedServiceItems = mapServiceItemsForTOR(booking.serviceItems);
+
+				// Map over original items and merge with mapped results and unit
+				// Since mapServiceItemsForTOR preserves order, we can match by index
+				const serviceItemsWithUnit = booking.serviceItems.map(
+					(serviceItem, index) => {
+						const mapped = mappedServiceItems[index];
+						const unit = unitMap.get(serviceItem.serviceId);
+
+						// Handle missing mapped entry gracefully (shouldn't happen, but safe guard)
+						if (!mapped) {
+							// Fallback: create basic mapped entry if missing
+							return {
+								service: {
+									name: serviceItem.service.name,
+									code: serviceItem.service.code ?? undefined,
+								},
+								quantity: serviceItem.quantity,
+								unitPrice:
+									typeof serviceItem.unitPrice === "object" &&
+									"toNumber" in serviceItem.unitPrice
+										? serviceItem.unitPrice.toNumber()
+										: Number(serviceItem.unitPrice),
+								totalPrice:
+									typeof serviceItem.totalPrice === "object" &&
+									"toNumber" in serviceItem.totalPrice
+										? serviceItem.totalPrice.toNumber()
+										: Number(serviceItem.totalPrice),
+								sampleName: serviceItem.sampleName ?? undefined,
+								unit: unit ?? "samples",
+							};
+						}
+
+						return {
+							...mapped,
+							unit: unit ?? "samples",
+						};
+					},
+				);
+
+				// Map workspace bookings to service items format
+				// Use stored pricing if available (new bookings), otherwise calculate (backward compatibility)
+				let workspaceItems: ServiceItemOutput[] = [];
+				if (booking.workspaceBookings.length > 0 && validatedWorkspaceService) {
+					// Check if workspace bookings have stored pricing (new schema)
+					const hasStoredPricing = booking.workspaceBookings.some(
+						(ws) => ws.unitPrice && ws.totalPrice,
+					);
+
+					if (hasStoredPricing) {
+						// Use stored pricing
+						workspaceItems = mapWorkspaceBookingsForTOR(
+							booking.workspaceBookings.map((ws) => ({
+								startDate: ws.startDate,
+								endDate: ws.endDate,
+								unitPrice: ws.unitPrice,
+								totalPrice: ws.totalPrice,
+								serviceAddOns: ws.serviceAddOns,
+							})),
+							{
+								name: validatedWorkspaceService.name,
+								code: validatedWorkspaceService.code,
+								unit: workspaceUnit,
+							},
+						);
+					} else if (validatedWorkspacePricing) {
+						// Fallback: calculate pricing for old bookings without stored pricing
+						workspaceItems = mapWorkspaceBookingsForTOR(
+							booking.workspaceBookings.map((ws) => {
+								// Calculate months (inclusive: includes both start and end dates)
+								// Example: Jan 1 to Jan 3 = 3 days, Jan 1 to Jan 31 = 31 days = 2 months
+								const startDate = new Date(ws.startDate);
+								const endDate = new Date(ws.endDate);
+								const diffTime = Math.abs(
+									endDate.getTime() - startDate.getTime(),
+								);
+								const diffDays =
+									Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+								// Ensure minimum 1 month for pricing (handles same-day bookings)
+								const months = Math.max(1, Math.ceil(diffDays / 30));
+								const monthlyRate = Number(validatedWorkspacePricing.price);
+								const addOnsTotal = (ws.serviceAddOns || []).reduce(
+									(sum, addon) =>
+										sum +
+										(typeof addon.amount === "object" &&
+										"toNumber" in addon.amount
+											? addon.amount.toNumber()
+											: Number(addon.amount)),
+									0,
+								);
+
+								return {
+									startDate: ws.startDate,
+									endDate: ws.endDate,
+									unitPrice: monthlyRate,
+									totalPrice: monthlyRate * months + addOnsTotal,
+									serviceAddOns: ws.serviceAddOns,
+								};
+							}),
+							{
+								name: validatedWorkspaceService.name,
+								code: validatedWorkspaceService.code,
+								unit: workspaceUnit,
+							},
+						);
+					}
+				}
+
+				// Combine service items and workspace bookings
+				const allServiceItems = [...serviceItemsWithUnit, ...workspaceItems];
 
 				pdfStream = await renderToStream(
 					<TORTemplate
 						date={new Date()}
-						equipmentCode={serviceItem.service.code}
-						equipmentName={serviceItem.service.name}
 						refNo={refNo}
+						serviceItems={allServiceItems}
 						supervisorName={booking.user.supervisorName ?? "N/A"}
+						userAddress={booking.user.address ?? ""}
+						userDepartment={booking.user.department?.name ?? undefined}
 						userEmail={booking.user.email}
-						userFaculty={
-							booking.user.faculty?.name ?? booking.user.company?.name
-						}
-						userName={`${booking.user.firstName} ${booking.user.lastName}`}
+						userFaculty={booking.user.faculty?.name ?? undefined}
+						userIkohza={booking.user.ikohza?.name ?? undefined}
+						userName={userName}
+						userTel={booking.user.phone ?? ""}
+						userType={booking.user.userType}
+						utmLocation={booking.user.UTM ?? undefined}
 					/>,
 				);
 				filename = `service-form-${refNo}.pdf`;

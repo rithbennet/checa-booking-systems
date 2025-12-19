@@ -173,6 +173,9 @@ export function DocumentVault({
 		},
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: bookingKeys.all });
+			queryClient.invalidateQueries({
+				queryKey: bookingDocumentKeys.byBooking(booking.id),
+			});
 			toast.success("Form regenerated successfully", {
 				description: `New form number: ${data.serviceForm.formNumber}`,
 			});

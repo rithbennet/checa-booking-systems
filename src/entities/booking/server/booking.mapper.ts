@@ -55,6 +55,8 @@ export interface NormalizedWorkspaceBooking {
 	startDate: Date;
 	endDate: Date;
 	preferredTimeSlot?: string;
+	unitPrice: Decimal; // Monthly rate
+	totalPrice: Decimal; // Base price + addons
 	equipmentIds: string[];
 	specialEquipment?: string[];
 	purpose?: string;
@@ -168,17 +170,47 @@ export function mapDtoToNormalized(
 	// Map workspace bookings
 	if (input.workspaceBookings && Array.isArray(input.workspaceBookings)) {
 		for (const workspace of input.workspaceBookings) {
+			const startDate =
+				workspace.startDate instanceof Date
+					? workspace.startDate
+					: new Date(workspace.startDate);
+			const endDate =
+				workspace.endDate instanceof Date
+					? workspace.endDate
+					: new Date(workspace.endDate);
+
+			// Calculate base price (monthly rate × months)
+			let basePrice = new Decimal(0);
+			if (workspaceMonthlyRate) {
+				const ms = endDate.getTime() - startDate.getTime();
+				const days = Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)) + 1); // inclusive
+				const months = Math.max(1, Math.ceil(days / 30));
+				basePrice = workspaceMonthlyRate.mul(months);
+			}
+
+			// Calculate addons total
+			let addOnsTotal = new Decimal(0);
+			if (
+				workspace.addOnCatalogIds &&
+				Array.isArray(workspace.addOnCatalogIds)
+			) {
+				for (const addOnId of workspace.addOnCatalogIds) {
+					const addOn = addOnsMap.get(addOnId);
+					if (addOn) {
+						addOnsTotal = addOnsTotal.add(addOn.amount);
+					}
+				}
+			}
+
+			const totalPrice = basePrice.add(addOnsTotal);
+
 			workspaceBookings.push({
 				id: (workspace as { id?: string }).id,
-				startDate:
-					workspace.startDate instanceof Date
-						? workspace.startDate
-						: new Date(workspace.startDate),
-				endDate:
-					workspace.endDate instanceof Date
-						? workspace.endDate
-						: new Date(workspace.endDate),
+				startDate,
+				endDate,
 				preferredTimeSlot: workspace.preferredTimeSlot,
+				unitPrice: workspaceMonthlyRate ?? new Decimal(0),
+				totalPrice,
 				equipmentIds: workspace.equipmentIds ?? [],
 				specialEquipment: workspace.specialEquipment,
 				purpose: workspace.purpose,
@@ -205,15 +237,16 @@ export function mapDtoToNormalized(
 /**
  * Computes total amount from service items and workspace bookings
  * @param serviceItems - Normalized service items with totalPrice computed
- * @param workspaceBookings - Normalized workspace bookings
- * @param addOnsMap - Map of add-on IDs to add-on data
+ * @param workspaceBookings - Normalized workspace bookings with totalPrice computed
+ * @param addOnsMap - Map of add-on IDs to add-on data (unused now, kept for compatibility)
+ * @param workspaceMonthlyRate - Monthly rate (unused now, kept for compatibility)
  * @returns Total amount for the booking
  */
 export function computeTotals(
 	serviceItems: NormalizedServiceItem[],
 	workspaceBookings: NormalizedWorkspaceBooking[],
-	addOnsMap: Map<string, AddOnData>,
-	workspaceMonthlyRate?: Decimal,
+	_addOnsMap: Map<string, AddOnData>,
+	_workspaceMonthlyRate?: Decimal,
 ): Decimal {
 	let total = new Decimal(0);
 
@@ -222,28 +255,9 @@ export function computeTotals(
 		total = total.add(item.totalPrice);
 	}
 
-	// Sum workspace base price (per 30-day month) if a rate is provided
-	if (workspaceMonthlyRate) {
-		for (const workspace of workspaceBookings) {
-			const ms =
-				new Date(workspace.endDate).getTime() -
-				new Date(workspace.startDate).getTime();
-			const days = Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)) + 1); // inclusive
-			const months = Math.max(1, Math.ceil(days / 30));
-			total = total.add(workspaceMonthlyRate.mul(months));
-		}
-	}
-
-	// Sum workspace booking add-ons
+	// Sum workspace bookings (totalPrice already includes base price + addons)
 	for (const workspace of workspaceBookings) {
-		if (workspace.addOnCatalogIds && Array.isArray(workspace.addOnCatalogIds)) {
-			for (const addOnId of workspace.addOnCatalogIds) {
-				const addOn = addOnsMap.get(addOnId);
-				if (addOn) {
-					total = total.add(addOn.amount);
-				}
-			}
-		}
+		total = total.add(workspace.totalPrice);
 	}
 
 	return total;

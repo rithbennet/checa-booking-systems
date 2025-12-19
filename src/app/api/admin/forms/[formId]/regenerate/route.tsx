@@ -10,7 +10,12 @@ import { NextResponse } from "next/server";
 import { UTFile } from "uploadthing/server";
 import { notifyServiceFormReady } from "@/entities/notification/server/form.notifications";
 import { requireAdmin } from "@/shared/lib/api-factory";
-import { TORTemplate, WorkAreaTemplate } from "@/shared/lib/pdf";
+import {
+	mapServiceItemsForTOR,
+	mapWorkspaceBookingsForTOR,
+	TORTemplate,
+	WorkAreaTemplate,
+} from "@/shared/lib/pdf";
 import { db } from "@/shared/server/db";
 import { utapi } from "@/shared/server/uploadthing";
 
@@ -45,6 +50,7 @@ export async function POST(
 							include: {
 								faculty: true,
 								department: true,
+								ikohza: true,
 								company: true,
 								companyBranch: true,
 							},
@@ -61,6 +67,7 @@ export async function POST(
 										equipment: true,
 									},
 								},
+								serviceAddOns: true,
 							},
 						},
 					},
@@ -105,20 +112,88 @@ export async function POST(
 			"N/A";
 		const supervisorName = booking.user.supervisorName ?? "N/A";
 
+		// Fetch workspace service info (name, code, unit) if workspace bookings exist
+		// Pricing is already stored in workspace bookings, so we only need service metadata
+		let workspaceServiceInfo:
+			| {
+					name: string | null;
+					code: string | null;
+					unit: string;
+			  }
+			| undefined;
+
+		if (hasWorkspace) {
+			const workspaceService = await db.service.findFirst({
+				where: { category: "working_space" },
+				include: {
+					pricing: {
+						where: {
+							userType: booking.user.userType as
+								| "mjiit_member"
+								| "utm_member"
+								| "external_member"
+								| "lab_administrator",
+							effectiveFrom: {
+								lte: new Date(),
+							},
+							OR: [{ effectiveTo: null }, { effectiveTo: { gte: new Date() } }],
+						},
+						orderBy: {
+							effectiveFrom: "desc",
+						},
+						take: 1,
+					},
+				},
+			});
+
+			if (workspaceService?.pricing?.[0]) {
+				workspaceServiceInfo = {
+					name: workspaceService.name,
+					code: workspaceService.code,
+					unit: "months", // Workarea is always billed in months
+				};
+			}
+		}
+
+		// Map service items
+		const mappedServiceItems = mapServiceItemsForTOR(booking.serviceItems);
+
+		// Map workspace bookings if available (using stored pricing)
+		let workspaceItems: typeof mappedServiceItems = [];
+		if (hasWorkspace && workspaceServiceInfo) {
+			workspaceItems = mapWorkspaceBookingsForTOR(
+				booking.workspaceBookings.map((ws) => ({
+					startDate: ws.startDate,
+					endDate: ws.endDate,
+					unitPrice: ws.unitPrice,
+					totalPrice: ws.totalPrice,
+					serviceAddOns: ws.serviceAddOns,
+				})),
+				workspaceServiceInfo,
+			);
+		}
+
+		// Combine service items and workspace bookings
+		const allServiceItems = [...mappedServiceItems, ...workspaceItems];
+
 		// Generate Service Form (TOR) PDF
-		const serviceItem = booking.serviceItems[0];
 		const torRefNo = `TOR-${newFormNumber}`;
 
 		const torPdfBuffer = await renderToBuffer(
 			<TORTemplate
 				date={new Date()}
-				equipmentCode={serviceItem?.service.code}
-				equipmentName={serviceItem?.service.name}
 				refNo={torRefNo}
+				serviceItems={allServiceItems}
 				supervisorName={supervisorName}
+				userAddress={booking.user.address ?? ""}
+				userDepartment={booking.user.department?.name ?? undefined}
 				userEmail={booking.user.email}
-				userFaculty={userFaculty}
+				userFaculty={booking.user.faculty?.name ?? undefined}
+				userIkohza={booking.user.ikohza?.name ?? undefined}
 				userName={userName}
+				userTel={booking.user.phone ?? ""}
+				userType={booking.user.userType}
+				utmLocation={booking.user.UTM ?? undefined}
 			/>,
 		);
 
@@ -139,12 +214,13 @@ export async function POST(
 				{ status: 500 },
 			);
 		}
-		const torUrl = torUploadResult[0].data.url;
+		const torUrl = torUploadResult[0].data.ufsUrl;
 		const torKey = torUploadResult[0].data.key;
 
 		// Generate Working Area Agreement PDF (if applicable)
 		let waUrl: string | null = null;
 		let waKey: string | null = null;
+		let waPdfBuffer: Buffer | null = null;
 
 		if (hasWorkspace) {
 			const workspaceBooking = booking.workspaceBookings[0];
@@ -160,7 +236,7 @@ export async function POST(
 
 				const waRefNo = `WA-${newFormNumber}`;
 
-				const waPdfBuffer = await renderToBuffer(
+				waPdfBuffer = await renderToBuffer(
 					<WorkAreaTemplate
 						department={booking.user.department?.name}
 						duration={duration}
@@ -185,14 +261,55 @@ export async function POST(
 
 				const waUploadResult = await utapi.uploadFiles([waFile]);
 				if (!waUploadResult[0]?.error && waUploadResult[0]?.data) {
-					waUrl = waUploadResult[0].data.url;
+					waUrl = waUploadResult[0].data.ufsUrl;
 					waKey = waUploadResult[0].data.key;
 				}
 			}
 		}
 
-		// Update the existing form with new paths
-		const updatedForm = await db.$transaction(async (tx) => {
+		// Update the existing form with new paths and delete old records atomically
+		const { updatedForm, oldBlobKeys } = await db.$transaction(async (tx) => {
+			// Find old documents and collect blob keys inside transaction
+			const oldDocuments = await tx.bookingDocument.findMany({
+				where: {
+					bookingId: booking.id,
+					type: {
+						in: ["service_form_unsigned", "workspace_form_unsigned"],
+					},
+				},
+				include: {
+					blob: true,
+				},
+			});
+
+			// Collect old blob keys for external deletion (after transaction commits)
+			const blobKeys: string[] = [];
+			for (const doc of oldDocuments) {
+				if (doc.blob?.key) {
+					blobKeys.push(doc.blob.key);
+				}
+			}
+
+			// Delete old BookingDocument and FileBlob records first
+			if (oldDocuments.length > 0) {
+				// Delete BookingDocument records
+				await tx.bookingDocument.deleteMany({
+					where: {
+						id: {
+							in: oldDocuments.map((d) => d.id),
+						},
+					},
+				});
+
+				// Delete FileBlob records
+				await tx.fileBlob.deleteMany({
+					where: {
+						id: {
+							in: oldDocuments.map((d) => d.blobId),
+						},
+					},
+				});
+			}
 			const form = await tx.serviceForm.update({
 				where: { id: formId },
 				data: {
@@ -234,14 +351,14 @@ export async function POST(
 				},
 			});
 
-			if (waUrl && waKey) {
+			if (waUrl && waKey && waPdfBuffer) {
 				const waBlob = await tx.fileBlob.create({
 					data: {
 						key: waKey,
 						url: waUrl,
 						mimeType: "application/pdf",
 						fileName: `working-area-WA-${newFormNumber}.pdf`,
-						sizeBytes: 0,
+						sizeBytes: waPdfBuffer.byteLength,
 						uploadedById: adminUser.adminId,
 					},
 				});
@@ -271,8 +388,21 @@ export async function POST(
 				},
 			});
 
-			return form;
+			return { updatedForm: form, oldBlobKeys: blobKeys };
 		});
+
+		// Delete old files from UploadThing storage after successful DB transaction
+		if (oldBlobKeys.length > 0) {
+			try {
+				await utapi.deleteFiles(oldBlobKeys);
+			} catch (error) {
+				console.error(
+					"[FormRegeneration] Failed to delete old files from UploadThing:",
+					error,
+				);
+				// Log error but don't rollback - DB transaction already committed
+			}
+		}
 
 		// Notify user
 		try {

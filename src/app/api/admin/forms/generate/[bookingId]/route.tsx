@@ -16,7 +16,13 @@ import { NextResponse } from "next/server";
 import { UTFile } from "uploadthing/server";
 import { notifyServiceFormReady } from "@/entities/notification/server/form.notifications";
 import { requireAdmin } from "@/shared/lib/api-factory";
-import { TORTemplate, WorkAreaTemplate } from "@/shared/lib/pdf";
+import {
+	mapServiceItemsForTOR,
+	mapWorkspaceBookingsForTOR,
+	TORTemplate,
+	WorkAreaTemplate,
+} from "@/shared/lib/pdf";
+import { facilityConfig } from "@/shared/lib/pdf/config/facility-config";
 import { db } from "@/shared/server/db";
 import { utapi } from "@/shared/server/uploadthing";
 
@@ -43,6 +49,7 @@ export async function POST(
 					include: {
 						faculty: true,
 						department: true,
+						ikohza: true,
 						company: true,
 						companyBranch: true,
 					},
@@ -59,6 +66,7 @@ export async function POST(
 								equipment: true,
 							},
 						},
+						serviceAddOns: true,
 					},
 				},
 				serviceForms: {
@@ -118,20 +126,124 @@ export async function POST(
 			"N/A";
 		const supervisorName = booking.user.supervisorName ?? "N/A";
 
+		// Fetch workspace service info (name, code, unit) if workspace bookings exist
+		// Pricing is already stored in workspace bookings, so we only need service metadata
+		let workspaceServiceInfo:
+			| {
+					name: string | null;
+					code: string | null;
+					unit: string;
+			  }
+			| undefined;
+
+		if (hasWorkspace) {
+			const workspaceService = await db.service.findFirst({
+				where: { category: "working_space" },
+				include: {
+					pricing: {
+						where: {
+							userType: booking.user.userType as
+								| "mjiit_member"
+								| "utm_member"
+								| "external_member"
+								| "lab_administrator",
+							effectiveFrom: {
+								lte: new Date(),
+							},
+							OR: [{ effectiveTo: null }, { effectiveTo: { gte: new Date() } }],
+						},
+						orderBy: {
+							effectiveFrom: "desc",
+						},
+						take: 1,
+					},
+				},
+			});
+
+			if (workspaceService?.pricing?.[0]) {
+				workspaceServiceInfo = {
+					name: workspaceService.name,
+					code: workspaceService.code,
+					unit: "months", // Workarea is always billed in months
+				};
+			} else {
+				// Workspace bookings exist but pricing configuration is missing
+				const firstWorkspace = booking.workspaceBookings[0];
+				if (!firstWorkspace) {
+					return NextResponse.json(
+						{ error: "Workspace booking data not found" },
+						{ status: 400 },
+					);
+				}
+
+				const startDate = new Date(firstWorkspace.startDate);
+				const endDate = new Date(firstWorkspace.endDate);
+				const dateRange = `${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}`;
+				const workspaceServiceName = workspaceService?.name ?? "Working Space";
+				const workspaceServiceCode = workspaceService?.code ?? "N/A";
+
+				console.warn(
+					`[admin/forms/generate/[bookingId]] Missing workspace service pricing for booking ${bookingId}, workspace ${firstWorkspace.id}, date range: ${dateRange}, userType: ${booking.user.userType}, serviceId: ${workspaceService?.id ?? "N/A"}`,
+				);
+
+				return NextResponse.json(
+					{
+						error:
+							"Cannot generate document: workspace pricing not configured for this user type and date range. Please configure pricing.",
+						details: {
+							bookingId,
+							workspaceId: firstWorkspace.id,
+							dateRange,
+							userType: booking.user.userType,
+							serviceId: workspaceService?.id ?? null,
+							serviceName: workspaceServiceName,
+							serviceCode: workspaceServiceCode,
+						},
+					},
+					{ status: 400 },
+				);
+			}
+		}
+
+		// Map service items
+		const mappedServiceItems = mapServiceItemsForTOR(booking.serviceItems);
+
+		// Map workspace bookings if available (using stored pricing)
+		let workspaceItems: typeof mappedServiceItems = [];
+		if (hasWorkspace && workspaceServiceInfo) {
+			workspaceItems = mapWorkspaceBookingsForTOR(
+				booking.workspaceBookings.map((ws) => ({
+					startDate: ws.startDate,
+					endDate: ws.endDate,
+					unitPrice: ws.unitPrice,
+					totalPrice: ws.totalPrice,
+					serviceAddOns: ws.serviceAddOns,
+				})),
+				workspaceServiceInfo,
+			);
+		}
+
+		// Combine service items and workspace bookings
+		const allServiceItems = [...mappedServiceItems, ...workspaceItems];
+
 		// 1. Generate Service Form (TOR) PDF
-		const serviceItem = booking.serviceItems[0];
 		const torRefNo = `TOR-${formNumber}`;
 
 		const torPdfBuffer = await renderToBuffer(
 			<TORTemplate
 				date={new Date()}
-				equipmentCode={serviceItem?.service.code}
-				equipmentName={serviceItem?.service.name}
 				refNo={torRefNo}
+				serviceItems={allServiceItems}
 				supervisorName={supervisorName}
+				userAddress={booking.user.address ?? ""}
+				userDepartment={booking.user.department?.name ?? undefined}
 				userEmail={booking.user.email}
-				userFaculty={userFaculty}
+				userFaculty={booking.user.faculty?.name ?? undefined}
+				userIkohza={booking.user.ikohza?.name ?? undefined}
 				userName={userName}
+				userTel={booking.user.phone ?? ""}
+				userType={booking.user.userType}
+				utmLocation={booking.user.UTM ?? undefined}
 			/>,
 		);
 
@@ -152,12 +264,13 @@ export async function POST(
 				{ status: 500 },
 			);
 		}
-		const torUrl = torUploadResult[0].data.url;
+		const torUrl = torUploadResult[0].data.ufsUrl;
 		const torKey = torUploadResult[0].data.key;
 
 		// 2. Generate Working Area Agreement PDF (if applicable)
 		let waUrl: string | null = null;
 		let waKey: string | null = null;
+		let waPdfBuffer: Buffer | null = null;
 
 		if (hasWorkspace) {
 			const workspaceBooking = booking.workspaceBookings[0];
@@ -173,7 +286,7 @@ export async function POST(
 
 				const waRefNo = `WA-${formNumber}`;
 
-				const waPdfBuffer = await renderToBuffer(
+				waPdfBuffer = await renderToBuffer(
 					<WorkAreaTemplate
 						department={booking.user.department?.name}
 						duration={duration}
@@ -204,7 +317,7 @@ export async function POST(
 					);
 					// Don't fail entirely - service form was uploaded successfully
 				} else {
-					waUrl = waUploadResult[0].data.url;
+					waUrl = waUploadResult[0].data.ufsUrl;
 					waKey = waUploadResult[0].data.key;
 				}
 			}
@@ -217,7 +330,7 @@ export async function POST(
 				data: {
 					bookingRequestId: bookingId,
 					formNumber,
-					facilityLab: "ChECA iKohza",
+					facilityLab: facilityConfig.facilityName,
 					subtotal,
 					totalAmount,
 					validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
@@ -251,14 +364,14 @@ export async function POST(
 			});
 
 			// Create FileBlob and BookingDocument for Working Area if applicable
-			if (waUrl && waKey) {
+			if (waUrl && waKey && waPdfBuffer) {
 				const waBlob = await tx.fileBlob.create({
 					data: {
 						key: waKey,
 						url: waUrl,
 						mimeType: "application/pdf",
 						fileName: `working-area-WA-${formNumber}.pdf`,
-						sizeBytes: 0, // We don't have the size easily
+						sizeBytes: waPdfBuffer.byteLength,
 						uploadedById: adminUser.adminId,
 					},
 				});

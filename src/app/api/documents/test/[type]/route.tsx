@@ -140,14 +140,25 @@ export async function GET(
 				pdfStream = await renderToStream(
 					<TORTemplate
 						date={today}
-						equipmentCode="ftir-atr"
-						equipmentName="FTIR-ATR Spectrometer"
 						refNo="TOR-TEST-2024-001"
-						supervisorEmail="siti.aminah@utm.my"
+						serviceItems={[
+							{
+								service: {
+									name: "FTIR-ATR Spectrometer",
+									code: "ftir-atr",
+								},
+								quantity: 3,
+								unitPrice: 50.0,
+								totalPrice: 150.0,
+								sampleName: "Sample A (Polymer)",
+							},
+						]}
 						supervisorName="Dr. Siti Aminah binti Hassan"
+						userAddress={SAMPLE_CUSTOMER.address}
 						userEmail="ahmad@student.utm.my"
 						userFaculty="Malaysia-Japan International Institute of Technology"
 						userName="Ahmad bin Abdullah"
+						userTel={SAMPLE_CUSTOMER.phone ?? ""}
 					/>,
 				);
 				filename = "test-service-form.pdf";
