@@ -4,7 +4,6 @@
  */
 
 // Configuration
-export { facilityConfig } from "../config/facility-config";
 
 export type { TORTemplateProps } from "./TORTemplate";
 export { TORTemplate } from "./TORTemplate";

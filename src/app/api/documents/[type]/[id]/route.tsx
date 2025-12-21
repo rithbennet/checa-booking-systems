@@ -227,25 +227,25 @@ export const GET = createProtectedHandler(
 					const servicePricings =
 						serviceIds.length > 0
 							? await db.servicePricing.findMany({
-								where: {
-									serviceId: { in: serviceIds },
-									userType: booking.user.userType as
-										| "mjiit_member"
-										| "utm_member"
-										| "external_member"
-										| "lab_administrator",
-									effectiveFrom: {
-										lte: new Date(),
+									where: {
+										serviceId: { in: serviceIds },
+										userType: booking.user.userType as
+											| "mjiit_member"
+											| "utm_member"
+											| "external_member"
+											| "lab_administrator",
+										effectiveFrom: {
+											lte: new Date(),
+										},
+										OR: [
+											{ effectiveTo: null },
+											{ effectiveTo: { gte: new Date() } },
+										],
 									},
-									OR: [
-										{ effectiveTo: null },
-										{ effectiveTo: { gte: new Date() } },
-									],
-								},
-								orderBy: {
-									effectiveFrom: "desc",
-								},
-							})
+									orderBy: {
+										effectiveFrom: "desc",
+									},
+								})
 							: [];
 
 					// Create a map of serviceId -> unit (get most recent pricing for each service)
@@ -354,12 +354,12 @@ export const GET = createProtectedHandler(
 									quantity: serviceItem.quantity,
 									unitPrice:
 										typeof serviceItem.unitPrice === "object" &&
-											"toNumber" in serviceItem.unitPrice
+										"toNumber" in serviceItem.unitPrice
 											? serviceItem.unitPrice.toNumber()
 											: Number(serviceItem.unitPrice),
 									totalPrice:
 										typeof serviceItem.totalPrice === "object" &&
-											"toNumber" in serviceItem.totalPrice
+										"toNumber" in serviceItem.totalPrice
 											? serviceItem.totalPrice.toNumber()
 											: Number(serviceItem.totalPrice),
 									sampleName: serviceItem.sampleName ?? undefined,
@@ -422,7 +422,7 @@ export const GET = createProtectedHandler(
 										(sum, addon) =>
 											sum +
 											(typeof addon.amount === "object" &&
-												"toNumber" in addon.amount
+											"toNumber" in addon.amount
 												? addon.amount.toNumber()
 												: Number(addon.amount)),
 										0,
