@@ -7,26 +7,54 @@
  */
 
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import {
 	getGlobalDocumentConfig,
 	updateGlobalDocumentConfig,
 } from "@/entities/document-config";
 import type { UpdateDocumentConfigInput } from "@/entities/document-config/model/types";
-import { requireAdmin } from "@/shared/lib/api-factory";
+import { createProtectedHandler, forbidden } from "@/shared/lib/api-factory";
+
+/**
+ * Zod schema for signature settings request body
+ */
+const signatureSettingsSchema = z.object({
+	staffPic: z
+		.object({
+			fullName: z.string().optional(),
+			title: z.string().nullable().optional(),
+			signatureBlobId: z.string().nullable().optional(),
+			signatureImageUrl: z.string().nullable().optional(),
+		})
+		.optional(),
+	ikohzaHead: z
+		.object({
+			name: z.string().optional(),
+			title: z.string().nullable().optional(),
+			department: z.string().optional(),
+			institute: z.string().optional(),
+			university: z.string().optional(),
+			address: z.string().optional(),
+			signatureBlobId: z.string().nullable().optional(),
+			signatureImageUrl: z.string().nullable().optional(),
+		})
+		.optional(),
+});
 
 /**
  * GET signature settings
  */
-export async function GET(): Promise<Response> {
-	try {
-		const adminUser = await requireAdmin();
-		if (!adminUser) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export const GET = createProtectedHandler(
+	async (_req, user) => {
+		// Enforce admin role
+		if (user.role !== "lab_administrator") {
+			return forbidden("Admin access required");
 		}
 
 		const config = await getGlobalDocumentConfig();
+
 		// Return only signature-related fields
-		return NextResponse.json({
+		return {
 			staffPic: {
 				fullName: config.staffPic.fullName,
 				title: config.staffPic.title,
@@ -43,30 +71,32 @@ export async function GET(): Promise<Response> {
 				signatureBlobId: config.ikohzaHead.signatureBlobId,
 				signatureImageUrl: config.ikohzaHead.signatureImageUrl,
 			},
-		});
-	} catch (error) {
-		console.error("Failed to get signature settings:", error);
-		if (error instanceof Error && error.message.includes("Forbidden")) {
-			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-		}
-		return NextResponse.json(
-			{ error: "Failed to load signature settings" },
-			{ status: 500 },
-		);
-	}
-}
+		};
+	},
+	{ requireActive: true },
+);
 
 /**
  * PUT/PATCH signature settings
  */
-export async function PUT(request: Request): Promise<Response> {
-	try {
-		const adminUser = await requireAdmin();
-		if (!adminUser) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export const PUT = createProtectedHandler(
+	async (req, user) => {
+		// Enforce admin role
+		if (user.role !== "lab_administrator") {
+			return forbidden("Admin access required");
 		}
 
-		const body = (await request.json()) as {
+		const rawBody = await req.json();
+		const parseResult = signatureSettingsSchema.safeParse(rawBody);
+
+		if (!parseResult.success) {
+			return NextResponse.json(
+				{ error: "Invalid input", details: parseResult.error.message },
+				{ status: 400 },
+			);
+		}
+
+		const body = parseResult.data as {
 			staffPic?: Partial<UpdateDocumentConfigInput["staffPic"]>;
 			ikohzaHead?: Partial<UpdateDocumentConfigInput["ikohzaHead"]>;
 		};
@@ -85,7 +115,7 @@ export async function PUT(request: Request): Promise<Response> {
 		const updated = await updateGlobalDocumentConfig(updateInput);
 
 		// Return only signature-related fields
-		return NextResponse.json({
+		return {
 			staffPic: {
 				fullName: updated.staffPic.fullName,
 				title: updated.staffPic.title,
@@ -102,24 +132,10 @@ export async function PUT(request: Request): Promise<Response> {
 				signatureBlobId: updated.ikohzaHead.signatureBlobId,
 				signatureImageUrl: updated.ikohzaHead.signatureImageUrl,
 			},
-		});
-	} catch (error) {
-		console.error("Failed to update signature settings:", error);
-		if (error instanceof Error && error.message.includes("Forbidden")) {
-			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-		}
-		if (error instanceof Error && error.name === "ZodError") {
-			return NextResponse.json(
-				{ error: "Invalid input", details: error.message },
-				{ status: 400 },
-			);
-		}
-		return NextResponse.json(
-			{ error: "Failed to update signature settings" },
-			{ status: 500 },
-		);
-	}
-}
+		};
+	},
+	{ requireActive: true },
+);
 
 // Support PATCH as well
 export const PATCH = PUT;

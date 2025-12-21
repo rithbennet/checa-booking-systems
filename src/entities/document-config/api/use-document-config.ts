@@ -4,6 +4,8 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { documentConfigSchema } from "../model/schema";
+import type { DocumentConfig, UpdateDocumentConfigInput } from "../model/types";
 import { documentConfigKeys } from "./query-keys";
 
 /**
@@ -12,12 +14,21 @@ import { documentConfigKeys } from "./query-keys";
 export function useDocumentConfig() {
 	return useQuery({
 		queryKey: documentConfigKeys.global(),
-		queryFn: async () => {
+		queryFn: async (): Promise<DocumentConfig> => {
 			const response = await fetch("/api/admin/settings/document-config");
 			if (!response.ok) {
 				throw new Error("Failed to fetch document config");
 			}
-			return response.json();
+			const json = await response.json();
+			try {
+				return documentConfigSchema.parse(json);
+			} catch (parseError) {
+				const message =
+					parseError instanceof Error
+						? parseError.message
+						: "Unknown validation error";
+				throw new Error(`Invalid document config response: ${message}`);
+			}
 		},
 	});
 }
@@ -29,7 +40,9 @@ export function useUpdateDocumentConfig() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (data: unknown) => {
+		mutationFn: async (
+			data: UpdateDocumentConfigInput,
+		): Promise<DocumentConfig> => {
 			const response = await fetch("/api/admin/settings/document-config", {
 				method: "PUT",
 				headers: {
@@ -39,11 +52,18 @@ export function useUpdateDocumentConfig() {
 			});
 
 			if (!response.ok) {
-				const error = await response.json();
-				throw new Error(error.error || "Failed to update document config");
+				let errorMessage = "Failed to update document config";
+				try {
+					const error = await response.json();
+					errorMessage = error.error || errorMessage;
+				} catch {
+					// Response is not JSON, use status text as fallback
+					errorMessage = `${response.status}: ${response.statusText || errorMessage}`;
+				}
+				throw new Error(errorMessage);
 			}
 
-			return response.json();
+			return (await response.json()) as DocumentConfig;
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({

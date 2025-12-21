@@ -12,6 +12,99 @@ import {
 import type { DocumentConfig, UpdateDocumentConfigInput } from "../model/types";
 
 /**
+ * Safely parse a JSON field to a string array with runtime validation.
+ * Logs warnings for non-string items that are filtered out and JSON parse errors.
+ */
+function parseJsonStringArray(value: unknown): string[] {
+	// If it's already an array, filter and validate each item
+	if (Array.isArray(value)) {
+		const filtered = value.filter(
+			(item): item is string => typeof item === "string",
+		);
+		const droppedCount = value.length - filtered.length;
+		if (droppedCount > 0) {
+			const droppedTypes = value
+				.filter((item) => typeof item !== "string")
+				.map((item) => typeof item);
+			console.warn(
+				"[DocumentConfig] parseJsonStringArray: Dropped non-string items",
+				{ originalLength: value.length, droppedCount, droppedTypes },
+			);
+		}
+		return filtered;
+	}
+	// If it's a string, try to parse it as JSON
+	if (typeof value === "string") {
+		try {
+			const parsed = JSON.parse(value);
+			if (Array.isArray(parsed)) {
+				const filtered = parsed.filter(
+					(item): item is string => typeof item === "string",
+				);
+				const droppedCount = parsed.length - filtered.length;
+				if (droppedCount > 0) {
+					const droppedTypes = parsed
+						.filter((item) => typeof item !== "string")
+						.map((item) => typeof item);
+					console.warn(
+						"[DocumentConfig] parseJsonStringArray: Dropped non-string items from parsed JSON",
+						{ originalLength: parsed.length, droppedCount, droppedTypes },
+					);
+				}
+				return filtered;
+			}
+		} catch (error) {
+			console.warn(
+				"[DocumentConfig] parseJsonStringArray: Failed to parse JSON string",
+				{
+					rawValue: value.slice(0, 100) + (value.length > 100 ? "..." : ""),
+					error: error instanceof Error ? error.message : String(error),
+				},
+			);
+		}
+	}
+	// Fallback to empty array
+	return [];
+}
+
+/**
+ * Build default document config from facility config
+ */
+function buildDefaultDocumentConfig(): DocumentConfig {
+	return {
+		id: "",
+		facilityName: facilityDocumentConfig.facilityName,
+		address: facilityDocumentConfig.address,
+		staffPic: {
+			name: facilityDocumentConfig.staffPic.name,
+			fullName: facilityDocumentConfig.staffPic.fullName,
+			email: facilityDocumentConfig.staffPic.email,
+			phone: facilityDocumentConfig.staffPic.phone ?? null,
+			title: facilityDocumentConfig.staffPic.title ?? null,
+			signatureBlobId: facilityDocumentConfig.staffPic.signatureBlobId ?? null,
+			signatureImageUrl:
+				facilityDocumentConfig.staffPic.signatureImageUrl ?? null,
+		},
+		ikohzaHead: {
+			name: facilityDocumentConfig.ikohzaHead.name,
+			title: facilityDocumentConfig.ikohzaHead.title ?? null,
+			department: facilityDocumentConfig.ikohzaHead.department,
+			institute: facilityDocumentConfig.ikohzaHead.institute,
+			university: facilityDocumentConfig.ikohzaHead.university,
+			address: facilityDocumentConfig.ikohzaHead.address,
+			signatureBlobId:
+				facilityDocumentConfig.ikohzaHead.signatureBlobId ?? null,
+			signatureImageUrl:
+				facilityDocumentConfig.ikohzaHead.signatureImageUrl ?? null,
+		},
+		ccRecipients: [...facilityDocumentConfig.ccRecipients],
+		facilities: [...facilityDocumentConfig.facilities],
+		createdAt: new Date(),
+		updatedAt: new Date(),
+	};
+}
+
+/**
  * Get global document configuration
  * Reads from FacilityDocumentConfig table, falls back to hardcoded defaults
  */
@@ -26,47 +119,12 @@ export async function getGlobalDocumentConfig(): Promise<DocumentConfig> {
 
 	if (!config) {
 		// Return default config structure
-		return {
-			id: "",
-			facilityName: facilityDocumentConfig.facilityName,
-			address: facilityDocumentConfig.address,
-			staffPic: {
-				name: facilityDocumentConfig.staffPic.name,
-				fullName: facilityDocumentConfig.staffPic.fullName,
-				email: facilityDocumentConfig.staffPic.email,
-				phone: facilityDocumentConfig.staffPic.phone ?? null,
-				title: facilityDocumentConfig.staffPic.title ?? null,
-				signatureBlobId:
-					facilityDocumentConfig.staffPic.signatureBlobId ?? null,
-				signatureImageUrl:
-					facilityDocumentConfig.staffPic.signatureImageUrl ?? null,
-			},
-			ikohzaHead: {
-				name: facilityDocumentConfig.ikohzaHead.name,
-				title: facilityDocumentConfig.ikohzaHead.title ?? null,
-				department: facilityDocumentConfig.ikohzaHead.department,
-				institute: facilityDocumentConfig.ikohzaHead.institute,
-				university: facilityDocumentConfig.ikohzaHead.university,
-				address: facilityDocumentConfig.ikohzaHead.address,
-				signatureBlobId:
-					facilityDocumentConfig.ikohzaHead.signatureBlobId ?? null,
-				signatureImageUrl:
-					facilityDocumentConfig.ikohzaHead.signatureImageUrl ?? null,
-			},
-			ccRecipients: [...facilityDocumentConfig.ccRecipients],
-			facilities: [...facilityDocumentConfig.facilities],
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		};
+		return buildDefaultDocumentConfig();
 	}
 
-	// Parse JSON fields
-	const ccRecipients = Array.isArray(config.ccRecipients)
-		? (config.ccRecipients as string[])
-		: [];
-	const facilities = Array.isArray(config.facilities)
-		? (config.facilities as string[])
-		: [];
+	// Parse JSON fields with runtime validation
+	const ccRecipients = parseJsonStringArray(config.ccRecipients);
+	const facilities = parseJsonStringArray(config.facilities);
 
 	// Build the config object
 	const documentConfig: DocumentConfig = {
@@ -87,7 +145,7 @@ export async function getGlobalDocumentConfig(): Promise<DocumentConfig> {
 			phone: config.staffPicPhone ?? null,
 			title: config.staffPicTitle ?? null,
 			signatureBlobId: config.staffPicSignatureBlobId ?? null,
-			signatureImageUrl: config.staffPicSignature?.url || null,
+			signatureImageUrl: config.staffPicSignature?.url ?? null,
 		},
 		ikohzaHead: {
 			name: config.ikohzaHeadName,
@@ -97,7 +155,7 @@ export async function getGlobalDocumentConfig(): Promise<DocumentConfig> {
 			university: config.ikohzaHeadUniversity,
 			address: config.ikohzaHeadAddress,
 			signatureBlobId: config.ikohzaHeadSignatureBlobId ?? null,
-			signatureImageUrl: config.ikohzaHeadSignature?.url || null,
+			signatureImageUrl: config.ikohzaHeadSignature?.url ?? null,
 		},
 		ccRecipients,
 		facilities,
@@ -127,39 +185,8 @@ export async function getGlobalDocumentConfig(): Promise<DocumentConfig> {
 		};
 	} catch (error) {
 		console.error("Failed to parse document config from DB:", error);
-		// Return defaults on parse error - construct directly to avoid recursion
-		return {
-			id: "",
-			facilityName: facilityDocumentConfig.facilityName,
-			address: facilityDocumentConfig.address,
-			staffPic: {
-				name: facilityDocumentConfig.staffPic.name,
-				fullName: facilityDocumentConfig.staffPic.fullName,
-				email: facilityDocumentConfig.staffPic.email,
-				phone: facilityDocumentConfig.staffPic.phone ?? null,
-				title: facilityDocumentConfig.staffPic.title ?? null,
-				signatureBlobId:
-					facilityDocumentConfig.staffPic.signatureBlobId ?? null,
-				signatureImageUrl:
-					facilityDocumentConfig.staffPic.signatureImageUrl ?? null,
-			},
-			ikohzaHead: {
-				name: facilityDocumentConfig.ikohzaHead.name,
-				title: facilityDocumentConfig.ikohzaHead.title ?? null,
-				department: facilityDocumentConfig.ikohzaHead.department,
-				institute: facilityDocumentConfig.ikohzaHead.institute,
-				university: facilityDocumentConfig.ikohzaHead.university,
-				address: facilityDocumentConfig.ikohzaHead.address,
-				signatureBlobId:
-					facilityDocumentConfig.ikohzaHead.signatureBlobId ?? null,
-				signatureImageUrl:
-					facilityDocumentConfig.ikohzaHead.signatureImageUrl ?? null,
-			},
-			ccRecipients: [...facilityDocumentConfig.ccRecipients],
-			facilities: [...facilityDocumentConfig.facilities],
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		};
+		// Return defaults on parse error - use helper to avoid recursion
+		return buildDefaultDocumentConfig();
 	}
 }
 
@@ -300,13 +327,9 @@ export async function updateGlobalDocumentConfig(
 		},
 	});
 
-	// Parse JSON fields
-	const ccRecipients = Array.isArray(updated.ccRecipients)
-		? (updated.ccRecipients as string[])
-		: [];
-	const facilities = Array.isArray(updated.facilities)
-		? (updated.facilities as string[])
-		: [];
+	// Parse JSON fields with runtime validation
+	const ccRecipients = parseJsonStringArray(updated.ccRecipients);
+	const facilities = parseJsonStringArray(updated.facilities);
 
 	// Return formatted config
 	return {
@@ -327,7 +350,7 @@ export async function updateGlobalDocumentConfig(
 			phone: updated.staffPicPhone,
 			title: updated.staffPicTitle,
 			signatureBlobId: updated.staffPicSignatureBlobId,
-			signatureImageUrl: updated.staffPicSignature?.url || null,
+			signatureImageUrl: updated.staffPicSignature?.url ?? null,
 		},
 		ikohzaHead: {
 			name: updated.ikohzaHeadName,
@@ -337,7 +360,7 @@ export async function updateGlobalDocumentConfig(
 			university: updated.ikohzaHeadUniversity,
 			address: updated.ikohzaHeadAddress,
 			signatureBlobId: updated.ikohzaHeadSignatureBlobId,
-			signatureImageUrl: updated.ikohzaHeadSignature?.url || null,
+			signatureImageUrl: updated.ikohzaHeadSignature?.url ?? null,
 		},
 		ccRecipients,
 		facilities,
@@ -359,7 +382,7 @@ export async function getEffectiveFacilityConfigForPdf() {
 			name: config.staffPic.name,
 			email: config.staffPic.email,
 			fullName: config.staffPic.fullName,
-			signatureImageUrl: config.staffPic.signatureImageUrl || null,
+			signatureImageUrl: config.staffPic.signatureImageUrl ?? null,
 		},
 		workArea: {
 			signature: {

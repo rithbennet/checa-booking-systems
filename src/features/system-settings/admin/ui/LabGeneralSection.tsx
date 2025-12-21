@@ -254,7 +254,7 @@ export function LabGeneralSection({ config }: LabGeneralSectionProps) {
 						</div>
 						{formData.ccRecipients.length > 0 && (
 							<div className="flex flex-wrap gap-2">
-								{formData.ccRecipients.map((recipient) => (
+								{formData.ccRecipients.map((recipient, i) => (
 									<div
 										className="flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 text-sm"
 										key={recipient}
@@ -264,9 +264,7 @@ export function LabGeneralSection({ config }: LabGeneralSectionProps) {
 											className="text-slate-500 hover:text-slate-700"
 											onClick={(e) => {
 												e.preventDefault();
-												removeCcRecipient(
-													formData.ccRecipients.indexOf(recipient),
-												);
+												removeCcRecipient(i);
 											}}
 											type="button"
 										>
@@ -304,7 +302,7 @@ export function LabGeneralSection({ config }: LabGeneralSectionProps) {
 						</div>
 						{formData.facilities.length > 0 && (
 							<div className="flex flex-wrap gap-2">
-								{formData.facilities.map((facility) => (
+								{formData.facilities.map((facility, i) => (
 									<div
 										className="flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 text-sm"
 										key={facility}
@@ -314,7 +312,7 @@ export function LabGeneralSection({ config }: LabGeneralSectionProps) {
 											className="text-slate-500 hover:text-slate-700"
 											onClick={(e) => {
 												e.preventDefault();
-												removeFacility(formData.facilities.indexOf(facility));
+												removeFacility(i);
 											}}
 											type="button"
 										>

@@ -5,11 +5,12 @@
  */
 
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 import {
 	getGlobalDocumentConfig,
 	updateGlobalDocumentConfig,
 } from "@/entities/document-config";
-import type { UpdateDocumentConfigInput } from "@/entities/document-config/model/types";
+import { updateDocumentConfigSchema } from "@/entities/document-config/model/schema";
 import { requireAdmin } from "@/shared/lib/api-factory";
 
 /**
@@ -46,7 +47,15 @@ export async function PUT(request: Request): Promise<Response> {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const body = (await request.json()) as UpdateDocumentConfigInput;
+		const rawBody = await request.json();
+		const parseResult = updateDocumentConfigSchema.safeParse(rawBody);
+		if (!parseResult.success) {
+			return NextResponse.json(
+				{ error: "Invalid input", details: parseResult.error.message },
+				{ status: 400 },
+			);
+		}
+		const body = parseResult.data;
 		const updated = await updateGlobalDocumentConfig(body);
 
 		return NextResponse.json(updated);
@@ -55,7 +64,7 @@ export async function PUT(request: Request): Promise<Response> {
 		if (error instanceof Error && error.message.includes("Forbidden")) {
 			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
-		if (error instanceof Error && error.name === "ZodError") {
+		if (error instanceof ZodError) {
 			return NextResponse.json(
 				{ error: "Invalid input", details: error.message },
 				{ status: 400 },
@@ -70,4 +79,3 @@ export async function PUT(request: Request): Promise<Response> {
 
 // Support PATCH as well
 export const PATCH = PUT;
-

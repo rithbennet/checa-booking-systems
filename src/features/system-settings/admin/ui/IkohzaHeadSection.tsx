@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useUpdateDocumentConfig } from "@/entities/document-config/api";
 import type { DocumentConfig } from "@/entities/document-config/model/types";
@@ -38,6 +38,20 @@ export function IkohzaHeadSection({ config }: IkohzaHeadSectionProps) {
 		config.ikohzaHead.signatureImageUrl,
 	);
 
+	// Sync local state when config prop changes
+	useEffect(() => {
+		setFormData({
+			name: config.ikohzaHead.name,
+			title: config.ikohzaHead.title ?? "",
+			department: config.ikohzaHead.department,
+			institute: config.ikohzaHead.institute,
+			university: config.ikohzaHead.university,
+			address: config.ikohzaHead.address,
+		});
+		setSignatureBlobId(config.ikohzaHead.signatureBlobId);
+		setSignatureImageUrl(config.ikohzaHead.signatureImageUrl);
+	}, [config.ikohzaHead]);
+
 	const updateMutation = useUpdateDocumentConfig();
 
 	// Check if there are any changes
@@ -58,6 +72,8 @@ export function IkohzaHeadSection({ config }: IkohzaHeadSectionProps) {
 				ikohzaHead: {
 					...formData,
 					title: formData.title || null,
+					signatureBlobId,
+					signatureImageUrl,
 				},
 			});
 			toast.success("Ikohza Head information updated");
@@ -70,15 +86,30 @@ export function IkohzaHeadSection({ config }: IkohzaHeadSectionProps) {
 		blobId: string | null,
 		imageUrl: string | null,
 	) => {
+		// Capture previous values for rollback
+		const prevBlobId = signatureBlobId;
+		const prevImageUrl = signatureImageUrl;
+
+		// Optimistic update
 		setSignatureBlobId(blobId);
 		setSignatureImageUrl(imageUrl);
 
-		await updateMutation.mutateAsync({
-			ikohzaHead: {
-				signatureBlobId: blobId,
-				signatureImageUrl: imageUrl,
-			},
-		});
+		try {
+			await updateMutation.mutateAsync({
+				ikohzaHead: {
+					signatureBlobId: blobId,
+					signatureImageUrl: imageUrl,
+				},
+			});
+		} catch (error) {
+			// Rollback on failure
+			setSignatureBlobId(prevBlobId);
+			setSignatureImageUrl(prevImageUrl);
+			console.error("Failed to update signature:", error);
+			toast.error(
+				error instanceof Error ? error.message : "Failed to update signature",
+			);
+		}
 	};
 
 	return (

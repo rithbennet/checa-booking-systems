@@ -21,6 +21,30 @@ const addressSchema = z.object({
 /**
  * Staff PIC schema
  */
+/**
+ * Custom validator for URL that accepts both absolute URLs and relative/local file paths
+ */
+const urlOrPathSchema = z
+	.string()
+	.refine(
+		(val) => {
+			// Allow empty strings
+			if (val === "") return true;
+			// Allow valid http(s) URLs
+			try {
+				const url = new URL(val);
+				return url.protocol === "http:" || url.protocol === "https:";
+			} catch {
+				// Allow relative paths (starts with ./ or /) or plain filenames (no URL scheme present)
+				return (
+					val.startsWith("./") || val.startsWith("/") || !val.includes(":")
+				);
+			}
+		},
+		{ message: "Must be a valid URL or relative path" },
+	)
+	.nullable();
+
 const staffPicSchema = z.object({
 	name: z.string().min(1, "Staff PIC name is required"),
 	fullName: z.string().min(1, "Full name is required"),
@@ -28,7 +52,7 @@ const staffPicSchema = z.object({
 	phone: z.string().nullable(),
 	title: z.string().nullable(),
 	signatureBlobId: z.string().uuid().nullable(),
-	signatureImageUrl: z.string().url().nullable(),
+	signatureImageUrl: urlOrPathSchema,
 });
 
 /**
@@ -42,20 +66,20 @@ const ikohzaHeadSchema = z.object({
 	university: z.string().min(1, "University is required"),
 	address: z.string().min(1, "Address is required"),
 	signatureBlobId: z.string().uuid().nullable(),
-	signatureImageUrl: z.string().url().nullable(),
+	signatureImageUrl: urlOrPathSchema,
 });
 
 /**
  * Full document config schema
  */
 export const documentConfigSchema = z.object({
-	id: z.string().uuid(),
+	id: z.union([z.string().uuid(), z.literal("")]),
 	facilityName: z.string().min(1, "Facility name is required"),
 	address: addressSchema,
 	staffPic: staffPicSchema,
 	ikohzaHead: ikohzaHeadSchema,
-	ccRecipients: z.array(z.string()).min(0),
-	facilities: z.array(z.string()).min(0),
+	ccRecipients: z.array(z.string()),
+	facilities: z.array(z.string()),
 	createdAt: z.date(),
 	updatedAt: z.date(),
 }) satisfies z.ZodType<DocumentConfig>;

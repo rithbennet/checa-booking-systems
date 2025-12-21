@@ -963,21 +963,3 @@ model FacilityDocumentConfig {
 
   @@map("facility_document_config")
 }
-
-// ============================================
-// System Settings Models
-// ============================================
-
-model SystemSetting {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  namespace   String   @db.VarChar(100) // e.g., "facility", "signatures"
-  key         String   @default("default") @db.VarChar(100) // For future multi-key support
-  value       Json // Stored as JSON for flexibility
-  description String?  @db.Text
-  createdAt   DateTime @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime @updatedAt @db.Timestamp(6)
-
-  @@unique([namespace, key])
-  @@index([namespace])
-  @@map("system_setting")
-}

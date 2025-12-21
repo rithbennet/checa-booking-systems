@@ -82,14 +82,23 @@ export const POST = createProtectedHandler(
 
 			// Generate new form number (increment version)
 			const baseNumber = existingForm.formNumber.replace(/-v\d+$/, "");
-			const existingVersions = await db.serviceForm.count({
+			// Fetch existing forms to determine the max version number
+			const existingForms = await db.serviceForm.findMany({
 				where: {
 					formNumber: {
 						startsWith: baseNumber,
 					},
 				},
+				select: { formNumber: true },
 			});
-			const newFormNumber = `${baseNumber}-v${existingVersions + 1}`;
+			// Extract version numbers and find the maximum
+			const versionRegex = /-v(\d+)$/;
+			const maxVersion = existingForms.reduce((max, form) => {
+				const match = form.formNumber.match(versionRegex);
+				const version = match ? parseInt(match[1] ?? "0", 10) : 0;
+				return Math.max(max, version);
+			}, 0);
+			const newFormNumber = `${baseNumber}-v${maxVersion + 1}`;
 
 			// Calculate totals
 			const subtotal = booking.serviceItems.reduce(
@@ -151,6 +160,24 @@ export const POST = createProtectedHandler(
 						code: workspaceService.code,
 						unit: "months", // Workarea is always billed in months
 					};
+				} else {
+					// Workspace bookings exist but pricing configuration is missing
+					const firstWorkspace = booking.workspaceBookings[0];
+					if (!firstWorkspace) {
+						return badRequest("Workspace booking data not found");
+					}
+
+					const startDate = new Date(firstWorkspace.startDate);
+					const endDate = new Date(firstWorkspace.endDate);
+					const dateRange = `${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}`;
+
+					console.warn(
+						`[admin/forms/regenerate] Missing workspace service pricing for booking ${booking.id}, workspace ${firstWorkspace.id}, date range: ${dateRange}, userType: ${booking.user.userType}, serviceId: ${workspaceService?.id ?? "N/A"}`,
+					);
+
+					return badRequest(
+						`Cannot generate document: workspace pricing not configured for this user type and date range. Please configure pricing. Booking ID: ${booking.id}, Workspace ID: ${firstWorkspace.id}, Date Range: ${dateRange}, User Type: ${booking.user.userType}`,
+					);
 				}
 			}
 
@@ -406,7 +433,7 @@ export const POST = createProtectedHandler(
 				}
 			}
 
-			// Notify user
+			// Notify user - use persisted validUntil from updatedForm
 			try {
 				await notifyServiceFormReady({
 					userId: booking.user.id,
@@ -414,10 +441,7 @@ export const POST = createProtectedHandler(
 					bookingId: booking.id,
 					bookingReference: booking.referenceNumber,
 					formNumber: newFormNumber,
-					validUntil:
-						new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-							.toISOString()
-							.split("T")[0] ?? "",
+					validUntil: updatedForm.validUntil.toISOString().slice(0, 10),
 					requiresWorkingAreaAgreement: hasWorkspace,
 				});
 			} catch (notifyError) {

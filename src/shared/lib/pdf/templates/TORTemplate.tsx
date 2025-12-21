@@ -42,10 +42,10 @@ function generateTORAddress({
 	utmLocation,
 }: {
 	userType:
-	| "mjiit_member"
-	| "utm_member"
-	| "external_member"
-	| "lab_administrator";
+		| "mjiit_member"
+		| "utm_member"
+		| "external_member"
+		| "lab_administrator";
 	userAddress?: string | null;
 	department?: string | null;
 	faculty?: string | null;
@@ -490,10 +490,10 @@ export interface TORTemplateProps {
 		unit?: string;
 	}>;
 	userType?:
-	| "mjiit_member"
-	| "utm_member"
-	| "external_member"
-	| "lab_administrator";
+		| "mjiit_member"
+		| "utm_member"
+		| "external_member"
+		| "lab_administrator";
 	// Facility config props
 	facilityName: string;
 	staffPicName: string;
@@ -925,7 +925,12 @@ export function InvoiceRequestForm({
 									<>
 										<Image
 											src={getImageSource(staffPicSignatureImageUrl)}
-											style={{ width: "auto", maxWidth: 150, maxHeight: 60, marginBottom: 5 }}
+											style={{
+												width: "auto",
+												maxWidth: 150,
+												maxHeight: 60,
+												marginBottom: 5,
+											}}
 										/>
 										<Text style={{ fontSize: 9 }}>Official stamp</Text>
 									</>
@@ -1116,13 +1121,13 @@ export function TORTemplate({
 	// Generate address based on user type
 	const generatedAddress = userType
 		? generateTORAddress({
-			userType,
-			userAddress,
-			department: userDepartment,
-			faculty: userFaculty,
-			ikohza: userIkohza,
-			utmLocation,
-		})
+				userType,
+				userAddress,
+				department: userDepartment,
+				faculty: userFaculty,
+				ikohza: userIkohza,
+				utmLocation,
+			})
 		: userAddress || "N/A";
 
 	// Use InvoiceRequestForm with mapped props

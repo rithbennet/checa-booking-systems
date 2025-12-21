@@ -67,7 +67,7 @@ export function SignatureUpload({
 				return;
 			}
 
-			await onUploadComplete(blobId ?? null, url ?? null);
+			await onUploadComplete(blobId, url);
 
 			// Invalidate document config query
 			queryClient.invalidateQueries({
@@ -75,6 +75,10 @@ export function SignatureUpload({
 			});
 
 			toast.success(`${label} uploaded successfully`);
+			// Revoke blob URL to prevent memory leak
+			if (preview?.startsWith("blob:")) {
+				URL.revokeObjectURL(preview);
+			}
 			setPreview(null);
 			setSelectedFile(null);
 			if (fileInputRef.current) {
@@ -96,11 +100,16 @@ export function SignatureUpload({
 			return;
 		}
 
+		let previewUrl: string | null = null;
 		try {
-			const previewUrl = URL.createObjectURL(file);
+			previewUrl = URL.createObjectURL(file);
 			setPreview(previewUrl);
 			setSelectedFile(file);
 		} catch (error) {
+			// Clean up blob URL on error to prevent memory leak
+			if (previewUrl) {
+				URL.revokeObjectURL(previewUrl);
+			}
 			toast.error("Failed to process image");
 			console.error(error);
 		}

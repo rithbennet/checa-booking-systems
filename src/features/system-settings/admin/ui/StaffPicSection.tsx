@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useUpdateDocumentConfig } from "@/entities/document-config/api";
 import type { DocumentConfig } from "@/entities/document-config/model/types";
@@ -37,6 +37,19 @@ export function StaffPicSection({ config }: StaffPicSectionProps) {
 		config.staffPic.signatureImageUrl,
 	);
 
+	// Sync local state when config prop changes
+	useEffect(() => {
+		setFormData({
+			name: config.staffPic.name,
+			fullName: config.staffPic.fullName,
+			email: config.staffPic.email,
+			phone: config.staffPic.phone ?? "",
+			title: config.staffPic.title ?? "",
+		});
+		setSignatureBlobId(config.staffPic.signatureBlobId);
+		setSignatureImageUrl(config.staffPic.signatureImageUrl);
+	}, [config.staffPic]);
+
 	const updateMutation = useUpdateDocumentConfig();
 
 	// Check if there are any changes
@@ -69,15 +82,30 @@ export function StaffPicSection({ config }: StaffPicSectionProps) {
 		blobId: string | null,
 		imageUrl: string | null,
 	) => {
+		// Capture previous values for rollback
+		const prevBlobId = signatureBlobId;
+		const prevImageUrl = signatureImageUrl;
+
+		// Optimistic update
 		setSignatureBlobId(blobId);
 		setSignatureImageUrl(imageUrl);
 
-		await updateMutation.mutateAsync({
-			staffPic: {
-				signatureBlobId: blobId,
-				signatureImageUrl: imageUrl,
-			},
-		});
+		try {
+			await updateMutation.mutateAsync({
+				staffPic: {
+					signatureBlobId: blobId,
+					signatureImageUrl: imageUrl,
+				},
+			});
+		} catch (error) {
+			// Rollback on failure
+			setSignatureBlobId(prevBlobId);
+			setSignatureImageUrl(prevImageUrl);
+			console.error("Failed to update signature:", error);
+			toast.error(
+				error instanceof Error ? error.message : "Failed to update signature",
+			);
+		}
 	};
 
 	return (

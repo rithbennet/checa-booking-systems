@@ -21,6 +21,48 @@ import { utapi } from "@/shared/server/uploadthing";
 
 const f = createUploadthing();
 
+/**
+ * Helper to get or create the default FacilityDocumentConfig and return its id.
+ * Used by signature and logo upload handlers for audit logging.
+ */
+async function getOrCreateFacilityConfigId(): Promise<string> {
+	// Use a single atomic upsert to avoid TOCTOU races when concurrent
+	// requests try to create the singleton record.
+	const res = await db.facilityDocumentConfig.upsert({
+		where: { singletonKey: "default" },
+		create: {
+			singletonKey: "default",
+			facilityName: "Default Facility",
+			addressTitle: "",
+			addressInstitute: "",
+			addressUniversity: "",
+			addressStreet: "",
+			addressCity: "",
+			addressEmail: "",
+			staffPicName: "",
+			staffPicFullName: "",
+			staffPicEmail: "",
+			staffPicPhone: null,
+			staffPicTitle: null,
+			staffPicSignatureBlobId: null,
+			ikohzaHeadName: "",
+			ikohzaHeadTitle: null,
+			ikohzaHeadDepartment: "",
+			ikohzaHeadInstitute: "",
+			ikohzaHeadUniversity: "",
+			ikohzaHeadAddress: "",
+			ikohzaHeadSignatureBlobId: null,
+			ccRecipients: [],
+			facilities: [],
+		},
+		// Perform a harmless update to ensure the upsert has an update branch
+		// when the record already exists. `updatedAt` is safe to touch.
+		update: { updatedAt: new Date() },
+		select: { id: true },
+	});
+	return res.id;
+}
+
 // Input schema for all booking document uploads
 const bookingDocInput = z.object({
 	bookingId: z.string().min(1, "Booking ID is required"),
@@ -446,12 +488,16 @@ export const fileRouter = {
 				},
 			});
 
-			// Create audit log entry
+			// Get or create the FacilityDocumentConfig record for entityId reference
+			const facilityConfigId = await getOrCreateFacilityConfigId();
+
+			// Create audit log entry with entityId
 			await db.auditLog.create({
 				data: {
 					userId: metadata.userId,
 					action: "system_signature_uploaded",
 					entity: "FacilityDocumentConfig",
+					entityId: facilityConfigId,
 					metadata: {
 						fileName: file.name,
 						fileSize: file.size,
@@ -513,12 +559,19 @@ export const fileRouter = {
 				},
 			});
 
-			// Create audit log entry
+			// Get the FacilityDocumentConfig record for entityId reference
+			const facilityConfig = await db.facilityDocumentConfig.findUnique({
+				where: { singletonKey: "default" },
+				select: { id: true },
+			});
+
+			// Create audit log entry with entityId
 			await db.auditLog.create({
 				data: {
 					userId: metadata.userId,
 					action: "system_logo_uploaded",
 					entity: "FacilityDocumentConfig",
+					entityId: facilityConfig?.id,
 					metadata: {
 						fileName: file.name,
 						fileSize: file.size,

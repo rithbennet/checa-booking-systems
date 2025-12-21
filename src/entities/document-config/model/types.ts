@@ -40,8 +40,8 @@ export interface DocumentConfig {
 	};
 	ccRecipients: string[];
 	facilities: string[];
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 /**
@@ -50,8 +50,13 @@ export interface DocumentConfig {
 export type DefaultDocumentConfig = typeof facilityDocumentConfig;
 
 /**
- * Input type for updates (allows partial updates)
+ * Input type for updates (allows partial updates including nested objects)
  */
-export type UpdateDocumentConfigInput = Partial<
-	Omit<DocumentConfig, "id" | "createdAt" | "updatedAt">
->;
+export interface UpdateDocumentConfigInput {
+	facilityName?: string;
+	address?: Partial<DocumentConfig["address"]>;
+	staffPic?: Partial<DocumentConfig["staffPic"]>;
+	ikohzaHead?: Partial<DocumentConfig["ikohzaHead"]>;
+	ccRecipients?: string[];
+	facilities?: string[];
+}

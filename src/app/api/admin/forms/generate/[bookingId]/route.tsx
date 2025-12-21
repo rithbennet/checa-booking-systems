@@ -95,9 +95,31 @@ export const POST = createProtectedHandler(
 				);
 			}
 
-			// Generate form number
-			const formCount = await db.serviceForm.count();
-			const formNumber = `SF-${new Date().getFullYear()}-${String(formCount + 1).padStart(5, "0")}`;
+			// Generate form number using last form's number to avoid race conditions
+			// Find the highest existing form number for this year
+			const currentYear = new Date().getFullYear();
+			const yearPrefix = `SF-${currentYear}-`;
+			const lastForm = await db.serviceForm.findFirst({
+				where: {
+					formNumber: {
+						startsWith: yearPrefix,
+					},
+				},
+				orderBy: {
+					formNumber: "desc",
+				},
+				select: { formNumber: true },
+			});
+
+			let nextNumber = 1;
+			if (lastForm?.formNumber) {
+				// Extract the 5-digit sequential number from formats like SF-YYYY-00001
+				const match = lastForm.formNumber.match(/-(\d{5})$/);
+				if (match?.[1]) {
+					nextNumber = parseInt(match[1], 10) + 1;
+				}
+			}
+			const formNumber = `${yearPrefix}${String(nextNumber).padStart(5, "0")}`;
 
 			// Calculate totals
 			const subtotal = booking.serviceItems.reduce(
@@ -253,6 +275,8 @@ export const POST = createProtectedHandler(
 			let waUrl: string | null = null;
 			let waKey: string | null = null;
 			let waPdfBuffer: Buffer | null = null;
+			let workingAreaUploadFailed = false;
+			let workingAreaUploadError: string | null = null;
 
 			if (hasWorkspace) {
 				const workspaceBooking = booking.workspaceBookings[0];
@@ -294,6 +318,9 @@ export const POST = createProtectedHandler(
 
 					const waUploadResult = await utapi.uploadFiles([waFile]);
 					if (waUploadResult[0]?.error || !waUploadResult[0]?.data) {
+						workingAreaUploadFailed = true;
+						workingAreaUploadError =
+							waUploadResult[0]?.error?.message ?? "Unknown upload error";
 						console.error(
 							"[FormGeneration] WA upload failed:",
 							waUploadResult[0]?.error,
@@ -307,54 +334,35 @@ export const POST = createProtectedHandler(
 			}
 
 			// 3. Create database records in a transaction
-			const result = await db.$transaction(async (tx) => {
-				// Create ServiceForm record
-				const serviceForm = await tx.serviceForm.create({
-					data: {
-						bookingRequestId: bookingId,
-						formNumber,
-						facilityLab: facilityConfig.facilityName,
-						subtotal,
-						totalAmount,
-						validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-						status: "generated",
-						serviceFormUnsignedPdfPath: torUrl,
-						requiresWorkingAreaAgreement: hasWorkspace,
-						workingAreaAgreementUnsignedPdfPath: waUrl,
-						generatedBy: user.id,
-					},
-				});
-
-				// Create FileBlob and BookingDocument for TOR
-				const torBlob = await tx.fileBlob.create({
-					data: {
-						key: torKey,
-						url: torUrl,
-						mimeType: "application/pdf",
-						fileName: torFileName,
-						sizeBytes: torPdfBuffer.byteLength,
-						uploadedById: user.id,
-					},
-				});
-
-				await tx.bookingDocument.create({
-					data: {
-						bookingId,
-						type: "service_form_unsigned",
-						blobId: torBlob.id,
-						createdById: user.id,
-					},
-				});
-
-				// Create FileBlob and BookingDocument for Working Area if applicable
-				if (waUrl && waKey && waPdfBuffer) {
-					const waBlob = await tx.fileBlob.create({
+			// Wrap in try/catch to cleanup uploaded files if transaction fails
+			let result: Awaited<ReturnType<typeof db.serviceForm.create>>;
+			try {
+				result = await db.$transaction(async (tx) => {
+					// Create ServiceForm record
+					const serviceForm = await tx.serviceForm.create({
 						data: {
-							key: waKey,
-							url: waUrl,
+							bookingRequestId: bookingId,
+							formNumber,
+							facilityLab: facilityConfig.facilityName,
+							subtotal,
+							totalAmount,
+							validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+							status: "generated",
+							serviceFormUnsignedPdfPath: torUrl,
+							requiresWorkingAreaAgreement: hasWorkspace,
+							workingAreaAgreementUnsignedPdfPath: waUrl,
+							generatedBy: user.id,
+						},
+					});
+
+					// Create FileBlob and BookingDocument for TOR
+					const torBlob = await tx.fileBlob.create({
+						data: {
+							key: torKey,
+							url: torUrl,
 							mimeType: "application/pdf",
-							fileName: `working-area-WA-${formNumber}.pdf`,
-							sizeBytes: waPdfBuffer.byteLength,
+							fileName: torFileName,
+							sizeBytes: torPdfBuffer.byteLength,
 							uploadedById: user.id,
 						},
 					});
@@ -362,26 +370,66 @@ export const POST = createProtectedHandler(
 					await tx.bookingDocument.create({
 						data: {
 							bookingId,
-							type: "workspace_form_unsigned",
-							blobId: waBlob.id,
+							type: "service_form_unsigned",
+							blobId: torBlob.id,
 							createdById: user.id,
 						},
 					});
+
+					// Create FileBlob and BookingDocument for Working Area if applicable
+					if (waUrl && waKey && waPdfBuffer) {
+						const waBlob = await tx.fileBlob.create({
+							data: {
+								key: waKey,
+								url: waUrl,
+								mimeType: "application/pdf",
+								fileName: `working-area-WA-${formNumber}.pdf`,
+								sizeBytes: waPdfBuffer.byteLength,
+								uploadedById: user.id,
+							},
+						});
+
+						await tx.bookingDocument.create({
+							data: {
+								bookingId,
+								type: "workspace_form_unsigned",
+								blobId: waBlob.id,
+								createdById: user.id,
+							},
+						});
+					}
+
+					return serviceForm;
+				});
+			} catch (txError) {
+				// Transaction failed - cleanup uploaded files to prevent orphans
+				const keysToDelete = [torKey, waKey].filter((k): k is string =>
+					Boolean(k),
+				);
+				if (keysToDelete.length > 0) {
+					try {
+						await utapi.deleteFiles(keysToDelete);
+					} catch (deleteError) {
+						console.error(
+							"[FormGeneration] Failed to cleanup uploaded files after transaction failure:",
+							deleteError,
+						);
+					}
 				}
+				throw txError;
+			}
 
-				return serviceForm;
-			});
-
-			// 4. Send notification to user
-			const validUntilDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+			// 4. Send notification to user - use persisted validUntil from result
 			try {
+				// Extract YYYY-MM-DD from ISO string (first 10 characters)
+				const validUntilDate = result.validUntil.toISOString().slice(0, 10);
 				await notifyServiceFormReady({
 					userId: booking.user.id,
 					formId: result.id,
 					bookingId,
 					bookingReference: booking.referenceNumber,
 					formNumber,
-					validUntil: validUntilDate.toISOString().split("T")[0] ?? "",
+					validUntil: validUntilDate,
 					requiresWorkingAreaAgreement: hasWorkspace,
 				});
 			} catch (notifyError) {
@@ -400,6 +448,10 @@ export const POST = createProtectedHandler(
 					serviceFormUrl: torUrl,
 					workingAreaFormUrl: waUrl,
 					validUntil: result.validUntil.toISOString(),
+					...(workingAreaUploadFailed && {
+						workingAreaUploadFailed: true,
+						workingAreaUploadError,
+					}),
 				},
 			});
 		} catch (error) {

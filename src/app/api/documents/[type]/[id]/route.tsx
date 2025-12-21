@@ -27,6 +27,67 @@ import { db } from "@/shared/server/db";
 
 type DocumentType = "work-area" | "service-form";
 
+/**
+ * Timeout-protected stream-to-buffer helper
+ * Converts a readable stream to a buffer with timeout protection
+ */
+async function streamToBufferWithTimeout(
+	stream: NodeJS.ReadableStream,
+	timeoutMs = 30000,
+): Promise<Buffer> {
+	return new Promise((resolve, reject) => {
+		const chunks: Uint8Array[] = [];
+		let completed = false;
+
+		const timeoutId = setTimeout(() => {
+			if (!completed) {
+				completed = true;
+				const timeoutError = new Error(`Stream timeout after ${timeoutMs}ms`);
+				// Destroy stream to release resources and prevent further data events
+				if (
+					typeof (
+						stream as NodeJS.ReadableStream & {
+							destroy?: (error?: Error) => void;
+						}
+					).destroy === "function"
+				) {
+					(
+						stream as NodeJS.ReadableStream & {
+							destroy: (error?: Error) => void;
+						}
+					).destroy(timeoutError);
+				} else {
+					stream.removeAllListeners();
+				}
+				reject(timeoutError);
+			}
+		}, timeoutMs);
+
+		const cleanup = () => {
+			clearTimeout(timeoutId);
+			completed = true;
+		};
+
+		stream.on("data", (chunk: Uint8Array) => {
+			chunks.push(chunk);
+		});
+
+		stream.on("end", () => {
+			if (!completed) {
+				cleanup();
+				resolve(Buffer.concat(chunks));
+			}
+		});
+
+		stream.on("error", (error: Error) => {
+			if (!completed) {
+				cleanup();
+				reject(error);
+			}
+		});
+	});
+}
+
 export const GET = createProtectedHandler(
 	async (_request: Request, user, { params }) => {
 		try {
@@ -162,25 +223,25 @@ export const GET = createProtectedHandler(
 					const servicePricings =
 						serviceIds.length > 0
 							? await db.servicePricing.findMany({
-									where: {
-										serviceId: { in: serviceIds },
-										userType: booking.user.userType as
-											| "mjiit_member"
-											| "utm_member"
-											| "external_member"
-											| "lab_administrator",
-										effectiveFrom: {
-											lte: new Date(),
-										},
-										OR: [
-											{ effectiveTo: null },
-											{ effectiveTo: { gte: new Date() } },
-										],
+								where: {
+									serviceId: { in: serviceIds },
+									userType: booking.user.userType as
+										| "mjiit_member"
+										| "utm_member"
+										| "external_member"
+										| "lab_administrator",
+									effectiveFrom: {
+										lte: new Date(),
 									},
-									orderBy: {
-										effectiveFrom: "desc",
-									},
-								})
+									OR: [
+										{ effectiveTo: null },
+										{ effectiveTo: { gte: new Date() } },
+									],
+								},
+								orderBy: {
+									effectiveFrom: "desc",
+								},
+							})
 							: [];
 
 					// Create a map of serviceId -> unit (get most recent pricing for each service)
@@ -289,12 +350,12 @@ export const GET = createProtectedHandler(
 									quantity: serviceItem.quantity,
 									unitPrice:
 										typeof serviceItem.unitPrice === "object" &&
-										"toNumber" in serviceItem.unitPrice
+											"toNumber" in serviceItem.unitPrice
 											? serviceItem.unitPrice.toNumber()
 											: Number(serviceItem.unitPrice),
 									totalPrice:
 										typeof serviceItem.totalPrice === "object" &&
-										"toNumber" in serviceItem.totalPrice
+											"toNumber" in serviceItem.totalPrice
 											? serviceItem.totalPrice.toNumber()
 											: Number(serviceItem.totalPrice),
 									sampleName: serviceItem.sampleName ?? undefined,
@@ -357,7 +418,7 @@ export const GET = createProtectedHandler(
 										(sum, addon) =>
 											sum +
 											(typeof addon.amount === "object" &&
-											"toNumber" in addon.amount
+												"toNumber" in addon.amount
 												? addon.amount.toNumber()
 												: Number(addon.amount)),
 										0,
@@ -412,15 +473,12 @@ export const GET = createProtectedHandler(
 				}
 			}
 
-			// Convert stream to buffer
-			const chunks: Uint8Array[] = [];
-			for await (const chunk of pdfStream) {
-				chunks.push(chunk as Uint8Array);
-			}
-			const pdfBuffer = Buffer.concat(chunks);
+			// Convert stream to buffer with timeout protection
+			const pdfBuffer = await streamToBufferWithTimeout(pdfStream, 30000);
 
 			// Return PDF response (createProtectedHandler will pass through Response objects)
-			return new Response(pdfBuffer, {
+			// Use Uint8Array.from to convert Buffer for Response compatibility
+			return new Response(Uint8Array.from(pdfBuffer), {
 				status: 200,
 				headers: {
 					"Content-Type": "application/pdf",
