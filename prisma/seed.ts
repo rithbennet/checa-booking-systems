@@ -981,56 +981,6 @@ async function main() {
 	}
 	console.log("─────────────────────────────────────────────────────");
 
-	// Seed System Settings
-	console.log("\n🌱 Seeding system settings...");
-
-	// Clean up existing system settings
-	await db.systemSetting.deleteMany({});
-
-	// Import facility config for seeding
-	const { facilityConfig } = await import(
-		"../src/shared/lib/pdf/config/facility-config"
-	);
-
-	// Seed facility settings from facilityConfig
-	await db.systemSetting.create({
-		data: {
-			namespace: "facility",
-			key: "default",
-			value: facilityConfig,
-			description: "Facility configuration for PDF templates and service forms",
-		},
-	});
-
-	// Seed initial signature settings (empty structure)
-	await db.systemSetting.create({
-		data: {
-			namespace: "signatures",
-			key: "default",
-			value: {
-				picSignature: {
-					name: facilityConfig.staffPic.fullName,
-					title: "",
-					imageUrl: null,
-					blobId: null,
-				},
-				ikohzaHeadSignature: {
-					name: facilityConfig.workArea.signature.name,
-					title: "",
-					department: facilityConfig.workArea.signature.department,
-					institute: facilityConfig.workArea.signature.institute,
-					university: facilityConfig.workArea.signature.university,
-					address: facilityConfig.workArea.signature.address,
-					imageUrl: null,
-					blobId: null,
-				},
-			},
-			description: "Signature settings for PIC and Ikohza head",
-		},
-	});
-
-	console.log("✅ Seeded system settings");
-
 	console.log("✅ Seed completed successfully!");
 	console.log("\n📋 Account Credentials:");
 	console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");

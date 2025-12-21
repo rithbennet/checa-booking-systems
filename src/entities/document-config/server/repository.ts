@@ -191,6 +191,37 @@ export async function getGlobalDocumentConfig(): Promise<DocumentConfig> {
 }
 
 /**
+ * Helper to build database fields from merged config
+ * Used for both create and update operations to avoid duplication
+ */
+function buildDbFields(merged: DocumentConfig) {
+	return {
+		facilityName: merged.facilityName,
+		addressTitle: merged.address.title,
+		addressInstitute: merged.address.institute,
+		addressUniversity: merged.address.university,
+		addressStreet: merged.address.street,
+		addressCity: merged.address.city,
+		addressEmail: merged.address.email,
+		staffPicName: merged.staffPic.name,
+		staffPicFullName: merged.staffPic.fullName,
+		staffPicEmail: merged.staffPic.email,
+		staffPicPhone: merged.staffPic.phone,
+		staffPicTitle: merged.staffPic.title,
+		staffPicSignatureBlobId: merged.staffPic.signatureBlobId,
+		ikohzaHeadName: merged.ikohzaHead.name,
+		ikohzaHeadTitle: merged.ikohzaHead.title,
+		ikohzaHeadDepartment: merged.ikohzaHead.department,
+		ikohzaHeadInstitute: merged.ikohzaHead.institute,
+		ikohzaHeadUniversity: merged.ikohzaHead.university,
+		ikohzaHeadAddress: merged.ikohzaHead.address,
+		ikohzaHeadSignatureBlobId: merged.ikohzaHead.signatureBlobId,
+		ccRecipients: merged.ccRecipients,
+		facilities: merged.facilities,
+	};
+}
+
+/**
  * Update global document configuration
  * Upserts the single row in FacilityDocumentConfig table
  */
@@ -269,58 +300,17 @@ export async function updateGlobalDocumentConfig(
 		facilities: validated.facilities ?? current.facilities,
 	};
 
+	// Build fields once and reuse for both create and update
+	const dbFields = buildDbFields(merged);
+
 	// Upsert into database
 	const updated = await db.facilityDocumentConfig.upsert({
 		where: { singletonKey: "default" },
 		create: {
 			singletonKey: "default",
-			facilityName: merged.facilityName,
-			addressTitle: merged.address.title,
-			addressInstitute: merged.address.institute,
-			addressUniversity: merged.address.university,
-			addressStreet: merged.address.street,
-			addressCity: merged.address.city,
-			addressEmail: merged.address.email,
-			staffPicName: merged.staffPic.name,
-			staffPicFullName: merged.staffPic.fullName,
-			staffPicEmail: merged.staffPic.email,
-			staffPicPhone: merged.staffPic.phone,
-			staffPicTitle: merged.staffPic.title,
-			staffPicSignatureBlobId: merged.staffPic.signatureBlobId,
-			ikohzaHeadName: merged.ikohzaHead.name,
-			ikohzaHeadTitle: merged.ikohzaHead.title,
-			ikohzaHeadDepartment: merged.ikohzaHead.department,
-			ikohzaHeadInstitute: merged.ikohzaHead.institute,
-			ikohzaHeadUniversity: merged.ikohzaHead.university,
-			ikohzaHeadAddress: merged.ikohzaHead.address,
-			ikohzaHeadSignatureBlobId: merged.ikohzaHead.signatureBlobId,
-			ccRecipients: merged.ccRecipients,
-			facilities: merged.facilities,
+			...dbFields,
 		},
-		update: {
-			facilityName: merged.facilityName,
-			addressTitle: merged.address.title,
-			addressInstitute: merged.address.institute,
-			addressUniversity: merged.address.university,
-			addressStreet: merged.address.street,
-			addressCity: merged.address.city,
-			addressEmail: merged.address.email,
-			staffPicName: merged.staffPic.name,
-			staffPicFullName: merged.staffPic.fullName,
-			staffPicEmail: merged.staffPic.email,
-			staffPicPhone: merged.staffPic.phone,
-			staffPicTitle: merged.staffPic.title,
-			staffPicSignatureBlobId: merged.staffPic.signatureBlobId,
-			ikohzaHeadName: merged.ikohzaHead.name,
-			ikohzaHeadTitle: merged.ikohzaHead.title,
-			ikohzaHeadDepartment: merged.ikohzaHead.department,
-			ikohzaHeadInstitute: merged.ikohzaHead.institute,
-			ikohzaHeadUniversity: merged.ikohzaHead.university,
-			ikohzaHeadAddress: merged.ikohzaHead.address,
-			ikohzaHeadSignatureBlobId: merged.ikohzaHead.signatureBlobId,
-			ccRecipients: merged.ccRecipients,
-			facilities: merged.facilities,
-		},
+		update: dbFields,
 		include: {
 			staffPicSignature: true,
 			ikohzaHeadSignature: true,
@@ -391,7 +381,7 @@ export async function getEffectiveFacilityConfigForPdf() {
 				institute: config.ikohzaHead.institute,
 				university: config.ikohzaHead.university,
 				address: config.ikohzaHead.address,
-				signatureImageUrl: config.ikohzaHead.signatureImageUrl || null,
+				signatureImageUrl: config.ikohzaHead.signatureImageUrl ?? null,
 			},
 			ccRecipients: config.ccRecipients as readonly string[],
 			address: config.address,

@@ -49,8 +49,10 @@ export const facilityDocumentConfig = {
 
 	// Logo paths (stored in repo, not in DB)
 	logos: {
-		main: "checa-logo.png",
-		big: "checa-logo-big.png",
+		// NOTE: Image files are stored under public/images
+		// Both main and big currently use the same CheCA logo asset
+		main: "checa-logo.jpeg",
+		big: "checa-logo.jpeg",
 	},
 
 	// CC Recipients
@@ -75,34 +77,4 @@ export const facilityDocumentConfig = {
 		"Deep freezer",
 		"Glassware",
 	] as const,
-} as const;
-
-/**
- * Legacy export for backward compatibility during migration
- * @deprecated Use facilityDocumentConfig instead
- */
-export const facilityConfig = {
-	facilityName: facilityDocumentConfig.facilityName,
-	staffPic: {
-		name: facilityDocumentConfig.staffPic.name,
-		email: facilityDocumentConfig.staffPic.email,
-		fullName: facilityDocumentConfig.staffPic.fullName,
-	},
-	workArea: {
-		signature: {
-			name: facilityDocumentConfig.ikohzaHead.name,
-			department: facilityDocumentConfig.ikohzaHead.department,
-			institute: facilityDocumentConfig.ikohzaHead.institute,
-			university: facilityDocumentConfig.ikohzaHead.university,
-			address: facilityDocumentConfig.ikohzaHead.address,
-			signatureImage: facilityDocumentConfig.ikohzaHead.signatureImageUrl || "",
-		},
-		ccRecipients: [...facilityDocumentConfig.ccRecipients],
-		address: facilityDocumentConfig.address,
-		logos: {
-			main: facilityDocumentConfig.logos.main,
-			big: facilityDocumentConfig.logos.big,
-		},
-		facilities: [...facilityDocumentConfig.facilities],
-	},
 } as const;

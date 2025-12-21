@@ -47,7 +47,21 @@ export async function PUT(request: Request): Promise<Response> {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const rawBody = await request.json();
+		let rawBody: unknown;
+		try {
+			rawBody = await request.json();
+		} catch (jsonError) {
+			return NextResponse.json(
+				{
+					error: "Malformed JSON",
+					details:
+						jsonError instanceof Error
+							? jsonError.message
+							: "Invalid JSON in request body",
+				},
+				{ status: 400 },
+			);
+		}
 		const parseResult = updateDocumentConfigSchema.safeParse(rawBody);
 		if (!parseResult.success) {
 			return NextResponse.json(

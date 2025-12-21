@@ -42,6 +42,66 @@ const signatureSettingsSchema = z.object({
 });
 
 /**
+ * Helper to build signature response from config
+ */
+interface SignatureResponse {
+	staffPic: {
+		fullName: string;
+		title: string | null;
+		signatureBlobId: string | null;
+		signatureImageUrl: string | null;
+	};
+	ikohzaHead: {
+		name: string;
+		title: string | null;
+		department: string;
+		institute: string;
+		university: string;
+		address: string;
+		signatureBlobId: string | null;
+		signatureImageUrl: string | null;
+	};
+}
+
+function toSignatureResponse(config: {
+	staffPic: {
+		fullName: string;
+		title: string | null;
+		signatureBlobId: string | null;
+		signatureImageUrl: string | null;
+	};
+	ikohzaHead: {
+		name: string;
+		title: string | null;
+		department: string;
+		institute: string;
+		university: string;
+		address: string;
+		signatureBlobId: string | null;
+		signatureImageUrl: string | null;
+	};
+}): SignatureResponse {
+	return {
+		staffPic: {
+			fullName: config.staffPic.fullName,
+			title: config.staffPic.title,
+			signatureBlobId: config.staffPic.signatureBlobId,
+			signatureImageUrl: config.staffPic.signatureImageUrl,
+		},
+		ikohzaHead: {
+			name: config.ikohzaHead.name,
+			title: config.ikohzaHead.title,
+			department: config.ikohzaHead.department,
+			institute: config.ikohzaHead.institute,
+			university: config.ikohzaHead.university,
+			address: config.ikohzaHead.address,
+			signatureBlobId: config.ikohzaHead.signatureBlobId,
+			signatureImageUrl: config.ikohzaHead.signatureImageUrl,
+		},
+	};
+}
+
+/**
  * GET signature settings
  */
 export const GET = createProtectedHandler(
@@ -53,25 +113,8 @@ export const GET = createProtectedHandler(
 
 		const config = await getGlobalDocumentConfig();
 
-		// Return only signature-related fields
-		return {
-			staffPic: {
-				fullName: config.staffPic.fullName,
-				title: config.staffPic.title,
-				signatureBlobId: config.staffPic.signatureBlobId,
-				signatureImageUrl: config.staffPic.signatureImageUrl,
-			},
-			ikohzaHead: {
-				name: config.ikohzaHead.name,
-				title: config.ikohzaHead.title,
-				department: config.ikohzaHead.department,
-				institute: config.ikohzaHead.institute,
-				university: config.ikohzaHead.university,
-				address: config.ikohzaHead.address,
-				signatureBlobId: config.ikohzaHead.signatureBlobId,
-				signatureImageUrl: config.ikohzaHead.signatureImageUrl,
-			},
-		};
+		// Return only signature-related fields using helper
+		return toSignatureResponse(config);
 	},
 	{ requireActive: true },
 );
@@ -86,7 +129,21 @@ export const PUT = createProtectedHandler(
 			return forbidden("Admin access required");
 		}
 
-		const rawBody = await req.json();
+		let rawBody: unknown;
+		try {
+			rawBody = await req.json();
+		} catch (jsonError) {
+			return NextResponse.json(
+				{
+					error: "Malformed JSON",
+					details:
+						jsonError instanceof Error
+							? jsonError.message
+							: "Invalid JSON in request body",
+				},
+				{ status: 400 },
+			);
+		}
 		const parseResult = signatureSettingsSchema.safeParse(rawBody);
 
 		if (!parseResult.success) {
@@ -114,25 +171,8 @@ export const PUT = createProtectedHandler(
 
 		const updated = await updateGlobalDocumentConfig(updateInput);
 
-		// Return only signature-related fields
-		return {
-			staffPic: {
-				fullName: updated.staffPic.fullName,
-				title: updated.staffPic.title,
-				signatureBlobId: updated.staffPic.signatureBlobId,
-				signatureImageUrl: updated.staffPic.signatureImageUrl,
-			},
-			ikohzaHead: {
-				name: updated.ikohzaHead.name,
-				title: updated.ikohzaHead.title,
-				department: updated.ikohzaHead.department,
-				institute: updated.ikohzaHead.institute,
-				university: updated.ikohzaHead.university,
-				address: updated.ikohzaHead.address,
-				signatureBlobId: updated.ikohzaHead.signatureBlobId,
-				signatureImageUrl: updated.ikohzaHead.signatureImageUrl,
-			},
-		};
+		// Return only signature-related fields using helper
+		return toSignatureResponse(updated);
 	},
 	{ requireActive: true },
 );

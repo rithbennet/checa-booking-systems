@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 		width: "30%",
 	},
 	logo: {
-		width: 120,
+		width: 200,
 		height: "auto",
 	},
 	addressContainer: {
@@ -104,12 +104,12 @@ const styles = StyleSheet.create({
 	},
 	// Signature Section
 	signatureBlock: {
-		marginTop: 30,
-		marginBottom: 20,
+		marginTop: 10,
+		marginBottom: 10,
 	},
 	signatureImage: {
-		width: 300,
-		height: "auto",
+		width: 200,
+		height: 80,
 		marginBottom: 5,
 	},
 	signerName: {
@@ -123,7 +123,6 @@ const styles = StyleSheet.create({
 		color: "#1a365d",
 	},
 	ccBlock: {
-		marginTop: 10,
 		fontSize: 9,
 	},
 	// Appendix Styles
@@ -142,7 +141,7 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 	},
 	centerLogo: {
-		width: 140,
+		width: 240,
 		height: "auto",
 		marginVertical: 10,
 	},

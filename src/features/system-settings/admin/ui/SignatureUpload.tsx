@@ -123,6 +123,14 @@ export function SignatureUpload({
 	const handleRemove = async () => {
 		setIsRemoving(true);
 		try {
+			// Revoke blob URL to prevent memory leak before clearing state
+			if (
+				preview &&
+				typeof preview === "string" &&
+				preview.startsWith("blob:")
+			) {
+				URL.revokeObjectURL(preview);
+			}
 			// Send null to actually delete the signature
 			await onUploadComplete(null, null);
 			queryClient.invalidateQueries({

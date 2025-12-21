@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2, Plus, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useUpdateDocumentConfig } from "@/entities/document-config/api";
 import type { DocumentConfig } from "@/entities/document-config/model/types";
@@ -36,6 +36,21 @@ export function LabGeneralSection({ config }: LabGeneralSectionProps) {
 	const [newCcRecipient, setNewCcRecipient] = useState("");
 	const [newFacility, setNewFacility] = useState("");
 
+	// Resync formData when config prop changes (e.g., after refetch)
+	useEffect(() => {
+		setFormData({
+			facilityName: config.facilityName,
+			addressTitle: config.address.title,
+			addressInstitute: config.address.institute,
+			addressUniversity: config.address.university,
+			addressStreet: config.address.street,
+			addressCity: config.address.city,
+			addressEmail: config.address.email,
+			ccRecipients: [...config.ccRecipients],
+			facilities: [...config.facilities],
+		});
+	}, [config]);
+
 	const updateMutation = useUpdateDocumentConfig();
 
 	// Check if there are any changes
@@ -47,10 +62,16 @@ export function LabGeneralSection({ config }: LabGeneralSectionProps) {
 		formData.addressStreet !== config.address.street ||
 		formData.addressCity !== config.address.city ||
 		formData.addressEmail !== config.address.email ||
-		JSON.stringify(formData.ccRecipients.sort()) !==
-			JSON.stringify([...config.ccRecipients].sort()) ||
-		JSON.stringify(formData.facilities.sort()) !==
-			JSON.stringify([...config.facilities].sort());
+		JSON.stringify(
+			[...formData.ccRecipients].sort((a, b) => a.localeCompare(b)),
+		) !==
+			JSON.stringify(
+				[...config.ccRecipients].sort((a, b) => a.localeCompare(b)),
+			) ||
+		JSON.stringify(
+			[...formData.facilities].sort((a, b) => a.localeCompare(b)),
+		) !==
+			JSON.stringify([...config.facilities].sort((a, b) => a.localeCompare(b)));
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();

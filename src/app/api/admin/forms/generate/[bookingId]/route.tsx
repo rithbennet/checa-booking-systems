@@ -38,6 +38,10 @@ export const POST = createProtectedHandler(
 
 			const bookingId = params?.bookingId as string;
 
+			if (!bookingId) {
+				return badRequest("Booking ID is required");
+			}
+
 			// Get effective facility config from document config
 			const facilityConfig = await getEffectiveFacilityConfigForPdf();
 
