@@ -375,6 +375,7 @@ export async function upsertAddOns(params: {
 	perItemAddOns: Array<{
 		bookingServiceItemId: string;
 		serviceId: string;
+		quantity: number;
 		addOnCatalogIds: string[];
 	}>;
 	perWorkspaceAddOns: Array<{
@@ -459,6 +460,7 @@ export async function upsertAddOns(params: {
 					addOnCatalogId,
 					name: addOn.name,
 					amount,
+					quantity: Math.max(0, Math.trunc(item.quantity ?? 0)),
 					taxable: true,
 					description: addOn.description,
 				},
@@ -478,12 +480,60 @@ export async function upsertAddOns(params: {
 					addOnCatalogId,
 					name: addOn.name,
 					amount: addOn.defaultAmount,
+					quantity: 1,
 					taxable: true,
 					description: addOn.description,
 				},
 			});
 		}
 	}
+}
+
+/**
+ * Get enabled service add-on mappings for a set of services and add-ons
+ * Used to resolve effective add-on pricing (service override vs default).
+ */
+export async function getEnabledServiceAddOnMappings(params: {
+	serviceIds: string[];
+	addOnIds: string[];
+}) {
+	const { serviceIds, addOnIds } = params;
+
+	if (serviceIds.length === 0 || addOnIds.length === 0) {
+		return new Map<
+			string,
+			Map<string, { customAmount: Prisma.Decimal | null }>
+		>();
+	}
+
+	const mappings = await db.serviceAddOnMapping.findMany({
+		where: {
+			serviceId: { in: serviceIds },
+			addOnId: { in: addOnIds },
+			isEnabled: true,
+		},
+		select: {
+			serviceId: true,
+			addOnId: true,
+			customAmount: true,
+		},
+	});
+
+	const lookup = new Map<
+		string,
+		Map<string, { customAmount: Prisma.Decimal | null }>
+	>();
+
+	for (const mapping of mappings) {
+		if (!lookup.has(mapping.serviceId)) {
+			lookup.set(mapping.serviceId, new Map());
+		}
+		lookup.get(mapping.serviceId)?.set(mapping.addOnId, {
+			customAmount: mapping.customAmount,
+		});
+	}
+
+	return lookup;
 }
 
 /**

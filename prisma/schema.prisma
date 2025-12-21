@@ -832,6 +832,7 @@ model ServiceAddOn {
   addOnCatalog         GlobalAddOnCatalog  @relation(fields: [addOnCatalogId], references: [id], onDelete: Cascade)
   name                 String              @db.VarChar(150)
   amount               Decimal             @db.Decimal(10, 2)
+  quantity             Int                 @default(1)
   taxable              Boolean             @default(true)
   description          String?             @db.Text
   createdAt            DateTime            @default(now()) @db.Timestamp(6)

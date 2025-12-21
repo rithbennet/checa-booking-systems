@@ -38,10 +38,7 @@ export async function GET(): Promise<Response> {
  */
 export async function PUT(request: Request): Promise<Response> {
 	try {
-		const adminUser = await requireAdmin();
-		if (!adminUser) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
+		await requireAdmin();
 
 		let rawBody: unknown;
 		try {

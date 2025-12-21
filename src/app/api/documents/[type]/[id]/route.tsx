@@ -125,6 +125,7 @@ export const GET = createProtectedHandler(
 					serviceItems: {
 						include: {
 							service: true,
+							serviceAddOns: true,
 						},
 					},
 					workspaceBookings: {
@@ -227,25 +228,25 @@ export const GET = createProtectedHandler(
 					const servicePricings =
 						serviceIds.length > 0
 							? await db.servicePricing.findMany({
-									where: {
-										serviceId: { in: serviceIds },
-										userType: booking.user.userType as
-											| "mjiit_member"
-											| "utm_member"
-											| "external_member"
-											| "lab_administrator",
-										effectiveFrom: {
-											lte: new Date(),
-										},
-										OR: [
-											{ effectiveTo: null },
-											{ effectiveTo: { gte: new Date() } },
-										],
+								where: {
+									serviceId: { in: serviceIds },
+									userType: booking.user.userType as
+										| "mjiit_member"
+										| "utm_member"
+										| "external_member"
+										| "lab_administrator",
+									effectiveFrom: {
+										lte: new Date(),
 									},
-									orderBy: {
-										effectiveFrom: "desc",
-									},
-								})
+									OR: [
+										{ effectiveTo: null },
+										{ effectiveTo: { gte: new Date() } },
+									],
+								},
+								orderBy: {
+									effectiveFrom: "desc",
+								},
+							})
 							: [];
 
 					// Create a map of serviceId -> unit (get most recent pricing for each service)
@@ -330,48 +331,10 @@ export const GET = createProtectedHandler(
 								: undefined;
 					}
 
-					// Map service items and add unit
-					// Call mapServiceItemsForTOR once with entire array for efficiency
-					const mappedServiceItems = mapServiceItemsForTOR(
+					// Map service items (includes add-ons as separate TOR line items)
+					const serviceItemsWithUnit = mapServiceItemsForTOR(
 						booking.serviceItems,
-					);
-
-					// Map over original items and merge with mapped results and unit
-					// Since mapServiceItemsForTOR preserves order, we can match by index
-					const serviceItemsWithUnit = booking.serviceItems.map(
-						(serviceItem, index) => {
-							const mapped = mappedServiceItems[index];
-							const unit = unitMap.get(serviceItem.serviceId);
-
-							// Handle missing mapped entry gracefully (shouldn't happen, but safe guard)
-							if (!mapped) {
-								// Fallback: create basic mapped entry if missing
-								return {
-									service: {
-										name: serviceItem.service.name,
-										code: serviceItem.service.code ?? undefined,
-									},
-									quantity: serviceItem.quantity,
-									unitPrice:
-										typeof serviceItem.unitPrice === "object" &&
-										"toNumber" in serviceItem.unitPrice
-											? serviceItem.unitPrice.toNumber()
-											: Number(serviceItem.unitPrice),
-									totalPrice:
-										typeof serviceItem.totalPrice === "object" &&
-										"toNumber" in serviceItem.totalPrice
-											? serviceItem.totalPrice.toNumber()
-											: Number(serviceItem.totalPrice),
-									sampleName: serviceItem.sampleName ?? undefined,
-									unit: unit ?? "samples",
-								};
-							}
-
-							return {
-								...mapped,
-								unit: unit ?? "samples",
-							};
-						},
+						unitMap,
 					);
 
 					// Map workspace bookings to service items format
@@ -422,7 +385,7 @@ export const GET = createProtectedHandler(
 										(sum, addon) =>
 											sum +
 											(typeof addon.amount === "object" &&
-											"toNumber" in addon.amount
+												"toNumber" in addon.amount
 												? addon.amount.toNumber()
 												: Number(addon.amount)),
 										0,

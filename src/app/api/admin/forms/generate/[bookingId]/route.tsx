@@ -61,6 +61,7 @@ export const POST = createProtectedHandler(
 					serviceItems: {
 						include: {
 							service: true,
+							serviceAddOns: true,
 						},
 					},
 					workspaceBookings: {
@@ -148,10 +149,10 @@ export const POST = createProtectedHandler(
 			// Pricing is already stored in workspace bookings, so we only need service metadata
 			let workspaceServiceInfo:
 				| {
-						name: string | null;
-						code: string | null;
-						unit: string;
-				  }
+					name: string | null;
+					code: string | null;
+					unit: string;
+				}
 				| undefined;
 
 			if (hasWorkspace) {

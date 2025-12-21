@@ -150,6 +150,33 @@ export async function saveDraft(params: {
 		// Fetch add-ons
 		const addOnsMapRaw = await repo.getAddOnsByIds(uniqueAddOnIds);
 
+		// Resolve effective add-on unit amounts per service (service override first, else default)
+		const serviceIdsForAddOns = [
+			...new Set(dto.serviceItems?.map((i) => i.serviceId) ?? []),
+		];
+		const mappingLookup = await repo.getEnabledServiceAddOnMappings({
+			serviceIds: serviceIdsForAddOns,
+			addOnIds: uniqueAddOnIds,
+		});
+		const serviceAddOnAmountMap = new Map<string, Decimal>();
+		if (dto.serviceItems && Array.isArray(dto.serviceItems)) {
+			for (const item of dto.serviceItems) {
+				if (!item.addOnCatalogIds || !Array.isArray(item.addOnCatalogIds))
+					continue;
+				for (const addOnId of item.addOnCatalogIds) {
+					const catalog = addOnsMapRaw.get(addOnId);
+					if (!catalog) continue;
+					const mapping = mappingLookup.get(item.serviceId)?.get(addOnId);
+					const effectiveAmount = (mapping?.customAmount ??
+						catalog.defaultAmount) as unknown as Decimal;
+					serviceAddOnAmountMap.set(
+						`${item.serviceId}:${addOnId}`,
+						effectiveAmount,
+					);
+				}
+			}
+		}
+
 		// Transform to match AddOnData interface
 		const addOnsMap = new Map(
 			Array.from(addOnsMapRaw.entries()).map(([id, addOn]) => [
@@ -185,6 +212,7 @@ export async function saveDraft(params: {
 			addOnsMap,
 			userType,
 			workspaceMonthlyRate,
+			serviceAddOnAmountMap,
 		);
 
 		// Upsert service items
@@ -199,6 +227,7 @@ export async function saveDraft(params: {
 				.map((item, index) => ({
 					bookingServiceItemId: item.id,
 					serviceId: item.serviceId,
+					quantity: item.quantity,
 					addOnCatalogIds: serviceItems[index]?.addOnCatalogIds ?? [],
 				}))
 				.filter((p) => p.addOnCatalogIds.length > 0);

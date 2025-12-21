@@ -42,10 +42,10 @@ function generateTORAddress({
 	utmLocation,
 }: {
 	userType:
-		| "mjiit_member"
-		| "utm_member"
-		| "external_member"
-		| "lab_administrator";
+	| "mjiit_member"
+	| "utm_member"
+	| "external_member"
+	| "lab_administrator";
 	userAddress?: string | null;
 	department?: string | null;
 	faculty?: string | null;
@@ -490,10 +490,10 @@ export interface TORTemplateProps {
 		unit?: string;
 	}>;
 	userType?:
-		| "mjiit_member"
-		| "utm_member"
-		| "external_member"
-		| "lab_administrator";
+	| "mjiit_member"
+	| "utm_member"
+	| "external_member"
+	| "lab_administrator";
 	// Facility config props
 	facilityName: string;
 	staffPicName: string;
@@ -1106,28 +1106,35 @@ export function TORTemplate({
 	staffPicSignatureImageUrl,
 }: TORTemplateProps) {
 	// Map service items to line items format
-	const items: LineItem[] = serviceItems.map((item) => ({
-		description: item.sampleName
-			? `${item.service.name} - ${item.sampleName}`
-			: item.service.name,
-		quantity: item.quantity,
-		unitCharge:
-			typeof item.unitPrice === "string"
-				? parseFloat(item.unitPrice)
-				: Number(item.unitPrice),
-		unit: item.unit,
-	}));
+	const items: LineItem[] = serviceItems.map((item) => {
+		const isAddOnLine = !item.service.code;
+		const description = item.sampleName
+			? isAddOnLine
+				? `${item.service.name} (Sample: ${item.sampleName})`
+				: `${item.service.name} - ${item.sampleName}`
+			: item.service.name;
+
+		return {
+			description,
+			quantity: item.quantity,
+			unitCharge:
+				typeof item.unitPrice === "string"
+					? parseFloat(item.unitPrice)
+					: Number(item.unitPrice),
+			unit: item.unit,
+		};
+	});
 
 	// Generate address based on user type
 	const generatedAddress = userType
 		? generateTORAddress({
-				userType,
-				userAddress,
-				department: userDepartment,
-				faculty: userFaculty,
-				ikohza: userIkohza,
-				utmLocation,
-			})
+			userType,
+			userAddress,
+			department: userDepartment,
+			faculty: userFaculty,
+			ikohza: userIkohza,
+			utmLocation,
+		})
 		: userAddress || "N/A";
 
 	// Use InvoiceRequestForm with mapped props
