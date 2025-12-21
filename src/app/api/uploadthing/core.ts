@@ -398,6 +398,142 @@ export const fileRouter = {
 				blobId: blob.id,
 			};
 		}),
+
+	/**
+	 * Signature Image Uploader
+	 *
+	 * Accepts images (up to 2MB) for system signature images (PIC and Ikohza head)
+	 * Only administrators can upload signature images
+	 */
+	signatureImage: f({
+		image: { maxFileSize: "2MB", maxFileCount: 1 },
+	})
+		.middleware(async () => {
+			// Get session using our auth wrapper
+			const session = await auth();
+
+			if (!session?.user?.appUserId) {
+				throw new Error(
+					"Unauthorized: Please sign in to upload signature image",
+				);
+			}
+
+			const userId = session.user.appUserId;
+			const userRole = session.user.role;
+			const isAdmin = userRole === "lab_administrator";
+
+			if (!isAdmin) {
+				throw new Error(
+					"Forbidden: Only administrators can upload signature images",
+				);
+			}
+
+			// Return metadata to be used in onUploadComplete
+			return {
+				userId,
+			};
+		})
+		.onUploadComplete(async ({ metadata, file }) => {
+			// Create FileBlob record
+			const blob = await db.fileBlob.create({
+				data: {
+					key: file.key,
+					url: file.ufsUrl,
+					mimeType: file.type,
+					fileName: file.name,
+					sizeBytes: file.size,
+					uploadedById: metadata.userId,
+				},
+			});
+
+			// Create audit log entry
+			await db.auditLog.create({
+				data: {
+					userId: metadata.userId,
+					action: "system_signature_uploaded",
+					entity: "FacilityDocumentConfig",
+					metadata: {
+						fileName: file.name,
+						fileSize: file.size,
+						url: file.ufsUrl,
+						blobId: blob.id,
+					},
+				},
+			});
+
+			// Return data that will be available on the client
+			return {
+				url: file.ufsUrl,
+				blobId: blob.id,
+			};
+		}),
+
+	/**
+	 * Logo Image Uploader
+	 *
+	 * Accepts images (up to 2MB) for system logos (main and big logos)
+	 * Only administrators can upload logo images
+	 */
+	logoImage: f({
+		image: { maxFileSize: "2MB", maxFileCount: 1 },
+	})
+		.middleware(async () => {
+			// Get session using our auth wrapper
+			const session = await auth();
+
+			if (!session?.user?.appUserId) {
+				throw new Error("Unauthorized: Please sign in to upload logo image");
+			}
+
+			const userId = session.user.appUserId;
+			const userRole = session.user.role;
+			const isAdmin = userRole === "lab_administrator";
+
+			if (!isAdmin) {
+				throw new Error(
+					"Forbidden: Only administrators can upload logo images",
+				);
+			}
+
+			// Return metadata to be used in onUploadComplete
+			return {
+				userId,
+			};
+		})
+		.onUploadComplete(async ({ metadata, file }) => {
+			// Create FileBlob record
+			const blob = await db.fileBlob.create({
+				data: {
+					key: file.key,
+					url: file.ufsUrl,
+					mimeType: file.type,
+					fileName: file.name,
+					sizeBytes: file.size,
+					uploadedById: metadata.userId,
+				},
+			});
+
+			// Create audit log entry
+			await db.auditLog.create({
+				data: {
+					userId: metadata.userId,
+					action: "system_logo_uploaded",
+					entity: "FacilityDocumentConfig",
+					metadata: {
+						fileName: file.name,
+						fileSize: file.size,
+						url: file.ufsUrl,
+						blobId: blob.id,
+					},
+				},
+			});
+
+			// Return data that will be available on the client
+			return {
+				url: file.ufsUrl,
+				blobId: blob.id,
+			};
+		}),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof fileRouter;

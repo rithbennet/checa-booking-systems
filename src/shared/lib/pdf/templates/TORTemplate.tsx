@@ -12,12 +12,22 @@ import {
 	Text,
 	View,
 } from "@react-pdf/renderer";
-import { facilityConfig } from "@/shared/lib/pdf/config/facility-config";
 import { formatDate } from "@/shared/lib/pdf/pdf-styles";
 
 // Get file system path for images (react-pdf needs absolute paths)
 const getImagePath = (imageName: string) => {
 	return path.join(process.cwd(), "public", "images", imageName);
+};
+
+// Helper to determine if an image source is a URL or file path
+const getImageSource = (src: string | null | undefined): string => {
+	if (!src) return "";
+	// If it starts with http:// or https://, it's a URL
+	if (src.startsWith("http://") || src.startsWith("https://")) {
+		return src;
+	}
+	// Otherwise, treat it as a file path in public/images/
+	return getImagePath(src);
 };
 
 /**
@@ -32,10 +42,10 @@ function generateTORAddress({
 	utmLocation,
 }: {
 	userType:
-		| "mjiit_member"
-		| "utm_member"
-		| "external_member"
-		| "lab_administrator";
+	| "mjiit_member"
+	| "utm_member"
+	| "external_member"
+	| "lab_administrator";
 	userAddress?: string | null;
 	department?: string | null;
 	faculty?: string | null;
@@ -440,6 +450,7 @@ export interface InvoiceFormProps {
 	date: Date | string;
 	staffPic: string;
 	staffPicEmail: string;
+	staffPicSignatureImageUrl?: string | null;
 	costCentre?: string;
 	refNo: string;
 
@@ -479,10 +490,16 @@ export interface TORTemplateProps {
 		unit?: string;
 	}>;
 	userType?:
-		| "mjiit_member"
-		| "utm_member"
-		| "external_member"
-		| "lab_administrator";
+	| "mjiit_member"
+	| "utm_member"
+	| "external_member"
+	| "lab_administrator";
+	// Facility config props
+	facilityName: string;
+	staffPicName: string;
+	staffPicEmail: string;
+	staffPicFullName: string;
+	staffPicSignatureImageUrl?: string | null;
 }
 
 export function InvoiceRequestForm({
@@ -496,10 +513,11 @@ export function InvoiceRequestForm({
 	date,
 	staffPic,
 	staffPicEmail,
+	staffPicSignatureImageUrl,
 	costCentre = "",
 	refNo,
 	items = [],
-	providerName = facilityConfig.staffPic.fullName,
+	providerName,
 	providerDate,
 }: InvoiceFormProps) {
 	const formattedDate = typeof date === "string" ? date : formatDate(date);
@@ -903,10 +921,19 @@ export function InvoiceRequestForm({
 							</View>
 
 							<View style={{ height: 40, marginTop: 10 }}>
-								<Text style={{ fontSize: 9, marginBottom: 30 }}>
-									Sign & Official stamp
-								</Text>
-								{/* Space for signature */}
+								{staffPicSignatureImageUrl ? (
+									<>
+										<Image
+											src={getImageSource(staffPicSignatureImageUrl)}
+											style={{ width: "auto", maxWidth: 150, maxHeight: 60, marginBottom: 5 }}
+										/>
+										<Text style={{ fontSize: 9 }}>Official stamp</Text>
+									</>
+								) : (
+									<Text style={{ fontSize: 9, marginBottom: 30 }}>
+										Sign & Official stamp
+									</Text>
+								)}
 							</View>
 
 							<View
@@ -1067,6 +1094,11 @@ export function TORTemplate({
 	userTel = "",
 	serviceItems = [],
 	userType,
+	facilityName,
+	staffPicName,
+	staffPicEmail,
+	staffPicFullName,
+	staffPicSignatureImageUrl,
 }: TORTemplateProps) {
 	// Map service items to line items format
 	const items: LineItem[] = serviceItems.map((item) => ({
@@ -1084,13 +1116,13 @@ export function TORTemplate({
 	// Generate address based on user type
 	const generatedAddress = userType
 		? generateTORAddress({
-				userType,
-				userAddress,
-				department: userDepartment,
-				faculty: userFaculty,
-				ikohza: userIkohza,
-				utmLocation,
-			})
+			userType,
+			userAddress,
+			department: userDepartment,
+			faculty: userFaculty,
+			ikohza: userIkohza,
+			utmLocation,
+		})
 		: userAddress || "N/A";
 
 	// Use InvoiceRequestForm with mapped props
@@ -1099,13 +1131,14 @@ export function TORTemplate({
 			address={generatedAddress || "N/A"}
 			date={date}
 			email={userEmail}
-			facility={facilityConfig.facilityName}
+			facility={facilityName}
 			items={items}
 			name={userName}
-			providerName={facilityConfig.staffPic.fullName}
+			providerName={staffPicFullName}
 			refNo={refNo}
-			staffPic={facilityConfig.staffPic.name}
-			staffPicEmail={facilityConfig.staffPic.email}
+			staffPic={staffPicName}
+			staffPicEmail={staffPicEmail}
+			staffPicSignatureImageUrl={staffPicSignatureImageUrl}
 			supervisorName={supervisorName}
 			tel={userTel || "N/A"}
 		/>

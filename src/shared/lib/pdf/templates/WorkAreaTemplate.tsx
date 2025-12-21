@@ -7,14 +7,24 @@ import {
 	Text,
 	View,
 } from "@react-pdf/renderer";
-import { facilityConfig } from "@/shared/lib/pdf/config/facility-config";
 
 // Register fonts if needed (using default Helvetica here, but recommended to register a font family for Bold/Italics if precise matching is needed)
 // Font.register({ family: 'OpenSans', src: '...' });
 
-// Get file system path for images
+// Get file system path for images (for logos stored in public/images/)
 const getImagePath = (imageName: string) => {
 	return path.join(process.cwd(), "public", "images", imageName);
+};
+
+// Helper to determine if an image source is a URL or file path
+const getImageSource = (src: string | null | undefined): string => {
+	if (!src) return "";
+	// If it starts with http:// or https://, it's a URL
+	if (src.startsWith("http://") || src.startsWith("https://")) {
+		return src;
+	}
+	// Otherwise, treat it as a file path in public/images/
+	return getImagePath(src);
 };
 
 const styles = StyleSheet.create({
@@ -98,8 +108,8 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	signatureImage: {
-		width: 100,
-		height: 40,
+		width: 300,
+		height: "auto",
 		marginBottom: 5,
 	},
 	signerName: {
@@ -197,6 +207,33 @@ const styles = StyleSheet.create({
 	},
 });
 
+export interface WorkAreaSignatureConfig {
+	name: string;
+	department: string;
+	institute: string;
+	university: string;
+	address: string;
+	signatureImageUrl: string | null;
+}
+
+export interface WorkAreaConfig {
+	signature: WorkAreaSignatureConfig;
+	ccRecipients: readonly string[];
+	address: {
+		title: string;
+		institute: string;
+		university: string;
+		street: string;
+		city: string;
+		email: string;
+	};
+	logos: {
+		main: string;
+		big: string;
+	};
+	facilities: readonly string[];
+}
+
 export interface WorkAreaTemplateProps {
 	studentName: string;
 	faculty: string;
@@ -209,6 +246,7 @@ export interface WorkAreaTemplateProps {
 	purpose?: string | null;
 	address?: string;
 	dateStr?: string;
+	workAreaConfig: WorkAreaConfig;
 }
 
 type TextContent =
@@ -255,6 +293,7 @@ export function WorkAreaTemplate({
 	purpose,
 	address,
 	dateStr,
+	workAreaConfig,
 }: WorkAreaTemplateProps) {
 	// Compute display date: use dateStr if provided, otherwise compute from startDate/endDate
 	// startDate and endDate are always required for workspaces
@@ -266,7 +305,7 @@ export function WorkAreaTemplate({
 		const endStr = endDate.toLocaleDateString();
 		displayDate = `${startStr} - ${endStr}`;
 	}
-	const config = facilityConfig.workArea;
+	const config = workAreaConfig;
 	const displayAddress = address || config.address.university;
 
 	return (
@@ -379,10 +418,12 @@ export function WorkAreaTemplate({
 
 				{/* Signature */}
 				<View style={styles.signatureBlock}>
-					<Image
-						src={getImagePath(config.signature.signatureImage)}
-						style={styles.signatureImage}
-					/>
+					{config.signature.signatureImageUrl && (
+						<Image
+							src={getImageSource(config.signature.signatureImageUrl)}
+							style={styles.signatureImage}
+						/>
+					)}
 					<Text style={styles.signerName}>{config.signature.name}</Text>
 					<Text style={styles.signerTitle}>{config.signature.department}</Text>
 					<Text style={styles.signerTitle}>{config.signature.institute},</Text>
@@ -544,9 +585,7 @@ export function WorkAreaTemplate({
 				<BulletItem label="•">
 					Facilities that can be used are
 					{"\n"}
-					{facilityConfig.workArea.facilities
-						.map((facility) => `    - ${facility}`)
-						.join("\n")}
+					{config.facilities.map((facility) => `    - ${facility}`).join("\n")}
 					{"\n"}
 				</BulletItem>
 				<BulletItem label="•">
