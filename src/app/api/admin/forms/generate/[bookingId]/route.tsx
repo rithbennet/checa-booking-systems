@@ -288,7 +288,7 @@ export const POST = createProtectedHandler(
 					const startDate = new Date(workspaceBooking.startDate);
 					const endDate = new Date(workspaceBooking.endDate);
 					const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-					const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+				const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 					const duration =
 						diffDays > 30
 							? `${Math.ceil(diffDays / 30)} month(s)`

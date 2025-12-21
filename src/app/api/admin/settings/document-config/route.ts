@@ -5,7 +5,6 @@
  */
 
 import { NextResponse } from "next/server";
-import { ZodError } from "zod";
 import {
 	getGlobalDocumentConfig,
 	updateGlobalDocumentConfig,
@@ -18,10 +17,7 @@ import { requireAdmin } from "@/shared/lib/api-factory";
  */
 export async function GET(): Promise<Response> {
 	try {
-		const adminUser = await requireAdmin();
-		if (!adminUser) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
+		await requireAdmin();
 
 		const config = await getGlobalDocumentConfig();
 		return NextResponse.json(config);
@@ -78,12 +74,7 @@ export async function PUT(request: Request): Promise<Response> {
 		if (error instanceof Error && error.message.includes("Forbidden")) {
 			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
-		if (error instanceof ZodError) {
-			return NextResponse.json(
-				{ error: "Invalid input", details: error.message },
-				{ status: 400 },
-			);
-		}
+
 		return NextResponse.json(
 			{ error: "Failed to update document configuration" },
 			{ status: 500 },
