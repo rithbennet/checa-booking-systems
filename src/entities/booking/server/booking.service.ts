@@ -1,4 +1,4 @@
-import type { Decimal } from "@prisma/client/runtime/library";
+import { Decimal } from "@prisma/client/runtime/library";
 import type { ZodIssue } from "zod";
 import { createSamplesForBooking } from "@/entities/sample-tracking/server";
 import type { BookingSaveDraftDto, BookingSubmitDto } from "./booking.dto";
@@ -167,8 +167,11 @@ export async function saveDraft(params: {
 					const catalog = addOnsMapRaw.get(addOnId);
 					if (!catalog) continue;
 					const mapping = mappingLookup.get(item.serviceId)?.get(addOnId);
-					const effectiveAmount = (mapping?.customAmount ??
-						catalog.defaultAmount) as unknown as Decimal;
+					// Use customAmount if defined, otherwise fall back to defaultAmount
+					const rawAmount = mapping?.customAmount ?? catalog.defaultAmount;
+					// Ensure the value is a Decimal instance for later Decimal operations
+					const effectiveAmount =
+						rawAmount instanceof Decimal ? rawAmount : new Decimal(rawAmount);
 					serviceAddOnAmountMap.set(
 						`${item.serviceId}:${addOnId}`,
 						effectiveAmount,

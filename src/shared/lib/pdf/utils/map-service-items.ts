@@ -91,6 +91,9 @@ export function mapServiceItemsForTOR(
 						? Number(addon.quantity)
 						: Number(item.quantity);
 
+				// Round to 2 decimal places to avoid floating-point precision errors
+				const totalPrice = Math.round(addonAmount * addonQty * 100) / 100;
+
 				addOnLines.push({
 					service: {
 						name: addon.name,
@@ -98,7 +101,7 @@ export function mapServiceItemsForTOR(
 					},
 					quantity: addonQty,
 					unitPrice: addonAmount,
-					totalPrice: addonAmount * addonQty,
+					totalPrice,
 					sampleName: item.sampleName ?? undefined,
 					unit,
 				});

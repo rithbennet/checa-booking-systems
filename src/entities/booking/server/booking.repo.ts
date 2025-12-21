@@ -8,6 +8,32 @@ import { type $Enums, Prisma } from "../../../../generated/prisma";
  */
 
 /**
+ * Build a nested Map lookup for service add-on mappings.
+ * Maps serviceId -> addOnId -> { customAmount }
+ */
+function buildMappingLookup(
+	mappings: Array<{
+		serviceId: string;
+		addOnId: string;
+		customAmount: Prisma.Decimal | null;
+	}>,
+): Map<string, Map<string, { customAmount: Prisma.Decimal | null }>> {
+	const lookup = new Map<
+		string,
+		Map<string, { customAmount: Prisma.Decimal | null }>
+	>();
+	for (const mapping of mappings) {
+		if (!lookup.has(mapping.serviceId)) {
+			lookup.set(mapping.serviceId, new Map());
+		}
+		lookup.get(mapping.serviceId)?.set(mapping.addOnId, {
+			customAmount: mapping.customAmount,
+		});
+	}
+	return lookup;
+}
+
+/**
  * Generate new reference number for booking
  * Using timestamp-based approach for simplicity
  */
@@ -429,18 +455,7 @@ export async function upsertAddOns(params: {
 	});
 
 	// Build mapping lookup: serviceId -> addOnId -> mapping
-	const mappingLookup = new Map<
-		string,
-		Map<string, { customAmount: Prisma.Decimal | null }>
-	>();
-	for (const mapping of mappings) {
-		if (!mappingLookup.has(mapping.serviceId)) {
-			mappingLookup.set(mapping.serviceId, new Map());
-		}
-		mappingLookup.get(mapping.serviceId)?.set(mapping.addOnId, {
-			customAmount: mapping.customAmount,
-		});
-	}
+	const mappingLookup = buildMappingLookup(mappings);
 
 	// Create new add-ons for service items with resolved amounts
 	for (const item of perItemAddOns) {
@@ -519,21 +534,7 @@ export async function getEnabledServiceAddOnMappings(params: {
 		},
 	});
 
-	const lookup = new Map<
-		string,
-		Map<string, { customAmount: Prisma.Decimal | null }>
-	>();
-
-	for (const mapping of mappings) {
-		if (!lookup.has(mapping.serviceId)) {
-			lookup.set(mapping.serviceId, new Map());
-		}
-		lookup.get(mapping.serviceId)?.set(mapping.addOnId, {
-			customAmount: mapping.customAmount,
-		});
-	}
-
-	return lookup;
+	return buildMappingLookup(mappings);
 }
 
 /**

@@ -250,6 +250,8 @@ export const POST = createProtectedHandler(
 			let waUrl: string | null = null;
 			let waKey: string | null = null;
 			let waPdfBuffer: Buffer | null = null;
+			let workingAreaUploadFailed = false;
+			let workingAreaUploadError: string | null = null;
 
 			if (hasWorkspace) {
 				const workspaceBooking = booking.workspaceBookings[0];
@@ -290,7 +292,16 @@ export const POST = createProtectedHandler(
 					});
 
 					const waUploadResult = await utapi.uploadFiles([waFile]);
-					if (!waUploadResult[0]?.error && waUploadResult[0]?.data) {
+					if (waUploadResult[0]?.error || !waUploadResult[0]?.data) {
+						workingAreaUploadFailed = true;
+						workingAreaUploadError =
+							waUploadResult[0]?.error?.message ?? "Unknown upload error";
+						console.error(
+							"[FormRegeneration] WA upload failed:",
+							waUploadResult[0]?.error,
+						);
+						// Don't fail entirely - service form was uploaded successfully
+					} else {
 						waUrl = waUploadResult[0].data.ufsUrl;
 						waKey = waUploadResult[0].data.key;
 					}
@@ -461,6 +472,10 @@ export const POST = createProtectedHandler(
 					serviceFormUrl: torUrl,
 					workingAreaFormUrl: waUrl,
 					validUntil: updatedForm.validUntil.toISOString(),
+					...(workingAreaUploadFailed && {
+						workingAreaUploadFailed: true,
+						workingAreaUploadError,
+					}),
 				},
 			});
 		} catch (error) {
