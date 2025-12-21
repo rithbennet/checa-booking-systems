@@ -96,6 +96,7 @@ export function mapDtoToNormalized(
 	addOnsMap: Map<string, AddOnData>,
 	userType: string,
 	workspaceMonthlyRate?: Decimal,
+	serviceAddOnAmountMap?: Map<string, Decimal>,
 ): MappingResult {
 	const serviceItems: NormalizedServiceItem[] = [];
 	const workspaceBookings: NormalizedWorkspaceBooking[] = [];
@@ -121,9 +122,12 @@ export function mapDtoToNormalized(
 			let addOnsTotal = new Decimal(0);
 			if (item.addOnCatalogIds && Array.isArray(item.addOnCatalogIds)) {
 				for (const addOnId of item.addOnCatalogIds) {
-					const addOn = addOnsMap.get(addOnId);
-					if (addOn) {
-						addOnsTotal = addOnsTotal.add(addOn.amount);
+					const resolvedAmount =
+						serviceAddOnAmountMap?.get(`${item.serviceId}:${addOnId}`) ??
+						addOnsMap.get(addOnId)?.amount;
+					if (resolvedAmount) {
+						// Per-sample addons: charge addon unit amount per sample
+						addOnsTotal = addOnsTotal.add(resolvedAmount.mul(quantity));
 					}
 				}
 			}

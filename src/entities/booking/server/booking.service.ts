@@ -1,4 +1,4 @@
-import type { Decimal } from "@prisma/client/runtime/library";
+import { Decimal } from "@prisma/client/runtime/library";
 import type { ZodIssue } from "zod";
 import { createSamplesForBooking } from "@/entities/sample-tracking/server";
 import type { BookingSaveDraftDto, BookingSubmitDto } from "./booking.dto";
@@ -150,6 +150,36 @@ export async function saveDraft(params: {
 		// Fetch add-ons
 		const addOnsMapRaw = await repo.getAddOnsByIds(uniqueAddOnIds);
 
+		// Resolve effective add-on unit amounts per service (service override first, else default)
+		const serviceIdsForAddOns = [
+			...new Set(dto.serviceItems?.map((i) => i.serviceId) ?? []),
+		];
+		const mappingLookup = await repo.getEnabledServiceAddOnMappings({
+			serviceIds: serviceIdsForAddOns,
+			addOnIds: uniqueAddOnIds,
+		});
+		const serviceAddOnAmountMap = new Map<string, Decimal>();
+		if (dto.serviceItems && Array.isArray(dto.serviceItems)) {
+			for (const item of dto.serviceItems) {
+				if (!item.addOnCatalogIds || !Array.isArray(item.addOnCatalogIds))
+					continue;
+				for (const addOnId of item.addOnCatalogIds) {
+					const catalog = addOnsMapRaw.get(addOnId);
+					if (!catalog) continue;
+					const mapping = mappingLookup.get(item.serviceId)?.get(addOnId);
+					// Use customAmount if defined, otherwise fall back to defaultAmount
+					const rawAmount = mapping?.customAmount ?? catalog.defaultAmount;
+					// Ensure the value is a Decimal instance for later Decimal operations
+					const effectiveAmount =
+						rawAmount instanceof Decimal ? rawAmount : new Decimal(rawAmount);
+					serviceAddOnAmountMap.set(
+						`${item.serviceId}:${addOnId}`,
+						effectiveAmount,
+					);
+				}
+			}
+		}
+
 		// Transform to match AddOnData interface
 		const addOnsMap = new Map(
 			Array.from(addOnsMapRaw.entries()).map(([id, addOn]) => [
@@ -185,6 +215,7 @@ export async function saveDraft(params: {
 			addOnsMap,
 			userType,
 			workspaceMonthlyRate,
+			serviceAddOnAmountMap,
 		);
 
 		// Upsert service items
@@ -199,6 +230,7 @@ export async function saveDraft(params: {
 				.map((item, index) => ({
 					bookingServiceItemId: item.id,
 					serviceId: item.serviceId,
+					quantity: item.quantity,
 					addOnCatalogIds: serviceItems[index]?.addOnCatalogIds ?? [],
 				}))
 				.filter((p) => p.addOnCatalogIds.length > 0);

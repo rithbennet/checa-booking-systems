@@ -798,7 +798,7 @@ model GlobalAddOnCatalog {
   name            String                @unique @db.VarChar(150)
   description     String?               @db.Text
   defaultAmount   Decimal               @db.Decimal(10, 2)
-  applicableTo   applicable_to_enum
+  applicableTo    applicable_to_enum
   isActive        Boolean               @default(true)
   createdAt       DateTime              @default(now()) @db.Timestamp(6)
   updatedAt       DateTime              @updatedAt @db.Timestamp(6)
@@ -832,6 +832,7 @@ model ServiceAddOn {
   addOnCatalog         GlobalAddOnCatalog  @relation(fields: [addOnCatalogId], references: [id], onDelete: Cascade)
   name                 String              @db.VarChar(150)
   amount               Decimal             @db.Decimal(10, 2)
+  quantity             Int                 @default(1)
   taxable              Boolean             @default(true)
   description          String?             @db.Text
   createdAt            DateTime            @default(now()) @db.Timestamp(6)
@@ -858,6 +859,10 @@ model FileBlob {
   uploadedBy   User     @relation("FileBlobUploaders", fields: [uploadedById], references: [id])
 
   bookingDocuments BookingDocument[]
+
+  // Document config relations
+  staffPicSignatures   FacilityDocumentConfig[] @relation("StaffPicSignature")
+  ikohzaHeadSignatures FacilityDocumentConfig[] @relation("IkohzaHeadSignature")
 
   @@index([uploadedById])
   @@index([url])
@@ -910,4 +915,52 @@ model BookingDocument {
   @@index([createdById])
   @@index([verificationStatus])
   @@map("booking_document")
+}
+
+// ============================================
+// Document Configuration Models
+// ============================================
+
+model FacilityDocumentConfig {
+  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  singletonKey String @unique @default("default") @db.VarChar(50) // Enforce single row
+
+  // Facility identity
+  facilityName String @db.VarChar(200)
+
+  // Facility address
+  addressTitle      String @db.VarChar(200)
+  addressInstitute  String @db.VarChar(200)
+  addressUniversity String @db.VarChar(200)
+  addressStreet     String @db.VarChar(200)
+  addressCity       String @db.VarChar(200)
+  addressEmail      String @db.VarChar(255)
+
+  // Staff PIC (Person In Charge)
+  staffPicName            String    @db.VarChar(200)
+  staffPicFullName        String    @db.VarChar(200)
+  staffPicEmail           String    @db.VarChar(255)
+  staffPicPhone           String?   @db.VarChar(20)
+  staffPicTitle           String?   @db.VarChar(200)
+  staffPicSignatureBlobId String?   @db.Uuid
+  staffPicSignature       FileBlob? @relation("StaffPicSignature", fields: [staffPicSignatureBlobId], references: [id], onDelete: SetNull)
+
+  // Ikohza Head
+  ikohzaHeadName            String    @db.VarChar(200)
+  ikohzaHeadTitle           String?   @db.VarChar(200)
+  ikohzaHeadDepartment      String    @db.VarChar(200)
+  ikohzaHeadInstitute       String    @db.VarChar(200)
+  ikohzaHeadUniversity      String    @db.VarChar(200)
+  ikohzaHeadAddress         String    @db.VarChar(500)
+  ikohzaHeadSignatureBlobId String?   @db.Uuid
+  ikohzaHeadSignature       FileBlob? @relation("IkohzaHeadSignature", fields: [ikohzaHeadSignatureBlobId], references: [id], onDelete: SetNull)
+
+  // Other settings (stored as JSON arrays)
+  ccRecipients Json @default("[]") // Array of strings
+  facilities   Json @default("[]") // Array of strings
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
+
+  @@map("facility_document_config")
 }

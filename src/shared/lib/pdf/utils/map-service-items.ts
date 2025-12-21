@@ -1,6 +1,7 @@
 import type { Decimal } from "@prisma/client/runtime/library";
 
 export interface ServiceItemInput {
+	serviceId: string;
 	service: {
 		name: string;
 		code: string | null;
@@ -9,6 +10,13 @@ export interface ServiceItemInput {
 	unitPrice: number | string | Decimal;
 	totalPrice: number | string | Decimal;
 	sampleName: string | null;
+	serviceAddOns?: Array<{
+		id: string;
+		name: string;
+		amount: number | string | Decimal;
+		description?: string | null;
+		quantity?: number | null;
+	}>;
 }
 
 export interface ServiceItemOutput {
@@ -44,23 +52,64 @@ export interface WorkspaceServiceInfo {
 
 export function mapServiceItemsForTOR(
 	serviceItems: ServiceItemInput[],
+	unitMap?: Map<string, string>,
 ): ServiceItemOutput[] {
-	return serviceItems.map((item) => ({
-		service: {
-			name: item.service.name,
-			code: item.service.code ?? undefined,
-		},
-		quantity: item.quantity,
-		unitPrice:
+	return serviceItems.flatMap((item) => {
+		const unit = unitMap?.get(item.serviceId) ?? "samples";
+
+		const baseUnitPrice =
 			typeof item.unitPrice === "object" && "toNumber" in item.unitPrice
 				? item.unitPrice.toNumber()
-				: Number(item.unitPrice),
-		totalPrice:
-			typeof item.totalPrice === "object" && "toNumber" in item.totalPrice
-				? item.totalPrice.toNumber()
-				: Number(item.totalPrice),
-		sampleName: item.sampleName ?? undefined,
-	}));
+				: Number(item.unitPrice);
+
+		const baseLine: ServiceItemOutput = {
+			service: {
+				name: item.service.name,
+				code: item.service.code ?? undefined,
+			},
+			quantity: item.quantity,
+			unitPrice: baseUnitPrice,
+			totalPrice:
+				typeof item.totalPrice === "object" && "toNumber" in item.totalPrice
+					? item.totalPrice.toNumber()
+					: Number(item.totalPrice),
+			sampleName: item.sampleName ?? undefined,
+			unit,
+		};
+
+		const addOnLines: ServiceItemOutput[] = [];
+		if (item.serviceAddOns && item.serviceAddOns.length > 0) {
+			for (const addon of item.serviceAddOns) {
+				const addonAmount =
+					typeof addon.amount === "object" && "toNumber" in addon.amount
+						? addon.amount.toNumber()
+						: Number(addon.amount);
+
+				// Prefer stored add-on quantity snapshot when available; fallback to service item quantity
+				const addonQty =
+					addon.quantity != null
+						? Number(addon.quantity)
+						: Number(item.quantity);
+
+				// Round to 2 decimal places to avoid floating-point precision errors
+				const totalPrice = Math.round(addonAmount * addonQty * 100) / 100;
+
+				addOnLines.push({
+					service: {
+						name: addon.name,
+						code: undefined,
+					},
+					quantity: addonQty,
+					unitPrice: addonAmount,
+					totalPrice,
+					sampleName: item.sampleName ?? undefined,
+					unit,
+				});
+			}
+		}
+
+		return [baseLine, ...addOnLines];
+	});
 }
 
 export function mapWorkspaceBookingsForTOR(

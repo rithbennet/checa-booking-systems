@@ -21,6 +21,48 @@ import { utapi } from "@/shared/server/uploadthing";
 
 const f = createUploadthing();
 
+/**
+ * Helper to get or create the default FacilityDocumentConfig and return its id.
+ * Used by signature and logo upload handlers for audit logging.
+ */
+async function getOrCreateFacilityConfigId(): Promise<string> {
+	// Use a single atomic upsert to avoid TOCTOU races when concurrent
+	// requests try to create the singleton record.
+	const res = await db.facilityDocumentConfig.upsert({
+		where: { singletonKey: "default" },
+		create: {
+			singletonKey: "default",
+			facilityName: "Default Facility",
+			addressTitle: "",
+			addressInstitute: "",
+			addressUniversity: "",
+			addressStreet: "",
+			addressCity: "",
+			addressEmail: "",
+			staffPicName: "",
+			staffPicFullName: "",
+			staffPicEmail: "",
+			staffPicPhone: null,
+			staffPicTitle: null,
+			staffPicSignatureBlobId: null,
+			ikohzaHeadName: "",
+			ikohzaHeadTitle: null,
+			ikohzaHeadDepartment: "",
+			ikohzaHeadInstitute: "",
+			ikohzaHeadUniversity: "",
+			ikohzaHeadAddress: "",
+			ikohzaHeadSignatureBlobId: null,
+			ccRecipients: [],
+			facilities: [],
+		},
+		// Perform a harmless update to ensure the upsert has an update branch
+		// when the record already exists. `updatedAt` is safe to touch.
+		update: { updatedAt: new Date() },
+		select: { id: true },
+	});
+	return res.id;
+}
+
 // Input schema for all booking document uploads
 const bookingDocInput = z.object({
 	bookingId: z.string().min(1, "Booking ID is required"),
@@ -388,6 +430,79 @@ export const fileRouter = {
 						fileName: file.name,
 						fileSize: file.size,
 						url: file.ufsUrl,
+					},
+				},
+			});
+
+			// Return data that will be available on the client
+			return {
+				url: file.ufsUrl,
+				blobId: blob.id,
+			};
+		}),
+
+	/**
+	 * Signature Image Uploader
+	 *
+	 * Accepts images (up to 2MB) for system signature images (PIC and Ikohza head)
+	 * Only administrators can upload signature images
+	 */
+	signatureImage: f({
+		image: { maxFileSize: "2MB", maxFileCount: 1 },
+	})
+		.middleware(async () => {
+			// Get session using our auth wrapper
+			const session = await auth();
+
+			if (!session?.user?.appUserId) {
+				throw new Error(
+					"Unauthorized: Please sign in to upload signature image",
+				);
+			}
+
+			const userId = session.user.appUserId;
+			const userRole = session.user.role;
+			const isAdmin = userRole === "lab_administrator";
+
+			if (!isAdmin) {
+				throw new Error(
+					"Forbidden: Only administrators can upload signature images",
+				);
+			}
+
+			// Return metadata to be used in onUploadComplete
+			return {
+				userId,
+			};
+		})
+		.onUploadComplete(async ({ metadata, file }) => {
+			// Create FileBlob record
+			const blob = await db.fileBlob.create({
+				data: {
+					key: file.key,
+					url: file.ufsUrl,
+					mimeType: file.type,
+					fileName: file.name,
+					sizeBytes: file.size,
+					uploadedById: metadata.userId,
+				},
+			});
+
+			// Get or create the FacilityDocumentConfig record for entityId reference
+			const facilityConfigId = await getOrCreateFacilityConfigId();
+
+			// Create audit log entry with entityId
+			await db.auditLog.create({
+				data: {
+					userId: metadata.userId,
+					action: "system_signature_uploaded",
+					entity: "FacilityDocumentConfig",
+					entityId: facilityConfigId,
+					metadata: {
+						fileName: file.name,
+						fileSize: file.size,
+						url: file.ufsUrl,
+						blobId: blob.id,
 					},
 				},
 			});
