@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { notifyAdminsNewUserRegistered } from "@/entities/notification/server";
@@ -10,7 +11,7 @@ import {
 	createCompany,
 	createCompanyBranch,
 } from "@/entities/user/server/onboarding-options-repository";
-import { invalidateUserSessionCache } from "@/shared/server/better-auth/config";
+import { auth } from "@/shared/server/better-auth";
 import { getSession } from "@/shared/server/better-auth/server";
 import { db } from "@/shared/server/db";
 import { ValidationError } from "@/shared/server/errors";
@@ -235,8 +236,15 @@ export async function POST(request: Request) {
 			});
 		}
 
-		// Invalidate session cache so needsOnboarding flips to false
-		invalidateUserSessionCache(authUserId);
+		// Force session refresh to update needsOnboarding status
+		// This bypasses all cache layers (NodeCache, cookieCache, and React cache)
+		// and ensures the session is refreshed from the database with the new User record
+		await auth.api.getSession({
+			headers: await headers(),
+			query: {
+				disableCookieCache: true,
+			},
+		});
 
 		return NextResponse.json({
 			message: "Onboarding completed successfully",

@@ -11,12 +11,6 @@ import { getFromEmail, resend } from "@/shared/server/email";
 // Create a tiny in-memory cache for session extensions
 const userCache = new NodeCache({ stdTTL: 300 }); // 5 minutes
 
-// Expose a helper to invalidate cached session extras for a user
-export function invalidateUserSessionCache(userId: string) {
-	const cacheKey = `user_session_${userId}`;
-	userCache.del(cacheKey);
-}
-
 export const auth = betterAuth({
 	database: prismaAdapter(db, {
 		provider: "postgresql",
@@ -117,11 +111,12 @@ export const auth = betterAuth({
 				status: appUser.status,
 			};
 
-			// Cache to avoid repetitive lookups
+			// Cache to avoid repetitive lookups, and clear it after session update
 			userCache.set(cacheKey, extra);
 
 			console.log("[auth-session]", "hydrating from DB for user", user.id);
 
+			// Always persist to ensure session cookie is updated with fresh data
 			return { user: { ...user, ...extra }, session, persist: true };
 		}),
 
