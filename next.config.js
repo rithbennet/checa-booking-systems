@@ -25,6 +25,7 @@ const config = {
 			},
 		],
 	},
+	serverExternalPackages: ["pino", "thread-stream", "pino-pretty"],
 };
 
 export default config;

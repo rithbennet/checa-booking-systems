@@ -11,6 +11,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * PATCH /api/admin/addons/[id]/toggle
@@ -35,9 +37,27 @@ export const PATCH = createProtectedHandler(
 
 			const addOn = await toggleAddOnActive(id, body.isActive);
 
+			// Log audit event (fire-and-forget to avoid blocking response)
+			void logAuditEvent({
+				userId: user.id,
+				action: "addon.toggle",
+				entity: "addon",
+				entityId: id,
+				metadata: {
+					isActive: body.isActive,
+					addOnName: addOn.name,
+				},
+			}).catch((auditError) => {
+				logger.error(
+					{ error: auditError, addOnId: id },
+					"Failed to log audit event for addon toggle",
+				);
+			});
+
 			return Response.json(addOn);
 		} catch (error) {
-			console.error("Error toggling add-on status:", error);
+			const addOnId = ctx.params?.id;
+			logger.error({ error, addOnId }, "Error toggling add-on status");
 			return serverError("Failed to toggle add-on status");
 		}
 	},

@@ -5,6 +5,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * POST /api/admin/users/[userId]/approve
@@ -27,9 +29,22 @@ export const POST = createProtectedHandler(
 			// Send approval notification to user
 			await notifyUserAccountApproved({ userId });
 
+			// Log audit event
+			await logAuditEvent({
+				userId: user.id,
+				action: "user.approve",
+				entity: "user",
+				entityId: userId,
+				metadata: {
+					approvedBy: user.id,
+				},
+			});
+
 			return Response.json({ success: true, message: "User approved" });
 		} catch (error) {
-			console.error("Error approving user:", error);
+			const params = await context?.params;
+			const userId = params?.userId as string;
+			logger.error({ error, userId }, "Error approving user");
 			return serverError("Failed to approve user");
 		}
 	},

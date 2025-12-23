@@ -18,6 +18,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * GET /api/admin/addons
@@ -35,7 +37,7 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
 
 		return Response.json(addOns);
 	} catch (error) {
-		console.error("Error fetching global add-ons:", error);
+		logger.error({ error }, "Error fetching global add-ons");
 		return serverError("Failed to fetch add-ons");
 	}
 });
@@ -62,9 +64,21 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 			isActive: body.isActive ?? true,
 		});
 
+		// Log audit event
+		await logAuditEvent({
+			userId: user.id,
+			action: "addon.create",
+			entity: "addon",
+			entityId: addOn.id,
+			metadata: {
+				addOnName: addOn.name,
+				defaultAmount: Number(addOn.defaultAmount),
+			},
+		});
+
 		return Response.json(addOn, { status: 201 });
 	} catch (error) {
-		console.error("Error creating add-on:", error);
+		logger.error({ error }, "Error creating add-on");
 		return serverError("Failed to create add-on");
 	}
 });
@@ -92,9 +106,20 @@ export const PUT = createProtectedHandler(async (request: Request, user) => {
 			isActive: body.isActive,
 		});
 
+		// Log audit event
+		await logAuditEvent({
+			userId: user.id,
+			action: "addon.update",
+			entity: "addon",
+			entityId: body.id,
+			metadata: {
+				addOnName: addOn.name,
+			},
+		});
+
 		return Response.json(addOn);
 	} catch (error) {
-		console.error("Error updating add-on:", error);
+		logger.error({ error }, "Error updating add-on");
 		return serverError("Failed to update add-on");
 	}
 });

@@ -71,6 +71,7 @@ const ikohzaHeadSchema = z.object({
 
 /**
  * Full document config schema
+ * Uses z.coerce.date() to handle both Date objects (server-side) and ISO date strings (from JSON responses)
  */
 export const documentConfigSchema = z.object({
 	id: z.union([z.string().uuid(), z.literal("")]),
@@ -80,8 +81,8 @@ export const documentConfigSchema = z.object({
 	ikohzaHead: ikohzaHeadSchema,
 	ccRecipients: z.array(z.string()),
 	facilities: z.array(z.string()),
-	createdAt: z.date(),
-	updatedAt: z.date(),
+	createdAt: z.coerce.date(),
+	updatedAt: z.coerce.date(),
 }) satisfies z.ZodType<DocumentConfig>;
 
 /**

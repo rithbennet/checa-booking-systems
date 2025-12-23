@@ -7,6 +7,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 import { rateLimit } from "@/shared/server/api-middleware";
 import { ValidationError } from "@/shared/server/errors";
 
@@ -45,7 +47,8 @@ export const GET = createProtectedHandler(
 			if (error instanceof Error) {
 				if (error.message.includes("Forbidden")) return forbidden();
 			}
-			console.error("Error fetching booking:", error);
+			const bookingId = params?.id;
+			logger.error({ error, bookingId }, "Error fetching booking");
 			return serverError(
 				error instanceof Error ? error.message : "Failed to fetch booking",
 			);
@@ -102,7 +105,8 @@ export const PATCH = createProtectedHandler(
 				if (error.message.includes("not editable"))
 					return badRequest(error.message);
 			}
-			console.error("Error saving draft:", error);
+			const bookingId = params?.id;
+			logger.error({ error, bookingId }, "Error saving draft");
 			return serverError(
 				error instanceof Error ? error.message : "Failed to save draft",
 			);
@@ -119,6 +123,24 @@ export const DELETE = createProtectedHandler(
 			if (!bookingId) return badRequest("Booking ID is required");
 
 			await bookingService.deleteDraft({ userId: user.id, bookingId });
+
+			// Log audit event (fire-and-forget to avoid blocking response)
+			try {
+				await logAuditEvent({
+					userId: user.id,
+					action: "booking.delete",
+					entity: "booking",
+					entityId: bookingId,
+					metadata: {
+						deletedBy: user.id,
+					},
+				});
+			} catch (auditError) {
+				logger.error(
+					{ error: auditError, bookingId, userId: user.id },
+					"Failed to log audit event for booking deletion",
+				);
+			}
 
 			return NextResponse.json({ success: true });
 		} catch (error) {
@@ -138,7 +160,8 @@ export const DELETE = createProtectedHandler(
 				if (error.message.includes("Can only delete"))
 					return badRequest(error.message);
 			}
-			console.error("Error deleting draft:", error);
+			const bookingId = params?.id;
+			logger.error({ error, bookingId }, "Error deleting draft");
 			return serverError(
 				error instanceof Error ? error.message : "Failed to delete draft",
 			);

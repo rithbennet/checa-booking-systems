@@ -5,6 +5,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * POST /api/admin/bookings/[id]/approve
@@ -20,6 +22,17 @@ export const POST = createProtectedHandler(
 
 			await bookingService.adminApprove({ adminId: user.id, bookingId });
 
+			// Log audit event
+			await logAuditEvent({
+				userId: user.id,
+				action: "booking.approve",
+				entity: "booking",
+				entityId: bookingId,
+				metadata: {
+					approvedBy: user.id,
+				},
+			});
+
 			return { success: true };
 		} catch (error) {
 			if (error instanceof Error) {
@@ -28,7 +41,8 @@ export const POST = createProtectedHandler(
 				if (error.message.includes("Can only approve"))
 					return badRequest(error.message);
 			}
-			console.error("Error approving booking:", error);
+			const bookingId = params?.id;
+			logger.error({ error, bookingId }, "Error approving booking");
 			return serverError(
 				error instanceof Error ? error.message : "Failed to approve booking",
 			);

@@ -4,6 +4,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * PATCH /api/admin/users/[userId]/type
@@ -11,11 +13,10 @@ import {
  */
 export const PATCH = createProtectedHandler(
 	async (request: Request, user, context) => {
+		const params = await context?.params;
+		const userId = params?.userId as string;
 		try {
 			if (user.role !== "lab_administrator") return forbidden();
-
-			const params = await context?.params;
-			const userId = params?.userId as string;
 
 			if (!userId) {
 				return Response.json({ error: "User ID required" }, { status: 400 });
@@ -43,12 +44,23 @@ export const PATCH = createProtectedHandler(
 
 			await updateUserType(userId, userType);
 
+			// Log audit event
+			await logAuditEvent({
+				userId: user.id,
+				action: "user.type_change",
+				entity: "user",
+				entityId: userId,
+				metadata: {
+					newUserType: userType,
+				},
+			});
+
 			return Response.json({
 				success: true,
 				message: `User type updated to ${userType}`,
 			});
 		} catch (error) {
-			console.error("Error updating user type:", error);
+			logger.error({ error, userId }, "Error updating user type");
 			return serverError("Failed to update user type");
 		}
 	},

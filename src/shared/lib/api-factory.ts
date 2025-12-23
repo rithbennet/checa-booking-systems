@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 // Use the project's auth wrapper which normalizes the Better Auth session shape.
 // `src/shared/server/auth.ts` exports `auth()` which returns { user, expires } or null.
 import { auth } from "@/shared/server/auth";
+import { logger } from "./logger";
 
 type User = { id: string; role?: string | null; status?: string | null };
 type HandlerCtx = { params?: Record<string, string>; authUserId?: string };
@@ -75,7 +76,7 @@ export function createProtectedHandler(
 			return NextResponse.json(result);
 		} catch (err: unknown) {
 			// Log for observability and return a generic 500
-			console.error("createProtectedHandler error:", err);
+			logger.error({ err }, "createProtectedHandler error");
 			return NextResponse.json(
 				{ error: "Internal Server Error" },
 				{ status: 500 },

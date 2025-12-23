@@ -10,6 +10,8 @@ import {
 	notFound,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 import { db } from "@/shared/server/db";
 
 export const DELETE = createProtectedHandler(
@@ -56,19 +58,17 @@ export const DELETE = createProtectedHandler(
 				where: { id: resultId },
 			});
 
-			// Create audit log entry
-			await db.auditLog.create({
-				data: {
-					userId: user.id,
-					action: "analysis_result_deleted",
-					entity: "AnalysisResult",
-					entityId: resultId,
-					metadata: {
-						bookingId: booking.id,
-						bookingReference: booking.referenceNumber,
-						fileName: result.fileName,
-						sampleTrackingId: result.sampleTrackingId,
-					},
+			// Log audit event (using standardized action name)
+			await logAuditEvent({
+				userId: user.id,
+				action: "sample.result.delete",
+				entity: "analysis_result",
+				entityId: resultId,
+				metadata: {
+					bookingId: booking.id,
+					bookingReference: booking.referenceNumber,
+					fileName: result.fileName,
+					sampleTrackingId: result.sampleTrackingId,
 				},
 			});
 
@@ -77,7 +77,7 @@ export const DELETE = createProtectedHandler(
 				message: "Analysis result deleted successfully",
 			});
 		} catch (error) {
-			console.error("Error deleting analysis result:", error);
+			logger.error({ error, resultId }, "Error deleting analysis result");
 			return serverError("Failed to delete analysis result");
 		}
 	},

@@ -8,6 +8,7 @@ import {
 	notFound,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logger } from "@/shared/lib/logger";
 
 export const GET = createProtectedHandler(
 	async (
@@ -33,7 +34,10 @@ export const GET = createProtectedHandler(
 
 			return vm;
 		} catch (error) {
-			console.error("[admin/bookings/[id] GET]", error);
+			logger.error(
+				{ error, bookingId: params?.id },
+				"[admin/bookings/[id] GET]",
+			);
 
 			// Handle Prisma not found error (P2025 from findUniqueOrThrow)
 			if (

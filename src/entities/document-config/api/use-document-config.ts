@@ -9,6 +9,25 @@ import type { DocumentConfig, UpdateDocumentConfigInput } from "../model/types";
 import { documentConfigKeys } from "./query-keys";
 
 /**
+ * Parse and validate document config JSON response.
+ * Throws a normalized error if validation fails.
+ *
+ * @param json - The raw JSON response to validate
+ * @returns The validated DocumentConfig
+ */
+function parseDocumentConfig(json: unknown): DocumentConfig {
+	try {
+		return documentConfigSchema.parse(json);
+	} catch (parseError) {
+		const message =
+			parseError instanceof Error
+				? parseError.message
+				: "Unknown validation error";
+		throw new Error(`Invalid document config response: ${message}`);
+	}
+}
+
+/**
  * Fetch global document configuration
  */
 export function useDocumentConfig() {
@@ -20,15 +39,7 @@ export function useDocumentConfig() {
 				throw new Error("Failed to fetch document config");
 			}
 			const json = await response.json();
-			try {
-				return documentConfigSchema.parse(json);
-			} catch (parseError) {
-				const message =
-					parseError instanceof Error
-						? parseError.message
-						: "Unknown validation error";
-				throw new Error(`Invalid document config response: ${message}`);
-			}
+			return parseDocumentConfig(json);
 		},
 	});
 }
@@ -63,7 +74,8 @@ export function useUpdateDocumentConfig() {
 				throw new Error(errorMessage);
 			}
 
-			return (await response.json()) as DocumentConfig;
+			const json = await response.json();
+			return parseDocumentConfig(json);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({

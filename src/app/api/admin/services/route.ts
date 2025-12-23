@@ -13,6 +13,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * GET /api/admin/services
@@ -54,7 +56,7 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
 
 		return Response.json(result);
 	} catch (error) {
-		console.error("Error fetching services:", error);
+		logger.error({ error }, "Error fetching services");
 		return serverError("Failed to fetch services");
 	}
 });
@@ -69,9 +71,26 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 		const body = await request.json();
 		const result = await upsertAdminService(body);
 
+		// Log audit event (fire-and-forget to avoid blocking response)
+		void logAuditEvent({
+			userId: user.id,
+			action: "service.create",
+			entity: "service",
+			entityId: result.id,
+			metadata: {
+				serviceCode: body.code,
+				serviceName: body.name,
+			},
+		}).catch((auditError) => {
+			logger.error(
+				{ error: auditError, serviceId: result.id },
+				"Failed to log audit event for service creation",
+			);
+		});
+
 		return Response.json(result, { status: 201 });
 	} catch (error) {
-		console.error("Error creating service:", error);
+		logger.error({ error }, "Error creating service");
 		if (error instanceof Error && error.message.includes("Unique constraint")) {
 			return Response.json(
 				{ error: "A service with this code already exists" },
@@ -92,9 +111,26 @@ export const PUT = createProtectedHandler(async (request: Request, user) => {
 		const body = await request.json();
 		const result = await upsertAdminService(body);
 
+		// Log audit event (fire-and-forget to avoid blocking response)
+		void logAuditEvent({
+			userId: user.id,
+			action: "service.update",
+			entity: "service",
+			entityId: result.id,
+			metadata: {
+				serviceCode: body.code,
+				serviceName: body.name,
+			},
+		}).catch((auditError) => {
+			logger.error(
+				{ error: auditError, serviceId: result.id },
+				"Failed to log audit event for service update",
+			);
+		});
+
 		return Response.json(result);
 	} catch (error) {
-		console.error("Error updating service:", error);
+		logger.error({ error }, "Error updating service");
 		if (error instanceof Error && error.message.includes("Unique constraint")) {
 			return Response.json(
 				{ error: "A service with this code already exists" },

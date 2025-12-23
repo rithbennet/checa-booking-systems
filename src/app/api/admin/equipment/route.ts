@@ -13,6 +13,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * GET /api/admin/equipment
@@ -47,7 +49,7 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
 
 		return Response.json(result);
 	} catch (error) {
-		console.error("Error fetching equipment:", error);
+		logger.error({ error }, "Error fetching equipment");
 		return serverError("Failed to fetch equipment");
 	}
 });
@@ -62,9 +64,20 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 		const body = await request.json();
 		const result = await upsertAdminEquipment(body);
 
+		// Log audit event
+		await logAuditEvent({
+			userId: user.id,
+			action: "equipment.create",
+			entity: "equipment",
+			entityId: result.id,
+			metadata: {
+				equipmentName: body.name,
+			},
+		});
+
 		return Response.json(result, { status: 201 });
 	} catch (error) {
-		console.error("Error creating equipment:", error);
+		logger.error({ error }, "Error creating equipment");
 		if (error instanceof Error && error.message.includes("Unique constraint")) {
 			return Response.json(
 				{ error: "Equipment with this name already exists" },
@@ -85,9 +98,20 @@ export const PUT = createProtectedHandler(async (request: Request, user) => {
 		const body = await request.json();
 		const result = await upsertAdminEquipment(body);
 
+		// Log audit event
+		await logAuditEvent({
+			userId: user.id,
+			action: "equipment.update",
+			entity: "equipment",
+			entityId: result.id,
+			metadata: {
+				equipmentName: body.name,
+			},
+		});
+
 		return Response.json(result);
 	} catch (error) {
-		console.error("Error updating equipment:", error);
+		logger.error({ error }, "Error updating equipment");
 		if (error instanceof Error && error.message.includes("Unique constraint")) {
 			return Response.json(
 				{ error: "Equipment with this name already exists" },

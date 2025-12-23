@@ -16,6 +16,8 @@ import {
 	notFound,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 import {
 	mapServiceItemsForTOR,
 	mapWorkspaceBookingsForTOR,
@@ -172,8 +174,15 @@ export const POST = createProtectedHandler(
 					const endDate = new Date(firstWorkspace.endDate);
 					const dateRange = `${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}`;
 
-					console.warn(
-						`[admin/forms/regenerate] Missing workspace service pricing for booking ${booking.id}, workspace ${firstWorkspace.id}, date range: ${dateRange}, userType: ${booking.user.userType}, serviceId: ${workspaceService?.id ?? "N/A"}`,
+					logger.warn(
+						{
+							bookingId: booking.id,
+							workspaceId: firstWorkspace.id,
+							dateRange,
+							userType: booking.user.userType,
+							serviceId: workspaceService?.id ?? "N/A",
+						},
+						"[admin/forms/regenerate] Missing workspace service pricing",
 					);
 
 					return badRequest(
@@ -237,9 +246,9 @@ export const POST = createProtectedHandler(
 
 			const torUploadResult = await utapi.uploadFiles([torFile]);
 			if (torUploadResult[0]?.error || !torUploadResult[0]?.data) {
-				console.error(
-					"[FormRegeneration] TOR upload failed:",
-					torUploadResult[0]?.error,
+				logger.error(
+					{ error: torUploadResult[0]?.error, formId, bookingId: booking.id },
+					"[FormRegeneration] TOR upload failed",
 				);
 				return serverError("Failed to upload regenerated service form PDF");
 			}
@@ -296,9 +305,13 @@ export const POST = createProtectedHandler(
 						workingAreaUploadFailed = true;
 						workingAreaUploadError =
 							waUploadResult[0]?.error?.message ?? "Unknown upload error";
-						console.error(
-							"[FormRegeneration] WA upload failed:",
-							waUploadResult[0]?.error,
+						logger.error(
+							{
+								error: waUploadResult[0]?.error,
+								formId,
+								bookingId: booking.id,
+							},
+							"[FormRegeneration] WA upload failed",
 						);
 						// Don't fail entirely - service form was uploaded successfully
 					} else {
@@ -414,20 +427,7 @@ export const POST = createProtectedHandler(
 					});
 				}
 
-				await tx.auditLog.create({
-					data: {
-						userId: user.id,
-						action: "REGENERATE_FORM",
-						entity: "service_form",
-						entityId: formId,
-						metadata: {
-							oldFormNumber: existingForm.formNumber,
-							newFormNumber,
-							bookingId: booking.id,
-							bookingReference: booking.referenceNumber,
-						},
-					},
-				});
+				// Audit log will be created via logAuditEvent after transaction
 
 				return { updatedForm: form, oldBlobKeys: blobKeys };
 			});
@@ -437,13 +437,32 @@ export const POST = createProtectedHandler(
 				try {
 					await utapi.deleteFiles(oldBlobKeys);
 				} catch (error) {
-					console.error(
-						"[FormRegeneration] Failed to delete old files from UploadThing:",
-						error,
+					logger.error(
+						{ error, formId, oldBlobKeys },
+						"[FormRegeneration] Failed to delete old files from UploadThing",
 					);
 					// Log error but don't rollback - DB transaction already committed
 				}
 			}
+
+			// Log audit event (fire-and-forget)
+			void logAuditEvent({
+				userId: user.id,
+				action: "form.regenerate",
+				entity: "service_form",
+				entityId: formId,
+				metadata: {
+					oldFormNumber: existingForm.formNumber,
+					newFormNumber,
+					bookingId: booking.id,
+					bookingReference: booking.referenceNumber,
+				},
+			}).catch((auditError) => {
+				logger.error(
+					{ error: auditError, formId, bookingId: booking.id },
+					"Failed to log audit event for form regeneration",
+				);
+			});
 
 			// Notify user - use persisted validUntil from updatedForm
 			try {
@@ -457,9 +476,9 @@ export const POST = createProtectedHandler(
 					requiresWorkingAreaAgreement: hasWorkspace,
 				});
 			} catch (notifyError) {
-				console.error(
-					"[FormRegeneration] Failed to send notification:",
-					notifyError,
+				logger.error(
+					{ error: notifyError, formId, bookingId: booking.id },
+					"[FormRegeneration] Failed to send notification",
 				);
 			}
 
@@ -479,7 +498,8 @@ export const POST = createProtectedHandler(
 				},
 			});
 		} catch (error) {
-			console.error("[admin/forms/regenerate] Error:", error);
+			const formId = params?.formId as string;
+			logger.error({ error, formId }, "[admin/forms/regenerate] Error");
 			return serverError("Failed to regenerate forms");
 		}
 	},

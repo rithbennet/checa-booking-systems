@@ -14,6 +14,8 @@ import {
 } from "@/entities/document-config";
 import type { UpdateDocumentConfigInput } from "@/entities/document-config/model/types";
 import { createProtectedHandler, forbidden } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * Zod schema for signature settings request body
@@ -170,6 +172,36 @@ export const PUT = createProtectedHandler(
 		};
 
 		const updated = await updateGlobalDocumentConfig(updateInput);
+
+		// Build detailed updatedFields with nested keys
+		const flattenKeys = (
+			obj: Record<string, unknown>,
+			prefix = "",
+		): string[] => {
+			return Object.entries(obj).flatMap(([key, value]) => {
+				const fullKey = prefix ? `${prefix}.${key}` : key;
+				if (value && typeof value === "object" && !Array.isArray(value)) {
+					return flattenKeys(value as Record<string, unknown>, fullKey);
+				}
+				return [fullKey];
+			});
+		};
+		const detailedUpdatedFields = flattenKeys(body as Record<string, unknown>);
+
+		// Log audit event (fire-and-forget to avoid blocking response)
+		void logAuditEvent({
+			userId: user.id,
+			action: "settings.signatures.update",
+			entity: "document_config",
+			metadata: {
+				updatedFields: detailedUpdatedFields,
+			},
+		}).catch((auditError) => {
+			logger.error(
+				{ error: auditError },
+				"Failed to log audit event for signatures update",
+			);
+		});
 
 		// Return only signature-related fields using helper
 		return toSignatureResponse(updated);
