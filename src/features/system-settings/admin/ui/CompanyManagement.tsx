@@ -46,6 +46,9 @@ interface DeleteState {
 export function CompanyManagement() {
 	const { data: companies, isLoading } = useCompanies();
 	const [isCreateCompanyOpen, setIsCreateCompanyOpen] = useState(false);
+	const [creatingBranchForCompanyId, setCreatingBranchForCompanyId] = useState<
+		string | null
+	>(null);
 	const [editingCompany, setEditingCompany] = useState<{
 		id: string;
 		name: string;
@@ -271,7 +274,14 @@ export function CompanyManagement() {
 													</p>
 												)}
 											</div>
-											<Dialog>
+											<Dialog
+												onOpenChange={(open) =>
+													setCreatingBranchForCompanyId(
+														open ? company.id : null,
+													)
+												}
+												open={creatingBranchForCompanyId === company.id}
+											>
 												<DialogTrigger asChild>
 													<Button
 														className="w-full"
@@ -290,9 +300,9 @@ export function CompanyManagement() {
 													</DialogHeader>
 													<CreateBranchForm
 														companyId={company.id}
-														onSuccess={() => {
-															// Dialog closes automatically
-														}}
+														onSuccess={() =>
+															setCreatingBranchForCompanyId(null)
+														}
 													/>
 												</DialogContent>
 											</Dialog>

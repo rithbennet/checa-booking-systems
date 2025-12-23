@@ -89,6 +89,31 @@ export function EditBranchForm({ branch, onSuccess }: EditBranchFormProps) {
 				</div>
 			</div>
 
+			<div className="grid grid-cols-2 gap-4">
+				<div className="space-y-2">
+					<Label htmlFor="postcode">Postcode (Optional)</Label>
+					<Input id="postcode" {...register("postcode")} />
+					{errors.postcode && (
+						<p className="text-red-500 text-sm">{errors.postcode.message}</p>
+					)}
+				</div>
+				<div className="space-y-2">
+					<Label htmlFor="country">Country (Optional)</Label>
+					<Input id="country" {...register("country")} />
+					{errors.country && (
+						<p className="text-red-500 text-sm">{errors.country.message}</p>
+					)}
+				</div>
+			</div>
+
+			<div className="space-y-2">
+				<Label htmlFor="phone">Phone (Optional)</Label>
+				<Input id="phone" {...register("phone")} />
+				{errors.phone && (
+					<p className="text-red-500 text-sm">{errors.phone.message}</p>
+				)}
+			</div>
+
 			<Button disabled={isPending} type="submit">
 				{isPending ? "Saving..." : "Save Changes"}
 			</Button>

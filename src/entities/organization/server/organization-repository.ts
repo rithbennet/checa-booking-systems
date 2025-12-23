@@ -43,10 +43,18 @@ export async function deleteFaculty(id: string) {
 }
 
 export async function getAffectedUsersByFaculty(facultyId: string) {
-	return db.user.findMany({
+	const users = await db.user.findMany({
 		where: { facultyId },
 		select: { id: true, email: true, firstName: true, lastName: true },
 	});
+	return users.map((user) => ({
+		id: user.id,
+		email: user.email,
+		name:
+			user.firstName || user.lastName
+				? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
+				: null,
+	}));
 }
 
 // ===================== Department =====================
@@ -65,10 +73,18 @@ export async function deleteDepartment(id: string) {
 }
 
 export async function getAffectedUsersByDepartment(departmentId: string) {
-	return db.user.findMany({
+	const users = await db.user.findMany({
 		where: { departmentId },
 		select: { id: true, email: true, firstName: true, lastName: true },
 	});
+	return users.map((user) => ({
+		id: user.id,
+		email: user.email,
+		name:
+			user.firstName || user.lastName
+				? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
+				: null,
+	}));
 }
 
 // ===================== Ikohza =====================
@@ -87,10 +103,18 @@ export async function deleteIkohza(id: string) {
 }
 
 export async function getAffectedUsersByIkohza(ikohzaId: string) {
-	return db.user.findMany({
+	const users = await db.user.findMany({
 		where: { ikohzaId },
 		select: { id: true, email: true, firstName: true, lastName: true },
 	});
+	return users.map((user) => ({
+		id: user.id,
+		email: user.email,
+		name:
+			user.firstName || user.lastName
+				? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
+				: null,
+	}));
 }
 
 // ===================== Company =====================
@@ -116,10 +140,18 @@ export async function deleteCompany(id: string) {
 }
 
 export async function getAffectedUsersByCompany(companyId: string) {
-	return db.user.findMany({
+	const users = await db.user.findMany({
 		where: { companyId },
 		select: { id: true, email: true, firstName: true, lastName: true },
 	});
+	return users.map((user) => ({
+		id: user.id,
+		email: user.email,
+		name:
+			user.firstName || user.lastName
+				? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
+				: null,
+	}));
 }
 
 // ===================== Branch =====================
@@ -138,8 +170,16 @@ export async function deleteBranch(id: string) {
 }
 
 export async function getAffectedUsersByBranch(branchId: string) {
-	return db.user.findMany({
+	const users = await db.user.findMany({
 		where: { companyBranchId: branchId },
 		select: { id: true, email: true, firstName: true, lastName: true },
 	});
+	return users.map((user) => ({
+		id: user.id,
+		email: user.email,
+		name:
+			user.firstName || user.lastName
+				? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
+				: null,
+	}));
 }

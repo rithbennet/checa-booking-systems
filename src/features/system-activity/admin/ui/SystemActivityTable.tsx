@@ -2,6 +2,7 @@
 
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import type { AuditLogListItem } from "@/entities/audit-log";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -56,8 +57,12 @@ function MetadataCell({
 	const handleCopy = async () => {
 		try {
 			await navigator.clipboard.writeText(prettyJson);
+			toast.success("Copied to clipboard");
 		} catch (error) {
 			console.error("Failed to copy:", error);
+			toast.error("Failed to copy to clipboard", {
+				description: error instanceof Error ? error.message : "Unknown error",
+			});
 		}
 	};
 

@@ -1,5 +1,6 @@
 import { getAffectedUsersByDepartment } from "@/entities/organization/server/organization-repository";
 import { createProtectedHandler, forbidden } from "@/shared/lib/api-factory";
+import { logger } from "@/shared/lib/logger";
 
 export const GET = createProtectedHandler(async (req, user) => {
 	if (user.role !== "lab_administrator") return forbidden();
@@ -15,7 +16,10 @@ export const GET = createProtectedHandler(async (req, user) => {
 		const users = await getAffectedUsersByDepartment(id);
 		return Response.json({ users });
 	} catch (error) {
-		console.error("Error fetching affected users by department:", error);
+		logger.error(
+			{ error, departmentId: id },
+			"Error fetching affected users by department",
+		);
 		return Response.json({ error: "Failed to fetch users" }, { status: 500 });
 	}
 });

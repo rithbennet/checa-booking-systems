@@ -76,6 +76,12 @@ export function FacultyManagement() {
 	);
 	const [editingIkohza, setEditingIkohza] = useState<Ikohza | null>(null);
 	const [deleteState, setDeleteState] = useState<DeleteState | null>(null);
+	const [creatingDeptForFacultyId, setCreatingDeptForFacultyId] = useState<
+		string | null
+	>(null);
+	const [creatingIkohzaForFacultyId, setCreatingIkohzaForFacultyId] = useState<
+		string | null
+	>(null);
 
 	const { mutate: deleteFaculty, isPending: isDeletingFaculty } =
 		useDeleteFaculty();
@@ -312,7 +318,14 @@ export function FacultyManagement() {
 															</p>
 														)}
 													</div>
-													<Dialog>
+													<Dialog
+														onOpenChange={(open) =>
+															setCreatingDeptForFacultyId(
+																open ? faculty.id : null,
+															)
+														}
+														open={creatingDeptForFacultyId === faculty.id}
+													>
 														<DialogTrigger asChild>
 															<Button
 																className="w-full"
@@ -329,7 +342,12 @@ export function FacultyManagement() {
 																	Add Department to {faculty.code}
 																</DialogTitle>
 															</DialogHeader>
-															<CreateDepartmentForm facultyId={faculty.id} />
+															<CreateDepartmentForm
+																facultyId={faculty.id}
+																onSuccess={() =>
+																	setCreatingDeptForFacultyId(null)
+																}
+															/>
 														</DialogContent>
 													</Dialog>
 												</div>
@@ -410,7 +428,14 @@ export function FacultyManagement() {
 														)}
 													</div>
 													{isMjiit ? (
-														<Dialog>
+														<Dialog
+															onOpenChange={(open) =>
+																setCreatingIkohzaForFacultyId(
+																	open ? faculty.id : null,
+																)
+															}
+															open={creatingIkohzaForFacultyId === faculty.id}
+														>
 															<DialogTrigger asChild>
 																<Button
 																	className="w-full"
@@ -427,7 +452,12 @@ export function FacultyManagement() {
 																		Add Ikohza to {faculty.code}
 																	</DialogTitle>
 																</DialogHeader>
-																<CreateIkohzaForm facultyId={faculty.id} />
+																<CreateIkohzaForm
+																	facultyId={faculty.id}
+																	onSuccess={() =>
+																		setCreatingIkohzaForFacultyId(null)
+																	}
+																/>
 															</DialogContent>
 														</Dialog>
 													) : (
