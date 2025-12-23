@@ -39,8 +39,8 @@ export const POST = createProtectedHandler(
 				note: validationResult.data.note,
 			});
 
-			// Log audit event
-			await logAuditEvent({
+			// Log audit event (fire-and-forget)
+			void logAuditEvent({
 				userId: user.id,
 				action: "booking.reject",
 				entity: "booking",
@@ -49,6 +49,11 @@ export const POST = createProtectedHandler(
 					rejectedBy: user.id,
 					note: validationResult.data.note || undefined,
 				},
+			}).catch((error) => {
+				logger.error(
+					{ error, bookingId },
+					"Failed to log audit event for booking rejection",
+				);
 			});
 
 			return { success: true };

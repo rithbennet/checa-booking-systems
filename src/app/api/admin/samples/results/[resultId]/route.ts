@@ -58,8 +58,8 @@ export const DELETE = createProtectedHandler(
 				where: { id: resultId },
 			});
 
-			// Log audit event (using standardized action name)
-			await logAuditEvent({
+			// Log audit event (fire-and-forget)
+			void logAuditEvent({
 				userId: user.id,
 				action: "sample.result.delete",
 				entity: "analysis_result",
@@ -70,6 +70,11 @@ export const DELETE = createProtectedHandler(
 					fileName: result.fileName,
 					sampleTrackingId: result.sampleTrackingId,
 				},
+			}).catch((error) => {
+				logger.error(
+					{ error, resultId },
+					"Failed to log audit event for analysis result deletion",
+				);
 			});
 
 			return Response.json({

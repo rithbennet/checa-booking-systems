@@ -2,6 +2,44 @@ import type { Prisma } from "@/generated/prisma";
 import { db } from "@/shared/server/db";
 import { logger } from "./logger";
 
+/**
+ * Sanitize metadata to ensure it's JSON-serializable.
+ * Handles BigInt, Date, undefined, functions, and circular references.
+ */
+function sanitizeMetadata(
+	data: Record<string, unknown>,
+): Record<string, unknown> {
+	try {
+		return JSON.parse(
+			JSON.stringify(data, (_key, value) => {
+				// Convert BigInt to string
+				if (typeof value === "bigint") {
+					return value.toString();
+				}
+				// Convert Date to ISO string
+				if (value instanceof Date) {
+					return value.toISOString();
+				}
+				// Remove functions
+				if (typeof value === "function") {
+					return undefined;
+				}
+				return value;
+			}),
+		);
+	} catch (error) {
+		logger.error(
+			{ error, dataKeys: Object.keys(data) },
+			"Failed to sanitize audit metadata - possible circular reference",
+		);
+		// Return a safe fallback with error indication
+		return {
+			_sanitizationError: true,
+			_originalKeys: Object.keys(data),
+		};
+	}
+}
+
 export interface AuditLogParams {
 	userId: string | null;
 	action: string;
@@ -37,13 +75,14 @@ export async function logAuditEvent(params: AuditLogParams): Promise<void> {
 
 	// Log to database (AuditLog)
 	try {
+		const sanitizedMetadata = sanitizeMetadata(params.metadata || {});
 		await db.auditLog.create({
 			data: {
 				userId: params.userId,
 				action: params.action,
 				entity: params.entity,
 				entityId: params.entityId,
-				metadata: (params.metadata || {}) as Prisma.InputJsonValue,
+				metadata: sanitizedMetadata as Prisma.InputJsonValue,
 			},
 		});
 	} catch (error) {

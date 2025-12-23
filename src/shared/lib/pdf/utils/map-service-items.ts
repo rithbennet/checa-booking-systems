@@ -80,8 +80,8 @@ export function mapServiceItemsForTOR(
 				// Prefer stored add-on quantity snapshot when available; fallback to service item quantity
 				const addonQty =
 					addon.quantity != null
-						? Number(addon.quantity)
-						: Number(item.quantity);
+						? toNumber(addon.quantity)
+						: toNumber(item.quantity);
 
 				// Round to 2 decimal places to avoid floating-point precision errors
 				const totalPrice = Math.round(addonAmount * addonQty * 100) / 100;

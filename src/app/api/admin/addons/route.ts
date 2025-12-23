@@ -64,8 +64,8 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 			isActive: body.isActive ?? true,
 		});
 
-		// Log audit event
-		await logAuditEvent({
+		// Log audit event (fire-and-forget)
+		void logAuditEvent({
 			userId: user.id,
 			action: "addon.create",
 			entity: "addon",
@@ -74,6 +74,11 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 				addOnName: addOn.name,
 				defaultAmount: Number(addOn.defaultAmount),
 			},
+		}).catch((error) => {
+			logger.error(
+				{ error, addOnId: addOn.id },
+				"Failed to log audit event for addon creation",
+			);
 		});
 
 		return Response.json(addOn, { status: 201 });
@@ -106,8 +111,8 @@ export const PUT = createProtectedHandler(async (request: Request, user) => {
 			isActive: body.isActive,
 		});
 
-		// Log audit event
-		await logAuditEvent({
+		// Log audit event (fire-and-forget)
+		void logAuditEvent({
 			userId: user.id,
 			action: "addon.update",
 			entity: "addon",
@@ -115,6 +120,11 @@ export const PUT = createProtectedHandler(async (request: Request, user) => {
 			metadata: {
 				addOnName: addOn.name,
 			},
+		}).catch((error) => {
+			logger.error(
+				{ error, addOnId: body.id },
+				"Failed to log audit event for addon update",
+			);
 		});
 
 		return Response.json(addOn);

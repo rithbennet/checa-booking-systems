@@ -454,26 +454,24 @@ export const POST = createProtectedHandler(
 				);
 			}
 
-			// Log audit event (fire-and-forget to avoid blocking response)
-			try {
-				await logAuditEvent({
-					userId: user.id,
-					action: "form.generate",
-					entity: "service_form",
-					entityId: result.id,
-					metadata: {
-						formNumber: result.formNumber,
-						bookingId,
-						bookingReference: booking.referenceNumber,
-						hasWorkspace,
-					},
-				});
-			} catch (auditError) {
+			// Log audit event (fire-and-forget)
+			void logAuditEvent({
+				userId: user.id,
+				action: "form.generate",
+				entity: "service_form",
+				entityId: result.id,
+				metadata: {
+					formNumber: result.formNumber,
+					bookingId,
+					bookingReference: booking.referenceNumber,
+					hasWorkspace,
+				},
+			}).catch((error) => {
 				logger.error(
-					{ error: auditError, bookingId, formId: result.id },
+					{ error, bookingId, formId: result.id },
 					"Failed to log audit event for form generation",
 				);
-			}
+			});
 
 			return Response.json({
 				success: true,

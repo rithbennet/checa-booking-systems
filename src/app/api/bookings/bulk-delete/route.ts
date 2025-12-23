@@ -40,18 +40,25 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 		const successful = results.filter((r) => r.status === "fulfilled").length;
 		const failed = results.filter((r) => r.status === "rejected").length;
 
-		// Log audit event for bulk delete
+		// Log audit event for bulk delete (fire-and-forget)
 		if (successful > 0) {
-			await logAuditEvent({
+			void logAuditEvent({
 				userId: user.id,
 				action: "booking.bulk_delete",
 				entity: "booking",
+				entityId: bookingIds[0] ?? "bulk",
 				metadata: {
 					deletedBy: user.id,
 					affectedCount: successful,
 					totalRequested: bookingIds.length,
 					failed,
+					bookingIds,
 				},
+			}).catch((error) => {
+				logger.error(
+					{ error, userId: user.id },
+					"Failed to log audit event for bulk delete",
+				);
 			});
 		}
 

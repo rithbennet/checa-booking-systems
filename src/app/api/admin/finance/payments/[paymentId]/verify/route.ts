@@ -31,8 +31,8 @@ export const POST = createProtectedHandler(
 				notes,
 			});
 
-			// Log audit event
-			await logAuditEvent({
+			// Log audit event (fire-and-forget)
+			void logAuditEvent({
 				userId: user.id,
 				action: "payment.verify",
 				entity: "payment",
@@ -42,6 +42,11 @@ export const POST = createProtectedHandler(
 					notes: notes || undefined,
 					amount: result.amount ? Number(result.amount) : undefined,
 				},
+			}).catch((error) => {
+				logger.error(
+					{ error, paymentId },
+					"Failed to log audit event for payment verification",
+				);
 			});
 
 			return Response.json(result);

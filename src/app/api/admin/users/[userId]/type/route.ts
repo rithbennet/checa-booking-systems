@@ -13,7 +13,7 @@ import { logger } from "@/shared/lib/logger";
  */
 export const PATCH = createProtectedHandler(
 	async (request: Request, user, context) => {
-		const params = await context?.params;
+		const params = await context.params;
 		const userId = params?.userId as string;
 		try {
 			if (user.role !== "lab_administrator") return forbidden();
@@ -60,7 +60,10 @@ export const PATCH = createProtectedHandler(
 				message: `User type updated to ${userType}`,
 			});
 		} catch (error) {
-			logger.error({ error, userId }, "Error updating user type");
+			logger.error(
+				{ error, userId: userId ?? "unknown" },
+				"Error updating user type",
+			);
 			return serverError("Failed to update user type");
 		}
 	},

@@ -153,34 +153,34 @@ export function AdminDashboard() {
 				{/* Alert Banner */}
 				{(metricsData.pendingVerifications > 0 ||
 					metricsData.pendingApprovals > 0) && (
-					<div className="mb-8 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-						<div className="flex items-center">
-							<AlertTriangle className="mr-3 h-5 w-5 text-yellow-600" />
-							<div className="flex-1">
-								<h3 className="font-medium text-sm text-yellow-800">
-									Attention Required
-								</h3>
-								<p className="mt-1 text-sm text-yellow-700">
-									You have {metricsData.pendingVerifications} pending user
-									verifications and {metricsData.pendingApprovals} booking
-									requests awaiting approval.
-								</p>
-							</div>
-							<div className="ml-4 flex gap-2">
-								{metricsData.pendingVerifications > 0 && (
-									<Button asChild size="sm" variant="outline">
-										<Link href="/admin/users">Review Users</Link>
-									</Button>
-								)}
-								{metricsData.pendingApprovals > 0 && (
-									<Button asChild size="sm" variant="outline">
-										<Link href="/admin/bookings">Review Bookings</Link>
-									</Button>
-								)}
+						<div className="mb-8 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+							<div className="flex items-center">
+								<AlertTriangle className="mr-3 h-5 w-5 text-yellow-600" />
+								<div className="flex-1">
+									<h3 className="font-medium text-sm text-yellow-800">
+										Attention Required
+									</h3>
+									<p className="mt-1 text-sm text-yellow-700">
+										You have {metricsData.pendingVerifications} pending user
+										verifications and {metricsData.pendingApprovals} booking
+										requests awaiting approval.
+									</p>
+								</div>
+								<div className="ml-4 flex gap-2">
+									{metricsData.pendingVerifications > 0 && (
+										<Button asChild size="sm" variant="outline">
+											<Link href="/admin/users">Review Users</Link>
+										</Button>
+									)}
+									{metricsData.pendingApprovals > 0 && (
+										<Button asChild size="sm" variant="outline">
+											<Link href="/admin/bookings">Review Bookings</Link>
+										</Button>
+									)}
+								</div>
 							</div>
 						</div>
-					</div>
-				)}
+					)}
 
 				{/* Key Metrics */}
 				{metricsError ? (
@@ -423,7 +423,9 @@ export function AdminDashboard() {
 															{activity.action}
 														</p>
 														<p className="text-gray-500 text-xs">
-															{activity.timestamp}
+															{activity.actor
+																? `${activity.actor} | ${activity.timestamp}`
+																: activity.timestamp}
 														</p>
 													</div>
 												</div>
@@ -431,8 +433,8 @@ export function AdminDashboard() {
 										})}
 									</div>
 								)}
-								<Button className="mt-4 w-full" variant="outline">
-									View All Activity
+								<Button asChild className="mt-4 w-full" variant="outline">
+									<Link href="/admin/analytics">View All Activity</Link>
 								</Button>
 							</CardContent>
 						</Card>
