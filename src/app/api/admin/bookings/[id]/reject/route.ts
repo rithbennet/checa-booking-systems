@@ -6,6 +6,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * POST /api/admin/bookings/[id]/reject
@@ -13,6 +15,7 @@ import {
  */
 export const POST = createProtectedHandler(
 	async (request: Request, user, { params }) => {
+		const bookingId = params?.id;
 		try {
 			if (user.role !== "lab_administrator") return forbidden();
 
@@ -28,13 +31,29 @@ export const POST = createProtectedHandler(
 				);
 			}
 
-			const bookingId = params?.id;
 			if (!bookingId) return badRequest("Booking ID is required");
 
 			await bookingService.adminReject({
 				adminId: user.id,
 				bookingId,
 				note: validationResult.data.note,
+			});
+
+			// Log audit event (fire-and-forget)
+			void logAuditEvent({
+				userId: user.id,
+				action: "booking.reject",
+				entity: "booking",
+				entityId: bookingId,
+				metadata: {
+					rejectedBy: user.id,
+					note: validationResult.data.note || undefined,
+				},
+			}).catch((error) => {
+				logger.error(
+					{ error, bookingId },
+					"Failed to log audit event for booking rejection",
+				);
 			});
 
 			return { success: true };
@@ -48,7 +67,7 @@ export const POST = createProtectedHandler(
 				)
 					return badRequest(error.message);
 			}
-			console.error("Error rejecting booking:", error);
+			logger.error({ error, bookingId }, "Error rejecting booking");
 			return serverError(
 				error instanceof Error ? error.message : "Failed to reject booking",
 			);

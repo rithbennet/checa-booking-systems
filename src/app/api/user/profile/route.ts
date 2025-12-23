@@ -6,6 +6,7 @@ import {
 	updateUserProfile,
 } from "@/entities/user/server/profile-repository";
 import { createProtectedHandler } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
 import { ValidationError } from "@/shared/server/errors";
 
 /**
@@ -75,6 +76,18 @@ export const PATCH = createProtectedHandler(
 			if (!profile) {
 				return Response.json({ error: "Profile not found" }, { status: 404 });
 			}
+
+			// Log audit event
+			await logAuditEvent({
+				userId: user.id,
+				action: "user.profile_update",
+				entity: "user",
+				entityId: user.id,
+				metadata: {
+					updatedFields: Object.keys(data),
+					...(data.newBranchName && { newBranchCreated: true }),
+				},
+			});
 
 			return profile;
 		} catch (error) {

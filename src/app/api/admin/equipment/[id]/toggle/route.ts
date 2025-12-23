@@ -10,6 +10,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * PATCH /api/admin/equipment/[id]/toggle
@@ -41,9 +43,24 @@ export const PATCH = createProtectedHandler(
 
 			const result = await toggleEquipmentAvailability(id, isAvailable);
 
+			// Log audit event
+			await logAuditEvent({
+				userId: user.id,
+				action: "equipment.toggle",
+				entity: "equipment",
+				entityId: id,
+				metadata: {
+					isAvailable,
+				},
+			});
+
 			return Response.json(result);
 		} catch (error) {
-			console.error("Error toggling equipment availability:", error);
+			const equipmentId = ctx.params?.id;
+			logger.error(
+				{ error, equipmentId },
+				"Error toggling equipment availability",
+			);
 			return serverError("Failed to toggle equipment availability");
 		}
 	},

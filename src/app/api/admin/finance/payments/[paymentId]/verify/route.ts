@@ -5,6 +5,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * POST /api/admin/finance/payments/[paymentId]/verify
@@ -29,9 +31,28 @@ export const POST = createProtectedHandler(
 				notes,
 			});
 
+			// Log audit event (fire-and-forget)
+			void logAuditEvent({
+				userId: user.id,
+				action: "payment.verify",
+				entity: "payment",
+				entityId: paymentId,
+				metadata: {
+					verifiedBy: user.id,
+					notes: notes || undefined,
+					amount: result.amount ? Number(result.amount) : undefined,
+				},
+			}).catch((error) => {
+				logger.error(
+					{ error, paymentId },
+					"Failed to log audit event for payment verification",
+				);
+			});
+
 			return Response.json(result);
 		} catch (error) {
-			console.error("Error verifying payment:", error);
+			const paymentId = params?.paymentId;
+			logger.error({ error, paymentId }, "Error verifying payment");
 			if (error instanceof Error) {
 				return badRequest(error.message);
 			}

@@ -6,6 +6,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * POST /api/admin/bookings/[id]/return-for-edit
@@ -37,6 +39,23 @@ export const POST = createProtectedHandler(
 				note: validationResult.data.note,
 			});
 
+			// Log audit event (fire-and-forget to avoid blocking response)
+			void logAuditEvent({
+				userId: user.id,
+				action: "booking.return_for_edit",
+				entity: "booking",
+				entityId: bookingId,
+				metadata: {
+					returnedBy: user.id,
+					note: validationResult.data.note || undefined,
+				},
+			}).catch((auditError) => {
+				logger.error(
+					{ error: auditError, bookingId },
+					"Failed to log audit event for return-for-edit",
+				);
+			});
+
 			return { success: true };
 		} catch (error) {
 			if (error instanceof Error) {
@@ -48,7 +67,8 @@ export const POST = createProtectedHandler(
 				)
 					return badRequest(error.message);
 			}
-			console.error("Error returning booking for edit:", error);
+			const bookingId = params?.id;
+			logger.error({ error, bookingId }, "Error returning booking for edit");
 			return serverError(
 				error instanceof Error
 					? error.message

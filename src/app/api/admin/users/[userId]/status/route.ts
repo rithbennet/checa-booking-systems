@@ -5,6 +5,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * PATCH /api/admin/users/[userId]/status
@@ -43,12 +45,26 @@ export const PATCH = createProtectedHandler(
 				});
 			}
 
+			// Log audit event
+			await logAuditEvent({
+				userId: user.id,
+				action: "user.status_change",
+				entity: "user",
+				entityId: userId,
+				metadata: {
+					newStatus: status,
+					reason: reason || undefined,
+				},
+			});
+
 			return Response.json({
 				success: true,
 				message: `User status updated to ${status}`,
 			});
 		} catch (error) {
-			console.error("Error updating user status:", error);
+			const params = await context?.params;
+			const userId = params?.userId as string;
+			logger.error({ error, userId }, "Error updating user status");
 			return serverError("Failed to update user status");
 		}
 	},

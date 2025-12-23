@@ -7,6 +7,8 @@ import {
 	serverError,
 	unauthorized,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 import { rateLimit } from "@/shared/server/api-middleware";
 
 /** POST /api/bookings/[id]/submit — submit booking for approval (owner only) */
@@ -33,10 +35,30 @@ export const POST = createProtectedHandler(
 				userStatus,
 			});
 
+			// Log audit event (fire-and-forget to avoid blocking response)
+			void logAuditEvent({
+				userId: user.id,
+				action: "booking.submit",
+				entity: "booking",
+				entityId: bookingId,
+				metadata: {
+					submittedBy: user.id,
+				},
+			}).catch((auditError) => {
+				logger.error(
+					{ error: auditError, bookingId, userId: user.id },
+					"Failed to log audit event for booking submission",
+				);
+			});
+
 			return result;
 		} catch (error) {
 			if (error instanceof bookingService.BookingValidationError) {
-				console.error("Booking validation failed:", error.issues);
+				const bookingId = params?.id;
+				logger.warn(
+					{ error, bookingId, issues: error.issues },
+					"Booking validation failed",
+				);
 				return NextResponse.json(
 					{
 						error: "Booking validation failed",
@@ -55,7 +77,8 @@ export const POST = createProtectedHandler(
 				)
 					return badRequest(error.message);
 			}
-			console.error("Error submitting booking:", error);
+			const bookingId = params?.id;
+			logger.error({ error, bookingId }, "Error submitting booking");
 			return serverError(
 				error instanceof Error ? error.message : "Failed to submit booking",
 			);

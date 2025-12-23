@@ -11,6 +11,7 @@ import {
 	notFound,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * GET /api/admin/services/[id]
@@ -35,7 +36,8 @@ export const GET = createProtectedHandler(
 
 			return Response.json(service);
 		} catch (error) {
-			console.error("Error fetching service detail:", error);
+			const serviceId = ctx.params?.id;
+			logger.error({ error, serviceId }, "Error fetching service detail");
 			return serverError("Failed to fetch service detail");
 		}
 	},

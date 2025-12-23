@@ -3,6 +3,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/shared/lib/logger";
 import { auth } from "./auth";
 
 export interface AuthenticatedRequest {
@@ -247,7 +248,7 @@ export function withAuth<T = unknown>(
 			// Otherwise, wrap in JSON response
 			return NextResponse.json(result);
 		} catch (error) {
-			console.error("API Error:", error);
+			logger.error({ error }, "API Error");
 			return internalErrorResponse(
 				error instanceof Error ? error.message : "An unexpected error occurred",
 			);

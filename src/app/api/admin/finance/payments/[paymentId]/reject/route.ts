@@ -5,6 +5,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 import { ValidationError } from "@/shared/server/errors";
 
 /**
@@ -34,9 +36,28 @@ export const POST = createProtectedHandler(
 				notes,
 			});
 
+			// Log audit event (fire-and-forget)
+			void logAuditEvent({
+				userId: user.id,
+				action: "payment.reject",
+				entity: "payment",
+				entityId: paymentId,
+				metadata: {
+					rejectedBy: user.id,
+					reason: notes,
+					amount: result.amount ? Number(result.amount) : undefined,
+				},
+			}).catch((error) => {
+				logger.error(
+					{ error, paymentId },
+					"Failed to log audit event for payment rejection",
+				);
+			});
+
 			return Response.json(result);
 		} catch (error) {
-			console.error("Error rejecting payment:", error);
+			const paymentId = params?.paymentId;
+			logger.error({ error, paymentId }, "Error rejecting payment");
 			// Handle validation errors (return 400)
 			if (error instanceof ValidationError) {
 				return Response.json(

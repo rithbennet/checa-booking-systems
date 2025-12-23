@@ -5,6 +5,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * POST /api/admin/users/[userId]/reject
@@ -12,11 +14,10 @@ import {
  */
 export const POST = createProtectedHandler(
 	async (request: Request, user, context) => {
+		const params = await context?.params;
+		const userId = params?.userId as string;
 		try {
 			if (user.role !== "lab_administrator") return forbidden();
-
-			const params = await context?.params;
-			const userId = params?.userId as string;
 
 			if (!userId) {
 				return Response.json({ error: "User ID required" }, { status: 400 });
@@ -36,9 +37,21 @@ export const POST = createProtectedHandler(
 			// Send rejection notification to user
 			await notifyUserAccountRejected({ userId, reason });
 
+			// Log audit event
+			await logAuditEvent({
+				userId: user.id,
+				action: "user.reject",
+				entity: "user",
+				entityId: userId,
+				metadata: {
+					rejectedBy: user.id,
+					reason: reason || undefined,
+				},
+			});
+
 			return Response.json({ success: true, message: "User rejected" });
 		} catch (error) {
-			console.error("Error rejecting user:", error);
+			logger.error({ error, userId }, "Error rejecting user");
 			return serverError("Failed to reject user");
 		}
 	},

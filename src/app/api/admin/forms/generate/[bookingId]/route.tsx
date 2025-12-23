@@ -22,6 +22,8 @@ import {
 	notFound,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 import {
 	mapServiceItemsForTOR,
 	mapWorkspaceBookingsForTOR,
@@ -149,10 +151,10 @@ export const POST = createProtectedHandler(
 			// Pricing is already stored in workspace bookings, so we only need service metadata
 			let workspaceServiceInfo:
 				| {
-					name: string | null;
-					code: string | null;
-					unit: string;
-				}
+						name: string | null;
+						code: string | null;
+						unit: string;
+				  }
 				| undefined;
 
 			if (hasWorkspace) {
@@ -202,8 +204,15 @@ export const POST = createProtectedHandler(
 						workspaceService?.name ?? "Working Space";
 					const _workspaceServiceCode = workspaceService?.code ?? "N/A";
 
-					console.warn(
-						`[admin/forms/generate/[bookingId]] Missing workspace service pricing for booking ${bookingId}, workspace ${firstWorkspace.id}, date range: ${dateRange}, userType: ${booking.user.userType}, serviceId: ${workspaceService?.id ?? "N/A"}`,
+					logger.warn(
+						{
+							bookingId,
+							workspaceId: firstWorkspace.id,
+							dateRange,
+							userType: booking.user.userType,
+							serviceId: workspaceService?.id ?? "N/A",
+						},
+						"[admin/forms/generate/[bookingId]] Missing workspace service pricing",
 					);
 
 					return badRequest(
@@ -267,9 +276,9 @@ export const POST = createProtectedHandler(
 
 			const torUploadResult = await utapi.uploadFiles([torFile]);
 			if (torUploadResult[0]?.error || !torUploadResult[0]?.data) {
-				console.error(
-					"[FormGeneration] TOR upload failed:",
-					torUploadResult[0]?.error,
+				logger.error(
+					{ error: torUploadResult[0]?.error, bookingId },
+					"[FormGeneration] TOR upload failed",
 				);
 				return serverError("Failed to upload service form PDF");
 			}
@@ -326,9 +335,9 @@ export const POST = createProtectedHandler(
 						workingAreaUploadFailed = true;
 						workingAreaUploadError =
 							waUploadResult[0]?.error?.message ?? "Unknown upload error";
-						console.error(
-							"[FormGeneration] WA upload failed:",
-							waUploadResult[0]?.error,
+						logger.error(
+							{ error: waUploadResult[0]?.error, bookingId },
+							"[FormGeneration] WA upload failed",
 						);
 						// Don't fail entirely - service form was uploaded successfully
 					} else {
@@ -415,9 +424,9 @@ export const POST = createProtectedHandler(
 					try {
 						await utapi.deleteFiles(keysToDelete);
 					} catch (deleteError) {
-						console.error(
-							"[FormGeneration] Failed to cleanup uploaded files after transaction failure:",
-							deleteError,
+						logger.error(
+							{ error: deleteError, bookingId, keysToDelete },
+							"[FormGeneration] Failed to cleanup uploaded files after transaction failure",
 						);
 					}
 				}
@@ -439,11 +448,30 @@ export const POST = createProtectedHandler(
 				});
 			} catch (notifyError) {
 				// Don't fail the request if notification fails
-				console.error(
-					"[FormGeneration] Failed to send notification:",
-					notifyError,
+				logger.error(
+					{ error: notifyError, bookingId, formId: result.id },
+					"[FormGeneration] Failed to send notification",
 				);
 			}
+
+			// Log audit event (fire-and-forget)
+			void logAuditEvent({
+				userId: user.id,
+				action: "form.generate",
+				entity: "service_form",
+				entityId: result.id,
+				metadata: {
+					formNumber: result.formNumber,
+					bookingId,
+					bookingReference: booking.referenceNumber,
+					hasWorkspace,
+				},
+			}).catch((error) => {
+				logger.error(
+					{ error, bookingId, formId: result.id },
+					"Failed to log audit event for form generation",
+				);
+			});
 
 			return Response.json({
 				success: true,
@@ -460,7 +488,8 @@ export const POST = createProtectedHandler(
 				},
 			});
 		} catch (error) {
-			console.error("[admin/forms/generate] Error:", error);
+			const bookingId = params?.bookingId as string;
+			logger.error({ error, bookingId }, "[admin/forms/generate] Error");
 			return serverError("Failed to generate forms");
 		}
 	},

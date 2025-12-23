@@ -1,4 +1,5 @@
 import type { Decimal } from "@prisma/client/runtime/library";
+import { toNumber } from "../../decimal-utils";
 
 export interface ServiceItemInput {
 	serviceId: string;
@@ -57,10 +58,7 @@ export function mapServiceItemsForTOR(
 	return serviceItems.flatMap((item) => {
 		const unit = unitMap?.get(item.serviceId) ?? "samples";
 
-		const baseUnitPrice =
-			typeof item.unitPrice === "object" && "toNumber" in item.unitPrice
-				? item.unitPrice.toNumber()
-				: Number(item.unitPrice);
+		const baseUnitPrice = toNumber(item.unitPrice);
 
 		const baseLine: ServiceItemOutput = {
 			service: {
@@ -69,10 +67,7 @@ export function mapServiceItemsForTOR(
 			},
 			quantity: item.quantity,
 			unitPrice: baseUnitPrice,
-			totalPrice:
-				typeof item.totalPrice === "object" && "toNumber" in item.totalPrice
-					? item.totalPrice.toNumber()
-					: Number(item.totalPrice),
+			totalPrice: toNumber(item.totalPrice),
 			sampleName: item.sampleName ?? undefined,
 			unit,
 		};
@@ -80,16 +75,13 @@ export function mapServiceItemsForTOR(
 		const addOnLines: ServiceItemOutput[] = [];
 		if (item.serviceAddOns && item.serviceAddOns.length > 0) {
 			for (const addon of item.serviceAddOns) {
-				const addonAmount =
-					typeof addon.amount === "object" && "toNumber" in addon.amount
-						? addon.amount.toNumber()
-						: Number(addon.amount);
+				const addonAmount = toNumber(addon.amount);
 
 				// Prefer stored add-on quantity snapshot when available; fallback to service item quantity
 				const addonQty =
 					addon.quantity != null
-						? Number(addon.quantity)
-						: Number(item.quantity);
+						? toNumber(addon.quantity)
+						: toNumber(item.quantity);
 
 				// Round to 2 decimal places to avoid floating-point precision errors
 				const totalPrice = Math.round(addonAmount * addonQty * 100) / 100;
@@ -124,21 +116,12 @@ export function mapWorkspaceBookingsForTOR(
 		const months = Math.max(1, Math.ceil((diffDays - 1) / 30));
 
 		// Calculate base workspace price (without addons)
-		const unitPrice =
-			typeof workspace.unitPrice === "object" &&
-			"toNumber" in workspace.unitPrice
-				? workspace.unitPrice.toNumber()
-				: Number(workspace.unitPrice);
+		const unitPrice = toNumber(workspace.unitPrice);
 
 		// Use provided totalPrice if available (handles prorated/adjusted pricing),
 		// otherwise calculate from unitPrice * months
 		const storedTotalPrice =
-			typeof workspace.totalPrice === "object" &&
-			"toNumber" in workspace.totalPrice
-				? workspace.totalPrice.toNumber()
-				: workspace.totalPrice != null
-					? Number(workspace.totalPrice)
-					: null;
+			workspace.totalPrice != null ? toNumber(workspace.totalPrice) : null;
 		const calculatedBasePrice = unitPrice * months;
 		const basePrice = storedTotalPrice ?? calculatedBasePrice;
 
@@ -160,10 +143,7 @@ export function mapWorkspaceBookingsForTOR(
 		// Add each addon as a separate line item
 		if (workspace.serviceAddOns && workspace.serviceAddOns.length > 0) {
 			for (const addon of workspace.serviceAddOns) {
-				const addonAmount =
-					typeof addon.amount === "object" && "toNumber" in addon.amount
-						? addon.amount.toNumber()
-						: Number(addon.amount);
+				const addonAmount = toNumber(addon.amount);
 
 				items.push({
 					service: {

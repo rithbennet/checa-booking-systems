@@ -11,6 +11,8 @@ import {
 } from "@/entities/document-config";
 import { updateDocumentConfigSchema } from "@/entities/document-config/model/schema";
 import { requireAdmin } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * GET global document configuration
@@ -22,7 +24,7 @@ export async function GET(): Promise<Response> {
 		const config = await getGlobalDocumentConfig();
 		return NextResponse.json(config);
 	} catch (error) {
-		console.error("Failed to get document config:", error);
+		logger.error({ error }, "Failed to get document config");
 		if (error instanceof Error && error.message.includes("Forbidden")) {
 			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
@@ -38,7 +40,7 @@ export async function GET(): Promise<Response> {
  */
 export async function PUT(request: Request): Promise<Response> {
 	try {
-		await requireAdmin();
+		const admin = await requireAdmin();
 
 		let rawBody: unknown;
 		try {
@@ -65,9 +67,24 @@ export async function PUT(request: Request): Promise<Response> {
 		const body = parseResult.data;
 		const updated = await updateGlobalDocumentConfig(body);
 
+		// Log audit event (fire-and-forget to avoid blocking response)
+		void logAuditEvent({
+			userId: admin.adminId,
+			action: "settings.document_config.update",
+			entity: "document_config",
+			metadata: {
+				updatedFields: Object.keys(body),
+			},
+		}).catch((auditError) =>
+			logger.error(
+				{ error: auditError, adminId: admin.adminId },
+				"Failed to log audit event for document config update",
+			),
+		);
+
 		return NextResponse.json(updated);
 	} catch (error) {
-		console.error("Failed to update document config:", error);
+		logger.error({ error }, "Failed to update document config");
 		if (error instanceof Error && error.message.includes("Forbidden")) {
 			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}

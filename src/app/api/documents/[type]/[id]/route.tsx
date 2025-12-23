@@ -16,6 +16,7 @@ import {
 	notFound,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { toNumber } from "@/shared/lib/decimal-utils";
 import {
 	mapServiceItemsForTOR,
 	mapWorkspaceBookingsForTOR,
@@ -228,25 +229,25 @@ export const GET = createProtectedHandler(
 					const servicePricings =
 						serviceIds.length > 0
 							? await db.servicePricing.findMany({
-								where: {
-									serviceId: { in: serviceIds },
-									userType: booking.user.userType as
-										| "mjiit_member"
-										| "utm_member"
-										| "external_member"
-										| "lab_administrator",
-									effectiveFrom: {
-										lte: new Date(),
+									where: {
+										serviceId: { in: serviceIds },
+										userType: booking.user.userType as
+											| "mjiit_member"
+											| "utm_member"
+											| "external_member"
+											| "lab_administrator",
+										effectiveFrom: {
+											lte: new Date(),
+										},
+										OR: [
+											{ effectiveTo: null },
+											{ effectiveTo: { gte: new Date() } },
+										],
 									},
-									OR: [
-										{ effectiveTo: null },
-										{ effectiveTo: { gte: new Date() } },
-									],
-								},
-								orderBy: {
-									effectiveFrom: "desc",
-								},
-							})
+									orderBy: {
+										effectiveFrom: "desc",
+									},
+								})
 							: [];
 
 					// Create a map of serviceId -> unit (get most recent pricing for each service)
@@ -382,12 +383,7 @@ export const GET = createProtectedHandler(
 									const months = Math.max(1, Math.ceil(diffDays / 30));
 									const monthlyRate = Number(validatedWorkspacePricing.price);
 									const addOnsTotal = (ws.serviceAddOns || []).reduce(
-										(sum, addon) =>
-											sum +
-											(typeof addon.amount === "object" &&
-												"toNumber" in addon.amount
-												? addon.amount.toNumber()
-												: Number(addon.amount)),
+										(sum, addon) => sum + toNumber(addon.amount),
 										0,
 									);
 

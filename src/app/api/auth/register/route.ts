@@ -6,6 +6,8 @@ import {
 	lookupIkohzaById,
 } from "@/entities/user/server";
 import { env } from "@/env";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 import { auth } from "@/shared/server/better-auth/config";
 import { db } from "@/shared/server/db";
 import { ValidationError } from "@/shared/server/errors";
@@ -244,6 +246,7 @@ export async function POST(request: Request) {
 		// 5. Wrap company/branch/user creation in a transaction
 		let finalCompanyId: string | undefined = companyId;
 		let finalBranchId: string | undefined = companyBranchId;
+		let createdUserId: string | undefined;
 
 		await db.$transaction(async (tx) => {
 			// Handle company/branch creation for external users
@@ -332,7 +335,7 @@ export async function POST(request: Request) {
 			}
 
 			// Create User record (with pending status, NOT verified)
-			await tx.user.create({
+			const createdUser = await tx.user.create({
 				data: {
 					email,
 					firstName,
@@ -371,7 +374,11 @@ export async function POST(request: Request) {
 						companyBranch: { connect: { id: finalBranchId } },
 					}),
 				},
+				select: {
+					id: true,
+				},
 			});
+			createdUserId = createdUser.id;
 		});
 
 		// 6. Generate verification token and send email (after transaction commits)
@@ -393,12 +400,35 @@ export async function POST(request: Request) {
 			verificationUrl,
 		});
 
+		// Log audit event (user registered themselves, so userId is the created user)
+		if (createdUserId) {
+			try {
+				await logAuditEvent({
+					userId: createdUserId,
+					action: "user.register",
+					entity: "user",
+					entityId: createdUserId,
+					metadata: {
+						userType: finalUserType,
+						email,
+						academicType: finalAcademicType,
+					},
+				});
+			} catch (auditError) {
+				logger.error(
+					{ error: auditError, createdUserId },
+					"Failed to log audit event for user registration",
+				);
+			}
+		}
+
 		return NextResponse.json({
 			message:
 				"Account created successfully. Please check your email to verify your account.",
 		});
 	} catch (error) {
-		console.error("Registration error:", error);
+		const email = typeof body?.email === "string" ? body.email : undefined;
+		logger.error({ error, email }, "Registration error");
 
 		// Handle validation errors (return 400)
 		if (error instanceof ValidationError) {

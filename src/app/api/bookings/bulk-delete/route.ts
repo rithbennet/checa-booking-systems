@@ -5,6 +5,8 @@ import {
 	createProtectedHandler,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 import { rateLimit } from "@/shared/server/api-middleware";
 
 /** POST /api/bookings/bulk-delete — delete multiple draft bookings (owner only) */
@@ -38,6 +40,28 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 		const successful = results.filter((r) => r.status === "fulfilled").length;
 		const failed = results.filter((r) => r.status === "rejected").length;
 
+		// Log audit event for bulk delete (fire-and-forget)
+		if (successful > 0) {
+			void logAuditEvent({
+				userId: user.id,
+				action: "booking.bulk_delete",
+				entity: "booking",
+				entityId: bookingIds[0] ?? "bulk",
+				metadata: {
+					deletedBy: user.id,
+					affectedCount: successful,
+					totalRequested: bookingIds.length,
+					failed,
+					bookingIds,
+				},
+			}).catch((error) => {
+				logger.error(
+					{ error, userId: user.id },
+					"Failed to log audit event for bulk delete",
+				);
+			});
+		}
+
 		return NextResponse.json({
 			success: successful > 0,
 			deleted: successful,
@@ -45,7 +69,7 @@ export const POST = createProtectedHandler(async (request: Request, user) => {
 			total: bookingIds.length,
 		});
 	} catch (error) {
-		console.error("Error bulk deleting bookings:", error);
+		logger.error({ error, userId: user.id }, "Error bulk deleting bookings");
 		return serverError("Failed to delete bookings");
 	}
 });

@@ -32,7 +32,10 @@ export interface AdminDashboardActivityItemVM {
 	id: string;
 	action: string;
 	timestamp: string;
-	type: "user" | "booking" | "payment" | "sample" | "service";
+	type: "user" | "booking" | "payment" | "sample" | "service" | "other";
+	actor?: string | null;
+	entity?: string | null;
+	entityId?: string | null;
 }
 
 export interface AdminDashboardActivityVM {

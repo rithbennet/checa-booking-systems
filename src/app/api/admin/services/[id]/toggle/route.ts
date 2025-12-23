@@ -10,6 +10,8 @@ import {
 	forbidden,
 	serverError,
 } from "@/shared/lib/api-factory";
+import { logAuditEvent } from "@/shared/lib/audit-log";
+import { logger } from "@/shared/lib/logger";
 
 /**
  * PATCH /api/admin/services/[id]/toggle
@@ -38,9 +40,26 @@ export const PATCH = createProtectedHandler(
 
 			const result = await toggleServiceActive(id, isActive);
 
+			// Log audit event (fire-and-forget to avoid blocking response)
+			void logAuditEvent({
+				userId: user.id,
+				action: "service.toggle",
+				entity: "service",
+				entityId: id,
+				metadata: {
+					isActive,
+				},
+			}).catch((auditError) => {
+				logger.error(
+					{ error: auditError, serviceId: id },
+					"Failed to log audit event for service toggle",
+				);
+			});
+
 			return Response.json(result);
 		} catch (error) {
-			console.error("Error toggling service status:", error);
+			const serviceId = ctx.params?.id;
+			logger.error({ error, serviceId }, "Error toggling service status");
 			return serverError("Failed to toggle service status");
 		}
 	},
