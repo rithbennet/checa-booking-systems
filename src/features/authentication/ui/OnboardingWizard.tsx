@@ -394,6 +394,10 @@ export function OnboardingWizard({
 				return;
 			}
 
+			// Wait briefly for session cookie to propagate before redirecting
+			// This ensures the browser has the updated session when it reloads
+			await new Promise((resolve) => setTimeout(resolve, 800));
+
 			// Redirect to dashboard after successful onboarding
 			// Use window.location.href to force a full page reload and fetch fresh session
 			window.location.href = "/dashboard";
@@ -646,11 +650,10 @@ export function OnboardingWizard({
 											</Label>
 											<div className="grid grid-cols-2 gap-3">
 												<button
-													className={`flex items-center justify-center gap-2 rounded-lg border-2 p-4 transition-colors ${
-														formState.academicType === "student"
+													className={`flex items-center justify-center gap-2 rounded-lg border-2 p-4 transition-colors ${formState.academicType === "student"
 															? "border-blue-500 bg-blue-50 text-blue-700"
 															: "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-													}`}
+														}`}
 													onClick={() =>
 														handleChange("academicType", "student")
 													}
@@ -660,11 +663,10 @@ export function OnboardingWizard({
 													<span className="font-medium">Student</span>
 												</button>
 												<button
-													className={`flex items-center justify-center gap-2 rounded-lg border-2 p-4 transition-colors ${
-														formState.academicType === "staff"
+													className={`flex items-center justify-center gap-2 rounded-lg border-2 p-4 transition-colors ${formState.academicType === "staff"
 															? "border-blue-500 bg-blue-50 text-blue-700"
 															: "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-													}`}
+														}`}
 													onClick={() => handleChange("academicType", "staff")}
 													type="button"
 												>
