@@ -1,6 +1,15 @@
 "use client";
 
-import { DocumentConfigSettings } from "@/features/system-settings/admin";
+import {
+	DocumentConfigSettings,
+	OrganizationSettings,
+} from "@/features/system-settings/admin";
+import {
+	Tabs,
+	TabsContent,
+	TabsList,
+	TabsTrigger,
+} from "@/shared/ui/shadcn/tabs";
 
 export default function AdminSettingsPage() {
 	return (
@@ -9,13 +18,22 @@ export default function AdminSettingsPage() {
 			<div>
 				<h1 className="font-bold text-2xl text-slate-900">System Settings</h1>
 				<p className="text-muted-foreground text-sm">
-					Configure system settings and preferences. Changes to facility
-					settings and signatures will affect PDF templates and service forms.
+					Configure system settings and preferences.
 				</p>
 			</div>
 
-			{/* Settings Content */}
-			<DocumentConfigSettings />
+			<Tabs className="w-full" defaultValue="documents">
+				<TabsList>
+					<TabsTrigger value="documents">Documents & General</TabsTrigger>
+					<TabsTrigger value="organizations">Organizations</TabsTrigger>
+				</TabsList>
+				<TabsContent className="mt-6" value="documents">
+					<DocumentConfigSettings />
+				</TabsContent>
+				<TabsContent className="mt-6" value="organizations">
+					<OrganizationSettings />
+				</TabsContent>
+			</Tabs>
 		</div>
 	);
 }

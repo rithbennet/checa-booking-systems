@@ -650,10 +650,11 @@ export function OnboardingWizard({
 											</Label>
 											<div className="grid grid-cols-2 gap-3">
 												<button
-													className={`flex items-center justify-center gap-2 rounded-lg border-2 p-4 transition-colors ${formState.academicType === "student"
+													className={`flex items-center justify-center gap-2 rounded-lg border-2 p-4 transition-colors ${
+														formState.academicType === "student"
 															? "border-blue-500 bg-blue-50 text-blue-700"
 															: "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-														}`}
+													}`}
 													onClick={() =>
 														handleChange("academicType", "student")
 													}
@@ -663,10 +664,11 @@ export function OnboardingWizard({
 													<span className="font-medium">Student</span>
 												</button>
 												<button
-													className={`flex items-center justify-center gap-2 rounded-lg border-2 p-4 transition-colors ${formState.academicType === "staff"
+													className={`flex items-center justify-center gap-2 rounded-lg border-2 p-4 transition-colors ${
+														formState.academicType === "staff"
 															? "border-blue-500 bg-blue-50 text-blue-700"
 															: "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-														}`}
+													}`}
 													onClick={() => handleChange("academicType", "staff")}
 													type="button"
 												>

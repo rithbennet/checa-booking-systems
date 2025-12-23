@@ -6,4 +6,5 @@
 export { DocumentConfigSettings } from "./ui/DocumentConfigSettings";
 export { IkohzaHeadSection } from "./ui/IkohzaHeadSection";
 export { LabGeneralSection } from "./ui/LabGeneralSection";
+export { OrganizationSettings } from "./ui/OrganizationSettings";
 export { StaffPicSection } from "./ui/StaffPicSection";
