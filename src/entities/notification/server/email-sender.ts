@@ -32,6 +32,7 @@ import {
 	BookingRevisionRequestedEmail,
 	BookingSubmittedEmail,
 	InvoiceUploadedEmail,
+	OrganizationDeletedEmail,
 	PaymentVerifiedEmail,
 	ResultsAvailableEmail,
 	SampleStatusUpdateEmail,
@@ -801,6 +802,30 @@ export async function sendAccountSuspendedEmail(params: {
 		context: {
 			template: "AccountSuspended",
 			entityType: "user",
+			userId: params.userId,
+		},
+	});
+}
+
+export async function sendOrganizationDeletedEmail(params: {
+	to: string;
+	userName: string;
+	organizationType: "faculty" | "department" | "ikohza" | "company" | "branch";
+	userId?: string;
+}) {
+	const baseUrl = getBaseUrl();
+	const dashboardUrl = `${baseUrl}/profile`;
+	return safeSendEmail({
+		to: params.to,
+		subject: "ChECA Lab - Organization Update Required",
+		react: OrganizationDeletedEmail({
+			userName: params.userName,
+			organizationType: params.organizationType,
+			dashboardUrl,
+		}),
+		context: {
+			template: "OrganizationDeleted",
+			entityType: "organization",
 			userId: params.userId,
 		},
 	});
