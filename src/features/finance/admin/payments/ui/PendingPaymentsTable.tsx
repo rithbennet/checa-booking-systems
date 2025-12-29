@@ -38,11 +38,11 @@ export function PendingPaymentsTable({
 	const columns: ColumnDef<PendingPaymentVM>[] = useMemo(
 		() => [
 			{
-				id: "invoiceNumber",
-				header: "Invoice No",
+				id: "formNumber",
+				header: "Form No",
 				className: "w-[130px]",
 				cell: ({ row }) => (
-					<span className="font-mono text-sm">{row.invoiceNumber}</span>
+					<span className="font-mono text-sm">{row.formNumber}</span>
 				),
 			},
 			{

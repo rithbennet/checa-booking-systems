@@ -3,12 +3,25 @@
  */
 
 import type { BookingServiceItem, BookingStep } from "@/entities/booking";
-import type { InvoiceProfile } from "@/entities/invoice";
 
 export type InstitutionalAcademicType = "student" | "staff" | "none";
 
-export interface BookingProfile extends InvoiceProfile {
-	academicType?: InstitutionalAcademicType | null;
+export interface BookingProfile {
+	firstName: string;
+	lastName: string;
+	email: string;
+	phone: string | null;
+	userType: "mjiit_member" | "utm_member" | "external_member";
+	academicType: InstitutionalAcademicType | null;
+	userIdentifier: string | null;
+	supervisorName: string | null;
+	organization?: {
+		facultyId?: string | null;
+		departmentId?: string | null;
+		ikohzaId?: string | null;
+		companyId?: string | null;
+		companyBranchId?: string | null;
+	};
 }
 
 export interface BookingFormState {

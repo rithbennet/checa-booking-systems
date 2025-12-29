@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { mapBookingToCreateBookingInput } from "@/entities/booking";
 import { getAvailableEquipment } from "@/entities/booking/api/get-available-equipment";
 import * as bookingService from "@/entities/booking/server/booking.service";
-import { getInvoicePayerProfile } from "@/entities/invoice/api/get-invoice-payer-profile";
 import { getServices } from "@/entities/service/api/get-services";
+import { getUserProfile } from "@/entities/user/server/profile-repository";
 import type { BookingProfile } from "@/features/bookings/form";
 import { mapRoleToUserType } from "@/shared/lib/user-type-mapper";
 import { requireCurrentUser } from "@/shared/server/current-user";
@@ -28,19 +28,25 @@ export default async function EditBookingPage({ params }: PageProps) {
 		email: me.email ?? null,
 	};
 
-	if (me.email) {
-		const invoiceProfile = await getInvoicePayerProfile({
-			email: me.email,
-		});
-
-		if (invoiceProfile) {
-			profile = {
-				...profile,
-				...invoiceProfile,
-				academicType:
-					invoiceProfile.academicType as BookingProfile["academicType"],
-			};
-		}
+	const userProfile = await getUserProfile(userId);
+	if (userProfile) {
+		profile = {
+			...profile,
+			fullName: `${userProfile.firstName} ${userProfile.lastName}`,
+			email: userProfile.email,
+			phone: userProfile.phone ?? null,
+			userType: userProfile.userType as BookingProfile["userType"],
+			academicType: userProfile.academicType as BookingProfile["academicType"],
+			userIdentifier: userProfile.userIdentifier ?? null,
+			supervisorName: userProfile.supervisorName ?? null,
+			organization: {
+				facultyId: userProfile.organization.facultyId ?? null,
+				departmentId: userProfile.organization.departmentId ?? null,
+				ikohzaId: userProfile.organization.ikohzaId ?? null,
+				companyId: userProfile.organization.companyId ?? null,
+				companyBranchId: userProfile.organization.companyBranchId ?? null,
+			},
+		};
 	}
 
 	const [services, equipment] = await Promise.all([

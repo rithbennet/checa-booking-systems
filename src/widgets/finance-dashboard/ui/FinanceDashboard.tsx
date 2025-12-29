@@ -4,18 +4,16 @@
  * Unified widget with tabs for managing financial operations:
  * - Overview: Per-booking financial status
  * - Forms: Service forms awaiting review
- * - Invoices: Invoice management
  * - Payments: Payment verification queue and history
- * - Results on Hold: Completed bookings with unpaid invoices
+ * - Results on Hold: Completed bookings with unpaid amounts
  */
 
 "use client";
 
-import { Clock, DollarSign, FileCheck, FileText, Lock } from "lucide-react";
+import { Clock, DollarSign, FileCheck, Lock } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useFinanceOverview, useResultsOnHold } from "@/entities/booking";
-import { useInvoiceList } from "@/entities/invoice/api/useInvoiceList";
 import {
 	type PendingPaymentVM,
 	usePaymentHistory,
@@ -27,7 +25,6 @@ import { useServiceFormList } from "@/entities/service-form/api/useServiceFormLi
 import {
 	FinanceOverviewTable,
 	FormsReviewTable,
-	InvoicesTable,
 	PaymentHistoryTable,
 	PendingPaymentsTable,
 	ResultsOnHoldTable,
@@ -40,12 +37,7 @@ import {
 } from "@/shared/ui/shadcn/tabs";
 import { FinanceKPIHeader } from "./FinanceKPIHeader";
 
-type MainTabValue =
-	| "overview"
-	| "forms"
-	| "invoices"
-	| "payments"
-	| "results-on-hold";
+type MainTabValue = "overview" | "forms" | "payments" | "results-on-hold";
 type PaymentSubTabValue = "pending" | "history";
 
 export function FinanceDashboard() {
@@ -62,10 +54,6 @@ export function FinanceDashboard() {
 		},
 	);
 	const { data: formsData, isLoading: formsLoading } = useServiceFormList({
-		page: 1,
-		pageSize: 20,
-	});
-	const { data: invoicesData, isLoading: invoicesLoading } = useInvoiceList({
 		page: 1,
 		pageSize: 20,
 	});
@@ -96,7 +84,7 @@ export function FinanceDashboard() {
 			{
 				onSuccess: () => {
 					toast.success("Payment verified", {
-						description: `Payment for invoice ${payment.invoiceNumber} has been verified.`,
+						description: `Payment for form ${payment.formNumber} has been verified.`,
 					});
 				},
 				onError: (error) => {
@@ -117,7 +105,7 @@ export function FinanceDashboard() {
 				{
 					onSuccess: () => {
 						toast.success("Payment rejected", {
-							description: `Payment for invoice ${payment.invoiceNumber} has been rejected.`,
+							description: `Payment for form ${payment.formNumber} has been rejected.`,
 						});
 					},
 					onError: (error) => {
@@ -150,7 +138,7 @@ export function FinanceDashboard() {
 				onValueChange={(value) => setActiveTab(value as MainTabValue)}
 				value={activeTab}
 			>
-				<TabsList className="grid w-full max-w-3xl grid-cols-5">
+				<TabsList className="grid w-full max-w-2xl grid-cols-4">
 					<TabsTrigger className="gap-2" value="overview">
 						<DollarSign className="size-4" />
 						<span className="hidden sm:inline">Overview</span>
@@ -158,10 +146,6 @@ export function FinanceDashboard() {
 					<TabsTrigger className="gap-2" value="forms">
 						<FileCheck className="size-4" />
 						<span className="hidden sm:inline">Forms</span>
-					</TabsTrigger>
-					<TabsTrigger className="gap-2" value="invoices">
-						<FileText className="size-4" />
-						<span className="hidden sm:inline">Invoices</span>
 					</TabsTrigger>
 					<TabsTrigger className="gap-2" value="payments">
 						<Clock className="size-4" />
@@ -186,14 +170,6 @@ export function FinanceDashboard() {
 					<FormsReviewTable
 						data={formsData?.items ?? []}
 						isLoading={formsLoading}
-					/>
-				</TabsContent>
-
-				{/* Invoices Tab */}
-				<TabsContent className="mt-6" value="invoices">
-					<InvoicesTable
-						data={invoicesData?.items ?? []}
-						isLoading={invoicesLoading}
 					/>
 				</TabsContent>
 

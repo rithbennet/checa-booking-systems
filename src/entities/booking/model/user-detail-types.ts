@@ -7,8 +7,6 @@
 
 import type {
 	booking_status_enum,
-	invoice_status_enum,
-	payment_status_enum,
 	sample_status_enum,
 	service_category_enum,
 } from "generated/prisma";
@@ -135,28 +133,6 @@ export interface UserServiceFormVM {
 	workingAreaAgreementUnsignedPdfPath: string | null;
 	requiresWorkingAreaAgreement: boolean;
 	generatedAt: string;
-	invoices: UserInvoiceVM[];
-}
-
-export interface UserInvoiceVM {
-	id: string;
-	invoiceNumber: string;
-	invoiceDate: string;
-	dueDate: string;
-	amount: string;
-	status: invoice_status_enum;
-	filePath: string | null;
-	payments: UserPaymentVM[];
-}
-
-export interface UserPaymentVM {
-	id: string;
-	amount: string;
-	paymentMethod: "eft" | "vote_transfer" | "local_order";
-	paymentDate: string;
-	referenceNumber: string | null;
-	status: payment_status_enum;
-	verifiedAt: string | null;
 }
 
 // ============================================
@@ -394,16 +370,8 @@ function getStepDate(
 		}
 		case "paid": {
 			// Find the first verified payment date
-			for (const form of booking.serviceForms) {
-				for (const invoice of form.invoices) {
-					for (const payment of invoice.payments) {
-						if (payment.status === "verified" && payment.verifiedAt) {
-							return payment.verifiedAt;
-						}
-					}
-				}
-			}
-			return undefined;
+			// Note: Payments are now directly linked to ServiceForm, not via Invoice
+			return booking.isPaid ? booking.updatedAt : undefined;
 		}
 		case "released":
 			return booking.status === "completed" ? booking.updatedAt : undefined;

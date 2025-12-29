@@ -28,10 +28,10 @@ import { submitPaymentProof } from "../actions/submit-payment-proof";
 import { formatAmount } from "../lib/helpers";
 
 interface FinancialsRowActionsProps {
-	invoice: UserFinancialVM;
+	financial: UserFinancialVM;
 }
 
-export function FinancialsRowActions({ invoice }: FinancialsRowActionsProps) {
+export function FinancialsRowActions({ financial }: FinancialsRowActionsProps) {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -40,11 +40,12 @@ export function FinancialsRowActions({ invoice }: FinancialsRowActionsProps) {
 	const queryClient = useQueryClient();
 
 	const canUploadPayment =
-		invoice.paymentStatus === "unpaid" || invoice.paymentStatus === "rejected";
+		financial.paymentStatus === "unpaid" ||
+		financial.paymentStatus === "rejected";
 
-	const handleViewInvoice = () => {
-		// Open the invoice file in a new tab
-		window.open(invoice.invoiceFilePath, "_blank");
+	const handleViewForm = () => {
+		// Open the form file in a new tab
+		window.open(financial.formFilePath, "_blank");
 	};
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -54,9 +55,9 @@ export function FinancialsRowActions({ invoice }: FinancialsRowActionsProps) {
 
 		try {
 			const formData = new FormData(e.currentTarget);
-			formData.set("invoiceId", invoice.id);
+			formData.set("serviceFormId", financial.id);
 			formData.set("paymentMethod", paymentMethod);
-			formData.set("amount", invoice.amount);
+			formData.set("amount", financial.amount);
 
 			const result = await submitPaymentProof(formData);
 
@@ -79,9 +80,9 @@ export function FinancialsRowActions({ invoice }: FinancialsRowActionsProps) {
 
 	return (
 		<div className="flex justify-end gap-2">
-			<Button onClick={handleViewInvoice} size="sm" variant="outline">
+			<Button onClick={handleViewForm} size="sm" variant="outline">
 				<ExternalLink className="mr-1 size-4" />
-				Invoice
+				Form
 			</Button>
 
 			{canUploadPayment && (
@@ -98,8 +99,8 @@ export function FinancialsRowActions({ invoice }: FinancialsRowActionsProps) {
 							<DialogDescription className="space-y-3 pt-2">
 								<p>
 									Please transfer{" "}
-									<strong>{formatAmount(invoice.amount)}</strong> to the account
-									below:
+									<strong>{formatAmount(financial.amount)}</strong> to the
+									account below:
 								</p>
 								<div className="rounded-md bg-muted p-3 text-sm">
 									<p>
@@ -112,7 +113,7 @@ export function FinancialsRowActions({ invoice }: FinancialsRowActionsProps) {
 										<strong>Account No:</strong> 8603410756
 									</p>
 									<p>
-										<strong>Reference:</strong> {invoice.invoiceNumber}
+										<strong>Reference:</strong> {financial.formNumber}
 									</p>
 								</div>
 								<p className="text-muted-foreground text-xs">
@@ -180,11 +181,11 @@ export function FinancialsRowActions({ invoice }: FinancialsRowActionsProps) {
 								</div>
 							)}
 
-							{invoice.paymentStatus === "rejected" &&
-								invoice.latestPaymentRejectionReason && (
+							{financial.paymentStatus === "rejected" &&
+								financial.latestPaymentRejectionReason && (
 									<div className="rounded-md bg-yellow-50 p-3 text-sm text-yellow-800">
 										<strong>Previous rejection reason:</strong>{" "}
-										{invoice.latestPaymentRejectionReason}
+										{financial.latestPaymentRejectionReason}
 									</div>
 								)}
 

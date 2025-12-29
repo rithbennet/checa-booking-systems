@@ -92,7 +92,6 @@ function getNotificationColor(type: NotificationVM["type"]): string {
 		case "service_modification_requested":
 		case "payment_reminder":
 			return "text-amber-600";
-		case "invoice_uploaded":
 		case "service_form_ready":
 		case "forms_signed_uploaded":
 			return "text-purple-600";

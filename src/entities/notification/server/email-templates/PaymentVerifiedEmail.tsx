@@ -7,7 +7,7 @@ import { BaseLayout } from "./BaseLayout";
 
 interface PaymentVerifiedEmailProps {
 	customerName: string;
-	invoiceNumber: string;
+	formNumber: string;
 	amount: string;
 	paymentDate: string;
 	bookingReference: string;
@@ -16,14 +16,14 @@ interface PaymentVerifiedEmailProps {
 
 export function PaymentVerifiedEmail({
 	customerName,
-	invoiceNumber,
+	formNumber,
 	amount,
 	paymentDate,
 	bookingReference,
 	dashboardUrl,
 }: PaymentVerifiedEmailProps) {
 	return (
-		<BaseLayout preview={`Payment verified for invoice ${invoiceNumber}`}>
+		<BaseLayout preview={`Payment verified for service form ${formNumber}`}>
 			<Heading style={heading}>Payment Verified</Heading>
 			<Text style={paragraph}>Dear {customerName},</Text>
 			<Text style={paragraph}>
@@ -31,7 +31,7 @@ export function PaymentVerifiedEmail({
 			</Text>
 
 			<Text style={detailsBox}>
-				<strong>Invoice Number:</strong> {invoiceNumber}
+				<strong>Service Form Number:</strong> {formNumber}
 				<br />
 				<strong>Amount:</strong> {amount}
 				<br />

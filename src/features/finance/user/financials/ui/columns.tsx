@@ -6,7 +6,7 @@ import type { ColumnDef } from "@/shared/ui/table";
 import {
 	formatAmount,
 	formatFinancialDate,
-	formatInvoiceRef,
+	formatFormRef,
 	getUserPaymentStatusBadgeVariant,
 	getUserPaymentStatusLabel,
 } from "../lib/helpers";
@@ -15,12 +15,12 @@ import { FinancialsRowActions } from "./FinancialsRowActions";
 export function getFinancialsColumns(): ColumnDef<UserFinancialVM>[] {
 	return [
 		{
-			id: "invoiceNumber",
-			header: "Invoice Ref",
+			id: "formNumber",
+			header: "Form Ref",
 			className: "w-[140px]",
 			cell: ({ row }) => (
 				<span className="font-mono text-sm">
-					{formatInvoiceRef(row.invoiceNumber)}
+					{formatFormRef(row.formNumber)}
 				</span>
 			),
 		},
@@ -56,7 +56,7 @@ export function getFinancialsColumns(): ColumnDef<UserFinancialVM>[] {
 			header: "Actions",
 			className: "w-[160px]",
 			align: "right",
-			cell: ({ row }) => <FinancialsRowActions invoice={row} />,
+			cell: ({ row }) => <FinancialsRowActions financial={row} />,
 		},
 	];
 }

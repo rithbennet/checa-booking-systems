@@ -4,6 +4,7 @@
  *
  * Allows admins to verify uploaded documents (signed forms, payment receipts).
  * For payment receipts, this also creates a verified Payment record.
+ * For signed forms, this updates ServiceForm fields with the signed document paths.
  */
 
 import { getVerifiableDocumentTypes } from "@/entities/booking-document";
@@ -45,12 +46,6 @@ export const POST = createProtectedHandler(
 							userId: true,
 							totalAmount: true,
 							serviceForms: {
-								include: {
-									invoices: {
-										orderBy: { createdAt: "desc" },
-										take: 1,
-									},
-								},
 								orderBy: { createdAt: "desc" },
 								take: 1,
 							},
@@ -79,41 +74,57 @@ export const POST = createProtectedHandler(
 				return badRequest("Document is not pending verification");
 			}
 
-			// For payment receipts, also create/update the Payment record
+			const latestForm = document.booking.serviceForms[0];
+
+			// For signed service forms, update ServiceForm fields
+			if (document.type === "service_form_signed" && latestForm) {
+				await db.serviceForm.update({
+					where: { id: latestForm.id },
+					data: {
+						serviceFormSignedPdfPath: document.blob.url,
+						signedFormsUploadedAt: document.createdAt,
+						signedFormsUploadedBy: document.createdById,
+						status: "signed_forms_uploaded",
+					},
+				});
+			}
+
+			// For signed workspace forms, update ServiceForm fields
+			if (document.type === "workspace_form_signed" && latestForm) {
+				await db.serviceForm.update({
+					where: { id: latestForm.id },
+					data: {
+						workingAreaAgreementSignedPdfPath: document.blob.url,
+					},
+				});
+			}
+
+			// For payment receipts, create a Payment record linked to ServiceForm
 			let payment = null;
-			if (document.type === "payment_receipt") {
-				const latestInvoice = document.booking.serviceForms[0]?.invoices[0];
+			if (document.type === "payment_receipt" && latestForm) {
+				const paymentMethod = (body.paymentMethod as string) || "eft";
+				const paymentAmount =
+					body.amount || document.booking.totalAmount.toString();
 
-				if (latestInvoice) {
-					const paymentMethod = (body.paymentMethod as string) || "eft";
-					const paymentAmount =
-						body.amount || document.booking.totalAmount.toString();
-
-					payment = await db.payment.create({
-						data: {
-							invoiceId: latestInvoice.id,
-							amount: paymentAmount,
-							paymentMethod: paymentMethod as
-								| "eft"
-								| "vote_transfer"
-								| "local_order",
-							paymentDate: new Date(),
-							receiptFilePath: document.blob.url,
-							status: "verified",
-							uploadedBy: document.createdById,
-							uploadedAt: document.createdAt,
-							verifiedAt: new Date(),
-							verifiedBy: user.id,
-							verificationNotes: notes || null,
-						},
-					});
-
-					// Update invoice status to paid
-					await db.invoice.update({
-						where: { id: latestInvoice.id },
-						data: { status: "paid" },
-					});
-				}
+				payment = await db.payment.create({
+					data: {
+						serviceFormId: latestForm.id,
+						bookingId: document.booking.id,
+						amount: paymentAmount,
+						paymentMethod: paymentMethod as
+							| "eft"
+							| "vote_transfer"
+							| "local_order",
+						paymentDate: new Date(),
+						receiptFilePath: document.blob.url,
+						status: "verified",
+						uploadedBy: document.createdById,
+						uploadedAt: document.createdAt,
+						verifiedAt: new Date(),
+						verifiedBy: user.id,
+						verificationNotes: notes || null,
+					},
+				});
 			}
 
 			// Verify the document

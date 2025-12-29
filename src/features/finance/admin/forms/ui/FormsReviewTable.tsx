@@ -152,20 +152,6 @@ export function FormsReviewTable({
 				),
 			},
 			{
-				id: "invoice",
-				header: "Invoice",
-				className: "w-[130px]",
-				cell: ({ row }) => (
-					<span className="text-sm">
-						{row.hasInvoice ? (
-							<span className="text-green-600">{row.invoiceNumber}</span>
-						) : (
-							<span className="text-muted-foreground">Not issued</span>
-						)}
-					</span>
-				),
-			},
-			{
 				id: "actions",
 				header: "Actions",
 				className: "w-[100px]",

@@ -122,7 +122,7 @@ export default function FinancialsPage() {
 			const query = searchQuery.toLowerCase();
 			filtered = filtered.filter(
 				(item) =>
-					item.invoiceNumber.toLowerCase().includes(query) ||
+					item.formNumber.toLowerCase().includes(query) ||
 					item.bookingRef.toLowerCase().includes(query),
 			);
 		}

@@ -7,8 +7,6 @@
 
 import type {
 	booking_status_enum,
-	invoice_status_enum,
-	payment_status_enum,
 	sample_status_enum,
 	service_category_enum,
 } from "generated/prisma";
@@ -142,30 +140,6 @@ export interface ServiceFormVM {
 	generatedAt: string;
 	signedFormsUploadedAt: string | null;
 	signedFormsUploadedBy: string | null;
-	invoices: InvoiceVM[];
-}
-
-export interface InvoiceVM {
-	id: string;
-	invoiceNumber: string;
-	invoiceDate: string;
-	dueDate: string;
-	amount: string;
-	status: invoice_status_enum;
-	filePath: string;
-	payments: PaymentVM[];
-}
-
-export interface PaymentVM {
-	id: string;
-	amount: string;
-	paymentMethod: "eft" | "vote_transfer" | "local_order";
-	paymentDate: string;
-	referenceNumber: string | null;
-	receiptFilePath: string;
-	status: payment_status_enum;
-	verifiedAt: string | null;
-	verificationNotes: string | null;
 }
 
 // ============================================

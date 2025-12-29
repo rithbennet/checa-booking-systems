@@ -10,9 +10,7 @@ import {
 	FileText,
 	Loader2,
 	RefreshCw,
-	Upload,
 } from "lucide-react";
-import { useState } from "react";
 import { toast } from "sonner";
 import { bookingKeys } from "@/entities/booking/api/query-keys";
 import type { BookingCommandCenterVM } from "@/entities/booking/model/command-center-types";
@@ -50,7 +48,6 @@ interface UnifiedDocumentManagerProps {
 export function UnifiedDocumentManager({
 	booking,
 }: UnifiedDocumentManagerProps) {
-	const [showInvoiceUpload, setShowInvoiceUpload] = useState(false);
 	const generateForms = useGenerateForms();
 	const queryClient = useQueryClient();
 
@@ -229,15 +226,6 @@ export function UnifiedDocumentManager({
 					<div className="flex items-center justify-between">
 						<CardTitle>Documents</CardTitle>
 						<div className="flex gap-2">
-							<Button
-								className="h-8 gap-2 text-xs"
-								onClick={() => setShowInvoiceUpload(!showInvoiceUpload)}
-								size="sm"
-								variant="outline"
-							>
-								<Upload className="h-3.5 w-3.5" />
-								Upload Invoice
-							</Button>
 							{!hasServiceForm &&
 								(shouldShowRegenerateAll ? (
 									<Button
@@ -272,22 +260,6 @@ export function UnifiedDocumentManager({
 					</div>
 				</CardHeader>
 				<CardContent className="space-y-4">
-					{/* Invoice Upload Area */}
-					{showInvoiceUpload && (
-						<div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
-							<p className="mb-2 font-medium text-blue-800 text-xs">
-								Upload Invoice PDF
-							</p>
-							<BookingDocUploader
-								bookingId={booking.id}
-								compact
-								label="Upload Invoice"
-								onUploaded={() => setShowInvoiceUpload(false)}
-								type="invoice"
-							/>
-						</div>
-					)}
-
 					{/* All Uploaded Documents (new system) */}
 					<BookingDocumentsList
 						bookingId={booking.id}

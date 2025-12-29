@@ -28,18 +28,59 @@ export type FormsStatusLabel =
 	| "completed"
 	| "expired";
 
-export type InvoiceStatusSeverity =
-	| "overdue"
-	| "sent"
-	| "pending"
-	| "paid"
-	| "cancelled";
+export type PaymentStatusSeverity = "unpaid" | "pending" | "paid";
 
 export type PaymentStatusLabel =
 	| "no_receipt"
 	| "receipt_pending"
 	| "paid"
 	| "rejected";
+
+interface PaymentSummaryResult {
+	totalVerifiedPaid: string;
+	paymentStatus: PaymentStatusSeverity;
+	latestPaymentStatusLabel: PaymentStatusLabel;
+}
+
+function getPaymentSummary(
+	payments: Array<{ status: string; amount: unknown }>,
+	totalAmount: number,
+): PaymentSummaryResult {
+	const verifiedPayments = payments.filter((p) => p.status === "verified");
+	const totalVerifiedPaid = verifiedPayments.reduce(
+		(sum, p) => sum + Number(p.amount),
+		0,
+	);
+
+	// Determine payment status severity
+	let paymentStatus: PaymentStatusSeverity = "unpaid";
+	if (totalVerifiedPaid >= totalAmount && totalAmount > 0) {
+		paymentStatus = "paid";
+	} else if (payments.some((p) => p.status === "pending_verification")) {
+		paymentStatus = "pending";
+	}
+
+	// Determine latest payment status label
+	let latestPaymentStatusLabel: PaymentStatusLabel = "no_receipt";
+	if (payments.length > 0) {
+		const latestPayment = payments[payments.length - 1];
+		if (latestPayment) {
+			if (latestPayment.status === "verified") {
+				latestPaymentStatusLabel = "paid";
+			} else if (latestPayment.status === "rejected") {
+				latestPaymentStatusLabel = "rejected";
+			} else if (latestPayment.status === "pending_verification") {
+				latestPaymentStatusLabel = "receipt_pending";
+			}
+		}
+	}
+
+	return {
+		totalVerifiedPaid: totalVerifiedPaid.toString(),
+		paymentStatus,
+		latestPaymentStatusLabel,
+	};
+}
 
 export interface FinanceOverviewVM {
 	id: string;
@@ -59,21 +100,18 @@ export interface FinanceOverviewVM {
 	hasServiceFormSigned: boolean;
 	hasWorkspaceFormSigned: boolean;
 	requiresWorkspaceForm: boolean;
-	// Invoice summary
-	invoiceCount: number;
-	totalInvoiced: string;
-	mostSevereInvoiceStatus: InvoiceStatusSeverity | null;
-	oldestDueDate: string | null;
 	// Payment summary
+	totalAmount: string;
 	totalVerifiedPaid: string;
-	latestPaymentStatus: PaymentStatusLabel;
+	paymentStatus: PaymentStatusSeverity;
+	latestPaymentStatusLabel: PaymentStatusLabel;
 	// Gate
 	resultsUnlocked: boolean;
 }
 
 export interface FinanceOverviewFilters {
 	gateStatus?: "locked" | "unlocked";
-	invoiceStatus?: string[];
+	paymentStatus?: string[];
 	userType?: string;
 	q?: string;
 	page: number;
@@ -191,110 +229,6 @@ function getFormsStatus(
 	};
 }
 
-function getInvoiceSummary(
-	invoices: Array<{
-		amount: { toString(): string };
-		status: string;
-		dueDate: Date;
-	}>,
-): {
-	invoiceCount: number;
-	totalInvoiced: string;
-	mostSevereInvoiceStatus: InvoiceStatusSeverity | null;
-	oldestDueDate: string | null;
-} {
-	const nonCancelled = invoices.filter((inv) => inv.status !== "cancelled");
-
-	if (nonCancelled.length === 0) {
-		return {
-			invoiceCount: 0,
-			totalInvoiced: "0",
-			mostSevereInvoiceStatus: null,
-			oldestDueDate: null,
-		};
-	}
-
-	const totalInvoiced = nonCancelled.reduce(
-		(sum, inv) => sum + Number(inv.amount),
-		0,
-	);
-
-	// Severity order: overdue > sent > pending > paid
-	const severityOrder: InvoiceStatusSeverity[] = [
-		"overdue",
-		"sent",
-		"pending",
-		"paid",
-	];
-
-	let mostSevere: InvoiceStatusSeverity | null = null;
-	for (const severity of severityOrder) {
-		if (nonCancelled.some((inv) => inv.status === severity)) {
-			mostSevere = severity;
-			break;
-		}
-	}
-
-	// Find oldest due date among unpaid invoices
-	const unpaid = nonCancelled.filter(
-		(inv) => inv.status !== "paid" && inv.status !== "cancelled",
-	);
-	const oldestDueDate =
-		unpaid.length > 0
-			? unpaid
-					.map((inv) => inv.dueDate)
-					.sort((a, b) => a.getTime() - b.getTime())[0]
-			: null;
-
-	return {
-		invoiceCount: nonCancelled.length,
-		totalInvoiced: totalInvoiced.toString(),
-		mostSevereInvoiceStatus: mostSevere,
-		oldestDueDate: oldestDueDate?.toISOString().split("T")[0] ?? null,
-	};
-}
-
-function getPaymentSummary(
-	payments: Array<{
-		amount: { toString(): string };
-		status: string;
-	}>,
-): {
-	totalVerifiedPaid: string;
-	latestPaymentStatus: PaymentStatusLabel;
-} {
-	if (payments.length === 0) {
-		return {
-			totalVerifiedPaid: "0",
-			latestPaymentStatus: "no_receipt",
-		};
-	}
-
-	const verified = payments.filter((p) => p.status === "verified");
-	const pending = payments.filter((p) => p.status === "pending");
-	const rejected = payments.filter((p) => p.status === "rejected");
-
-	const totalVerifiedPaid = verified.reduce(
-		(sum, p) => sum + Number(p.amount),
-		0,
-	);
-
-	let latestPaymentStatus: PaymentStatusLabel = "no_receipt";
-
-	if (verified.length > 0) {
-		latestPaymentStatus = "paid";
-	} else if (pending.length > 0) {
-		latestPaymentStatus = "receipt_pending";
-	} else if (rejected.length > 0) {
-		latestPaymentStatus = "rejected";
-	}
-
-	return {
-		totalVerifiedPaid: totalVerifiedPaid.toString(),
-		latestPaymentStatus,
-	};
-}
-
 // ==============================================================
 // Query Functions
 // ==============================================================
@@ -303,50 +237,68 @@ function getPaymentSummary(
  * Get finance stats for KPI header
  */
 export async function getFinanceStats(): Promise<FinanceStatsVM> {
-	const [
-		outstandingInvoices,
-		pendingForms,
-		pendingPayments,
-		pendingDocVerifications,
-	] = await Promise.all([
-		// Outstanding and overdue invoices
-		db.invoice.findMany({
-			where: {
-				status: { in: ["pending", "sent", "overdue"] },
-			},
-			select: {
-				amount: true,
-				dueDate: true,
-				status: true,
-			},
-		}),
-		// Pending form reviews
-		db.serviceForm.count({
-			where: { status: "signed_forms_uploaded" },
-		}),
-		// Pending payment verifications (legacy)
-		db.payment.count({
-			where: { status: "pending" },
-		}),
-		// Pending document verifications (new flow - payment receipts)
-		db.bookingDocument.count({
-			where: {
-				type: "payment_receipt",
-				verificationStatus: "pending_verification",
-			},
-		}),
-	]);
+	const [pendingForms, pendingPayments, pendingDocVerifications] =
+		await Promise.all([
+			// Pending form reviews
+			db.serviceForm.count({
+				where: { status: "signed_forms_uploaded" },
+			}),
+			// Pending payment verifications (legacy direct payment records)
+			db.payment.count({
+				where: { status: "pending_verification" },
+			}),
+			// Pending document verifications (new flow - payment receipts)
+			db.bookingDocument.count({
+				where: {
+					type: "payment_receipt",
+					verificationStatus: "pending_verification",
+				},
+			}),
+		]);
 
-	const now = new Date();
+	// Calculate outstanding amounts from bookings with verified service forms
+	const bookingsWithForms = await db.bookingRequest.findMany({
+		where: {
+			status: { notIn: ["draft", "cancelled", "rejected"] },
+			serviceForms: {
+				some: {
+					status: { in: ["signed_forms_uploaded", "generated", "downloaded"] },
+				},
+			},
+		},
+		include: {
+			serviceForms: {
+				include: {
+					payments: {
+						where: { status: "verified" },
+					},
+				},
+			},
+		},
+	});
+
 	let totalOutstanding = 0;
 	let overdueAmount = 0;
+	const now = new Date();
 
-	for (const inv of outstandingInvoices) {
-		const amount = Number(inv.amount);
-		totalOutstanding += amount;
+	for (const booking of bookingsWithForms) {
+		const latestForm = booking.serviceForms[booking.serviceForms.length - 1];
+		if (!latestForm) continue;
 
-		if (inv.dueDate < now) {
-			overdueAmount += amount;
+		const formAmount = Number(latestForm.totalAmount);
+		const paidAmount = latestForm.payments.reduce(
+			(sum, p) => sum + Number(p.amount),
+			0,
+		);
+		const outstanding = formAmount - paidAmount;
+
+		if (outstanding > 0) {
+			totalOutstanding += outstanding;
+
+			// Check if overdue (form expired)
+			if (latestForm.validUntil < now) {
+				overdueAmount += outstanding;
+			}
 		}
 	}
 
@@ -365,7 +317,7 @@ export async function getFinanceStats(): Promise<FinanceStatsVM> {
 export async function getFinanceOverview(
 	params: FinanceOverviewFilters,
 ): Promise<{ items: FinanceOverviewVM[]; total: number }> {
-	const { gateStatus, invoiceStatus, userType, q, page, pageSize } = params;
+	const { gateStatus, paymentStatus, userType, q, page, pageSize } = params;
 
 	// Build where clause
 	const where: Prisma.BookingRequestWhereInput = {
@@ -421,11 +373,7 @@ export async function getFinanceOverview(
 			},
 			serviceForms: {
 				include: {
-					invoices: {
-						include: {
-							payments: true,
-						},
-					},
+					payments: true,
 				},
 				orderBy: { createdAt: "asc" },
 			},
@@ -449,13 +397,12 @@ export async function getFinanceOverview(
 		// Get forms status
 		const formsInfo = getFormsStatus(booking.serviceForms);
 
-		// Collect all invoices and payments
-		const allInvoices = booking.serviceForms.flatMap((sf) => sf.invoices);
-		const allPayments = allInvoices.flatMap((inv) => inv.payments);
+		// Collect all payments
+		const allPayments = booking.serviceForms.flatMap((sf) => sf.payments);
 
 		// Get summaries
-		const invoiceSummary = getInvoiceSummary(allInvoices);
-		const paymentSummary = getPaymentSummary(allPayments);
+		const totalAmount = Number(booking.totalAmount);
+		const paymentSummary = getPaymentSummary(allPayments, totalAmount);
 
 		// Result Gatekeeper: Check document verification status
 		// Results are unlocked when all required documents are verified
@@ -497,12 +444,10 @@ export async function getFinanceOverview(
 			hasServiceFormSigned: formsInfo.hasServiceFormSigned,
 			hasWorkspaceFormSigned: formsInfo.hasWorkspaceFormSigned,
 			requiresWorkspaceForm: formsInfo.requiresWorkspaceForm,
-			invoiceCount: invoiceSummary.invoiceCount,
-			totalInvoiced: invoiceSummary.totalInvoiced,
-			mostSevereInvoiceStatus: invoiceSummary.mostSevereInvoiceStatus,
-			oldestDueDate: invoiceSummary.oldestDueDate,
+			totalAmount: totalAmount.toString(),
 			totalVerifiedPaid: paymentSummary.totalVerifiedPaid,
-			latestPaymentStatus: paymentSummary.latestPaymentStatus,
+			paymentStatus: paymentSummary.paymentStatus,
+			latestPaymentStatusLabel: paymentSummary.latestPaymentStatusLabel,
 			resultsUnlocked,
 		};
 	});
@@ -514,12 +459,8 @@ export async function getFinanceOverview(
 		);
 	}
 
-	if (invoiceStatus && invoiceStatus.length > 0) {
-		items = items.filter(
-			(item) =>
-				item.mostSevereInvoiceStatus &&
-				invoiceStatus.includes(item.mostSevereInvoiceStatus),
-		);
+	if (paymentStatus && paymentStatus.length > 0) {
+		items = items.filter((item) => paymentStatus.includes(item.paymentStatus));
 	}
 
 	const total = items.length;
@@ -601,8 +542,11 @@ export async function getResultsOnHold(params: {
 				select: { id: true },
 			},
 			serviceForms: {
-				include: {
-					invoices: true,
+				select: {
+					totalAmount: true,
+					payments: {
+						where: { status: "verified" },
+					},
 				},
 			},
 		},
@@ -672,15 +616,9 @@ export async function getResultsOnHold(params: {
 			: 0;
 
 		// Calculate total due
-		const allInvoices = booking.serviceForms.flatMap((sf) => sf.invoices);
-		const totalDue =
-			allInvoices.length > 0
-				? allInvoices
-						.filter(
-							(inv) => inv.status !== "cancelled" && inv.status !== "paid",
-						)
-						.reduce((sum, inv) => sum + Number(inv.amount), 0)
-				: Number(booking.totalAmount);
+		const allPayments = booking.serviceForms.flatMap((sf) => sf.payments);
+		const totalPaid = allPayments.reduce((sum, p) => sum + Number(p.amount), 0);
+		const totalDue = Number(booking.totalAmount) - totalPaid;
 
 		return {
 			id: booking.id,
@@ -693,7 +631,7 @@ export async function getResultsOnHold(params: {
 			},
 			organization,
 			samplesCompleted,
-			totalDue: totalDue.toString(),
+			totalDue: totalDue > 0 ? totalDue.toString() : "0",
 			daysSinceFirstCompletion,
 			earliestCompletionDate:
 				earliestCompletion?.toISOString().split("T")[0] ?? "",

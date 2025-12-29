@@ -30,22 +30,18 @@ function mapPaymentToVM(
 			verifiedByUser: {
 				select: { id: true; firstName: true; lastName: true };
 			};
-			invoice: {
+			serviceForm: {
 				include: {
 					payments: { where: { status: "verified" } };
-					serviceForm: {
+					bookingRequest: {
 						include: {
-							bookingRequest: {
+							user: {
 								include: {
-									user: {
-										include: {
-											faculty: { select: { name: true } };
-											department: { select: { name: true } };
-											ikohza: { select: { name: true } };
-											company: { select: { name: true } };
-											companyBranch: { select: { name: true } };
-										};
-									};
+									faculty: { select: { name: true } };
+									department: { select: { name: true } };
+									ikohza: { select: { name: true } };
+									company: { select: { name: true } };
+									companyBranch: { select: { name: true } };
 								};
 							};
 						};
@@ -55,12 +51,12 @@ function mapPaymentToVM(
 		};
 	}>,
 ): PaymentVM {
-	const invoice = payment.invoice;
-	const booking = invoice.serviceForm.bookingRequest;
+	const serviceForm = payment.serviceForm;
+	const booking = serviceForm.bookingRequest;
 	const user = booking.user;
 
-	// Calculate verified total for this invoice
-	const totalVerified = invoice.payments.reduce(
+	// Calculate verified total for this service form
+	const totalVerified = serviceForm.payments.reduce(
 		(sum, p) => sum + Number(p.amount),
 		0,
 	);
@@ -76,8 +72,8 @@ function mapPaymentToVM(
 
 	return {
 		id: payment.id,
-		invoiceId: invoice.id,
-		invoiceNumber: invoice.invoiceNumber,
+		serviceFormId: serviceForm.id,
+		formNumber: serviceForm.formNumber,
 		bookingRef: booking.referenceNumber,
 		bookingId: booking.id,
 		amount: payment.amount.toString(),
@@ -106,11 +102,11 @@ function mapPaymentToVM(
 			userType: user.userType,
 		},
 		organization,
-		invoiceAmount: invoice.amount.toString(),
-		invoiceDueDate: invoice.dueDate.toISOString().split("T")[0] ?? "",
-		invoiceStatus: invoice.status,
-		totalVerifiedForInvoice: totalVerified.toString(),
-		invoiceBalance: (Number(invoice.amount) - totalVerified).toString(),
+		formAmount: serviceForm.totalAmount.toString(),
+		formValidUntil: serviceForm.validUntil.toISOString().split("T")[0] ?? "",
+		formStatus: serviceForm.status,
+		totalVerifiedForForm: totalVerified.toString(),
+		formBalance: (Number(serviceForm.totalAmount) - totalVerified).toString(),
 	};
 }
 
@@ -151,22 +147,18 @@ const paymentInclude = {
 	verifiedByUser: {
 		select: { id: true, firstName: true, lastName: true },
 	},
-	invoice: {
+	serviceForm: {
 		include: {
 			payments: { where: { status: "verified" as const } },
-			serviceForm: {
+			bookingRequest: {
 				include: {
-					bookingRequest: {
+					user: {
 						include: {
-							user: {
-								include: {
-									faculty: { select: { name: true } },
-									department: { select: { name: true } },
-									ikohza: { select: { name: true } },
-									company: { select: { name: true } },
-									companyBranch: { select: { name: true } },
-								},
-							},
+							faculty: { select: { name: true } },
+							department: { select: { name: true } },
+							ikohza: { select: { name: true } },
+							company: { select: { name: true } },
+							companyBranch: { select: { name: true } },
 						},
 					},
 				},
@@ -187,7 +179,7 @@ export async function listPendingPayments(params: {
 	const { q, method, page, pageSize } = params;
 
 	const where: Prisma.PaymentWhereInput = {
-		status: "pending",
+		status: "pending_verification",
 		...(method ? { paymentMethod: method } : {}),
 		...(q
 			? {
@@ -196,30 +188,26 @@ export async function listPendingPayments(params: {
 							referenceNumber: { contains: q, mode: "insensitive" },
 						},
 						{
-							invoice: {
-								invoiceNumber: { contains: q, mode: "insensitive" },
+							serviceForm: {
+								formNumber: { contains: q, mode: "insensitive" },
 							},
 						},
 						{
-							invoice: {
-								serviceForm: {
-									bookingRequest: {
-										referenceNumber: { contains: q, mode: "insensitive" },
-									},
+							serviceForm: {
+								bookingRequest: {
+									referenceNumber: { contains: q, mode: "insensitive" },
 								},
 							},
 						},
 						{
-							invoice: {
-								serviceForm: {
-									bookingRequest: {
-										user: {
-											OR: [
-												{ firstName: { contains: q, mode: "insensitive" } },
-												{ lastName: { contains: q, mode: "insensitive" } },
-												{ email: { contains: q, mode: "insensitive" } },
-											],
-										},
+							serviceForm: {
+								bookingRequest: {
+									user: {
+										OR: [
+											{ firstName: { contains: q, mode: "insensitive" } },
+											{ lastName: { contains: q, mode: "insensitive" } },
+											{ email: { contains: q, mode: "insensitive" } },
+										],
 									},
 								},
 							},
@@ -281,16 +269,14 @@ export async function listPaymentHistory(params: {
 							referenceNumber: { contains: q, mode: "insensitive" },
 						},
 						{
-							invoice: {
-								invoiceNumber: { contains: q, mode: "insensitive" },
+							serviceForm: {
+								formNumber: { contains: q, mode: "insensitive" },
 							},
 						},
 						{
-							invoice: {
-								serviceForm: {
-									bookingRequest: {
-										referenceNumber: { contains: q, mode: "insensitive" },
-									},
+							serviceForm: {
+								bookingRequest: {
+									referenceNumber: { contains: q, mode: "insensitive" },
 								},
 							},
 						},
@@ -350,22 +336,18 @@ export async function verifyPayment(params: {
 	const { paymentId, verifierId, notes } = params;
 
 	return db.$transaction(async (tx) => {
-		// Get the payment with invoice info
+		// Get the payment with service form info
 		const payment = await tx.payment.findUniqueOrThrow({
 			where: { id: paymentId },
 			include: {
-				invoice: {
+				serviceForm: {
 					include: {
 						payments: { where: { status: "verified" } },
-						serviceForm: {
-							include: {
-								bookingRequest: {
-									select: {
-										id: true,
-										referenceNumber: true,
-										userId: true,
-									},
-								},
+						bookingRequest: {
+							select: {
+								id: true,
+								referenceNumber: true,
+								userId: true,
 							},
 						},
 					},
@@ -373,7 +355,7 @@ export async function verifyPayment(params: {
 			},
 		});
 
-		if (payment.status !== "pending") {
+		if (payment.status !== "pending_verification") {
 			throw new Error("Payment is not pending verification");
 		}
 
@@ -389,24 +371,8 @@ export async function verifyPayment(params: {
 			include: paymentInclude,
 		});
 
-		// Calculate new total verified
-		const currentVerified = payment.invoice.payments.reduce(
-			(sum, p) => sum + Number(p.amount),
-			0,
-		);
-		const newTotal = currentVerified + Number(payment.amount);
-		const invoiceAmount = Number(payment.invoice.amount);
-
-		// Update invoice status if fully paid
-		if (newTotal >= invoiceAmount) {
-			await tx.invoice.update({
-				where: { id: payment.invoiceId },
-				data: { status: "paid" },
-			});
-		}
-
 		// Create notification
-		const booking = payment.invoice.serviceForm.bookingRequest;
+		const booking = payment.serviceForm.bookingRequest;
 		await tx.notification.create({
 			data: {
 				userId: booking.userId,
@@ -425,7 +391,7 @@ export async function verifyPayment(params: {
 				await notifyPaymentVerified({
 					userId: booking.userId,
 					paymentId,
-					invoiceNumber: payment.invoice.invoiceNumber,
+					formNumber: payment.serviceForm.formNumber,
 					amount: `RM ${payment.amount}`,
 					paymentDate: payment.paymentDate.toISOString().split("T")[0] ?? "",
 					bookingReference: booking.referenceNumber,
@@ -444,7 +410,7 @@ export async function verifyPayment(params: {
 				entity: "Payment",
 				entityId: paymentId,
 				metadata: {
-					invoiceId: payment.invoiceId,
+					serviceFormId: payment.serviceFormId,
 					bookingId: booking.id,
 					amount: payment.amount.toString(),
 					notes: notes ?? null,
@@ -480,17 +446,13 @@ export async function rejectPayment(params: {
 		const payment = await tx.payment.findUniqueOrThrow({
 			where: { id: paymentId },
 			include: {
-				invoice: {
+				serviceForm: {
 					include: {
-						serviceForm: {
-							include: {
-								bookingRequest: {
-									select: {
-										id: true,
-										referenceNumber: true,
-										userId: true,
-									},
-								},
+						bookingRequest: {
+							select: {
+								id: true,
+								referenceNumber: true,
+								userId: true,
 							},
 						},
 					},
@@ -498,7 +460,7 @@ export async function rejectPayment(params: {
 			},
 		});
 
-		if (payment.status !== "pending") {
+		if (payment.status !== "pending_verification") {
 			throw new Error("Payment is not pending verification");
 		}
 
@@ -510,12 +472,14 @@ export async function rejectPayment(params: {
 				verifiedBy: verifierId,
 				verifiedAt: new Date(),
 				verificationNotes: notes,
+				rejectedAt: new Date(),
+				rejectionReason: notes,
 			},
 			include: paymentInclude,
 		});
 
 		// Create notification
-		const booking = payment.invoice.serviceForm.bookingRequest;
+		const booking = payment.serviceForm.bookingRequest;
 		await tx.notification.create({
 			data: {
 				userId: booking.userId,
@@ -536,7 +500,7 @@ export async function rejectPayment(params: {
 				entity: "Payment",
 				entityId: paymentId,
 				metadata: {
-					invoiceId: payment.invoiceId,
+					serviceFormId: payment.serviceFormId,
 					bookingId: booking.id,
 					amount: payment.amount.toString(),
 					reason: notes,
@@ -552,7 +516,8 @@ export async function rejectPayment(params: {
  * Create a manual payment (admin recording offline payment)
  */
 export async function createManualPayment(params: {
-	invoiceId: string;
+	serviceFormId: string;
+	bookingId: string;
 	amount: string;
 	paymentMethod: payment_method_enum;
 	paymentDate: string;
@@ -562,7 +527,8 @@ export async function createManualPayment(params: {
 	notes?: string;
 }): Promise<PaymentVM> {
 	const {
-		invoiceId,
+		serviceFormId,
+		bookingId,
 		amount,
 		paymentMethod,
 		paymentDate,
@@ -573,17 +539,13 @@ export async function createManualPayment(params: {
 	} = params;
 
 	return db.$transaction(async (tx) => {
-		// Get invoice to validate
-		const invoice = await tx.invoice.findUniqueOrThrow({
-			where: { id: invoiceId },
+		// Get service form to validate
+		const serviceForm = await tx.serviceForm.findUniqueOrThrow({
+			where: { id: serviceFormId },
 			include: {
 				payments: { where: { status: "verified" } },
-				serviceForm: {
-					include: {
-						bookingRequest: {
-							select: { id: true, referenceNumber: true, userId: true },
-						},
-					},
+				bookingRequest: {
+					select: { id: true, referenceNumber: true, userId: true },
 				},
 			},
 		});
@@ -591,7 +553,8 @@ export async function createManualPayment(params: {
 		// Create payment as verified (since admin is recording it)
 		const payment = await tx.payment.create({
 			data: {
-				invoiceId,
+				serviceFormId,
+				bookingId,
 				amount: parseFloat(amount),
 				paymentMethod,
 				paymentDate: new Date(paymentDate),
@@ -607,20 +570,6 @@ export async function createManualPayment(params: {
 			include: paymentInclude,
 		});
 
-		// Check if invoice is now fully paid
-		const currentVerified = invoice.payments.reduce(
-			(sum, p) => sum + Number(p.amount),
-			0,
-		);
-		const newTotal = currentVerified + parseFloat(amount);
-
-		if (newTotal >= Number(invoice.amount)) {
-			await tx.invoice.update({
-				where: { id: invoiceId },
-				data: { status: "paid" },
-			});
-		}
-
 		// Create audit log
 		await tx.auditLog.create({
 			data: {
@@ -629,8 +578,8 @@ export async function createManualPayment(params: {
 				entity: "Payment",
 				entityId: payment.id,
 				metadata: {
-					invoiceId,
-					bookingId: invoice.serviceForm.bookingRequest.id,
+					serviceFormId,
+					bookingId: serviceForm.bookingRequest.id,
 					amount,
 					method: paymentMethod,
 				},

@@ -36,7 +36,6 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
 				| "locked"
 				| "unlocked"
 				| undefined,
-			invoiceStatus: searchParams.get("invoiceStatus")?.split(",") ?? undefined,
 			userType: searchParams.get("userType") ?? undefined,
 		};
 

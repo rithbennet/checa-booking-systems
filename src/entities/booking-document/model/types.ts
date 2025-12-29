@@ -97,7 +97,6 @@ export interface RejectDocumentInput {
 // ============================================
 
 export const documentTypeLabels: Record<DocumentType, string> = {
-	invoice: "Invoice",
 	service_form_unsigned: "Service Form (Unsigned)",
 	service_form_signed: "Signed Service Form",
 	workspace_form_unsigned: "Working Area Agreement (Unsigned)",
@@ -160,7 +159,6 @@ export function getVerificationStatusLabel(
 
 export function isAdminOnlyDocumentType(type: DocumentType): boolean {
 	return (
-		type === "invoice" ||
 		type === "sample_result" ||
 		type === "service_form_unsigned" ||
 		type === "workspace_form_unsigned"
@@ -172,12 +170,7 @@ export function getUserUploadableTypes(): DocumentType[] {
 }
 
 export function getAdminUploadableTypes(): DocumentType[] {
-	return [
-		"invoice",
-		"sample_result",
-		"service_form_unsigned",
-		"workspace_form_unsigned",
-	];
+	return ["sample_result", "service_form_unsigned", "workspace_form_unsigned"];
 }
 
 export function getSystemGeneratedTypes(): DocumentType[] {

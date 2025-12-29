@@ -17,7 +17,7 @@ import type { ServiceFormListFilters, ServiceFormListVM } from "../model/types";
 export async function listServiceFormsForReview(
 	params: ServiceFormListFilters,
 ): Promise<{ items: ServiceFormListVM[]; total: number }> {
-	const { status, bookingId, hasInvoice, q, page, pageSize } = params;
+	const { status, bookingId, q, page, pageSize } = params;
 
 	const where: Prisma.ServiceFormWhereInput = {
 		...(status && status.length > 0 ? { status: { in: status } } : {}),
@@ -64,12 +64,6 @@ export async function listServiceFormsForReview(
 						},
 					},
 				},
-				invoices: {
-					select: {
-						id: true,
-						invoiceNumber: true,
-					},
-				},
 			},
 			orderBy: { createdAt: "desc" },
 			skip: (page - 1) * pageSize,
@@ -79,7 +73,7 @@ export async function listServiceFormsForReview(
 	]);
 
 	const now = new Date();
-	let items: ServiceFormListVM[] = forms.map((form) => {
+	const items: ServiceFormListVM[] = forms.map((form) => {
 		const booking = form.bookingRequest;
 		const user = booking.user;
 
@@ -123,22 +117,12 @@ export async function listServiceFormsForReview(
 				userType: user.userType,
 			},
 			organization,
-			hasInvoice: form.invoices.length > 0,
-			invoiceNumber: form.invoices[0]?.invoiceNumber ?? null,
-			invoiceCount: form.invoices.length,
 			generatedAt: form.generatedAt.toISOString(),
 			downloadedAt: form.downloadedAt?.toISOString() ?? null,
 			signedFormsUploadedAt: form.signedFormsUploadedAt?.toISOString() ?? null,
 			isExpired,
 		};
 	});
-
-	// Apply post-query filter for hasInvoice
-	if (hasInvoice !== undefined) {
-		items = items.filter((item) =>
-			hasInvoice ? item.hasInvoice : !item.hasInvoice,
-		);
-	}
 
 	return { items, total };
 }

@@ -34,6 +34,11 @@ import {
 } from "@/shared/ui/shadcn/alert-dialog";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/shared/ui/shadcn/tooltip";
 
 interface BookingDocumentsListProps {
 	bookingId: string;
@@ -119,13 +124,20 @@ function DocumentRow({
 
 	return (
 		<div className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-3">
-			<div className="flex items-center gap-3">
+			<div className="flex min-w-0 flex-1 items-center gap-3">
 				{getFileIcon(document.blob.mimeType)}
 				<div className="min-w-0 flex-1">
 					<div className="flex items-center gap-2">
-						<p className="truncate font-medium text-slate-900 text-sm">
-							{document.blob.fileName}
-						</p>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<p className="max-w-[250px] truncate font-medium text-slate-900 text-sm">
+									{document.blob.fileName}
+								</p>
+							</TooltipTrigger>
+							<TooltipContent>
+								<p className="max-w-xs break-words">{document.blob.fileName}</p>
+							</TooltipContent>
+						</Tooltip>
 						{showVerificationStatus &&
 							getStatusBadge(document.verificationStatus)}
 					</div>
@@ -147,7 +159,7 @@ function DocumentRow({
 					</div>
 				</div>
 			</div>
-			<div className="flex items-center gap-1">
+			<div className="flex shrink-0 items-center gap-1">
 				<Button onClick={handleDownload} size="sm" variant="ghost">
 					<Download className="h-4 w-4" />
 				</Button>

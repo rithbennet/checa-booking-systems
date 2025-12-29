@@ -110,15 +110,7 @@ export async function getUserBookingDetailData(
 					serviceAddOns: true,
 				},
 			},
-			serviceForms: {
-				include: {
-					invoices: {
-						include: {
-							payments: true,
-						},
-					},
-				},
-			},
+			serviceForms: true,
 		},
 	});
 
@@ -126,23 +118,10 @@ export async function getUserBookingDetailData(
 		return null;
 	}
 
-	// Calculate financial info
-	let totalPaid = 0;
+	// Calculate financial info from document verification
 	let hasUnverifiedPayments = false;
 
-	for (const form of booking.serviceForms) {
-		for (const invoice of form.invoices) {
-			for (const payment of invoice.payments) {
-				if (payment.status === "verified") {
-					totalPaid += Number(payment.amount);
-				} else if (payment.status === "pending") {
-					hasUnverifiedPayments = true;
-				}
-			}
-		}
-	}
-
-	// Check payment receipt document verification status (new flow)
+	// Check payment receipt document verification status
 	const paymentReceiptVerifiedDoc = booking.bookingDocuments.find(
 		(doc) =>
 			doc.type === "payment_receipt" && doc.verificationStatus === "verified",
@@ -174,9 +153,8 @@ export async function getUserBookingDetailData(
 	// Check if booking has workspace service
 	const hasWorkspaceService = booking.workspaceBookings.length > 0;
 
-	// Calculate if paid - legacy payment model OR document verification
-	const isPaid =
-		totalPaid >= Number(booking.totalAmount) || isPaidViaDocVerification;
+	// Calculate if paid - document verification only
+	const isPaid = isPaidViaDocVerification;
 
 	// Result Gatekeeper: Check document verification status
 	// Results can only be downloaded if all required documents are verified
@@ -353,28 +331,10 @@ export async function getUserBookingDetailData(
 				form.workingAreaAgreementUnsignedPdfPath,
 			requiresWorkingAreaAgreement: form.requiresWorkingAreaAgreement,
 			generatedAt: form.generatedAt.toISOString(),
-			invoices: form.invoices.map((inv) => ({
-				id: inv.id,
-				invoiceNumber: inv.invoiceNumber,
-				invoiceDate: inv.invoiceDate.toISOString(),
-				dueDate: inv.dueDate.toISOString(),
-				amount: decimalToString(inv.amount),
-				status: inv.status,
-				filePath: inv.filePath,
-				payments: inv.payments.map((pay) => ({
-					id: pay.id,
-					amount: decimalToString(pay.amount),
-					paymentMethod: pay.paymentMethod,
-					paymentDate: pay.paymentDate.toISOString(),
-					referenceNumber: pay.referenceNumber,
-					status: pay.status,
-					verifiedAt: dateToISOString(pay.verifiedAt),
-				})),
-			})),
 		})),
 
 		pendingModifications,
-		paidAmount: totalPaid.toFixed(2),
+		paidAmount: "0.00",
 		isPaid,
 		hasUnverifiedPayments,
 		totalSamples,

@@ -21,7 +21,6 @@ interface ServiceFormListResponse {
 interface UseServiceFormListParams {
 	status?: form_status_enum[];
 	bookingId?: string;
-	hasInvoice?: boolean;
 	q?: string;
 	page: number;
 	pageSize: number;
@@ -45,9 +44,6 @@ export function useServiceFormList(params: UseServiceFormListParams) {
 			}
 			if (params.bookingId) {
 				searchParams.set("bookingId", params.bookingId);
-			}
-			if (params.hasInvoice !== undefined) {
-				searchParams.set("hasInvoice", String(params.hasInvoice));
 			}
 
 			const res = await fetch(

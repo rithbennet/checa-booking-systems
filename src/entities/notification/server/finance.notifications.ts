@@ -1,13 +1,12 @@
 /**
  * Finance Notifications
- * Handles notifications for invoices and payments
+ * Handles notifications for payments
  */
 
 import { db } from "@/shared/server/db";
 import type { notification_type_enum } from "../../../../generated/prisma";
 import {
 	sendAdminPaymentPendingEmail,
-	sendInvoiceUploadedEmail,
 	sendPaymentVerifiedEmail,
 } from "./email-sender";
 
@@ -59,52 +58,12 @@ async function markEmailSent(notificationId: string) {
 }
 
 /**
- * Notify user when invoice is uploaded
- */
-export async function notifyInvoiceUploaded(params: {
-	userId: string;
-	invoiceId: string;
-	invoiceNumber: string;
-	amount: string;
-	dueDate: string;
-	bookingReference: string;
-	bookingId: string;
-}) {
-	// Create in-app notification
-	const notification = await enqueueInApp({
-		userId: params.userId,
-		type: "invoice_uploaded",
-		relatedEntityType: "invoice",
-		relatedEntityId: params.invoiceId,
-		title: "Invoice Ready",
-		message: `Invoice ${params.invoiceNumber} for ${params.amount} is ready. Due date: ${params.dueDate}.`,
-	});
-
-	// Send email notification
-	const userDetails = await getUserEmailDetails(params.userId);
-	if (userDetails) {
-		const result = await sendInvoiceUploadedEmail({
-			to: userDetails.email,
-			customerName: userDetails.name,
-			invoiceNumber: params.invoiceNumber,
-			amount: params.amount,
-			dueDate: params.dueDate,
-			bookingReference: params.bookingReference,
-			bookingId: params.bookingId,
-		});
-		if (result.success) {
-			await markEmailSent(notification.id);
-		}
-	}
-}
-
-/**
  * Notify user when payment is verified
  */
 export async function notifyPaymentVerified(params: {
 	userId: string;
 	paymentId: string;
-	invoiceNumber: string;
+	formNumber: string;
 	amount: string;
 	paymentDate: string;
 	bookingReference: string;
@@ -117,7 +76,7 @@ export async function notifyPaymentVerified(params: {
 		relatedEntityType: "payment",
 		relatedEntityId: params.paymentId,
 		title: "Payment Verified",
-		message: `Your payment of ${params.amount} for invoice ${params.invoiceNumber} has been verified. Results are now available.`,
+		message: `Your payment of ${params.amount} for service form ${params.formNumber} has been verified. Results are now available.`,
 	});
 
 	// Send email notification
@@ -126,7 +85,7 @@ export async function notifyPaymentVerified(params: {
 		const result = await sendPaymentVerifiedEmail({
 			to: userDetails.email,
 			customerName: userDetails.name,
-			invoiceNumber: params.invoiceNumber,
+			formNumber: params.formNumber,
 			amount: params.amount,
 			paymentDate: params.paymentDate,
 			bookingReference: params.bookingReference,
@@ -136,33 +95,6 @@ export async function notifyPaymentVerified(params: {
 			await markEmailSent(notification.id);
 		}
 	}
-}
-
-/**
- * Send payment reminder
- */
-export async function notifyPaymentReminder(params: {
-	userId: string;
-	invoiceId: string;
-	invoiceNumber: string;
-	amount: string;
-	dueDate: string;
-	daysOverdue: number;
-}) {
-	// Create in-app notification
-	await enqueueInApp({
-		userId: params.userId,
-		type: "payment_reminder",
-		relatedEntityType: "invoice",
-		relatedEntityId: params.invoiceId,
-		title: "Payment Reminder",
-		message:
-			params.daysOverdue > 0
-				? `Payment for invoice ${params.invoiceNumber} (${params.amount}) is ${params.daysOverdue} day(s) overdue.`
-				: `Payment for invoice ${params.invoiceNumber} (${params.amount}) is due on ${params.dueDate}.`,
-	});
-
-	// Note: Payment reminder emails could be sent here if needed
 }
 
 /**

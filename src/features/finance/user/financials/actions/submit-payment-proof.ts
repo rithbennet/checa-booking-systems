@@ -30,7 +30,7 @@ export async function submitPaymentProof(
 		const user = await requireCurrentUserApi();
 
 		// Extract form data
-		const invoiceId = formData.get("invoiceId") as string;
+		const serviceFormId = formData.get("serviceFormId") as string;
 		const paymentMethod = formData.get("paymentMethod") as payment_method_enum;
 		const paymentDate = formData.get("paymentDate") as string;
 		const referenceNumber = formData.get("referenceNumber") as string | null;
@@ -38,7 +38,7 @@ export async function submitPaymentProof(
 		const file = formData.get("file") as File | null;
 
 		// Validate required fields
-		if (!invoiceId || !paymentMethod || !paymentDate || !amount) {
+		if (!serviceFormId || !paymentMethod || !paymentDate || !amount) {
 			return { success: false, error: "Missing required fields" };
 		}
 
@@ -59,35 +59,29 @@ export async function submitPaymentProof(
 			};
 		}
 
-		// Verify invoice exists and belongs to user
-		const invoice = await db.invoice.findFirst({
+		// Verify service form exists and belongs to user
+		const serviceForm = await db.serviceForm.findFirst({
 			where: {
-				id: invoiceId,
-				serviceForm: {
-					bookingRequest: {
-						userId: user.appUserId,
-					},
+				id: serviceFormId,
+				bookingRequest: {
+					userId: user.appUserId,
 				},
 			},
 			include: {
-				serviceForm: {
-					include: {
-						bookingRequest: {
-							select: { id: true, referenceNumber: true },
-						},
-					},
+				bookingRequest: {
+					select: { id: true, referenceNumber: true },
 				},
 			},
 		});
 
-		if (!invoice) {
-			return { success: false, error: "Invoice not found" };
+		if (!serviceForm) {
+			return { success: false, error: "Service form not found" };
 		}
 
 		// Generate unique filename
 		const timestamp = Date.now();
 		const ext = path.extname(file.name) || getExtensionFromType(file.type);
-		const filename = `payment-${invoiceId}-${timestamp}${ext}`;
+		const filename = `payment-${serviceFormId}-${timestamp}${ext}`;
 
 		// Create upload directory if it doesn't exist
 		const uploadDir = path.join(
@@ -110,13 +104,14 @@ export async function submitPaymentProof(
 		// Create payment record
 		const payment = await db.payment.create({
 			data: {
-				invoiceId,
+				serviceFormId,
+				bookingId: serviceForm.bookingRequest.id,
 				amount: parseFloat(amount),
 				paymentMethod,
 				paymentDate: new Date(paymentDate),
 				referenceNumber: referenceNumber || null,
 				receiptFilePath: publicPath,
-				status: "pending",
+				status: "pending_verification",
 				uploadedBy: user.appUserId,
 				uploadedAt: new Date(),
 			},
@@ -136,7 +131,7 @@ export async function submitPaymentProof(
 					relatedEntityType: "payment",
 					relatedEntityId: payment.id,
 					title: "New Payment Receipt Uploaded",
-					message: `A payment receipt has been uploaded for invoice ${invoice.invoiceNumber} (Booking: ${invoice.serviceForm.bookingRequest.referenceNumber}). Please verify.`,
+					message: `A payment receipt has been uploaded for Form ${serviceForm.formNumber} (Booking: ${serviceForm.bookingRequest.referenceNumber}). Please verify.`,
 					emailSent: false,
 				})),
 			});
@@ -150,9 +145,9 @@ export async function submitPaymentProof(
 				entity: "Payment",
 				entityId: payment.id,
 				metadata: {
-					invoiceId,
-					invoiceNumber: invoice.invoiceNumber,
-					bookingRef: invoice.serviceForm.bookingRequest.referenceNumber,
+					serviceFormId,
+					formNumber: serviceForm.formNumber,
+					bookingRef: serviceForm.bookingRequest.referenceNumber,
 					amount,
 					paymentMethod,
 				},

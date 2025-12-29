@@ -5,15 +5,16 @@
 
 import type {
 	form_status_enum,
-	invoice_status_enum,
 	payment_method_enum,
 	payment_status_enum,
 } from "generated/prisma";
 import type {
 	FormsStatusLabel,
-	InvoiceStatusSeverity,
 	PaymentStatusLabel,
 } from "@/entities/booking/server/finance-repository";
+
+// Legacy status types (for backward compatibility with old code)
+type LegacyStatusSeverity = string;
 
 // ==============================================================
 // Currency Formatting
@@ -92,10 +93,10 @@ export function getFormsStatusBadgeClass(status: FormsStatusLabel): string {
 	return classes[status];
 }
 
-export function getInvoiceStatusLabel(
-	status: invoice_status_enum | InvoiceStatusSeverity | null,
+export function getLegacyStatusLabel(
+	status: LegacyStatusSeverity | null,
 ): string {
-	if (!status) return "No Invoice";
+	if (!status) return "No Form";
 	const labels: Record<string, string> = {
 		pending: "Pending",
 		sent: "Sent",
@@ -106,8 +107,8 @@ export function getInvoiceStatusLabel(
 	return labels[status] ?? status;
 }
 
-export function getInvoiceStatusBadgeClass(
-	status: invoice_status_enum | InvoiceStatusSeverity | null,
+export function getLegacyStatusBadgeClass(
+	status: LegacyStatusSeverity | null,
 	isOverdue?: boolean,
 ): string {
 	if (!status) return "bg-gray-100 text-gray-700";

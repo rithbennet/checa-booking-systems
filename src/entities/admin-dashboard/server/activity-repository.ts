@@ -129,9 +129,10 @@ function buildActivityDescription(args: {
 		? String(bookingRefValue)
 		: null;
 
-	const invoiceNumberValue = metadata.invoiceNumber ?? entityId;
-	const invoiceNumber = isValidValue(invoiceNumberValue)
-		? String(invoiceNumberValue)
+	const formNumberValue =
+		metadata.formNumber ?? metadata.invoiceNumber ?? entityId;
+	const formNumber = isValidValue(formNumberValue)
+		? String(formNumberValue)
 		: null;
 
 	const sampleIdValue = metadata.sampleTrackingId;
@@ -155,16 +156,16 @@ function buildActivityDescription(args: {
 				? `Booking #${bookingRef} returned for revision`
 				: "Booking returned for revision";
 		case "upload_payment_proof":
-			return invoiceNumber
-				? `Payment proof uploaded for Invoice #${invoiceNumber}`
+			return formNumber
+				? `Payment proof uploaded for Form #${formNumber}`
 				: "Payment proof uploaded";
 		case "payment.verified":
-			return invoiceNumber
-				? `Payment verified for Invoice #${invoiceNumber}`
+			return formNumber
+				? `Payment verified for Form #${formNumber}`
 				: "Payment verified";
 		case "payment.rejected":
-			return invoiceNumber
-				? `Payment rejected for Invoice #${invoiceNumber}`
+			return formNumber
+				? `Payment rejected for Form #${formNumber}`
 				: "Payment rejected";
 		case "document_uploaded":
 			if (metadata.documentType === "sample_result") {

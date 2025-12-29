@@ -34,10 +34,6 @@ export interface ServiceFormListVM {
 		userType: string;
 	};
 	organization: string | null;
-	// Invoice info
-	hasInvoice: boolean;
-	invoiceNumber: string | null;
-	invoiceCount: number;
 	// Timestamps
 	generatedAt: string;
 	downloadedAt: string | null;
@@ -48,7 +44,6 @@ export interface ServiceFormListVM {
 export interface ServiceFormListFilters {
 	status?: form_status_enum[];
 	bookingId?: string;
-	hasInvoice?: boolean;
 	q?: string;
 	page: number;
 	pageSize: number;

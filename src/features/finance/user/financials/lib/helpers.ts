@@ -72,9 +72,9 @@ export function getUserPaymentStatusClassName(
 }
 
 // ==============================================================
-// Invoice Reference Formatting
+// Form Reference Formatting
 // ==============================================================
 
-export function formatInvoiceRef(invoiceNumber: string): string {
-	return invoiceNumber;
+export function formatFormRef(formNumber: string): string {
+	return formNumber;
 }

@@ -17,13 +17,13 @@ export type UserPaymentStatus =
 	| "rejected";
 
 export interface UserFinancialVM {
-	id: string; // Invoice ID
+	id: string; // ServiceForm ID
 	bookingId: string;
 	bookingRef: string;
-	invoiceNumber: string;
-	invoiceFilePath: string;
+	formNumber: string;
+	formFilePath: string;
 	amount: string;
-	dueDate: string;
+	validUntil: string;
 	createdAt: string;
 	// Payment info
 	paymentStatus: UserPaymentStatus;
@@ -75,7 +75,9 @@ function determinePaymentStatus(
 	}
 
 	// Check for pending payment
-	const pendingPayment = payments.find((p) => p.status === "pending");
+	const pendingPayment = payments.find(
+		(p) => p.status === "pending_verification",
+	);
 	if (pendingPayment) {
 		return {
 			status: "pending_verification",
@@ -98,32 +100,26 @@ function determinePaymentStatus(
 // ==============================================================
 
 /**
- * Get user's financial records (invoices with payment status)
- * Filters to only show invoices where the user owns the booking
+ * Get user's financial records (service forms with payment status)
+ * Filters to only show service forms where the user owns the booking
  */
 export async function getUserFinancials(
 	userId: string,
 ): Promise<UserFinancialsResponse> {
-	// Fetch all invoices for bookings owned by this user
-	const invoices = await db.invoice.findMany({
+	// Fetch all service forms for bookings owned by this user
+	const serviceForms = await db.serviceForm.findMany({
 		where: {
-			serviceForm: {
-				bookingRequest: {
-					userId,
-				},
+			bookingRequest: {
+				userId,
 			},
-			// Only show active invoices (not cancelled)
-			status: { not: "cancelled" },
+			// Only show active forms
+			status: { notIn: ["expired"] },
 		},
 		include: {
-			serviceForm: {
-				include: {
-					bookingRequest: {
-						select: {
-							id: true,
-							referenceNumber: true,
-						},
-					},
+			bookingRequest: {
+				select: {
+					id: true,
+					referenceNumber: true,
 				},
 			},
 			payments: {
@@ -139,20 +135,20 @@ export async function getUserFinancials(
 	let totalPaid = 0;
 
 	// Map to VMs
-	const items: UserFinancialVM[] = invoices.map((invoice) => {
-		const booking = invoice.serviceForm.bookingRequest;
-		const amount = Number(invoice.amount);
+	const items: UserFinancialVM[] = serviceForms.map((form) => {
+		const booking = form.bookingRequest;
+		const amount = Number(form.totalAmount);
 
 		// Determine payment status
 		const paymentInfo = determinePaymentStatus(
-			invoice.payments.map((p) => ({
+			form.payments.map((p) => ({
 				status: p.status,
 				verificationNotes: p.verificationNotes,
 			})),
 		);
 
 		// Get latest payment ID if any
-		const latestPayment = invoice.payments[0];
+		const latestPayment = form.payments[0];
 
 		// Update summary based on status
 		if (paymentInfo.status === "verified") {
@@ -165,14 +161,14 @@ export async function getUserFinancials(
 		}
 
 		return {
-			id: invoice.id,
+			id: form.id,
 			bookingId: booking.id,
 			bookingRef: booking.referenceNumber,
-			invoiceNumber: invoice.invoiceNumber,
-			invoiceFilePath: invoice.filePath,
+			formNumber: form.formNumber,
+			formFilePath: form.serviceFormUnsignedPdfPath,
 			amount: amount.toString(),
-			dueDate: invoice.dueDate.toISOString().split("T")[0] ?? "",
-			createdAt: invoice.createdAt.toISOString(),
+			validUntil: form.validUntil.toISOString().split("T")[0] ?? "",
+			createdAt: form.createdAt.toISOString(),
 			paymentStatus: paymentInfo.status,
 			latestPaymentId: latestPayment?.id ?? null,
 			latestPaymentRejectionReason: paymentInfo.latestRejectionReason,

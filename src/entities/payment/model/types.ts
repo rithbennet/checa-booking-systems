@@ -13,12 +13,12 @@ import type {
 // ==============================================================
 
 /**
- * Base payment view model with invoice and booking context
+ * Base payment view model with service form and booking context
  */
 export interface PaymentVM {
 	id: string;
-	invoiceId: string;
-	invoiceNumber: string;
+	serviceFormId: string;
+	formNumber: string;
 	bookingRef: string;
 	bookingId: string;
 	amount: string;
@@ -46,12 +46,12 @@ export interface PaymentVM {
 		userType: string;
 	};
 	organization: string | null;
-	// Invoice context for verification
-	invoiceAmount: string;
-	invoiceDueDate: string;
-	invoiceStatus: string;
-	totalVerifiedForInvoice: string;
-	invoiceBalance: string;
+	// ServiceForm context for verification
+	formAmount: string;
+	formValidUntil: string;
+	formStatus: string;
+	totalVerifiedForForm: string;
+	formBalance: string;
 }
 
 /**
@@ -74,7 +74,7 @@ export interface PaymentHistoryVM extends PaymentVM {
 
 export interface PaymentListFilters {
 	status?: payment_status_enum | payment_status_enum[];
-	invoiceId?: string;
+	serviceFormId?: string;
 	bookingId?: string;
 	method?: payment_method_enum;
 	verifierId?: string;
@@ -111,7 +111,8 @@ export interface RejectPaymentRequest {
 }
 
 export interface CreateManualPaymentRequest {
-	invoiceId: string;
+	serviceFormId: string;
+	bookingId: string;
 	amount: string;
 	paymentMethod: payment_method_enum;
 	paymentDate: string;
@@ -139,7 +140,7 @@ export type PaymentStatusLabel = {
 };
 
 export const PAYMENT_STATUS_LABELS: PaymentStatusLabel = {
-	pending: "Pending Verification",
+	pending_verification: "Pending Verification",
 	verified: "Verified",
 	rejected: "Rejected",
 };
