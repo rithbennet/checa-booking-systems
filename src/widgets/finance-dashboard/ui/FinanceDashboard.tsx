@@ -121,8 +121,17 @@ export function FinanceDashboard() {
 	};
 
 	const handleViewReceipt = (payment: PaymentReceiptVM) => {
-		// Open receipt in new tab
-		window.open(payment.receiptUrl, "_blank");
+		// Validate URL before opening
+		try {
+			const url = new URL(payment.receiptUrl);
+			if (url.protocol !== "http:" && url.protocol !== "https:") {
+				console.error("Invalid URL protocol:", url.protocol);
+				return;
+			}
+			window.open(payment.receiptUrl, "_blank");
+		} catch (error) {
+			console.error("Invalid receipt URL:", payment.receiptUrl, error);
+		}
 	};
 
 	return (

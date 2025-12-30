@@ -5,7 +5,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { payment_method_enum } from "generated/prisma";
-import type { PaymentReceiptVM } from "../server/payment-receipt-repository";
+import type { PaymentReceiptVM } from "../model/types";
 import { bookingDocumentKeys } from "./query-keys";
 
 // ==============================================================
@@ -34,7 +34,22 @@ export function usePendingPaymentReceipts(params: {
 			const res = await fetch(
 				`/api/admin/finance/payments/pending?${searchParams}`,
 			);
-			if (!res.ok) throw new Error("Failed to fetch pending payment receipts");
+			if (!res.ok) {
+				let errorDetails = "";
+				try {
+					const errorBody = await res.json();
+					errorDetails = JSON.stringify(errorBody);
+				} catch {
+					try {
+						errorDetails = await res.text();
+					} catch {
+						errorDetails = res.statusText;
+					}
+				}
+				throw new Error(
+					`Failed to fetch pending payment receipts (${res.status} ${res.statusText}): ${errorDetails}`,
+				);
+			}
 			return res.json();
 		},
 	});
@@ -68,7 +83,22 @@ export function usePaymentReceiptHistory(params: {
 			const res = await fetch(
 				`/api/admin/finance/payments/history?${searchParams}`,
 			);
-			if (!res.ok) throw new Error("Failed to fetch payment receipt history");
+			if (!res.ok) {
+				let errorDetails = "";
+				try {
+					const errorBody = await res.json();
+					errorDetails = JSON.stringify(errorBody);
+				} catch {
+					try {
+						errorDetails = await res.text();
+					} catch {
+						errorDetails = res.statusText;
+					}
+				}
+				throw new Error(
+					`Failed to fetch payment receipt history (${res.status} ${res.statusText}): ${errorDetails}`,
+				);
+			}
 			return res.json();
 		},
 	});

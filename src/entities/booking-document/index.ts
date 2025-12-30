@@ -28,6 +28,7 @@ export type {
 	DocumentVerificationStatus,
 	DownloadEligibilityVM,
 	FileBlobVM,
+	PaymentReceiptVM,
 	RejectDocumentInput,
 	VerifyDocumentInput,
 } from "./model";
@@ -44,4 +45,3 @@ export {
 	verificationStatusColors,
 	verificationStatusLabels,
 } from "./model";
-export type { PaymentReceiptVM } from "./server/payment-receipt-repository";

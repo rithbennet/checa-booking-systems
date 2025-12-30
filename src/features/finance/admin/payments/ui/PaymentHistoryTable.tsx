@@ -3,7 +3,7 @@
 import { Eye, FileText } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
-import type { PaymentReceiptVM } from "@/entities/booking-document/server/payment-receipt-repository";
+import type { PaymentReceiptVM } from "@/entities/booking-document";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {

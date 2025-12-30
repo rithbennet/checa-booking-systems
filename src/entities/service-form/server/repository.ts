@@ -94,30 +94,28 @@ export async function listServiceFormsForReview(
 
 		const isExpired = form.validUntil < now;
 
-		// Check for uploaded documents (new document verification flow)
-		const hasServiceFormDoc = booking.bookingDocuments.some(
-			(doc) => doc.type === "service_form_signed",
-		);
-		const hasWorkspaceFormDoc = booking.bookingDocuments.some(
-			(doc) => doc.type === "workspace_form_signed",
-		);
+		// Check for uploaded documents (new document verification flow) - single pass
+		let hasServiceFormDoc = false;
+		let hasWorkspaceFormDoc = false;
+		let serviceFormVerified = false;
+		let workspaceFormVerified = false;
+		let serviceFormPending = false;
 
-		// Determine actual status based on document verification
-		const serviceFormVerified = booking.bookingDocuments.some(
-			(doc) =>
-				doc.type === "service_form_signed" &&
-				doc.verificationStatus === "verified",
-		);
-		const workspaceFormVerified = booking.bookingDocuments.some(
-			(doc) =>
-				doc.type === "workspace_form_signed" &&
-				doc.verificationStatus === "verified",
-		);
-		const serviceFormPending = booking.bookingDocuments.some(
-			(doc) =>
-				doc.type === "service_form_signed" &&
-				doc.verificationStatus === "pending_verification",
-		);
+		for (const doc of booking.bookingDocuments) {
+			if (doc.type === "service_form_signed") {
+				hasServiceFormDoc = true;
+				if (doc.verificationStatus === "verified") {
+					serviceFormVerified = true;
+				} else if (doc.verificationStatus === "pending_verification") {
+					serviceFormPending = true;
+				}
+			} else if (doc.type === "workspace_form_signed") {
+				hasWorkspaceFormDoc = true;
+				if (doc.verificationStatus === "verified") {
+					workspaceFormVerified = true;
+				}
+			}
+		}
 
 		// Determine the actual status to show
 		let actualStatus:

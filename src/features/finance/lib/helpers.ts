@@ -115,7 +115,7 @@ export function getServiceFormStatusLabel(
 export function getServiceFormStatusBadgeClass(
 	status: form_status_enum | "verified",
 ): string {
-	const classes: Record<string, string> = {
+	const classes: Record<form_status_enum | "verified", string> = {
 		generated: "bg-gray-100 text-gray-700",
 		downloaded: "bg-blue-100 text-blue-800",
 		signed_forms_uploaded: "bg-blue-100 text-blue-800",

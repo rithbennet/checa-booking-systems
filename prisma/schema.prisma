@@ -813,11 +813,11 @@ enum upload_document_type_enum {
 }
 
 enum document_verification_status_enum {
-  pending_upload // Generated/available but not yet uploaded by user
-  pending_verification // Uploaded by user, awaiting admin review
-  verified // Admin verified/approved
-  rejected // Admin rejected, user needs to re-upload
-  not_required // Document not required for this booking
+  pending_upload // Generated/available but not yet uploaded by user → transitions to pending_verification when user uploads file
+  pending_verification // Uploaded by user, awaiting admin review → transitions to verified or rejected after admin review
+  verified // Admin verified/approved (final state for required documents)
+  rejected // Admin rejected, user needs to re-upload → can transition back to pending_verification when user re-uploads
+  not_required // Document not required for this booking (never requires upload)
 }
 
 enum applicable_to_enum {

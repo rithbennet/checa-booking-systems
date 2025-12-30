@@ -6,6 +6,7 @@
 
 import type {
 	document_verification_status_enum,
+	payment_method_enum,
 	upload_document_type_enum,
 } from "generated/prisma";
 
@@ -90,6 +91,55 @@ export interface VerifyDocumentInput {
 export interface RejectDocumentInput {
 	documentId: string;
 	reason: string;
+}
+
+// ============================================
+// Payment Receipt Types
+// ============================================
+
+export interface PaymentReceiptVM {
+	id: string;
+	bookingId: string;
+	bookingRef: string;
+	formNumber: string;
+
+	// Receipt details (from note JSON)
+	amount: string;
+	paymentMethod: payment_method_enum;
+	paymentDate: string;
+	referenceNumber: string | null;
+
+	// Document info
+	verificationStatus: "pending_verification" | "verified" | "rejected";
+	rejectionReason: string | null;
+
+	// File info
+	receiptUrl: string;
+	fileName: string;
+	mimeType: string;
+
+	// Client info
+	client: {
+		id: string;
+		name: string;
+		email: string;
+		userType: string;
+	};
+	organization: string | null;
+
+	// Metadata
+	uploadedBy: {
+		id: string;
+		name: string;
+	};
+	uploadedAt: string;
+	verifiedBy: {
+		id: string;
+		name: string;
+	} | null;
+	verifiedAt: string | null;
+
+	age?: number;
 }
 
 // ============================================

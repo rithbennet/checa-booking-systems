@@ -21,10 +21,7 @@ import {
 	useBookingDocuments,
 } from "@/entities/booking-document";
 import { useGenerateForms } from "@/entities/service-form";
-import {
-	BookingDocUploader,
-	BookingDocumentsList,
-} from "@/features/bookings/shared";
+import { BookingDocumentsList } from "@/features/bookings/shared";
 import { DocumentVerificationCard } from "@/features/document-verification";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";

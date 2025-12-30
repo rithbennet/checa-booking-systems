@@ -16,6 +16,7 @@ const ALLOWED_TYPES = [
 	"image/webp",
 	"application/pdf",
 ];
+const DOCUMENT_TYPE_PAYMENT_RECEIPT = "payment_receipt" as const;
 
 interface SubmitPaymentProofResult {
 	success: boolean;
@@ -93,18 +94,6 @@ export async function submitPaymentProof(
 			return { success: false, error: "Failed to upload file" };
 		}
 
-		// Create fileBlob record
-		const blob = await db.fileBlob.create({
-			data: {
-				key: uploaded.data.key,
-				url: uploaded.data.ufsUrl,
-				mimeType: file.type,
-				fileName: file.name,
-				sizeBytes: file.size,
-				uploadedById: user.appUserId,
-			},
-		});
-
 		// Store payment metadata as JSON in the note field
 		const paymentMetadata = {
 			paymentMethod,
@@ -114,17 +103,43 @@ export async function submitPaymentProof(
 			serviceFormId,
 		};
 
-		// Create bookingDocument record (replaces old payment record)
-		const document = await db.bookingDocument.create({
-			data: {
-				bookingId: serviceForm.bookingRequest.id,
-				blobId: blob.id,
-				type: "payment_receipt",
-				note: JSON.stringify(paymentMetadata),
-				verificationStatus: "pending_verification",
-				createdById: user.appUserId,
-			},
-		});
+		// Create both records in a transaction
+		const { document } = await db
+			.$transaction(async (tx) => {
+				const blob = await tx.fileBlob.create({
+					data: {
+						key: uploaded.data.key,
+						url: uploaded.data.ufsUrl,
+						mimeType: file.type,
+						fileName: file.name,
+						sizeBytes: file.size,
+						uploadedById: user.appUserId,
+					},
+				});
+
+				const document = await tx.bookingDocument.create({
+					data: {
+						bookingId: serviceForm.bookingRequest.id,
+						blobId: blob.id,
+						type: DOCUMENT_TYPE_PAYMENT_RECEIPT,
+						note: JSON.stringify(paymentMetadata),
+						verificationStatus: "pending_verification",
+						createdById: user.appUserId,
+					},
+				});
+
+				return { blob, document };
+			})
+			.catch(async (error) => {
+				// On transaction failure, cleanup uploaded file
+				try {
+					await utapi.deleteFiles(uploaded.data.key);
+					console.log(`Cleaned up orphaned file: ${uploaded.data.key}`);
+				} catch (cleanupError) {
+					console.error("Failed to cleanup uploaded file:", cleanupError);
+				}
+				throw error;
+			});
 
 		// Send notifications to admins
 		const admins = await db.user.findMany({

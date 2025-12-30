@@ -139,6 +139,13 @@ export async function listPendingPaymentReceipts(params: {
 						lastName: true,
 					},
 				},
+				verifiedByUser: {
+					select: {
+						id: true,
+						firstName: true,
+						lastName: true,
+					},
+				},
 			},
 			orderBy: { createdAt: "asc" as const }, // FIFO
 			skip: (page - 1) * pageSize,
@@ -151,7 +158,20 @@ export async function listPendingPaymentReceipts(params: {
 
 	return {
 		items: documents.map((doc) => {
-			const metadata = doc.note ? JSON.parse(doc.note) : {};
+			let metadata: {
+				amount?: number;
+				paymentMethod?: payment_method_enum;
+				paymentDate?: string;
+				referenceNumber?: string | null;
+			} = {};
+			if (doc.note) {
+				try {
+					metadata = JSON.parse(doc.note);
+				} catch (err) {
+					console.warn(`Failed to parse note for document ${doc.id}:`, err);
+					metadata = {};
+				}
+			}
 			const user = doc.booking.user;
 			const isExternal = user.userType === "external_member";
 
@@ -195,12 +215,19 @@ export async function listPendingPaymentReceipts(params: {
 				},
 				uploadedAt: doc.createdAt.toISOString(),
 
-				verifiedBy: doc.verifiedBy
+				verifiedBy: doc.verifiedByUser
 					? {
-							id: doc.verifiedBy,
-							name: "Unknown", // verifiedBy is just an ID string
+							id: doc.verifiedByUser.id,
+							name:
+								`${doc.verifiedByUser.firstName} ${doc.verifiedByUser.lastName}`.trim() ||
+								"Unknown",
 						}
-					: null,
+					: doc.verifiedBy
+						? {
+								id: doc.verifiedBy,
+								name: "Unknown",
+							}
+						: null,
 				verifiedAt: doc.verifiedAt?.toISOString() || null,
 
 				age: Math.ceil(
@@ -315,6 +342,13 @@ export async function listPaymentReceiptHistory(params: {
 						lastName: true,
 					},
 				},
+				verifiedByUser: {
+					select: {
+						id: true,
+						firstName: true,
+						lastName: true,
+					},
+				},
 			},
 			orderBy: { verifiedAt: "desc" as const },
 			skip: (page - 1) * pageSize,
@@ -327,7 +361,20 @@ export async function listPaymentReceiptHistory(params: {
 
 	return {
 		items: documents.map((doc) => {
-			const metadata = doc.note ? JSON.parse(doc.note) : {};
+			let metadata: {
+				amount?: number;
+				paymentMethod?: payment_method_enum;
+				paymentDate?: string;
+				referenceNumber?: string | null;
+			} = {};
+			if (doc.note) {
+				try {
+					metadata = JSON.parse(doc.note);
+				} catch (err) {
+					console.warn(`Failed to parse note for document ${doc.id}:`, err);
+					metadata = {};
+				}
+			}
 			const user = doc.booking.user;
 			const isExternal = user.userType === "external_member";
 

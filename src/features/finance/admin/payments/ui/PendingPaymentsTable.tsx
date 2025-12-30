@@ -3,7 +3,7 @@
 import { Check, FileText, X } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
-import type { PaymentReceiptVM } from "@/entities/booking-document/server/payment-receipt-repository";
+import type { PaymentReceiptVM } from "@/entities/booking-document";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -129,20 +129,23 @@ export function PendingPaymentsTable({
 				headerTooltip: "Days since payment receipt was uploaded",
 				className: "w-[80px]",
 				align: "center",
-				cell: ({ row }) => (
-					<Badge
-						className={
-							row.age > 7
-								? "bg-red-100 text-red-800"
-								: row.age > 3
-									? "bg-yellow-100 text-yellow-800"
-									: "bg-gray-100 text-gray-700"
-						}
-						variant="secondary"
-					>
-						{row.age}d
-					</Badge>
-				),
+				cell: ({ row }) => {
+					const age = row.age ?? 0;
+					return (
+						<Badge
+							className={
+								age > 7
+									? "bg-red-100 text-red-800"
+									: age > 3
+										? "bg-yellow-100 text-yellow-800"
+										: "bg-gray-100 text-gray-700"
+							}
+							variant="secondary"
+						>
+							{age}d
+						</Badge>
+					);
+				},
 			},
 			{
 				id: "actions",
