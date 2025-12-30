@@ -139,18 +139,18 @@ export const GET = createProtectedHandler(async (_request: Request, user) => {
 					editUrl: mockData.editUrl,
 				}),
 		},
-		// {
-		// 	name: "PaymentVerifiedEmail",
-		// 	render: () =>
-		// 		PaymentVerifiedEmail({
-		// 			customerName: mockData.customerName,
-		// 			invoiceNumber: "INV-TEST-001",
-		// 			amount: "RM 500.00",
-		// 			paymentDate: "2025-01-01",
-		// 			bookingReference: mockData.referenceNumber,
-		// 			dashboardUrl: mockData.dashboardUrl,
-		// 		}),
-		// },
+		{
+			name: "PaymentVerifiedEmail",
+			render: () =>
+				PaymentVerifiedEmail({
+					customerName: mockData.customerName,
+					formNumber: "INV-TEST-001",
+					amount: "RM 500.00",
+					paymentDate: "2025-01-01",
+					bookingReference: mockData.referenceNumber,
+					dashboardUrl: mockData.dashboardUrl,
+				}),
+		},
 		{
 			name: "SampleStatusUpdateEmail",
 			render: () =>

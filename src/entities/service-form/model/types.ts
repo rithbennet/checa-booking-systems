@@ -4,6 +4,8 @@
 
 import type { form_status_enum } from "generated/prisma";
 
+export type ServiceFormStatus = form_status_enum | "verified";
+
 export interface ServiceFormListVM {
 	id: string;
 	formNumber: string;
@@ -11,7 +13,7 @@ export interface ServiceFormListVM {
 	subtotal: string;
 	totalAmount: string;
 	validUntil: string;
-	status: form_status_enum;
+	status: ServiceFormStatus;
 	// Document status
 	hasUnsignedForm: boolean;
 	hasSignedForm: boolean;

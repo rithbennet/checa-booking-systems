@@ -15,12 +15,12 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useFinanceOverview, useResultsOnHold } from "@/entities/booking";
 import {
-	type PendingPaymentVM,
-	usePaymentHistory,
-	usePendingPayments,
-	useRejectPayment,
-	useVerifyPayment,
-} from "@/entities/payment";
+	type PaymentReceiptVM,
+	usePaymentReceiptHistory,
+	usePendingPaymentReceipts,
+	useRejectPaymentReceipt,
+	useVerifyPaymentReceipt,
+} from "@/entities/booking-document";
 import { useServiceFormList } from "@/entities/service-form/api/useServiceFormList";
 import {
 	FinanceOverviewTable,
@@ -58,12 +58,12 @@ export function FinanceDashboard() {
 		pageSize: 20,
 	});
 	const { data: pendingPaymentsData, isLoading: pendingPaymentsLoading } =
-		usePendingPayments({
+		usePendingPaymentReceipts({
 			page: 1,
 			pageSize: 20,
 		});
 	const { data: paymentHistoryData, isLoading: paymentHistoryLoading } =
-		usePaymentHistory({
+		usePaymentReceiptHistory({
 			page: 1,
 			pageSize: 20,
 		});
@@ -74,13 +74,13 @@ export function FinanceDashboard() {
 		});
 
 	// Payment mutation hooks
-	const verifyPayment = useVerifyPayment();
-	const rejectPayment = useRejectPayment();
+	const verifyPayment = useVerifyPaymentReceipt();
+	const rejectPayment = useRejectPaymentReceipt();
 
 	// Handlers for payment verification/rejection
-	const handleVerifyPayment = (payment: PendingPaymentVM) => {
+	const handleVerifyPayment = (payment: PaymentReceiptVM) => {
 		verifyPayment.mutate(
-			{ paymentId: payment.id },
+			{ documentId: payment.id },
 			{
 				onSuccess: () => {
 					toast.success("Payment verified", {
@@ -89,19 +89,20 @@ export function FinanceDashboard() {
 				},
 				onError: (error) => {
 					toast.error("Failed to verify payment", {
-						description: error.message,
+						description:
+							error instanceof Error ? error.message : "Unknown error",
 					});
 				},
 			},
 		);
 	};
 
-	const handleRejectPayment = (payment: PendingPaymentVM) => {
+	const handleRejectPayment = (payment: PaymentReceiptVM) => {
 		// In a real implementation, you'd show a dialog to get the rejection reason
 		const reason = prompt("Enter rejection reason:");
 		if (reason) {
 			rejectPayment.mutate(
-				{ paymentId: payment.id, notes: reason },
+				{ documentId: payment.id, reason },
 				{
 					onSuccess: () => {
 						toast.success("Payment rejected", {
@@ -110,12 +111,18 @@ export function FinanceDashboard() {
 					},
 					onError: (error) => {
 						toast.error("Failed to reject payment", {
-							description: error.message,
+							description:
+								error instanceof Error ? error.message : "Unknown error",
 						});
 					},
 				},
 			);
 		}
+	};
+
+	const handleViewReceipt = (payment: PaymentReceiptVM) => {
+		// Open receipt in new tab
+		window.open(payment.receiptUrl, "_blank");
 	};
 
 	return (
@@ -192,6 +199,7 @@ export function FinanceDashboard() {
 								isLoading={pendingPaymentsLoading}
 								onReject={handleRejectPayment}
 								onVerify={handleVerifyPayment}
+								onViewReceipt={handleViewReceipt}
 							/>
 						</TabsContent>
 
@@ -199,6 +207,7 @@ export function FinanceDashboard() {
 							<PaymentHistoryTable
 								data={paymentHistoryData?.items ?? []}
 								isLoading={paymentHistoryLoading}
+								onViewReceipt={handleViewReceipt}
 							/>
 						</TabsContent>
 					</Tabs>

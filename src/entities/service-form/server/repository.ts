@@ -62,6 +62,12 @@ export async function listServiceFormsForReview(
 								companyBranch: { select: { name: true } },
 							},
 						},
+						bookingDocuments: {
+							select: {
+								type: true,
+								verificationStatus: true,
+							},
+						},
 					},
 				},
 			},
@@ -88,6 +94,54 @@ export async function listServiceFormsForReview(
 
 		const isExpired = form.validUntil < now;
 
+		// Check for uploaded documents (new document verification flow)
+		const hasServiceFormDoc = booking.bookingDocuments.some(
+			(doc) => doc.type === "service_form_signed",
+		);
+		const hasWorkspaceFormDoc = booking.bookingDocuments.some(
+			(doc) => doc.type === "workspace_form_signed",
+		);
+
+		// Determine actual status based on document verification
+		const serviceFormVerified = booking.bookingDocuments.some(
+			(doc) =>
+				doc.type === "service_form_signed" &&
+				doc.verificationStatus === "verified",
+		);
+		const workspaceFormVerified = booking.bookingDocuments.some(
+			(doc) =>
+				doc.type === "workspace_form_signed" &&
+				doc.verificationStatus === "verified",
+		);
+		const serviceFormPending = booking.bookingDocuments.some(
+			(doc) =>
+				doc.type === "service_form_signed" &&
+				doc.verificationStatus === "pending_verification",
+		);
+
+		// Determine the actual status to show
+		let actualStatus:
+			| "generated"
+			| "downloaded"
+			| "signed_forms_uploaded"
+			| "expired"
+			| "verified" = form.status;
+		if (isExpired) {
+			actualStatus = "expired";
+		} else if (
+			serviceFormVerified &&
+			(!form.requiresWorkingAreaAgreement || workspaceFormVerified)
+		) {
+			// All required forms are verified
+			actualStatus = "verified";
+		} else if (serviceFormPending || hasServiceFormDoc) {
+			// Forms are uploaded and pending verification
+			actualStatus = "signed_forms_uploaded";
+		} else if (form.status === "downloaded" || form.status === "generated") {
+			// Keep original status if nothing uploaded yet
+			actualStatus = form.status;
+		}
+
 		return {
 			id: form.id,
 			formNumber: form.formNumber,
@@ -95,14 +149,16 @@ export async function listServiceFormsForReview(
 			subtotal: form.subtotal.toString(),
 			totalAmount: form.totalAmount.toString(),
 			validUntil: form.validUntil.toISOString().split("T")[0] ?? "",
-			status: form.status,
+			status: actualStatus,
 			hasUnsignedForm: Boolean(form.serviceFormUnsignedPdfPath),
-			hasSignedForm: Boolean(form.serviceFormSignedPdfPath),
+			hasSignedForm:
+				Boolean(form.serviceFormSignedPdfPath) || hasServiceFormDoc,
 			requiresWorkingAreaAgreement: form.requiresWorkingAreaAgreement,
 			hasUnsignedWorkspaceForm: Boolean(
 				form.workingAreaAgreementUnsignedPdfPath,
 			),
-			hasSignedWorkspaceForm: Boolean(form.workingAreaAgreementSignedPdfPath),
+			hasSignedWorkspaceForm:
+				Boolean(form.workingAreaAgreementSignedPdfPath) || hasWorkspaceFormDoc,
 			serviceFormUnsignedPdfPath: form.serviceFormUnsignedPdfPath,
 			serviceFormSignedPdfPath: form.serviceFormSignedPdfPath,
 			workingAreaAgreementUnsignedPdfPath:

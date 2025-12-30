@@ -3,7 +3,7 @@
 import { Check, FileText, X } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
-import type { PendingPaymentVM } from "@/entities/payment/model/types";
+import type { PaymentReceiptVM } from "@/entities/booking-document/server/payment-receipt-repository";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -21,11 +21,11 @@ import {
 } from "../../../lib/helpers";
 
 interface PendingPaymentsTableProps {
-	data: PendingPaymentVM[];
+	data: PaymentReceiptVM[];
 	isLoading: boolean;
-	onVerify: (payment: PendingPaymentVM) => void;
-	onReject: (payment: PendingPaymentVM) => void;
-	onViewReceipt?: (payment: PendingPaymentVM) => void;
+	onVerify: (payment: PaymentReceiptVM) => void;
+	onReject: (payment: PaymentReceiptVM) => void;
+	onViewReceipt?: (payment: PaymentReceiptVM) => void;
 }
 
 export function PendingPaymentsTable({
@@ -35,7 +35,7 @@ export function PendingPaymentsTable({
 	onReject,
 	onViewReceipt,
 }: PendingPaymentsTableProps) {
-	const columns: ColumnDef<PendingPaymentVM>[] = useMemo(
+	const columns: ColumnDef<PaymentReceiptVM>[] = useMemo(
 		() => [
 			{
 				id: "formNumber",

@@ -11,8 +11,12 @@ export {
 	useBookingDocuments,
 	useDocumentVerificationState,
 	useDownloadEligibility,
+	usePaymentReceiptHistory,
+	usePendingPaymentReceipts,
 	useRejectDocument,
+	useRejectPaymentReceipt,
 	useVerifyDocument,
+	useVerifyPaymentReceipt,
 } from "./api";
 
 // Model exports (types and helpers)
@@ -40,3 +44,4 @@ export {
 	verificationStatusColors,
 	verificationStatusLabels,
 } from "./model";
+export type { PaymentReceiptVM } from "./server/payment-receipt-repository";

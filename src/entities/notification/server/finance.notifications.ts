@@ -102,10 +102,11 @@ export async function notifyPaymentVerified(params: {
  */
 export async function notifyAdminsPaymentUploaded(params: {
 	adminIds: string[];
-	paymentId: string;
+	documentId: string;
 	bookingReference: string;
 	customerName: string;
 	amount: string;
+	formNumber?: string;
 }) {
 	// Collect admin emails for batch email
 	const adminEmails: string[] = [];
@@ -114,10 +115,10 @@ export async function notifyAdminsPaymentUploaded(params: {
 		await enqueueInApp({
 			userId: adminId,
 			type: "payment_verified", // Using existing type
-			relatedEntityType: "payment",
-			relatedEntityId: params.paymentId,
+			relatedEntityType: "bookingDocument",
+			relatedEntityId: params.documentId,
 			title: "Payment Proof Uploaded",
-			message: `${params.customerName} has uploaded payment proof (${params.amount}) for booking ${params.bookingReference}. Please verify.`,
+			message: `${params.customerName} has uploaded payment proof (${params.amount})${params.formNumber ? ` for form ${params.formNumber}` : ""} for booking ${params.bookingReference}. Please verify.`,
 		});
 
 		const adminDetails = await getUserEmailDetails(adminId);

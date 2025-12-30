@@ -13,4 +13,9 @@ export const bookingDocumentKeys = {
 		[...bookingDocumentKeys.all, "verification-state", bookingId] as const,
 	downloadEligibility: (bookingId: string) =>
 		[...bookingDocumentKeys.all, "download-eligibility", bookingId] as const,
+	// Payment receipts
+	paymentReceipts: (
+		type: "pending" | "history",
+		params?: Record<string, unknown>,
+	) => [...bookingDocumentKeys.all, "payment-receipts", type, params] as const,
 };

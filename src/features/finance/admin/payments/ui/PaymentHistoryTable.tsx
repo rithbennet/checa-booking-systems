@@ -3,7 +3,7 @@
 import { Eye, FileText } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
-import type { PaymentHistoryVM } from "@/entities/payment/model/types";
+import type { PaymentReceiptVM } from "@/entities/booking-document/server/payment-receipt-repository";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -23,9 +23,9 @@ import {
 } from "../../../lib/helpers";
 
 interface PaymentHistoryTableProps {
-	data: PaymentHistoryVM[];
+	data: PaymentReceiptVM[];
 	isLoading: boolean;
-	onViewReceipt?: (payment: PaymentHistoryVM) => void;
+	onViewReceipt?: (payment: PaymentReceiptVM) => void;
 }
 
 export function PaymentHistoryTable({
@@ -33,7 +33,7 @@ export function PaymentHistoryTable({
 	isLoading,
 	onViewReceipt,
 }: PaymentHistoryTableProps) {
-	const columns: ColumnDef<PaymentHistoryVM>[] = useMemo(
+	const columns: ColumnDef<PaymentReceiptVM>[] = useMemo(
 		() => [
 			{
 				id: "formNumber",
@@ -109,10 +109,10 @@ export function PaymentHistoryTable({
 				className: "w-[100px]",
 				cell: ({ row }) => (
 					<Badge
-						className={getPaymentStatusBadgeClass(row.status)}
+						className={getPaymentStatusBadgeClass(row.verificationStatus)}
 						variant="secondary"
 					>
-						{getPaymentStatusLabel(row.status)}
+						{getPaymentStatusLabel(row.verificationStatus)}
 					</Badge>
 				),
 			},
@@ -126,7 +126,7 @@ export function PaymentHistoryTable({
 							<>
 								<div>{row.verifiedBy.name}</div>
 								<div className="text-muted-foreground text-xs">
-									{formatDate(row.processedAt)}
+									{formatDate(row.verifiedAt ?? row.uploadedAt)}
 								</div>
 							</>
 						) : (
@@ -141,7 +141,7 @@ export function PaymentHistoryTable({
 				className: "min-w-[150px]",
 				cell: ({ row }) => (
 					<span className="text-muted-foreground text-sm">
-						{row.verificationNotes || "-"}
+						{row.rejectionReason || "-"}
 					</span>
 				),
 			},

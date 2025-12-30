@@ -1,5 +1,5 @@
 import type { payment_method_enum } from "generated/prisma";
-import { listPendingPayments } from "@/entities/payment/server/repository";
+import { listPendingPaymentReceipts } from "@/entities/booking-document/server/payment-receipt-repository";
 import {
 	createProtectedHandler,
 	forbidden,
@@ -8,7 +8,7 @@ import {
 
 /**
  * GET /api/admin/finance/payments/pending
- * Get pending payments for verification queue
+ * Get pending payment receipts from bookingDocuments for verification queue
  */
 export const GET = createProtectedHandler(async (request: Request, user) => {
 	try {
@@ -26,7 +26,7 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
 		);
 		const pageSize = [10, 25, 50].includes(pageSizeRaw) ? pageSizeRaw : 25;
 
-		const result = await listPendingPayments({
+		const result = await listPendingPaymentReceipts({
 			page,
 			pageSize,
 			q: searchParams.get("q") ?? undefined,
@@ -35,7 +35,7 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
 
 		return Response.json(result);
 	} catch (error) {
-		console.error("Error fetching pending payments:", error);
-		return serverError("Failed to fetch pending payments");
+		console.error("Error fetching pending payment receipts:", error);
+		return serverError("Failed to fetch pending payment receipts");
 	}
 });

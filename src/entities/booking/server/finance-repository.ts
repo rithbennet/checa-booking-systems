@@ -32,7 +32,7 @@ export type PaymentStatusSeverity = "unpaid" | "pending" | "paid";
 
 export type PaymentStatusLabel =
 	| "no_receipt"
-	| "receipt_pending"
+	| "pending_verification"
 	| "paid"
 	| "rejected";
 
@@ -45,7 +45,21 @@ interface PaymentSummaryResult {
 function getPaymentSummary(
 	payments: Array<{ status: string; amount: unknown }>,
 	totalAmount: number,
+	documents: Array<{ type: string; verificationStatus: string | null }>,
 ): PaymentSummaryResult {
+	// Primary source: bookingDocuments payment_receipt verification status
+	const paymentReceiptDoc = documents.find(
+		(doc) => doc.type === "payment_receipt",
+	);
+	const hasPaymentReceipt = paymentReceiptDoc !== undefined;
+	const paymentReceiptVerified =
+		paymentReceiptDoc?.verificationStatus === "verified";
+	const paymentReceiptPending =
+		paymentReceiptDoc?.verificationStatus === "pending_verification";
+	const paymentReceiptRejected =
+		paymentReceiptDoc?.verificationStatus === "rejected";
+
+	// Legacy: calculate verified payments from old payment records
 	const verifiedPayments = payments.filter((p) => p.status === "verified");
 	const totalVerifiedPaid = verifiedPayments.reduce(
 		(sum, p) => sum + Number(p.amount),
@@ -53,25 +67,26 @@ function getPaymentSummary(
 	);
 
 	// Determine payment status severity
+	// Prioritize new document-based flow
 	let paymentStatus: PaymentStatusSeverity = "unpaid";
-	if (totalVerifiedPaid >= totalAmount && totalAmount > 0) {
+	if (
+		paymentReceiptVerified ||
+		(totalVerifiedPaid >= totalAmount && totalAmount > 0)
+	) {
 		paymentStatus = "paid";
-	} else if (payments.some((p) => p.status === "pending_verification")) {
+	} else if (paymentReceiptPending) {
 		paymentStatus = "pending";
 	}
 
-	// Determine latest payment status label
+	// Determine latest payment status label (prioritize new document flow)
 	let latestPaymentStatusLabel: PaymentStatusLabel = "no_receipt";
-	if (payments.length > 0) {
-		const latestPayment = payments[payments.length - 1];
-		if (latestPayment) {
-			if (latestPayment.status === "verified") {
-				latestPaymentStatusLabel = "paid";
-			} else if (latestPayment.status === "rejected") {
-				latestPaymentStatusLabel = "rejected";
-			} else if (latestPayment.status === "pending_verification") {
-				latestPaymentStatusLabel = "receipt_pending";
-			}
+	if (hasPaymentReceipt) {
+		if (paymentReceiptVerified) {
+			latestPaymentStatusLabel = "paid";
+		} else if (paymentReceiptRejected) {
+			latestPaymentStatusLabel = "rejected";
+		} else if (paymentReceiptPending) {
+			latestPaymentStatusLabel = "pending_verification";
 		}
 	}
 
@@ -150,6 +165,10 @@ function getFormsStatus(
 		requiresWorkingAreaAgreement: boolean;
 		validUntil: Date;
 	}>,
+	documents: Array<{
+		type: string;
+		verificationStatus: string | null;
+	}>,
 ): {
 	status: FormsStatusLabel;
 	hasServiceFormSigned: boolean;
@@ -192,8 +211,53 @@ function getFormsStatus(
 		};
 	}
 
-	// Determine status based on form status
-	if (latestForm.status === "signed_forms_uploaded") {
+	// Check document verification status
+	const serviceFormVerified = documents.some(
+		(doc) =>
+			doc.type === "service_form_signed" &&
+			doc.verificationStatus === "verified",
+	);
+	const workspaceFormVerified = documents.some(
+		(doc) =>
+			doc.type === "workspace_form_signed" &&
+			doc.verificationStatus === "verified",
+	);
+
+	// Check if documents are uploaded and pending verification
+	const serviceFormPendingReview = documents.some(
+		(doc) =>
+			doc.type === "service_form_signed" &&
+			doc.verificationStatus === "pending_verification",
+	);
+	const workspaceFormPendingReview = documents.some(
+		(doc) =>
+			doc.type === "workspace_form_signed" &&
+			doc.verificationStatus === "pending_verification",
+	);
+
+	// If documents are verified, forms are completed
+	const requiredDocsVerified =
+		serviceFormVerified && (!requiresWorkspaceForm || workspaceFormVerified);
+
+	if (requiredDocsVerified) {
+		return {
+			status: "completed",
+			hasServiceFormSigned,
+			hasWorkspaceFormSigned,
+			requiresWorkspaceForm,
+		};
+	}
+
+	// If documents are uploaded and pending review
+	// Show pending review if:
+	// - Service form is pending, OR
+	// - Workspace form is pending (when required), OR
+	// - Old status is signed_forms_uploaded
+	const hasAnyDocsPending =
+		serviceFormPendingReview ||
+		(requiresWorkspaceForm && workspaceFormPendingReview);
+
+	if (hasAnyDocsPending || latestForm.status === "signed_forms_uploaded") {
 		return {
 			status: "awaiting_review",
 			hasServiceFormSigned,
@@ -237,26 +301,22 @@ function getFormsStatus(
  * Get finance stats for KPI header
  */
 export async function getFinanceStats(): Promise<FinanceStatsVM> {
-	const [pendingForms, pendingPayments, pendingDocVerifications] =
-		await Promise.all([
-			// Pending form reviews
-			db.serviceForm.count({
-				where: { status: "signed_forms_uploaded" },
-			}),
-			// Pending payment verifications (legacy direct payment records)
-			db.payment.count({
-				where: { status: "pending_verification" },
-			}),
-			// Pending document verifications (new flow - payment receipts)
-			db.bookingDocument.count({
-				where: {
-					type: "payment_receipt",
-					verificationStatus: "pending_verification",
-				},
-			}),
-		]);
+	const [pendingForms, pendingDocVerifications] = await Promise.all([
+		// Pending form reviews
+		db.serviceForm.count({
+			where: { status: "signed_forms_uploaded" },
+		}),
+		// Pending payment receipt verifications from bookingDocuments
+		db.bookingDocument.count({
+			where: {
+				type: "payment_receipt",
+				verificationStatus: "pending_verification",
+			},
+		}),
+	]);
 
-	// Calculate outstanding amounts from bookings with verified service forms
+	// Calculate outstanding amounts from bookings with service forms
+	// Note: With the new flow, we check payment receipt verification status
 	const bookingsWithForms = await db.bookingRequest.findMany({
 		where: {
 			status: { notIn: ["draft", "cancelled", "rejected"] },
@@ -268,10 +328,13 @@ export async function getFinanceStats(): Promise<FinanceStatsVM> {
 		},
 		include: {
 			serviceForms: {
-				include: {
-					payments: {
-						where: { status: "verified" },
-					},
+				orderBy: { createdAt: "desc" },
+				take: 1,
+			},
+			bookingDocuments: {
+				where: {
+					type: "payment_receipt",
+					verificationStatus: "verified",
 				},
 			},
 		},
@@ -282,15 +345,13 @@ export async function getFinanceStats(): Promise<FinanceStatsVM> {
 	const now = new Date();
 
 	for (const booking of bookingsWithForms) {
-		const latestForm = booking.serviceForms[booking.serviceForms.length - 1];
+		const latestForm = booking.serviceForms[0];
 		if (!latestForm) continue;
 
 		const formAmount = Number(latestForm.totalAmount);
-		const paidAmount = latestForm.payments.reduce(
-			(sum, p) => sum + Number(p.amount),
-			0,
-		);
-		const outstanding = formAmount - paidAmount;
+		// If there's a verified payment receipt, consider it paid
+		const hasVerifiedPayment = booking.bookingDocuments.length > 0;
+		const outstanding = hasVerifiedPayment ? 0 : formAmount;
 
 		if (outstanding > 0) {
 			totalOutstanding += outstanding;
@@ -306,8 +367,7 @@ export async function getFinanceStats(): Promise<FinanceStatsVM> {
 		totalOutstanding: totalOutstanding.toString(),
 		overdueAmount: overdueAmount.toString(),
 		pendingFormReviews: pendingForms,
-		// Combine legacy payment verifications and new document verifications
-		pendingPaymentVerifications: pendingPayments + pendingDocVerifications,
+		pendingPaymentVerifications: pendingDocVerifications,
 	};
 }
 
@@ -372,9 +432,6 @@ export async function getFinanceOverview(
 				select: { id: true },
 			},
 			serviceForms: {
-				include: {
-					payments: true,
-				},
 				orderBy: { createdAt: "asc" },
 			},
 		},
@@ -394,15 +451,20 @@ export async function getFinanceOverview(
 				user.department?.name ??
 				null);
 
-		// Get forms status
-		const formsInfo = getFormsStatus(booking.serviceForms);
+		// Get forms status (passing documents for verification check)
+		const formsInfo = getFormsStatus(
+			booking.serviceForms,
+			booking.bookingDocuments,
+		);
 
-		// Collect all payments
-		const allPayments = booking.serviceForms.flatMap((sf) => sf.payments);
-
+		// Note: Payment data is tracked via bookingDocuments, not ServiceForm
 		// Get summaries
 		const totalAmount = Number(booking.totalAmount);
-		const paymentSummary = getPaymentSummary(allPayments, totalAmount);
+		const paymentSummary = getPaymentSummary(
+			[],
+			totalAmount,
+			booking.bookingDocuments,
+		);
 
 		// Result Gatekeeper: Check document verification status
 		// Results are unlocked when all required documents are verified
@@ -544,9 +606,6 @@ export async function getResultsOnHold(params: {
 			serviceForms: {
 				select: {
 					totalAmount: true,
-					payments: {
-						where: { status: "verified" },
-					},
 				},
 			},
 		},
@@ -615,10 +674,8 @@ export async function getResultsOnHold(params: {
 				)
 			: 0;
 
-		// Calculate total due
-		const allPayments = booking.serviceForms.flatMap((sf) => sf.payments);
-		const totalPaid = allPayments.reduce((sum, p) => sum + Number(p.amount), 0);
-		const totalDue = Number(booking.totalAmount) - totalPaid;
+		// Calculate total due - payment info is in bookingDocuments
+		const totalDue = Number(booking.totalAmount);
 
 		return {
 			id: booking.id,

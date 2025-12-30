@@ -3,8 +3,8 @@
  * POST /api/booking-docs/[docId]/verify
  *
  * Allows admins to verify uploaded documents (signed forms, payment receipts).
- * For payment receipts, this also creates a verified Payment record.
  * For signed forms, this updates ServiceForm fields with the signed document paths.
+ * Payment receipts are verified via the bookingDocument verificationStatus field.
  */
 
 import { getVerifiableDocumentTypes } from "@/entities/booking-document";
@@ -45,6 +45,8 @@ export const POST = createProtectedHandler(
 							referenceNumber: true,
 							userId: true,
 							totalAmount: true,
+						},
+						include: {
 							serviceForms: {
 								orderBy: { createdAt: "desc" },
 								take: 1,
@@ -99,33 +101,8 @@ export const POST = createProtectedHandler(
 				});
 			}
 
-			// For payment receipts, create a Payment record linked to ServiceForm
-			let payment = null;
-			if (document.type === "payment_receipt" && latestForm) {
-				const paymentMethod = (body.paymentMethod as string) || "eft";
-				const paymentAmount =
-					body.amount || document.booking.totalAmount.toString();
-
-				payment = await db.payment.create({
-					data: {
-						serviceFormId: latestForm.id,
-						bookingId: document.booking.id,
-						amount: paymentAmount,
-						paymentMethod: paymentMethod as
-							| "eft"
-							| "vote_transfer"
-							| "local_order",
-						paymentDate: new Date(),
-						receiptFilePath: document.blob.url,
-						status: "verified",
-						uploadedBy: document.createdById,
-						uploadedAt: document.createdAt,
-						verifiedAt: new Date(),
-						verifiedBy: user.id,
-						verificationNotes: notes || null,
-					},
-				});
-			}
+			// Payment receipts: No separate Payment record created
+			// The bookingDocument verification status is the source of truth
 
 			// Verify the document
 			const verifiedDocument = await verifyDocument(documentId, user.id, notes);
@@ -141,7 +118,6 @@ export const POST = createProtectedHandler(
 						bookingId: document.booking.id,
 						bookingReference: document.booking.referenceNumber,
 						documentType: document.type,
-						paymentId: payment?.id || null,
 						notes,
 					},
 				},
@@ -166,7 +142,6 @@ export const POST = createProtectedHandler(
 			return Response.json({
 				success: true,
 				document: verifiedDocument,
-				payment,
 			});
 		} catch (error) {
 			console.error("Error verifying document:", error);

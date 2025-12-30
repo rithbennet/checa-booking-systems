@@ -13,21 +13,9 @@ import type {
 	PaymentStatusLabel,
 } from "@/entities/booking/server/finance-repository";
 
-// Legacy status types (for backward compatibility with old code)
-type LegacyStatusSeverity = string;
-
 // ==============================================================
 // Currency Formatting
 // ==============================================================
-
-export function formatCurrency(amount: string | number): string {
-	const num = typeof amount === "string" ? parseFloat(amount) : amount;
-	return new Intl.NumberFormat("en-MY", {
-		style: "currency",
-		currency: "MYR",
-		minimumFractionDigits: 2,
-	}).format(num);
-}
 
 export function formatCurrencyCompact(amount: string | number): string {
 	const num = typeof amount === "string" ? parseFloat(amount) : amount;
@@ -46,25 +34,6 @@ export function formatDate(dateStr: string | null | undefined): string {
 		month: "short",
 		year: "numeric",
 	});
-}
-
-export function formatDateTime(dateStr: string | null | undefined): string {
-	if (!dateStr) return "-";
-	const date = new Date(dateStr);
-	return date.toLocaleString("en-MY", {
-		day: "numeric",
-		month: "short",
-		year: "numeric",
-		hour: "numeric",
-		minute: "2-digit",
-	});
-}
-
-export function getDaysUntilDue(dueDate: string): number {
-	const due = new Date(dueDate);
-	const now = new Date();
-	const diffTime = due.getTime() - now.getTime();
-	return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
 // ==============================================================
@@ -93,44 +62,12 @@ export function getFormsStatusBadgeClass(status: FormsStatusLabel): string {
 	return classes[status];
 }
 
-export function getLegacyStatusLabel(
-	status: LegacyStatusSeverity | null,
-): string {
-	if (!status) return "No Form";
-	const labels: Record<string, string> = {
-		pending: "Pending",
-		sent: "Sent",
-		paid: "Paid",
-		overdue: "Overdue",
-		cancelled: "Cancelled",
-	};
-	return labels[status] ?? status;
-}
-
-export function getLegacyStatusBadgeClass(
-	status: LegacyStatusSeverity | null,
-	isOverdue?: boolean,
-): string {
-	if (!status) return "bg-gray-100 text-gray-700";
-	if (isOverdue && status !== "paid" && status !== "cancelled") {
-		return "bg-red-100 text-red-800";
-	}
-	const classes: Record<string, string> = {
-		pending: "bg-yellow-100 text-yellow-800",
-		sent: "bg-blue-100 text-blue-800",
-		paid: "bg-green-100 text-green-800",
-		overdue: "bg-red-100 text-red-800",
-		cancelled: "bg-gray-100 text-gray-500",
-	};
-	return classes[status] ?? "bg-gray-100 text-gray-700";
-}
-
 export function getPaymentStatusLabel(
 	status: PaymentStatusLabel | payment_status_enum,
 ): string {
 	const labels: Record<string, string> = {
 		no_receipt: "No Receipt",
-		receipt_pending: "Receipt Pending",
+		pending_verification: "Pending Verification",
 		paid: "Paid",
 		rejected: "Rejected",
 		pending: "Pending Verification",
@@ -144,10 +81,10 @@ export function getPaymentStatusBadgeClass(
 ): string {
 	const classes: Record<string, string> = {
 		no_receipt: "bg-gray-100 text-gray-700",
-		receipt_pending: "bg-yellow-100 text-yellow-800",
+		pending_verification: "bg-blue-100 text-blue-800",
 		paid: "bg-green-100 text-green-800",
 		rejected: "bg-red-100 text-red-800",
-		pending: "bg-yellow-100 text-yellow-800",
+		pending: "bg-blue-100 text-blue-800",
 		verified: "bg-green-100 text-green-800",
 	};
 	return classes[status] ?? "bg-gray-100 text-gray-700";
@@ -162,26 +99,30 @@ export function getPaymentMethodLabel(method: payment_method_enum): string {
 	return labels[method];
 }
 
-export function getServiceFormStatusLabel(status: form_status_enum): string {
-	const labels: Record<form_status_enum, string> = {
+export function getServiceFormStatusLabel(
+	status: form_status_enum | "verified",
+): string {
+	const labels: Record<string, string> = {
 		generated: "Generated",
 		downloaded: "Downloaded",
-		signed_forms_uploaded: "Signed Uploaded",
+		signed_forms_uploaded: "Pending Review",
+		verified: "Verified",
 		expired: "Expired",
 	};
-	return labels[status];
+	return labels[status] ?? status;
 }
 
 export function getServiceFormStatusBadgeClass(
-	status: form_status_enum,
+	status: form_status_enum | "verified",
 ): string {
-	const classes: Record<form_status_enum, string> = {
+	const classes: Record<string, string> = {
 		generated: "bg-gray-100 text-gray-700",
 		downloaded: "bg-blue-100 text-blue-800",
-		signed_forms_uploaded: "bg-yellow-100 text-yellow-800",
+		signed_forms_uploaded: "bg-blue-100 text-blue-800",
+		verified: "bg-green-100 text-green-800",
 		expired: "bg-red-100 text-red-800",
 	};
-	return classes[status];
+	return classes[status] ?? "bg-gray-100 text-gray-700";
 }
 
 // ==============================================================

@@ -270,7 +270,7 @@ export function DashboardClient() {
 								<div className="flex items-center gap-2">
 									<CardTitle>Recent Notifications</CardTitle>
 									{unreadCount > 0 && (
-										<span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-blue-600 px-1.5 font-medium text-white text-xs">
+										<span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1.5 font-medium text-white text-xs">
 											{unreadCount > 9 ? "9+" : unreadCount}
 										</span>
 									)}

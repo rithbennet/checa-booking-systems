@@ -248,7 +248,7 @@ export const fileRouter = {
 						try {
 							await notifyAdminsPaymentUploaded({
 								adminIds,
-								paymentId: document.id,
+								documentId: document.id,
 								bookingReference: metadata.bookingReference,
 								customerName: metadata.customerName,
 								amount: "Payment proof",

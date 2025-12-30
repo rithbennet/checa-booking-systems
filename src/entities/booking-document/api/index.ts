@@ -10,3 +10,9 @@ export {
 	useRejectDocument,
 	useVerifyDocument,
 } from "./useDocumentVerification";
+export {
+	usePaymentReceiptHistory,
+	usePendingPaymentReceipts,
+	useRejectPaymentReceipt,
+	useVerifyPaymentReceipt,
+} from "./usePaymentReceipts";

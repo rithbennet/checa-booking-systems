@@ -135,7 +135,9 @@ function DocumentRow({
 								</p>
 							</TooltipTrigger>
 							<TooltipContent>
-								<p className="max-w-xs break-words">{document.blob.fileName}</p>
+								<p className="wrap-break-word max-w-xs">
+									{document.blob.fileName}
+								</p>
 							</TooltipContent>
 						</Tooltip>
 						{showVerificationStatus &&
