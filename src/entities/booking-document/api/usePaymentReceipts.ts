@@ -9,6 +9,33 @@ import type { PaymentReceiptVM } from "../model/types";
 import { bookingDocumentKeys } from "./query-keys";
 
 // ==============================================================
+// Helpers
+// ==============================================================
+
+/**
+ * Handle fetch errors by extracting error details and throwing a formatted error
+ */
+async function handleFetchError(
+	res: Response,
+	operation: string,
+): Promise<never> {
+	let errorDetails = "";
+	try {
+		const errorBody = await res.json();
+		errorDetails = JSON.stringify(errorBody);
+	} catch {
+		try {
+			errorDetails = await res.text();
+		} catch {
+			errorDetails = res.statusText;
+		}
+	}
+	throw new Error(
+		`Failed to ${operation} (${res.status} ${res.statusText}): ${errorDetails}`,
+	);
+}
+
+// ==============================================================
 // Query Hooks
 // ==============================================================
 
@@ -35,20 +62,7 @@ export function usePendingPaymentReceipts(params: {
 				`/api/admin/finance/payments/pending?${searchParams}`,
 			);
 			if (!res.ok) {
-				let errorDetails = "";
-				try {
-					const errorBody = await res.json();
-					errorDetails = JSON.stringify(errorBody);
-				} catch {
-					try {
-						errorDetails = await res.text();
-					} catch {
-						errorDetails = res.statusText;
-					}
-				}
-				throw new Error(
-					`Failed to fetch pending payment receipts (${res.status} ${res.statusText}): ${errorDetails}`,
-				);
+				await handleFetchError(res, "fetch pending payment receipts");
 			}
 			return res.json();
 		},
@@ -84,20 +98,7 @@ export function usePaymentReceiptHistory(params: {
 				`/api/admin/finance/payments/history?${searchParams}`,
 			);
 			if (!res.ok) {
-				let errorDetails = "";
-				try {
-					const errorBody = await res.json();
-					errorDetails = JSON.stringify(errorBody);
-				} catch {
-					try {
-						errorDetails = await res.text();
-					} catch {
-						errorDetails = res.statusText;
-					}
-				}
-				throw new Error(
-					`Failed to fetch payment receipt history (${res.status} ${res.statusText}): ${errorDetails}`,
-				);
+				await handleFetchError(res, "fetch payment receipt history");
 			}
 			return res.json();
 		},

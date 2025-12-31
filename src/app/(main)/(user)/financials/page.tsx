@@ -162,7 +162,7 @@ export default function FinancialsPage() {
 			<div>
 				<h1 className="font-bold text-2xl text-slate-900">Financials</h1>
 				<p className="text-muted-foreground text-sm">
-					View your invoices and manage payments
+					View your forms and manage payments
 				</p>
 			</div>
 
@@ -218,15 +218,15 @@ export default function FinancialsPage() {
 				</Card>
 			</div>
 
-			{/* Invoices Table */}
+			{/* Forms Table */}
 			<div className="space-y-4">
-				<h2 className="font-semibold text-lg">Your Invoices</h2>
+				<h2 className="font-semibold text-lg">Your Forms</h2>
 
 				{/* Toolbar with search and filters */}
 				<DataTableToolbar
 					filters={sortFilters}
 					onSearchChange={setSearchQuery}
-					searchPlaceholder="Search by invoice or booking ref..."
+					searchPlaceholder="Search by form or booking ref..."
 					searchValue={searchQuery}
 				>
 					<DataTableStatusChips
@@ -240,13 +240,13 @@ export default function FinancialsPage() {
 				<DataTable
 					columns={columns}
 					data={filteredItems}
-					emptyMessage="No invoices found"
+					emptyMessage="No forms found"
 					emptyState={
 						searchQuery || statusFilter ? (
 							<div className="flex flex-col items-center gap-2 py-8 text-center">
 								<Receipt className="size-12 text-muted-foreground/50" />
 								<p className="text-muted-foreground">
-									No invoices match your filters.
+									No forms match your filters.
 								</p>
 								<p className="text-muted-foreground text-sm">
 									Try adjusting your search or filter criteria.
@@ -256,10 +256,10 @@ export default function FinancialsPage() {
 							<div className="flex flex-col items-center gap-2 py-8 text-center">
 								<Receipt className="size-12 text-muted-foreground/50" />
 								<p className="text-muted-foreground">
-									You don't have any invoices yet.
+									You don't have any forms yet.
 								</p>
 								<p className="text-muted-foreground text-sm">
-									Invoices will appear here once your bookings are processed.
+									Forms will appear here once your bookings are processed.
 								</p>
 							</div>
 						)

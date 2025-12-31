@@ -17,12 +17,12 @@ import type { BookingCommandCenterVM } from "@/entities/booking/model/command-ce
 import {
 	bookingDocumentKeys,
 	type DocumentType,
+	DocumentVerificationCard,
 	getVerifiableDocumentTypes,
 	useBookingDocuments,
 } from "@/entities/booking-document";
 import { useGenerateForms } from "@/entities/service-form";
 import { BookingDocumentsList } from "@/features/bookings/shared";
-import { DocumentVerificationCard } from "@/features/document-verification";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {

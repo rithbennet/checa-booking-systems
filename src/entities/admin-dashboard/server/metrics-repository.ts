@@ -44,7 +44,7 @@ export async function getAdminDashboardMetrics(): Promise<AdminDashboardMetricsV
 	});
 
 	// Count overdue payments from bookings with unverified payment receipts
-	const overdueBookings = await db.bookingRequest.findMany({
+	const overduePayments = await db.bookingRequest.count({
 		where: {
 			status: {
 				in: ["approved", "in_progress", "completed"],
@@ -60,8 +60,6 @@ export async function getAdminDashboardMetrics(): Promise<AdminDashboardMetricsV
 			},
 		},
 	});
-
-	const overduePayments = overdueBookings.length;
 
 	// Calculate total revenue for current month from verified payment receipts
 	const monthlyVerifiedBookings = await db.bookingRequest.findMany({

@@ -27,9 +27,27 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
 		const pageSize = [10, 25, 50].includes(pageSizeRaw) ? pageSizeRaw : 25;
 
 		const statusParam = searchParams.get("status");
-		const status = statusParam
-			? (statusParam.split(",") as ("verified" | "rejected")[])
-			: undefined;
+		const ALLOWED_STATUS = new Set(["verified", "rejected"]);
+		let status: ("verified" | "rejected")[] | undefined;
+
+		if (statusParam) {
+			const statusValues = statusParam
+				.split(",")
+				.map((s) => s.trim().toLowerCase());
+
+			for (const val of statusValues) {
+				if (!ALLOWED_STATUS.has(val)) {
+					return Response.json(
+						{
+							error: `Invalid status value: "${val}". Allowed values are: verified, rejected`,
+						},
+						{ status: 400 },
+					);
+				}
+			}
+
+			status = statusValues as ("verified" | "rejected")[];
+		}
 
 		const result = await listPaymentReceiptHistory({
 			page,

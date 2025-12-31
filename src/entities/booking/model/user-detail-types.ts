@@ -195,6 +195,9 @@ export interface UserBookingDetailVM {
 	totalSamples: number;
 	samplesCompleted: number;
 	canDownloadResults: boolean;
+
+	// Payment verification date (from verified payment receipt document)
+	paymentVerifiedAt: string | null;
 }
 
 // ============================================
@@ -369,9 +372,10 @@ function getStepDate(
 			return analysisStartDates.sort()[0];
 		}
 		case "paid": {
-			// Find the first verified payment date
-			// Note: Payments are now directly linked to ServiceForm, not via Invoice
-			return booking.isPaid ? booking.updatedAt : undefined;
+			// Use the payment document's verifiedAt date when available
+			return booking.isPaid
+				? (booking.paymentVerifiedAt ?? booking.updatedAt)
+				: undefined;
 		}
 		case "released":
 			return booking.status === "completed" ? booking.updatedAt : undefined;

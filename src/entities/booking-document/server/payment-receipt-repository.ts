@@ -5,51 +5,30 @@
 
 import type { Prisma, payment_method_enum } from "generated/prisma";
 import { db } from "@/shared/server/db";
+import type { PaymentReceiptVM } from "../model/types";
 
-export interface PaymentReceiptVM {
-	id: string;
-	bookingId: string;
-	bookingRef: string;
-	formNumber: string;
+/**
+ * Parse payment metadata from document note JSON
+ */
+function parsePaymentMetadata(
+	note: string | null,
+	documentId: string,
+): {
+	amount?: number;
+	paymentMethod?: payment_method_enum;
+	paymentDate?: string;
+	referenceNumber?: string | null;
+} {
+	if (!note) {
+		return {};
+	}
 
-	// Receipt details (from note JSON)
-	amount: string;
-	paymentMethod: payment_method_enum;
-	paymentDate: string;
-	referenceNumber: string | null;
-
-	// Document info
-	verificationStatus: "pending_verification" | "verified" | "rejected";
-	rejectionReason: string | null;
-
-	// File info
-	receiptUrl: string;
-	fileName: string;
-	mimeType: string;
-
-	// Client info
-	client: {
-		id: string;
-		name: string;
-		email: string;
-		userType: string;
-	};
-	organization: string | null;
-
-	// Metadata
-	uploadedBy: {
-		id: string;
-		name: string;
-	};
-	uploadedAt: string;
-	verifiedBy: {
-		id: string;
-		name: string;
-	} | null;
-	verifiedAt: string | null;
-
-	// Computed
-	age: number; // days since upload
+	try {
+		return JSON.parse(note);
+	} catch (err) {
+		console.warn(`Failed to parse note for document ${documentId}:`, err);
+		return {};
+	}
 }
 
 /**
@@ -63,7 +42,10 @@ export async function listPendingPaymentReceipts(params: {
 }): Promise<{ items: PaymentReceiptVM[]; total: number }> {
 	const { q, method, page, pageSize } = params;
 
-	// Parse method filter from note JSON
+	// Note: The `note` field is stored as plain text (not JSON type) in PostgreSQL.
+	// We use string contains matching for DB-level filtering, then validate parsed JSON
+	// in application code for correctness. This is a limitation of the current schema.
+	// Consider migrating `note` to a proper JSON column for better query performance.
 	const methodCondition = method
 		? {
 				note: {
@@ -158,20 +140,7 @@ export async function listPendingPaymentReceipts(params: {
 
 	return {
 		items: documents.map((doc) => {
-			let metadata: {
-				amount?: number;
-				paymentMethod?: payment_method_enum;
-				paymentDate?: string;
-				referenceNumber?: string | null;
-			} = {};
-			if (doc.note) {
-				try {
-					metadata = JSON.parse(doc.note);
-				} catch (err) {
-					console.warn(`Failed to parse note for document ${doc.id}:`, err);
-					metadata = {};
-				}
-			}
+			const metadata = parsePaymentMetadata(doc.note, doc.id);
 			const user = doc.booking.user;
 			const isExternal = user.userType === "external_member";
 
@@ -256,7 +225,10 @@ export async function listPaymentReceiptHistory(params: {
 	const statusFilter =
 		status && status.length > 0 ? status : ["verified", "rejected"];
 
-	// Parse method filter from note JSON
+	// Note: The `note` field is stored as plain text (not JSON type) in PostgreSQL.
+	// We use string contains matching for DB-level filtering, then validate parsed JSON
+	// in application code for correctness. This is a limitation of the current schema.
+	// Consider migrating `note` to a proper JSON column for better query performance.
 	const methodCondition = method
 		? {
 				note: {
@@ -361,20 +333,7 @@ export async function listPaymentReceiptHistory(params: {
 
 	return {
 		items: documents.map((doc) => {
-			let metadata: {
-				amount?: number;
-				paymentMethod?: payment_method_enum;
-				paymentDate?: string;
-				referenceNumber?: string | null;
-			} = {};
-			if (doc.note) {
-				try {
-					metadata = JSON.parse(doc.note);
-				} catch (err) {
-					console.warn(`Failed to parse note for document ${doc.id}:`, err);
-					metadata = {};
-				}
-			}
+			const metadata = parsePaymentMetadata(doc.note, doc.id);
 			const user = doc.booking.user;
 			const isExternal = user.userType === "external_member";
 
@@ -418,12 +377,19 @@ export async function listPaymentReceiptHistory(params: {
 				},
 				uploadedAt: doc.createdAt.toISOString(),
 
-				verifiedBy: doc.verifiedBy
+				verifiedBy: doc.verifiedByUser
 					? {
-							id: doc.verifiedBy,
-							name: "Unknown", // verifiedBy is just an ID string
+							id: doc.verifiedByUser.id,
+							name:
+								`${doc.verifiedByUser.firstName} ${doc.verifiedByUser.lastName}`.trim() ||
+								"Unknown",
 						}
-					: null,
+					: doc.verifiedBy
+						? {
+								id: doc.verifiedBy,
+								name: "Unknown",
+							}
+						: null,
 				verifiedAt: doc.verifiedAt?.toISOString() || null,
 
 				age: Math.ceil(

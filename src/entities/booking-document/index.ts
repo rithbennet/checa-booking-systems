@@ -45,3 +45,10 @@ export {
 	verificationStatusColors,
 	verificationStatusLabels,
 } from "./model";
+
+// UI exports (components)
+export {
+	DocumentVerificationCard,
+	type DocumentVerificationCardProps,
+	VerificationStatusBadge,
+} from "./ui";

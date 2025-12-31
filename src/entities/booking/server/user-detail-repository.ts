@@ -72,6 +72,7 @@ export async function getUserBookingDetailData(
 				select: {
 					type: true,
 					verificationStatus: true,
+					verifiedAt: true,
 				},
 			},
 			serviceItems: {
@@ -340,5 +341,9 @@ export async function getUserBookingDetailData(
 		totalSamples,
 		samplesCompleted,
 		canDownloadResults,
+		// Extract verifiedAt from the payment receipt document if verified
+		paymentVerifiedAt: paymentReceiptVerifiedDoc?.verifiedAt
+			? dateToISOString(paymentReceiptVerifiedDoc.verifiedAt)
+			: null,
 	};
 }

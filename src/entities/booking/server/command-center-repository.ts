@@ -264,7 +264,10 @@ export async function getBookingCommandCenterData(
 
 		isExternal,
 		organizationName,
-		paidAmount: "0.00",
+		// paidAmount is the actual booking total if payment is verified, otherwise "0.00"
+		paidAmount: isPaidViaDocVerification
+			? decimalToString(booking.totalAmount)
+			: "0.00",
 		// isPaid is true if payment receipt document verified
 		isPaid: isPaidViaDocVerification,
 		hasUnverifiedPayments,
