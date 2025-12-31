@@ -258,7 +258,6 @@ export async function getUserSummary(
 	const [
 		bookingCounts,
 		recentBookings,
-		invoices,
 		serviceUsage,
 		sampleEquipmentUsage,
 		workspaceEquipmentUsage,
@@ -281,20 +280,6 @@ export async function getUserSummary(
 				status: true,
 				totalAmount: true,
 				createdAt: true,
-			},
-		}),
-		// Get financial data
-		db.invoice.findMany({
-			where: {
-				serviceForm: {
-					bookingRequest: { userId },
-				},
-				status: { not: "cancelled" },
-			},
-			include: {
-				payments: {
-					orderBy: { uploadedAt: "desc" },
-				},
 			},
 		}),
 		// Get usage patterns - top services
@@ -338,9 +323,9 @@ export async function getUserSummary(
 
 	// Process booking counts
 	const statusCounts: Record<string, number> = {};
-	bookingCounts.forEach((item) => {
+	for (const item of bookingCounts) {
 		statusCounts[item.status] = item._count._all;
-	});
+	}
 
 	const totalBookings = Object.values(statusCounts).reduce((a, b) => a + b, 0);
 	const upcoming =
@@ -349,43 +334,14 @@ export async function getUserSummary(
 	const cancelled = statusCounts.cancelled || 0;
 	const rejected = statusCounts.rejected || 0;
 
-	// Process financial data
-	let totalSpent = 0;
-	let outstanding = 0;
-	let pending = 0;
-	let lastPaymentDate: Date | null = null;
-	let lastPaymentAmount: number | null = null;
-
-	for (const invoice of invoices) {
-		const amount = Number(invoice.amount);
-		const verifiedPayments = invoice.payments.filter(
-			(p) => p.status === "verified",
-		);
-		const totalPaid = verifiedPayments.reduce(
-			(sum, p) => sum + Number(p.amount),
-			0,
-		);
-
-		// Track latest verified payment for lastPaymentDate
-		if (verifiedPayments.length > 0) {
-			const latest = verifiedPayments[0];
-			if (latest && (!lastPaymentDate || latest.uploadedAt > lastPaymentDate)) {
-				lastPaymentDate = latest.uploadedAt;
-				lastPaymentAmount = Number(latest.amount);
-			}
-		}
-
-		if (totalPaid >= amount) {
-			totalSpent += totalPaid;
-		} else {
-			const hasPending = invoice.payments.some((p) => p.status === "pending");
-			if (hasPending) {
-				pending += amount - totalPaid;
-			} else {
-				outstanding += amount - totalPaid;
-			}
-		}
-	}
+	// Process financial data - now based on document verification
+	// TODO: Calculate these from verified payment receipt documents
+	const totalSpent = 0;
+	const outstanding = 0;
+	const pending = 0;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const lastPaymentDate = null as Date | null;
+	const lastPaymentAmount: number | null = null;
 
 	// Process service usage - sort by count descending and take top 3
 	const sortedServiceUsage = serviceUsage

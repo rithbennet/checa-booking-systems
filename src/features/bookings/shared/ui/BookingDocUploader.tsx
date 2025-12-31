@@ -21,7 +21,6 @@ import { Button } from "@/shared/ui/shadcn/button";
 
 /** Types that can be uploaded via UploadThing (excludes server-generated types) */
 export type UploadableDocumentType =
-	| "invoice"
 	| "service_form_signed"
 	| "workspace_form_signed"
 	| "payment_receipt"

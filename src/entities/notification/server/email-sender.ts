@@ -31,7 +31,6 @@ import {
 	BookingRejectedEmail,
 	BookingRevisionRequestedEmail,
 	BookingSubmittedEmail,
-	InvoiceUploadedEmail,
 	OrganizationDeletedEmail,
 	PaymentVerifiedEmail,
 	ResultsAvailableEmail,
@@ -433,42 +432,10 @@ export async function sendSampleStatusUpdateEmail(params: {
 // Finance Email Functions
 // ============================================
 
-export async function sendInvoiceUploadedEmail(params: {
-	to: string;
-	customerName: string;
-	invoiceNumber: string;
-	amount: string;
-	dueDate: string;
-	bookingReference: string;
-	bookingId: string;
-	invoiceId?: string;
-	userId?: string;
-}) {
-	const dashboardUrl = `${getBaseUrl()}/bookings/${params.bookingId}`;
-	return safeSendEmail({
-		to: params.to,
-		subject: `Invoice Ready - ${params.invoiceNumber}`,
-		react: InvoiceUploadedEmail({
-			customerName: params.customerName,
-			invoiceNumber: params.invoiceNumber,
-			amount: params.amount,
-			dueDate: params.dueDate,
-			bookingReference: params.bookingReference,
-			dashboardUrl,
-		}),
-		context: {
-			template: "InvoiceUploaded",
-			entityType: "invoice",
-			entityId: params.invoiceId ?? params.bookingId,
-			userId: params.userId,
-		},
-	});
-}
-
 export async function sendPaymentVerifiedEmail(params: {
 	to: string;
 	customerName: string;
-	invoiceNumber: string;
+	formNumber: string;
 	amount: string;
 	paymentDate: string;
 	bookingReference: string;
@@ -479,10 +446,10 @@ export async function sendPaymentVerifiedEmail(params: {
 	const dashboardUrl = `${getBaseUrl()}/bookings/${params.bookingId}`;
 	return safeSendEmail({
 		to: params.to,
-		subject: `Payment Verified - ${params.invoiceNumber}`,
+		subject: `Payment Verified - ${params.formNumber}`,
 		react: PaymentVerifiedEmail({
 			customerName: params.customerName,
-			invoiceNumber: params.invoiceNumber,
+			formNumber: params.formNumber,
 			amount: params.amount,
 			paymentDate: params.paymentDate,
 			bookingReference: params.bookingReference,

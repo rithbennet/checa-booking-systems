@@ -66,15 +66,7 @@ export async function getBookingCommandCenterData(
 					serviceAddOns: true,
 				},
 			},
-			serviceForms: {
-				include: {
-					invoices: {
-						include: {
-							payments: true,
-						},
-					},
-				},
-			},
+			serviceForms: true,
 			// Include booking documents to check verification status
 			bookingDocuments: {
 				where: {
@@ -82,35 +74,25 @@ export async function getBookingCommandCenterData(
 				},
 				select: {
 					id: true,
+					type: true,
 					verificationStatus: true,
 				},
 			},
 		},
 	});
 
-	// Calculate financial info
-	let totalPaid = 0;
+	// Calculate financial info from document verification
 	let hasUnverifiedPayments = false;
 
-	// Check for pending payments in the payments table (legacy)
-	for (const form of booking.serviceForms) {
-		for (const invoice of form.invoices) {
-			for (const payment of invoice.payments) {
-				if (payment.status === "verified") {
-					totalPaid += Number(payment.amount);
-				} else if (payment.status === "pending") {
-					hasUnverifiedPayments = true;
-				}
-			}
-		}
-	}
-
-	// Check payment receipt document verification status (new flow)
+	// Check payment receipt document verification status
 	const paymentReceiptDoc = booking.bookingDocuments.find(
-		(doc) => doc.verificationStatus === "verified",
+		(doc) =>
+			doc.type === "payment_receipt" && doc.verificationStatus === "verified",
 	);
 	const pendingPaymentDoc = booking.bookingDocuments.find(
-		(doc) => doc.verificationStatus === "pending_verification",
+		(doc) =>
+			doc.type === "payment_receipt" &&
+			doc.verificationStatus === "pending_verification",
 	);
 
 	// If payment receipt is verified via document verification, consider paid
@@ -278,34 +260,16 @@ export async function getBookingCommandCenterData(
 			generatedAt: form.generatedAt.toISOString(),
 			signedFormsUploadedAt: dateToISOString(form.signedFormsUploadedAt),
 			signedFormsUploadedBy: form.signedFormsUploadedBy,
-			invoices: form.invoices.map((inv) => ({
-				id: inv.id,
-				invoiceNumber: inv.invoiceNumber,
-				invoiceDate: inv.invoiceDate.toISOString(),
-				dueDate: inv.dueDate.toISOString(),
-				amount: decimalToString(inv.amount),
-				status: inv.status,
-				filePath: inv.filePath,
-				payments: inv.payments.map((pay) => ({
-					id: pay.id,
-					amount: decimalToString(pay.amount),
-					paymentMethod: pay.paymentMethod,
-					paymentDate: pay.paymentDate.toISOString(),
-					referenceNumber: pay.referenceNumber,
-					receiptFilePath: pay.receiptFilePath,
-					status: pay.status,
-					verifiedAt: dateToISOString(pay.verifiedAt),
-					verificationNotes: pay.verificationNotes,
-				})),
-			})),
 		})),
 
 		isExternal,
 		organizationName,
-		paidAmount: totalPaid.toFixed(2),
-		// isPaid is true if either legacy payment verified OR payment receipt document verified
-		isPaid:
-			totalPaid >= Number(booking.totalAmount) || isPaidViaDocVerification,
+		// paidAmount is the actual booking total if payment is verified, otherwise "0.00"
+		paidAmount: isPaidViaDocVerification
+			? decimalToString(booking.totalAmount)
+			: "0.00",
+		// isPaid is true if payment receipt document verified
+		isPaid: isPaidViaDocVerification,
 		hasUnverifiedPayments,
 		totalSamples,
 		samplesInAnalysis,

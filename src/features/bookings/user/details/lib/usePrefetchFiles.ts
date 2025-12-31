@@ -61,13 +61,12 @@ export function usePrefetchFiles(
 
 /**
  * Extract all prefetchable file URLs from a booking detail object.
- * Includes service forms, invoices, working area agreements, and sample results.
+ * Includes service forms, working area agreements, and sample results.
  */
 export function extractPrefetchableUrls(booking: {
 	serviceForms: Array<{
 		serviceFormUnsignedPdfPath: string | null;
 		workingAreaAgreementUnsignedPdfPath: string | null;
-		invoices: Array<{ filePath: string | null }>;
 	}>;
 	serviceItems: Array<{
 		sampleTracking: Array<{
@@ -87,12 +86,6 @@ export function extractPrefetchableUrls(booking: {
 				url: form.workingAreaAgreementUnsignedPdfPath,
 				type: "pdf",
 			});
-		}
-		// Invoices
-		for (const invoice of form.invoices) {
-			if (invoice.filePath) {
-				files.push({ url: invoice.filePath, type: "pdf" });
-			}
 		}
 	}
 

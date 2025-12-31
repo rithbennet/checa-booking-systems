@@ -268,15 +268,12 @@ model User {
   auditLogs                AuditLog[]
   bookingRequests          BookingRequest[]
   approvedBookings         BookingRequest[]     @relation("BookingApprovals")
-  serviceForms             ServiceForm[]        @relation("FormGenerators")
-  uploadedInvoices         Invoice[]
-  verifiedPayments         Payment[]            @relation("PaymentVerifiers")
+  serviceForms             ServiceForm[]        @relation("FormGenerators")     
   uploadedResults          AnalysisResult[]
   notifications            Notification[]
   sampleTracking           SampleTracking[]     @relation("SampleUpdaters")
   createdModifications     SampleModification[] @relation("ModificationCreators")
   approvedModifications    SampleModification[] @relation("ModificationApprovers")
-  uploadedPayments         Payment[]            @relation("PaymentUploaders")
   uploadedFileBlobs        FileBlob[]           @relation("FileBlobUploaders")
   createdBookingDocuments  BookingDocument[]    @relation("BookingDocumentCreators")
   verifiedBookingDocuments BookingDocument[]    @relation("BookingDocumentVerifiers")
@@ -501,11 +498,7 @@ model ServiceForm {
   bookingRequestId                    String           @db.Uuid
   bookingRequest                      BookingRequest   @relation(fields: [bookingRequestId], references: [id])
   formNumber                          String           @unique @db.VarChar(50)
-  costCentre                          String?          @db.VarChar(50)
   facilityLab                         String           @default("ChECA iKohza") @db.VarChar(100)
-  staffPicName                        String?          @db.VarChar(200)
-  staffPicEmail                       String?          @db.VarChar(255)
-  staffPicPhone                       String?          @db.VarChar(20)
   subtotal                            Decimal          @db.Decimal(10, 2)
   totalAmount                         Decimal          @db.Decimal(10, 2)
   validUntil                          DateTime         @db.Date
@@ -524,45 +517,12 @@ model ServiceForm {
   createdAt                           DateTime         @default(now()) @db.Timestamp(6)
   updatedAt                           DateTime         @updatedAt @db.Timestamp(6)
 
-  invoices Invoice[]
 
   @@index([formNumber])
   @@index([bookingRequestId])
   @@index([status])
   @@index([validUntil])
   @@map("service_form")
-}
-
-enum invoice_status_enum {
-  pending
-  sent
-  paid
-  overdue
-  cancelled
-}
-
-model Invoice {
-  id             String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  serviceFormId  String              @db.Uuid
-  serviceForm    ServiceForm         @relation(fields: [serviceFormId], references: [id])
-  invoiceNumber  String              @unique @db.VarChar(50)
-  invoiceDate    DateTime            @default(now()) @db.Date
-  dueDate        DateTime            @db.Date
-  amount         Decimal             @db.Decimal(10, 2)
-  status         invoice_status_enum @default(pending)
-  filePath       String              @db.VarChar(500)
-  uploadedBy     String              @db.Uuid
-  uploadedByUser User                @relation(fields: [uploadedBy], references: [id])
-  uploadedAt     DateTime            @default(now()) @db.Timestamp(6)
-  createdAt      DateTime            @default(now()) @db.Timestamp(6)
-  updatedAt      DateTime            @updatedAt @db.Timestamp(6)
-
-  payments Payment[]
-
-  @@index([serviceFormId])
-  @@index([status])
-  @@index([dueDate])
-  @@map("invoice")
 }
 
 enum payment_method_enum {
@@ -572,36 +532,11 @@ enum payment_method_enum {
 }
 
 enum payment_status_enum {
-  pending
+  pending_verification
   verified
   rejected
 }
 
-model Payment {
-  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  invoiceId         String              @db.Uuid
-  invoice           Invoice             @relation(fields: [invoiceId], references: [id])
-  amount            Decimal             @db.Decimal(10, 2)
-  paymentMethod     payment_method_enum
-  paymentDate       DateTime            @db.Date
-  referenceNumber   String?             @db.VarChar(100)
-  receiptFilePath   String              @db.VarChar(500)
-  status            payment_status_enum @default(pending)
-  uploadedBy        String              @db.Uuid
-  uploadedByUser    User                @relation("PaymentUploaders", fields: [uploadedBy], references: [id])
-  uploadedAt        DateTime            @default(now()) @db.Timestamp(6)
-  verifiedAt        DateTime?           @db.Timestamp(6)
-  verifiedBy        String?             @db.Uuid
-  verifiedByUser    User?               @relation("PaymentVerifiers", fields: [verifiedBy], references: [id])
-  verificationNotes String?             @db.Text
-  createdAt         DateTime            @default(now()) @db.Timestamp(6)
-  updatedAt         DateTime            @updatedAt @db.Timestamp(6)
-
-  @@index([invoiceId])
-  @@index([status])
-  @@index([paymentDate])
-  @@map("payment")
-}
 
 enum sample_status_enum {
   pending
@@ -740,7 +675,6 @@ enum notification_type_enum {
   service_modification_requested
   service_form_ready
   forms_signed_uploaded
-  invoice_uploaded
   payment_reminder
   payment_verified
   results_available
@@ -870,7 +804,6 @@ model FileBlob {
 }
 
 enum upload_document_type_enum {
-  invoice
   service_form_unsigned
   service_form_signed
   workspace_form_unsigned
@@ -880,11 +813,11 @@ enum upload_document_type_enum {
 }
 
 enum document_verification_status_enum {
-  pending_upload // Generated/available but not yet uploaded by user
-  pending_verification // Uploaded by user, awaiting admin review
-  verified // Admin verified/approved
-  rejected // Admin rejected, user needs to re-upload
-  not_required // Document not required for this booking
+  pending_upload // Generated/available but not yet uploaded by user → transitions to pending_verification when user uploads file
+  pending_verification // Uploaded by user, awaiting admin review → transitions to verified or rejected after admin review
+  verified // Admin verified/approved (final state for required documents)
+  rejected // Admin rejected, user needs to re-upload → can transition back to pending_verification when user re-uploads
+  not_required // Document not required for this booking (never requires upload)
 }
 
 enum applicable_to_enum {

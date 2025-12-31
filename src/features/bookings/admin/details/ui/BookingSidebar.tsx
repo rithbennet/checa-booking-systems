@@ -10,7 +10,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { invoice_status_enum } from "generated/prisma";
+
 import {
 	CalendarClock,
 	CheckCircle,
@@ -23,7 +23,6 @@ import {
 	FileText,
 	Loader2,
 	Lock,
-	Plus,
 	RefreshCw,
 	ShieldCheck,
 	X,
@@ -31,19 +30,13 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 import { bookingKeys } from "@/entities/booking/api/query-keys";
-import type {
-	BookingCommandCenterVM,
-	InvoiceVM,
-} from "@/entities/booking/model/command-center-types";
+import type { BookingCommandCenterVM } from "@/entities/booking/model/command-center-types";
 import {
 	bookingDocumentKeys,
 	useBookingDocuments,
 } from "@/entities/booking-document";
 import { useGenerateForms } from "@/entities/service-form";
-import {
-	BookingDocUploader,
-	BookingDocumentsList,
-} from "@/features/bookings/shared";
+import { BookingDocumentsList } from "@/features/bookings/shared";
 import { DocumentVerificationPanel } from "@/features/document-verification";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
@@ -155,7 +148,6 @@ export function DocumentVault({
 }: {
 	booking: BookingCommandCenterVM;
 }) {
-	const [showInvoiceUpload, setShowInvoiceUpload] = useState(false);
 	const generateForms = useGenerateForms();
 	const queryClient = useQueryClient();
 
@@ -214,7 +206,6 @@ export function DocumentVault({
 
 	// Get all documents from service forms
 	const serviceForms = booking.serviceForms;
-	const invoices = serviceForms.flatMap((f) => f.invoices);
 	const hasServiceForm = serviceForms.length > 0;
 
 	// Can generate if booking is approved and no forms exist
@@ -279,30 +270,7 @@ export function DocumentVault({
 		<div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 			<div className="flex items-center justify-between border-slate-100 border-b bg-slate-50/50 p-4">
 				<h3 className="font-bold text-slate-900 text-sm">Documents</h3>
-				<button
-					className="text-blue-600 hover:text-blue-800"
-					onClick={() => setShowInvoiceUpload(!showInvoiceUpload)}
-					type="button"
-				>
-					<Plus className="h-4 w-4" />
-				</button>
 			</div>
-
-			{/* Invoice Upload Section (collapsible) */}
-			{showInvoiceUpload && (
-				<div className="border-slate-100 border-b bg-blue-50/50 p-4">
-					<p className="mb-2 font-medium text-blue-800 text-xs">
-						Upload Invoice PDF
-					</p>
-					<BookingDocUploader
-						bookingId={booking.id}
-						compact
-						label="Upload Invoice"
-						onUploaded={() => setShowInvoiceUpload(false)}
-						type="invoice"
-					/>
-				</div>
-			)}
 
 			{/* Signature Verification Banner */}
 			{formNeedingVerification && (
@@ -420,20 +388,6 @@ export function DocumentVault({
 					Admin / System
 				</p>
 				<div className="space-y-2">
-					{/* Show uploaded invoices from new system */}
-					<BookingDocumentsList
-						bookingId={booking.id}
-						filterTypes={["invoice"]}
-						showDelete
-						showEmptyState={false}
-						showUploader
-					/>
-
-					{/* Legacy Invoices */}
-					{invoices.map((invoice) => (
-						<InvoiceDocumentRow invoice={invoice} key={invoice.id} />
-					))}
-
 					{/* Generated Service Forms Preview */}
 					{serviceForms.map((form) => (
 						<div
@@ -619,69 +573,6 @@ export function DocumentVault({
 	);
 }
 
-function InvoiceDocumentRow({ invoice }: { invoice: InvoiceVM }) {
-	const statusConfig: Record<
-		invoice_status_enum,
-		{ label: string; className: string }
-	> = {
-		pending: {
-			label: "Draft",
-			className: "bg-yellow-50 text-yellow-700 border-yellow-100",
-		},
-		sent: {
-			label: "Sent",
-			className: "bg-blue-50 text-blue-700 border-blue-100",
-		},
-		paid: {
-			label: "Paid",
-			className: "bg-green-50 text-green-700 border-green-100",
-		},
-		overdue: {
-			label: "Overdue",
-			className: "bg-red-50 text-red-700 border-red-100",
-		},
-		cancelled: {
-			label: "Cancelled",
-			className: "bg-slate-50 text-slate-600 border-slate-100",
-		},
-	};
-
-	const config = statusConfig[invoice.status];
-
-	return (
-		<Tooltip>
-			<TooltipTrigger asChild>
-				<div className="flex cursor-not-allowed items-center gap-3 rounded border border-slate-200 bg-white p-2">
-					<FileText className="h-4 w-4 text-slate-400" />
-					<div className="flex-1 overflow-hidden">
-						<p className="truncate font-medium text-slate-900 text-xs">
-							{invoice.invoiceNumber}.pdf
-						</p>
-						<Badge
-							className={`${config.className} mt-1 text-[10px]`}
-							variant="outline"
-						>
-							{config.label}
-						</Badge>
-					</div>
-					{invoice.status === "pending" && (
-						<Button
-							className="h-auto cursor-not-allowed rounded bg-slate-400 px-2 py-1 text-white text-xs"
-							disabled
-							size="sm"
-						>
-							Send
-						</Button>
-					)}
-				</div>
-			</TooltipTrigger>
-			<TooltipContent>
-				<p>Invoice management coming soon</p>
-			</TooltipContent>
-		</Tooltip>
-	);
-}
-
 // Financial Gate Component
 export function FinancialGate({
 	booking,
@@ -706,7 +597,6 @@ export function FinancialGate({
 
 	const totalAmount = Number.parseFloat(booking.totalAmount);
 	const isPaid = booking.isPaid;
-	const firstInvoice = booking.serviceForms[0]?.invoices[0];
 
 	// Count total items
 	const serviceCount = booking.serviceItems.length;
@@ -874,12 +764,6 @@ export function FinancialGate({
 						<p className="font-bold text-2xl text-slate-900">
 							{formatCurrency(totalAmount)}
 						</p>
-						{firstInvoice && (
-							<p className="mt-1 text-[10px] text-slate-400">
-								Invoice #{firstInvoice.invoiceNumber} (
-								{firstInvoice.status === "sent" ? "Sent" : firstInvoice.status})
-							</p>
-						)}
 					</div>
 					<Badge
 						className={

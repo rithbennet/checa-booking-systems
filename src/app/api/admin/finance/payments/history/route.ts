@@ -1,8 +1,5 @@
-import type {
-	payment_method_enum,
-	payment_status_enum,
-} from "generated/prisma";
-import { listPaymentHistory } from "@/entities/payment/server/repository";
+import type { payment_method_enum } from "generated/prisma";
+import { listPaymentReceiptHistory } from "@/entities/booking-document/server/payment-receipt-repository";
 import {
 	createProtectedHandler,
 	forbidden,
@@ -11,7 +8,7 @@ import {
 
 /**
  * GET /api/admin/finance/payments/history
- * Get payment history (verified and rejected)
+ * Get payment receipt history from bookingDocuments (verified and rejected)
  */
 export const GET = createProtectedHandler(async (request: Request, user) => {
 	try {
@@ -30,24 +27,41 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
 		const pageSize = [10, 25, 50].includes(pageSizeRaw) ? pageSizeRaw : 25;
 
 		const statusParam = searchParams.get("status");
-		const status = statusParam
-			? (statusParam.split(",") as payment_status_enum[])
-			: undefined;
+		const ALLOWED_STATUS = new Set(["verified", "rejected"]);
+		let status: ("verified" | "rejected")[] | undefined;
 
-		const result = await listPaymentHistory({
+		if (statusParam) {
+			const statusValues = statusParam
+				.split(",")
+				.map((s) => s.trim().toLowerCase());
+
+			for (const val of statusValues) {
+				if (!ALLOWED_STATUS.has(val)) {
+					return Response.json(
+						{
+							error: `Invalid status value: "${val}". Allowed values are: verified, rejected`,
+						},
+						{ status: 400 },
+					);
+				}
+			}
+
+			status = statusValues as ("verified" | "rejected")[];
+		}
+
+		const result = await listPaymentReceiptHistory({
 			page,
 			pageSize,
 			q: searchParams.get("q") ?? undefined,
 			status,
 			method: searchParams.get("method") as payment_method_enum | undefined,
-			verifierId: searchParams.get("verifierId") ?? undefined,
 			dateFrom: searchParams.get("dateFrom") ?? undefined,
 			dateTo: searchParams.get("dateTo") ?? undefined,
 		});
 
 		return Response.json(result);
 	} catch (error) {
-		console.error("Error fetching payment history:", error);
-		return serverError("Failed to fetch payment history");
+		console.error("Error fetching payment receipt history:", error);
+		return serverError("Failed to fetch payment receipt history");
 	}
 });

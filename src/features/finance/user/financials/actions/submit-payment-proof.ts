@@ -1,11 +1,12 @@
 "use server";
 
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import type { payment_method_enum } from "generated/prisma";
 import { revalidatePath } from "next/cache";
+import { UTFile } from "uploadthing/server";
+import { notifyAdminsPaymentUploaded } from "@/entities/notification/server/finance.notifications";
 import { requireCurrentUserApi } from "@/shared/server/current-user";
 import { db } from "@/shared/server/db";
+import { utapi } from "@/shared/server/uploadthing";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = [
@@ -15,11 +16,12 @@ const ALLOWED_TYPES = [
 	"image/webp",
 	"application/pdf",
 ];
+const DOCUMENT_TYPE_PAYMENT_RECEIPT = "payment_receipt" as const;
 
 interface SubmitPaymentProofResult {
 	success: boolean;
 	error?: string;
-	paymentId?: string;
+	documentId?: string;
 }
 
 export async function submitPaymentProof(
@@ -30,7 +32,7 @@ export async function submitPaymentProof(
 		const user = await requireCurrentUserApi();
 
 		// Extract form data
-		const invoiceId = formData.get("invoiceId") as string;
+		const serviceFormId = formData.get("serviceFormId") as string;
 		const paymentMethod = formData.get("paymentMethod") as payment_method_enum;
 		const paymentDate = formData.get("paymentDate") as string;
 		const referenceNumber = formData.get("referenceNumber") as string | null;
@@ -38,7 +40,7 @@ export async function submitPaymentProof(
 		const file = formData.get("file") as File | null;
 
 		// Validate required fields
-		if (!invoiceId || !paymentMethod || !paymentDate || !amount) {
+		if (!serviceFormId || !paymentMethod || !paymentDate || !amount) {
 			return { success: false, error: "Missing required fields" };
 		}
 
@@ -59,86 +61,102 @@ export async function submitPaymentProof(
 			};
 		}
 
-		// Verify invoice exists and belongs to user
-		const invoice = await db.invoice.findFirst({
+		// Verify service form exists and belongs to user
+		const serviceForm = await db.serviceForm.findFirst({
 			where: {
-				id: invoiceId,
-				serviceForm: {
-					bookingRequest: {
-						userId: user.appUserId,
-					},
+				id: serviceFormId,
+				bookingRequest: {
+					userId: user.appUserId,
 				},
 			},
 			include: {
-				serviceForm: {
-					include: {
-						bookingRequest: {
-							select: { id: true, referenceNumber: true },
-						},
-					},
+				bookingRequest: {
+					select: { id: true, referenceNumber: true },
 				},
 			},
 		});
 
-		if (!invoice) {
-			return { success: false, error: "Invoice not found" };
+		if (!serviceForm) {
+			return { success: false, error: "Service form not found" };
 		}
 
-		// Generate unique filename
+		// Upload file to blob storage using uploadthing
 		const timestamp = Date.now();
-		const ext = path.extname(file.name) || getExtensionFromType(file.type);
-		const filename = `payment-${invoiceId}-${timestamp}${ext}`;
-
-		// Create upload directory if it doesn't exist
-		const uploadDir = path.join(
-			process.cwd(),
-			"public",
-			"uploads",
-			"payment-proofs",
+		const utFile = new UTFile(
+			[file],
+			`payment-${serviceFormId}-${timestamp}-${file.name}`,
 		);
-		await mkdir(uploadDir, { recursive: true });
+		const uploadResult = await utapi.uploadFiles([utFile]);
+		const uploaded = uploadResult[0];
 
-		// Save file to disk
-		const filePath = path.join(uploadDir, filename);
-		const bytes = await file.arrayBuffer();
-		const buffer = Buffer.from(bytes);
-		await writeFile(filePath, buffer);
+		if (!uploaded?.data) {
+			console.error("Upload failed:", uploaded?.error);
+			return { success: false, error: "Failed to upload file" };
+		}
 
-		// Store public path in database
-		const publicPath = `/uploads/payment-proofs/${filename}`;
+		// Store payment metadata as JSON in the note field
+		const paymentMetadata = {
+			paymentMethod,
+			paymentDate: new Date(paymentDate).toISOString(),
+			referenceNumber: referenceNumber || null,
+			amount: parseFloat(amount),
+			serviceFormId,
+		};
 
-		// Create payment record
-		const payment = await db.payment.create({
-			data: {
-				invoiceId,
-				amount: parseFloat(amount),
-				paymentMethod,
-				paymentDate: new Date(paymentDate),
-				referenceNumber: referenceNumber || null,
-				receiptFilePath: publicPath,
-				status: "pending",
-				uploadedBy: user.appUserId,
-				uploadedAt: new Date(),
-			},
-		});
+		// Create both records in a transaction
+		const { document } = await db
+			.$transaction(async (tx) => {
+				const blob = await tx.fileBlob.create({
+					data: {
+						key: uploaded.data.key,
+						url: uploaded.data.ufsUrl,
+						mimeType: file.type,
+						fileName: file.name,
+						sizeBytes: file.size,
+						uploadedById: user.appUserId,
+					},
+				});
 
-		// Create notification for admins
+				const document = await tx.bookingDocument.create({
+					data: {
+						bookingId: serviceForm.bookingRequest.id,
+						blobId: blob.id,
+						type: DOCUMENT_TYPE_PAYMENT_RECEIPT,
+						note: JSON.stringify(paymentMetadata),
+						verificationStatus: "pending_verification",
+						createdById: user.appUserId,
+					},
+				});
+
+				return { blob, document };
+			})
+			.catch(async (error) => {
+				// On transaction failure, cleanup uploaded file
+				try {
+					await utapi.deleteFiles(uploaded.data.key);
+					console.log(`Cleaned up orphaned file: ${uploaded.data.key}`);
+				} catch (cleanupError) {
+					console.error("Failed to cleanup uploaded file:", cleanupError);
+				}
+				throw error;
+			});
+
+		// Send notifications to admins
 		const admins = await db.user.findMany({
 			where: { userType: "lab_administrator", status: "active" },
 			select: { id: true },
 		});
 
 		if (admins.length > 0) {
-			await db.notification.createMany({
-				data: admins.map((admin) => ({
-					userId: admin.id,
-					type: "payment_reminder" as const,
-					relatedEntityType: "payment",
-					relatedEntityId: payment.id,
-					title: "New Payment Receipt Uploaded",
-					message: `A payment receipt has been uploaded for invoice ${invoice.invoiceNumber} (Booking: ${invoice.serviceForm.bookingRequest.referenceNumber}). Please verify.`,
-					emailSent: false,
-				})),
+			const adminIds = admins.map((a) => a.id);
+			// Use notification service
+			await notifyAdminsPaymentUploaded({
+				adminIds,
+				documentId: document.id,
+				bookingReference: serviceForm.bookingRequest.referenceNumber,
+				customerName: user.name || "Customer",
+				amount,
+				formNumber: serviceForm.formNumber,
 			});
 		}
 
@@ -147,12 +165,12 @@ export async function submitPaymentProof(
 			data: {
 				userId: user.appUserId,
 				action: "upload_payment_proof",
-				entity: "Payment",
-				entityId: payment.id,
+				entity: "BookingDocument",
+				entityId: document.id,
 				metadata: {
-					invoiceId,
-					invoiceNumber: invoice.invoiceNumber,
-					bookingRef: invoice.serviceForm.bookingRequest.referenceNumber,
+					serviceFormId,
+					formNumber: serviceForm.formNumber,
+					bookingRef: serviceForm.bookingRequest.referenceNumber,
 					amount,
 					paymentMethod,
 				},
@@ -162,7 +180,7 @@ export async function submitPaymentProof(
 		// Revalidate the financials page
 		revalidatePath("/financials");
 
-		return { success: true, paymentId: payment.id };
+		return { success: true, documentId: document.id };
 	} catch (error) {
 		console.error("Error submitting payment proof:", error);
 
@@ -175,15 +193,4 @@ export async function submitPaymentProof(
 			error: "Failed to submit payment. Please try again.",
 		};
 	}
-}
-
-function getExtensionFromType(mimeType: string): string {
-	const typeMap: Record<string, string> = {
-		"image/jpeg": ".jpg",
-		"image/png": ".png",
-		"image/gif": ".gif",
-		"image/webp": ".webp",
-		"application/pdf": ".pdf",
-	};
-	return typeMap[mimeType] || ".bin";
 }

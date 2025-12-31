@@ -3,7 +3,7 @@
 import { Check, FileText, X } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
-import type { PendingPaymentVM } from "@/entities/payment/model/types";
+import type { PaymentReceiptVM } from "@/entities/booking-document";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import {
@@ -21,11 +21,11 @@ import {
 } from "../../../lib/helpers";
 
 interface PendingPaymentsTableProps {
-	data: PendingPaymentVM[];
+	data: PaymentReceiptVM[];
 	isLoading: boolean;
-	onVerify: (payment: PendingPaymentVM) => void;
-	onReject: (payment: PendingPaymentVM) => void;
-	onViewReceipt?: (payment: PendingPaymentVM) => void;
+	onVerify: (payment: PaymentReceiptVM) => void;
+	onReject: (payment: PaymentReceiptVM) => void;
+	onViewReceipt?: (payment: PaymentReceiptVM) => void;
 }
 
 export function PendingPaymentsTable({
@@ -35,14 +35,14 @@ export function PendingPaymentsTable({
 	onReject,
 	onViewReceipt,
 }: PendingPaymentsTableProps) {
-	const columns: ColumnDef<PendingPaymentVM>[] = useMemo(
+	const columns: ColumnDef<PaymentReceiptVM>[] = useMemo(
 		() => [
 			{
-				id: "invoiceNumber",
-				header: "Invoice No",
+				id: "formNumber",
+				header: "Form No",
 				className: "w-[130px]",
 				cell: ({ row }) => (
-					<span className="font-mono text-sm">{row.invoiceNumber}</span>
+					<span className="font-mono text-sm">{row.formNumber}</span>
 				),
 			},
 			{
@@ -129,20 +129,23 @@ export function PendingPaymentsTable({
 				headerTooltip: "Days since payment receipt was uploaded",
 				className: "w-[80px]",
 				align: "center",
-				cell: ({ row }) => (
-					<Badge
-						className={
-							row.age > 7
-								? "bg-red-100 text-red-800"
-								: row.age > 3
-									? "bg-yellow-100 text-yellow-800"
-									: "bg-gray-100 text-gray-700"
-						}
-						variant="secondary"
-					>
-						{row.age}d
-					</Badge>
-				),
+				cell: ({ row }) => {
+					const age = row.age ?? 0;
+					return (
+						<Badge
+							className={
+								age > 7
+									? "bg-red-100 text-red-800"
+									: age > 3
+										? "bg-yellow-100 text-yellow-800"
+										: "bg-gray-100 text-gray-700"
+							}
+							variant="secondary"
+						>
+							{age}d
+						</Badge>
+					);
+				},
 			},
 			{
 				id: "actions",

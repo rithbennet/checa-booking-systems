@@ -173,7 +173,6 @@ export async function getLatestDocumentsByType(
 	bookingId: string,
 ): Promise<Record<DocumentType, BookingDocumentVM | null>> {
 	const types: DocumentType[] = [
-		"invoice",
 		"service_form_unsigned",
 		"service_form_signed",
 		"workspace_form_unsigned",
@@ -183,7 +182,6 @@ export async function getLatestDocumentsByType(
 	];
 
 	const result: Record<DocumentType, BookingDocumentVM | null> = {
-		invoice: null,
 		service_form_unsigned: null,
 		service_form_signed: null,
 		workspace_form_unsigned: null,

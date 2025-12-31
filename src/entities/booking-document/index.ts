@@ -11,8 +11,12 @@ export {
 	useBookingDocuments,
 	useDocumentVerificationState,
 	useDownloadEligibility,
+	usePaymentReceiptHistory,
+	usePendingPaymentReceipts,
 	useRejectDocument,
+	useRejectPaymentReceipt,
 	useVerifyDocument,
+	useVerifyPaymentReceipt,
 } from "./api";
 
 // Model exports (types and helpers)
@@ -24,6 +28,7 @@ export type {
 	DocumentVerificationStatus,
 	DownloadEligibilityVM,
 	FileBlobVM,
+	PaymentReceiptVM,
 	RejectDocumentInput,
 	VerifyDocumentInput,
 } from "./model";
@@ -40,3 +45,10 @@ export {
 	verificationStatusColors,
 	verificationStatusLabels,
 } from "./model";
+
+// UI exports (components)
+export {
+	DocumentVerificationCard,
+	type DocumentVerificationCardProps,
+	VerificationStatusBadge,
+} from "./ui";

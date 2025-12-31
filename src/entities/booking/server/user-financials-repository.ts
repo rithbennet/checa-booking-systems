@@ -1,9 +1,12 @@
 /**
  * User Financials Repository
  * Data access layer for user-facing financial data
+ *
+ * Note: Payment tracking has been migrated to use BookingDocument with type "payment_receipt"
+ * instead of a separate Payment model.
  */
 
-import type { payment_status_enum } from "generated/prisma";
+import type { document_verification_status_enum } from "generated/prisma";
 import { db } from "@/shared/server/db";
 
 // ==============================================================
@@ -17,15 +20,15 @@ export type UserPaymentStatus =
 	| "rejected";
 
 export interface UserFinancialVM {
-	id: string; // Invoice ID
+	id: string; // ServiceForm ID
 	bookingId: string;
 	bookingRef: string;
-	invoiceNumber: string;
-	invoiceFilePath: string;
+	formNumber: string;
+	formFilePath: string;
 	amount: string;
-	dueDate: string;
+	validUntil: string;
 	createdAt: string;
-	// Payment info
+	// Payment info (derived from booking documents)
 	paymentStatus: UserPaymentStatus;
 	latestPaymentId: string | null;
 	latestPaymentRejectionReason: string | null;
@@ -46,17 +49,18 @@ export interface UserFinancialsResponse {
 // Helper Functions
 // ==============================================================
 
-function determinePaymentStatus(
-	payments: Array<{
-		status: payment_status_enum;
-		verificationNotes: string | null;
+function determinePaymentStatusFromDocuments(
+	paymentDocs: Array<{
+		id: string;
+		verificationStatus: document_verification_status_enum;
+		rejectionReason: string | null;
 	}>,
 ): {
 	status: UserPaymentStatus;
 	latestRejectionReason: string | null;
 	latestPaymentId: string | null;
 } {
-	if (payments.length === 0) {
+	if (paymentDocs.length === 0) {
 		return {
 			status: "unpaid",
 			latestRejectionReason: null,
@@ -65,30 +69,57 @@ function determinePaymentStatus(
 	}
 
 	// Check for any verified payment
-	const verifiedPayment = payments.find((p) => p.status === "verified");
-	if (verifiedPayment) {
+	const verifiedDoc = paymentDocs.find(
+		(d) => d.verificationStatus === "verified",
+	);
+	if (verifiedDoc) {
 		return {
 			status: "verified",
 			latestRejectionReason: null,
-			latestPaymentId: null,
+			latestPaymentId: verifiedDoc.id,
 		};
 	}
 
 	// Check for pending payment
-	const pendingPayment = payments.find((p) => p.status === "pending");
-	if (pendingPayment) {
+	const pendingDoc = paymentDocs.find(
+		(d) => d.verificationStatus === "pending_verification",
+	);
+	if (pendingDoc) {
 		return {
 			status: "pending_verification",
 			latestRejectionReason: null,
-			latestPaymentId: null,
+			latestPaymentId: pendingDoc.id,
 		};
 	}
 
-	// All payments are rejected
-	const latestRejected = payments.find((p) => p.status === "rejected");
+	// Check for pending_upload documents (payment not yet submitted)
+	const pendingUploadDoc = paymentDocs.find(
+		(d) => d.verificationStatus === "pending_upload",
+	);
+	if (pendingUploadDoc) {
+		return {
+			status: "unpaid",
+			latestRejectionReason: null,
+			latestPaymentId: pendingUploadDoc.id,
+		};
+	}
+
+	// Check for rejected documents
+	const latestRejected = paymentDocs.find(
+		(d) => d.verificationStatus === "rejected",
+	);
+	if (latestRejected) {
+		return {
+			status: "rejected",
+			latestRejectionReason: latestRejected.rejectionReason ?? null,
+			latestPaymentId: latestRejected.id,
+		};
+	}
+
+	// No documents found or all are in unknown states
 	return {
-		status: "rejected",
-		latestRejectionReason: latestRejected?.verificationNotes ?? null,
+		status: "unpaid",
+		latestRejectionReason: null,
 		latestPaymentId: null,
 	};
 }
@@ -98,36 +129,42 @@ function determinePaymentStatus(
 // ==============================================================
 
 /**
- * Get user's financial records (invoices with payment status)
- * Filters to only show invoices where the user owns the booking
+ * Get user's financial records (service forms with payment status)
+ * Filters to only show service forms where the user owns the booking
+ *
+ * Payment status is now derived from BookingDocument with type "payment_receipt"
  */
 export async function getUserFinancials(
 	userId: string,
 ): Promise<UserFinancialsResponse> {
-	// Fetch all invoices for bookings owned by this user
-	const invoices = await db.invoice.findMany({
+	// Fetch all service forms for bookings owned by this user
+	const serviceForms = await db.serviceForm.findMany({
 		where: {
-			serviceForm: {
-				bookingRequest: {
-					userId,
-				},
+			bookingRequest: {
+				userId,
 			},
-			// Only show active invoices (not cancelled)
-			status: { not: "cancelled" },
+			// Only show active forms
+			status: { notIn: ["expired"] },
 		},
 		include: {
-			serviceForm: {
-				include: {
-					bookingRequest: {
+			bookingRequest: {
+				select: {
+					id: true,
+					referenceNumber: true,
+					// Get payment receipt documents
+					bookingDocuments: {
+						where: {
+							type: "payment_receipt",
+						},
 						select: {
 							id: true,
-							referenceNumber: true,
+							verificationStatus: true,
+							rejectionReason: true,
+							createdAt: true,
 						},
+						orderBy: { createdAt: "desc" },
 					},
 				},
-			},
-			payments: {
-				orderBy: { uploadedAt: "desc" },
 			},
 		},
 		orderBy: { createdAt: "desc" },
@@ -139,20 +176,18 @@ export async function getUserFinancials(
 	let totalPaid = 0;
 
 	// Map to VMs
-	const items: UserFinancialVM[] = invoices.map((invoice) => {
-		const booking = invoice.serviceForm.bookingRequest;
-		const amount = Number(invoice.amount);
+	const items: UserFinancialVM[] = serviceForms.map((form) => {
+		const booking = form.bookingRequest;
+		const amount = Number(form.totalAmount);
 
-		// Determine payment status
-		const paymentInfo = determinePaymentStatus(
-			invoice.payments.map((p) => ({
-				status: p.status,
-				verificationNotes: p.verificationNotes,
+		// Determine payment status from booking documents
+		const paymentInfo = determinePaymentStatusFromDocuments(
+			booking.bookingDocuments.map((doc) => ({
+				id: doc.id,
+				verificationStatus: doc.verificationStatus,
+				rejectionReason: doc.rejectionReason,
 			})),
 		);
-
-		// Get latest payment ID if any
-		const latestPayment = invoice.payments[0];
 
 		// Update summary based on status
 		if (paymentInfo.status === "verified") {
@@ -165,16 +200,16 @@ export async function getUserFinancials(
 		}
 
 		return {
-			id: invoice.id,
+			id: form.id,
 			bookingId: booking.id,
 			bookingRef: booking.referenceNumber,
-			invoiceNumber: invoice.invoiceNumber,
-			invoiceFilePath: invoice.filePath,
+			formNumber: form.formNumber,
+			formFilePath: form.serviceFormUnsignedPdfPath,
 			amount: amount.toString(),
-			dueDate: invoice.dueDate.toISOString().split("T")[0] ?? "",
-			createdAt: invoice.createdAt.toISOString(),
+			validUntil: form.validUntil.toISOString().split("T")[0] ?? "",
+			createdAt: form.createdAt.toISOString(),
 			paymentStatus: paymentInfo.status,
-			latestPaymentId: latestPayment?.id ?? null,
+			latestPaymentId: paymentInfo.latestPaymentId,
 			latestPaymentRejectionReason: paymentInfo.latestRejectionReason,
 		};
 	});

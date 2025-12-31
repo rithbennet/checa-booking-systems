@@ -31,17 +31,12 @@ export const GET = createProtectedHandler(async (request: Request, user) => {
 			? (statusParam.split(",") as form_status_enum[])
 			: undefined;
 
-		const hasInvoiceParam = searchParams.get("hasInvoice");
-		const hasInvoice =
-			hasInvoiceParam !== null ? hasInvoiceParam === "true" : undefined;
-
 		const result = await listServiceFormsForReview({
 			page,
 			pageSize,
 			q: searchParams.get("q") ?? undefined,
 			status,
 			bookingId: searchParams.get("bookingId") ?? undefined,
-			hasInvoice,
 		});
 
 		return Response.json(result);

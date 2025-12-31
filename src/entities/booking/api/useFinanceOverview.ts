@@ -28,9 +28,6 @@ export function useFinanceOverview(params: FinanceOverviewFilters) {
 			if (params.gateStatus) {
 				searchParams.set("gateStatus", params.gateStatus);
 			}
-			if (params.invoiceStatus && params.invoiceStatus.length > 0) {
-				searchParams.set("invoiceStatus", params.invoiceStatus.join(","));
-			}
 			if (params.userType) {
 				searchParams.set("userType", params.userType);
 			}

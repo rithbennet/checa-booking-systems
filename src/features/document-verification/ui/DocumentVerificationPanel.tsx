@@ -2,9 +2,11 @@
 
 import { AlertCircle, FileCheck2, ShieldCheck } from "lucide-react";
 import {
+	DocumentVerificationCard,
 	getVerifiableDocumentTypes,
 	useBookingDocuments,
 	useDocumentVerificationState,
+	VerificationStatusBadge,
 } from "@/entities/booking-document";
 import {
 	Card,
@@ -14,8 +16,6 @@ import {
 	CardTitle,
 } from "@/shared/ui/shadcn/card";
 import { Skeleton } from "@/shared/ui/shadcn/skeleton";
-import { DocumentVerificationCard } from "./DocumentVerificationCard";
-import { VerificationStatusBadge } from "./VerificationStatusBadge";
 
 interface DocumentVerificationPanelProps {
 	bookingId: string;

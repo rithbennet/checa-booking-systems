@@ -43,54 +43,46 @@ export async function getAdminDashboardMetrics(): Promise<AdminDashboardMetricsV
 		},
 	});
 
-	// Count overdue payments (invoices with status 'overdue' or past due date)
-	const overdueInvoices = await db.invoice.findMany({
+	// Threshold for overdue payments (in milliseconds)
+	const OVERDUE_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+	// Count overdue payments from bookings with unverified payment receipts
+	const overduePayments = await db.bookingRequest.count({
 		where: {
 			status: {
-				in: ["pending", "sent", "overdue"],
+				in: ["approved", "in_progress", "completed"],
 			},
-			dueDate: {
-				lt: now,
+			createdAt: {
+				lt: new Date(Date.now() - OVERDUE_THRESHOLD_MS),
 			},
-		},
-		include: {
-			payments: {
-				where: {
-					status: "verified",
+			bookingDocuments: {
+				none: {
+					type: "payment_receipt",
+					verificationStatus: "verified",
 				},
 			},
 		},
 	});
 
-	let overduePayments = 0;
-	for (const invoice of overdueInvoices) {
-		const totalPaid = invoice.payments.reduce(
-			(sum, p) => sum + Number(p.amount),
-			0,
-		);
-		const balance = Number(invoice.amount) - totalPaid;
-		if (balance > 0) {
-			overduePayments++;
-		}
-	}
-
-	// Calculate total revenue for current month (from verified payments)
-	const monthlyPayments = await db.payment.findMany({
+	// Calculate total revenue for current month from verified payment receipts
+	const revenueAggregate = await db.bookingRequest.aggregate({
+		_sum: {
+			totalAmount: true,
+		},
 		where: {
-			status: "verified",
-			paymentDate: {
+			createdAt: {
 				gte: startOfMonth,
 			},
-		},
-		select: {
-			amount: true,
+			bookingDocuments: {
+				some: {
+					type: "payment_receipt",
+					verificationStatus: "verified",
+				},
+			},
 		},
 	});
 
-	const totalRevenue = monthlyPayments.reduce(
-		(sum, p) => sum + Number(p.amount),
-		0,
-	);
+	const totalRevenue = Number(revenueAggregate._sum.totalAmount ?? 0);
 
 	return {
 		pendingVerifications,

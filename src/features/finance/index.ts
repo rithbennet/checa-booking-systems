@@ -4,7 +4,6 @@
 
 // Admin features
 export { FormsReviewTable } from "./admin/forms/ui/FormsReviewTable";
-export { InvoicesTable } from "./admin/invoices/ui/InvoicesTable";
 export { FinanceOverviewTable } from "./admin/overview/ui/FinanceOverviewTable";
 export { PaymentHistoryTable } from "./admin/payments/ui/PaymentHistoryTable";
 export { PendingPaymentsTable } from "./admin/payments/ui/PendingPaymentsTable";

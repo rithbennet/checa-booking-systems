@@ -6,13 +6,13 @@ import type {
 	BookingServiceItemInput,
 	CreateBookingInput,
 } from "@/entities/booking/model/schemas";
+import type { Service } from "@/entities/service";
+import { getServicePrice } from "@/entities/service";
 import {
 	campusLabel,
 	formatInvoicePayerType,
 	generateTempReference,
-} from "@/entities/invoice";
-import type { Service } from "@/entities/service";
-import { getServicePrice } from "@/entities/service";
+} from "@/shared/lib/billing";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import {
 	Card,

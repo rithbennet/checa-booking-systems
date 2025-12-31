@@ -1,5 +1,11 @@
+/**
+ * Re-exports billing utilities for backward compatibility
+ */
 export {
-	buildInvoiceAddressDisplay as buildBillingAddressDisplay,
+	buildBillingAddressDisplay,
+	buildInvoiceAddressDisplay,
 	campusLabel,
+	formatInvoicePayerType,
+	formatPayerType,
 	generateTempReference,
-} from "@/entities/invoice";
+} from "./billing";

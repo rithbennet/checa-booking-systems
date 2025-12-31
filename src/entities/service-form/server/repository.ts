@@ -17,7 +17,7 @@ import type { ServiceFormListFilters, ServiceFormListVM } from "../model/types";
 export async function listServiceFormsForReview(
 	params: ServiceFormListFilters,
 ): Promise<{ items: ServiceFormListVM[]; total: number }> {
-	const { status, bookingId, hasInvoice, q, page, pageSize } = params;
+	const { status, bookingId, q, page, pageSize } = params;
 
 	const where: Prisma.ServiceFormWhereInput = {
 		...(status && status.length > 0 ? { status: { in: status } } : {}),
@@ -62,12 +62,12 @@ export async function listServiceFormsForReview(
 								companyBranch: { select: { name: true } },
 							},
 						},
-					},
-				},
-				invoices: {
-					select: {
-						id: true,
-						invoiceNumber: true,
+						bookingDocuments: {
+							select: {
+								type: true,
+								verificationStatus: true,
+							},
+						},
 					},
 				},
 			},
@@ -79,7 +79,7 @@ export async function listServiceFormsForReview(
 	]);
 
 	const now = new Date();
-	let items: ServiceFormListVM[] = forms.map((form) => {
+	const items: ServiceFormListVM[] = forms.map((form) => {
 		const booking = form.bookingRequest;
 		const user = booking.user;
 
@@ -94,6 +94,52 @@ export async function listServiceFormsForReview(
 
 		const isExpired = form.validUntil < now;
 
+		// Check for uploaded documents (new document verification flow) - single pass
+		let hasServiceFormDoc = false;
+		let hasWorkspaceFormDoc = false;
+		let serviceFormVerified = false;
+		let workspaceFormVerified = false;
+		let serviceFormPending = false;
+
+		for (const doc of booking.bookingDocuments) {
+			if (doc.type === "service_form_signed") {
+				hasServiceFormDoc = true;
+				if (doc.verificationStatus === "verified") {
+					serviceFormVerified = true;
+				} else if (doc.verificationStatus === "pending_verification") {
+					serviceFormPending = true;
+				}
+			} else if (doc.type === "workspace_form_signed") {
+				hasWorkspaceFormDoc = true;
+				if (doc.verificationStatus === "verified") {
+					workspaceFormVerified = true;
+				}
+			}
+		}
+
+		// Determine the actual status to show
+		let actualStatus:
+			| "generated"
+			| "downloaded"
+			| "signed_forms_uploaded"
+			| "expired"
+			| "verified" = form.status;
+		if (isExpired) {
+			actualStatus = "expired";
+		} else if (
+			serviceFormVerified &&
+			(!form.requiresWorkingAreaAgreement || workspaceFormVerified)
+		) {
+			// All required forms are verified
+			actualStatus = "verified";
+		} else if (serviceFormPending || hasServiceFormDoc) {
+			// Forms are uploaded and pending verification
+			actualStatus = "signed_forms_uploaded";
+		} else if (form.status === "downloaded" || form.status === "generated") {
+			// Keep original status if nothing uploaded yet
+			actualStatus = form.status;
+		}
+
 		return {
 			id: form.id,
 			formNumber: form.formNumber,
@@ -101,14 +147,16 @@ export async function listServiceFormsForReview(
 			subtotal: form.subtotal.toString(),
 			totalAmount: form.totalAmount.toString(),
 			validUntil: form.validUntil.toISOString().split("T")[0] ?? "",
-			status: form.status,
+			status: actualStatus,
 			hasUnsignedForm: Boolean(form.serviceFormUnsignedPdfPath),
-			hasSignedForm: Boolean(form.serviceFormSignedPdfPath),
+			hasSignedForm:
+				Boolean(form.serviceFormSignedPdfPath) || hasServiceFormDoc,
 			requiresWorkingAreaAgreement: form.requiresWorkingAreaAgreement,
 			hasUnsignedWorkspaceForm: Boolean(
 				form.workingAreaAgreementUnsignedPdfPath,
 			),
-			hasSignedWorkspaceForm: Boolean(form.workingAreaAgreementSignedPdfPath),
+			hasSignedWorkspaceForm:
+				Boolean(form.workingAreaAgreementSignedPdfPath) || hasWorkspaceFormDoc,
 			serviceFormUnsignedPdfPath: form.serviceFormUnsignedPdfPath,
 			serviceFormSignedPdfPath: form.serviceFormSignedPdfPath,
 			workingAreaAgreementUnsignedPdfPath:
@@ -123,22 +171,12 @@ export async function listServiceFormsForReview(
 				userType: user.userType,
 			},
 			organization,
-			hasInvoice: form.invoices.length > 0,
-			invoiceNumber: form.invoices[0]?.invoiceNumber ?? null,
-			invoiceCount: form.invoices.length,
 			generatedAt: form.generatedAt.toISOString(),
 			downloadedAt: form.downloadedAt?.toISOString() ?? null,
 			signedFormsUploadedAt: form.signedFormsUploadedAt?.toISOString() ?? null,
 			isExpired,
 		};
 	});
-
-	// Apply post-query filter for hasInvoice
-	if (hasInvoice !== undefined) {
-		items = items.filter((item) =>
-			hasInvoice ? item.hasInvoice : !item.hasInvoice,
-		);
-	}
 
 	return { items, total };
 }

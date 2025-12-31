@@ -16,7 +16,6 @@ import {
 	BookingRejectedEmail,
 	BookingRevisionRequestedEmail,
 	BookingSubmittedEmail,
-	InvoiceUploadedEmail,
 	PaymentVerifiedEmail,
 	ResultsAvailableEmail,
 	SampleStatusUpdateEmail,
@@ -141,23 +140,11 @@ export const GET = createProtectedHandler(async (_request: Request, user) => {
 				}),
 		},
 		{
-			name: "InvoiceUploadedEmail",
-			render: () =>
-				InvoiceUploadedEmail({
-					customerName: mockData.customerName,
-					invoiceNumber: "INV-TEST-001",
-					amount: "RM 500.00",
-					dueDate: "2025-01-15",
-					bookingReference: mockData.referenceNumber,
-					dashboardUrl: mockData.dashboardUrl,
-				}),
-		},
-		{
 			name: "PaymentVerifiedEmail",
 			render: () =>
 				PaymentVerifiedEmail({
 					customerName: mockData.customerName,
-					invoiceNumber: "INV-TEST-001",
+					formNumber: "SF-TEST-001",
 					amount: "RM 500.00",
 					paymentDate: "2025-01-01",
 					bookingReference: mockData.referenceNumber,

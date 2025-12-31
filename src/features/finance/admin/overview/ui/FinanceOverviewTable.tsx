@@ -14,13 +14,10 @@ import {
 import { type ColumnDef, DataTable } from "@/shared/ui/table";
 import {
 	formatCurrencyCompact,
-	formatDate,
 	getFormsStatusBadgeClass,
 	getFormsStatusLabel,
 	getGateStatusBadgeClass,
 	getGateStatusLabel,
-	getInvoiceStatusBadgeClass,
-	getInvoiceStatusLabel,
 	getPaymentStatusBadgeClass,
 	getPaymentStatusLabel,
 	getUserTypeBadgeClass,
@@ -106,59 +103,37 @@ export function FinanceOverviewTable({
 				),
 			},
 			{
-				id: "invoice",
-				header: "Invoice",
-				className: "min-w-[200px]",
-				cell: ({ row }) => {
-					if (row.invoiceCount === 0) {
-						return (
-							<span className="text-muted-foreground text-sm">No invoice</span>
-						);
-					}
-
-					return (
-						<div className="space-y-1">
-							<div className="flex items-center gap-2">
-								<span className="font-medium">
-									{formatCurrencyCompact(row.totalInvoiced)}
-								</span>
-								<Badge
-									className={getInvoiceStatusBadgeClass(
-										row.mostSevereInvoiceStatus,
-									)}
-									variant="secondary"
-								>
-									{getInvoiceStatusLabel(row.mostSevereInvoiceStatus)}
-								</Badge>
-							</div>
-							{row.oldestDueDate && (
-								<div className="text-muted-foreground text-xs">
-									Due: {formatDate(row.oldestDueDate)}
-								</div>
-							)}
-						</div>
-					);
-				},
+				id: "amount",
+				header: "Total Amount",
+				className: "w-[130px]",
+				align: "right",
+				cell: ({ row }) => (
+					<span className="font-medium">
+						{formatCurrencyCompact(row.totalAmount)}
+					</span>
+				),
 			},
 			{
 				id: "payment",
 				header: "Payment",
 				className: "w-[150px]",
 				cell: ({ row }) => {
-					const totalInvoiced = parseFloat(row.totalInvoiced);
+					const totalAmount = parseFloat(row.totalAmount);
 					const totalPaid = parseFloat(row.totalVerifiedPaid);
 
-					if (totalInvoiced === 0 && totalPaid === 0) {
+					if (totalAmount === 0 && totalPaid === 0) {
 						return <span className="text-muted-foreground text-sm">-</span>;
 					}
 
 					return (
 						<div className="space-y-1">
 							<Badge
-								className={getPaymentStatusBadgeClass(row.latestPaymentStatus)}
+								className={getPaymentStatusBadgeClass(
+									row.latestPaymentStatusLabel,
+								)}
 								variant="secondary"
 							>
-								{getPaymentStatusLabel(row.latestPaymentStatus)}
+								{getPaymentStatusLabel(row.latestPaymentStatusLabel)}
 							</Badge>
 							{totalPaid > 0 && (
 								<div className="text-xs">

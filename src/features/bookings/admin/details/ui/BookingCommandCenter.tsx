@@ -79,15 +79,8 @@ export function BookingCommandCenter({ booking }: BookingCommandCenterProps) {
 			.filter((date): date is string => date !== null)
 			.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
 
-	// Get first verified payment date
-	const paidAt =
-		booking.serviceForms
-			.flatMap((form) => form.invoices)
-			.flatMap((invoice) => invoice.payments)
-			.filter((payment) => payment.status === "verified" && payment.verifiedAt)
-			.map((payment) => payment.verifiedAt)
-			.filter((date): date is string => date !== null)
-			.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
+	// Payment date is tracked separately (invoice feature deprecated)
+	const paidAt = null;
 
 	// Released date is when booking is completed
 	const releasedAt = booking.status === "completed" ? booking.updatedAt : null;

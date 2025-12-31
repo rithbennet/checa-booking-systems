@@ -10,7 +10,6 @@ export type NotificationType =
 	| "service_modification_requested"
 	| "service_form_ready"
 	| "forms_signed_uploaded"
-	| "invoice_uploaded"
 	| "payment_reminder"
 	| "payment_verified"
 	| "results_available"
@@ -116,27 +115,13 @@ export interface ResultsAvailablePayload {
 }
 
 /**
- * Payload for notifying user that invoice is uploaded
- * @trigger After admin uploads/creates invoice for a service form
- */
-export interface InvoiceUploadedPayload {
-	userId: string;
-	invoiceId: string;
-	invoiceNumber: string;
-	amount: string;
-	dueDate: string;
-	bookingReference: string;
-	bookingId: string;
-}
-
-/**
  * Payload for notifying user that payment is verified
  * @trigger After admin verifies payment
  */
 export interface PaymentVerifiedPayload {
 	userId: string;
 	paymentId: string;
-	invoiceNumber: string;
+	formNumber: string;
 	amount: string;
 	paymentDate: string;
 	bookingReference: string;

@@ -14,7 +14,6 @@ export { BookingApprovedEmail } from "./BookingApprovedEmail";
 export { BookingRejectedEmail } from "./BookingRejectedEmail";
 export { BookingRevisionRequestedEmail } from "./BookingRevisionRequestedEmail";
 export { BookingSubmittedEmail } from "./BookingSubmittedEmail";
-export { InvoiceUploadedEmail } from "./InvoiceUploadedEmail";
 export { OrganizationDeletedEmail } from "./OrganizationDeletedEmail";
 export { PaymentVerifiedEmail } from "./PaymentVerifiedEmail";
 export { ResultsAvailableEmail } from "./ResultsAvailableEmail";
