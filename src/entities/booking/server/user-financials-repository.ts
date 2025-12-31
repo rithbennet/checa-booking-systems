@@ -92,14 +92,35 @@ function determinePaymentStatusFromDocuments(
 		};
 	}
 
-	// No verified or pending payments found; defaulting to rejected status
+	// Check for pending_upload documents (payment not yet submitted)
+	const pendingUploadDoc = paymentDocs.find(
+		(d) => d.verificationStatus === "pending_upload",
+	);
+	if (pendingUploadDoc) {
+		return {
+			status: "unpaid",
+			latestRejectionReason: null,
+			latestPaymentId: pendingUploadDoc.id,
+		};
+	}
+
+	// Check for rejected documents
 	const latestRejected = paymentDocs.find(
 		(d) => d.verificationStatus === "rejected",
 	);
+	if (latestRejected) {
+		return {
+			status: "rejected",
+			latestRejectionReason: latestRejected.rejectionReason ?? null,
+			latestPaymentId: latestRejected.id,
+		};
+	}
+
+	// No documents found or all are in unknown states
 	return {
-		status: "rejected",
-		latestRejectionReason: latestRejected?.rejectionReason ?? null,
-		latestPaymentId: latestRejected?.id ?? null,
+		status: "unpaid",
+		latestRejectionReason: null,
+		latestPaymentId: null,
 	};
 }
 

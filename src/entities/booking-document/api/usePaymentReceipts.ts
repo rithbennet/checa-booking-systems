@@ -122,7 +122,9 @@ export function useVerifyPaymentReceipt() {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ notes: params.notes }),
 			});
-			if (!res.ok) throw new Error("Failed to verify payment receipt");
+			if (!res.ok) {
+				await handleFetchError(res, "verify payment receipt");
+			}
 			return res.json();
 		},
 		onSuccess: () => {
@@ -153,7 +155,9 @@ export function useRejectPaymentReceipt() {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ reason: params.reason }),
 			});
-			if (!res.ok) throw new Error("Failed to reject payment receipt");
+			if (!res.ok) {
+				await handleFetchError(res, "reject payment receipt");
+			}
 			return res.json();
 		},
 		onSuccess: () => {

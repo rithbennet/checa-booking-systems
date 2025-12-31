@@ -93,6 +93,8 @@ export function DocumentVerificationCard({
 			);
 			setShowVerifyDialog(false);
 			setVerifyNotes("");
+			setPaymentMethod("eft");
+			setPaymentAmount("");
 			onVerified?.();
 		} catch (error) {
 			toast.error(
@@ -161,9 +163,9 @@ export function DocumentVerificationCard({
 					"transition-all",
 					isPending && "border-amber-200 bg-amber-50/50",
 					document.verificationStatus === "verified" &&
-						"border-green-200 bg-green-50/50",
+					"border-green-200 bg-green-50/50",
 					document.verificationStatus === "rejected" &&
-						"border-red-200 bg-red-50/50",
+					"border-red-200 bg-red-50/50",
 				)}
 			>
 				<CardHeader className="pb-3">
@@ -286,7 +288,17 @@ export function DocumentVerificationCard({
 			</Card>
 
 			{/* Verify Dialog */}
-			<Dialog onOpenChange={setShowVerifyDialog} open={showVerifyDialog}>
+			<Dialog
+				onOpenChange={(open) => {
+					setShowVerifyDialog(open);
+					if (!open) {
+						setVerifyNotes("");
+						setPaymentMethod("eft");
+						setPaymentAmount("");
+					}
+				}}
+				open={showVerifyDialog}
+			>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>
@@ -368,7 +380,15 @@ export function DocumentVerificationCard({
 			</Dialog>
 
 			{/* Reject Dialog */}
-			<Dialog onOpenChange={setShowRejectDialog} open={showRejectDialog}>
+			<Dialog
+				onOpenChange={(open) => {
+					setShowRejectDialog(open);
+					if (!open) {
+						setRejectReason("");
+					}
+				}}
+				open={showRejectDialog}
+			>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>

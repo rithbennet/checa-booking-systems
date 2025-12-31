@@ -335,7 +335,9 @@ export async function getUserBookingDetailData(
 		})),
 
 		pendingModifications,
-		paidAmount: "0.00",
+		paidAmount: isPaidViaDocVerification
+			? decimalToString(booking.totalAmount)
+			: "0.00",
 		isPaid,
 		hasUnverifiedPayments,
 		totalSamples,
