@@ -8,6 +8,11 @@ import type {
 
 export type { Faculty, Department, Ikohza, Company, CompanyBranch };
 
+/**
+ * UTM Campus locations
+ */
+export type UtmCampus = "kl" | "johor_bahru";
+
 export interface FacultyWithRelations extends Faculty {
 	departments: Department[];
 	ikohzas: Ikohza[];

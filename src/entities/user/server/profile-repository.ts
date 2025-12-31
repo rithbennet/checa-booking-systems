@@ -335,10 +335,12 @@ export async function getUserSummary(
 	const rejected = statusCounts.rejected || 0;
 
 	// Process financial data - now based on document verification
-	const totalSpent = 0; // TODO: Calculate from verified bookings
-	const outstanding = 0; // TODO: Calculate from unverified bookings
-	const pending = 0; // TODO: Calculate from pending verification
-	const lastPaymentDate: Date | null = null;
+	// TODO: Calculate these from verified payment receipt documents
+	const totalSpent = 0;
+	const outstanding = 0;
+	const pending = 0;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const lastPaymentDate = null as Date | null;
 	const lastPaymentAmount: number | null = null;
 
 	// Process service usage - sort by count descending and take top 3

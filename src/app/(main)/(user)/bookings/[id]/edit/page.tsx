@@ -23,15 +23,28 @@ export default async function EditBookingPage({ params }: PageProps) {
 	const userStatus = me.status ?? undefined;
 
 	// Fetch user profile for billing information
+	// Handle name splitting with proper whitespace normalization
+	const nameParts = me.name
+		?.trim()
+		.split(/\s+/)
+		.filter((part) => part.length > 0) ?? [];
+	const firstName = nameParts[0] || "Unknown";
+	const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+
 	let profile: BookingProfile = {
+		firstName,
+		lastName,
 		fullName: me.name || "Unknown",
 		email: me.email ?? null,
+		phone: null,
 	};
 
 	const userProfile = await getUserProfile(userId);
 	if (userProfile) {
 		profile = {
 			...profile,
+			firstName: userProfile.firstName,
+			lastName: userProfile.lastName,
 			fullName: `${userProfile.firstName} ${userProfile.lastName}`,
 			email: userProfile.email,
 			phone: userProfile.phone ?? null,
@@ -39,6 +52,8 @@ export default async function EditBookingPage({ params }: PageProps) {
 			academicType: userProfile.academicType as BookingProfile["academicType"],
 			userIdentifier: userProfile.userIdentifier ?? null,
 			supervisorName: userProfile.supervisorName ?? null,
+			department: userProfile.organization.department ?? null,
+			faculty: userProfile.organization.faculty ?? null,
 			organization: {
 				facultyId: userProfile.organization.facultyId ?? null,
 				departmentId: userProfile.organization.departmentId ?? null,

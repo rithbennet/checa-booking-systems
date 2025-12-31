@@ -4,7 +4,7 @@ import { AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import type { CreateBookingInput } from "@/entities/booking/model/schemas";
-import { buildInvoiceAddressDisplay, campusLabel } from "@/entities/invoice";
+import { buildInvoiceAddressDisplay, campusLabel } from "@/shared/lib/billing";
 import { Alert, AlertDescription } from "@/shared/ui/shadcn/alert";
 import { Input } from "@/shared/ui/shadcn/input";
 import { Label } from "@/shared/ui/shadcn/label";

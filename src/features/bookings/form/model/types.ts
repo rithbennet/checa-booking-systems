@@ -3,18 +3,19 @@
  */
 
 import type { BookingServiceItem, BookingStep } from "@/entities/booking";
+import type { UtmCampus } from "@/entities/organization/model/types";
 
 export type InstitutionalAcademicType = "student" | "staff" | "none";
 
 export interface BookingProfile {
 	firstName: string;
 	lastName: string;
-	email: string;
+	email: string | null;
 	phone: string | null;
-	userType: "mjiit_member" | "utm_member" | "external_member";
-	academicType: InstitutionalAcademicType | null;
-	userIdentifier: string | null;
-	supervisorName: string | null;
+	userType?: "mjiit_member" | "utm_member" | "external_member";
+	academicType?: InstitutionalAcademicType | null;
+	userIdentifier?: string | null;
+	supervisorName?: string | null;
 	organization?: {
 		facultyId?: string | null;
 		departmentId?: string | null;
@@ -22,6 +23,12 @@ export interface BookingProfile {
 		companyId?: string | null;
 		companyBranchId?: string | null;
 	};
+	// Additional fields for billing display
+	fullName?: string;
+	department?: string | null;
+	faculty?: string | null;
+	utmCampus?: UtmCampus | null;
+	organizationAddress?: string | null;
 }
 
 export interface BookingFormState {
