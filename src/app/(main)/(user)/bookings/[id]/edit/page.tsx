@@ -24,10 +24,11 @@ export default async function EditBookingPage({ params }: PageProps) {
 
 	// Fetch user profile for billing information
 	// Handle name splitting with proper whitespace normalization
-	const nameParts = me.name
-		?.trim()
-		.split(/\s+/)
-		.filter((part) => part.length > 0) ?? [];
+	const nameParts =
+		me.name
+			?.trim()
+			.split(/\s+/)
+			.filter((part) => part.length > 0) ?? [];
 	const firstName = nameParts[0] || "Unknown";
 	const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
 

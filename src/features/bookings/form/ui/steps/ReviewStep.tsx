@@ -141,7 +141,7 @@ export function ReviewStep({
 						0,
 						Math.ceil(
 							(end.getTime() - start.getTime() + 24 * 60 * 60 * 1000) /
-							(24 * 60 * 60 * 1000),
+								(24 * 60 * 60 * 1000),
 						),
 					);
 					const months = Math.max(1, Math.ceil(days / 30));
@@ -345,7 +345,7 @@ export function ReviewStep({
 												(end.getTime() -
 													start.getTime() +
 													24 * 60 * 60 * 1000) /
-												(24 * 60 * 60 * 1000),
+													(24 * 60 * 60 * 1000),
 											),
 										);
 										months = Math.max(1, Math.ceil(days / 30));
@@ -376,8 +376,8 @@ export function ReviewStep({
 														{(() => {
 															const wsAddOnMap = workingSpaceService
 																? addOnPriceMapByService.get(
-																	workingSpaceService.id,
-																)
+																		workingSpaceService.id,
+																	)
 																: undefined;
 															const addOnsSum = (
 																ws.addOnCatalogIds || []
