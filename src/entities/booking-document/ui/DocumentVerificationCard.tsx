@@ -52,6 +52,7 @@ import { VerificationStatusBadge } from "./VerificationStatusBadge";
 export interface DocumentVerificationCardProps {
     document: BookingDocumentVM;
     // Reserved for future use (e.g., booking-level validation or context)
+    bookingId?: string;
     bookingReference: string;
     onVerified?: () => void;
     onRejected?: () => void;
