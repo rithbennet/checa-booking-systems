@@ -364,15 +364,24 @@ function getStepDate(
 			const receivedDates = booking.serviceItems
 				.flatMap((item) => item.sampleTracking)
 				.map((s) => s.receivedAt)
-				.filter((d): d is string => d !== null);
-			return receivedDates.sort()[0];
+				.filter((d): d is string => d !== null)
+				.sort();
+			const analysisStartDates = booking.serviceItems
+				.flatMap((item) => item.sampleTracking)
+				.map((s) => s.analysisStartAt)
+				.filter((d): d is string => d !== null)
+				.sort();
+			// Use receivedAt if available, otherwise fall back to analysisStartAt
+			// This handles cases where admin sets status directly to "in_analysis"
+			return receivedDates[0] ?? analysisStartDates[0];
 		}
 		case "in_progress": {
 			const analysisStartDates = booking.serviceItems
 				.flatMap((item) => item.sampleTracking)
 				.map((s) => s.analysisStartAt)
-				.filter((d): d is string => d !== null);
-			return analysisStartDates.sort()[0];
+				.filter((d): d is string => d !== null)
+				.sort();
+			return analysisStartDates[0];
 		}
 		case "paid": {
 			// Use the payment document's verifiedAt date when available

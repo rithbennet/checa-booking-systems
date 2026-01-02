@@ -76,6 +76,7 @@ export async function getBookingCommandCenterData(
 					id: true,
 					type: true,
 					verificationStatus: true,
+					verifiedAt: true,
 				},
 			},
 		},
@@ -274,5 +275,7 @@ export async function getBookingCommandCenterData(
 		hasUnverifiedPayments,
 		totalSamples,
 		samplesInAnalysis,
+		// Payment verification timestamp from the payment receipt document
+		paymentVerifiedAt: dateToISOString(paymentReceiptDoc?.verifiedAt),
 	};
 }

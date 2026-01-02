@@ -208,6 +208,8 @@ export interface BookingCommandCenterVM {
 	hasUnverifiedPayments: boolean;
 	totalSamples: number;
 	samplesInAnalysis: number;
+	// Payment verification timestamp (from payment receipt document)
+	paymentVerifiedAt: string | null;
 }
 
 // ============================================

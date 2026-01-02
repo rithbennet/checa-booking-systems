@@ -170,17 +170,21 @@ export function DocumentVerificationCard({
 						<p className="truncate font-medium text-sm">
 							{document.blob.fileName}
 						</p>
-						<div className="mt-1 flex items-center gap-3 text-muted-foreground text-xs">
-							<span>{formatFileSize(document.blob.sizeBytes)}</span>
-							<span>•</span>
-							<span className="flex items-center gap-1">
-								<Calendar className="h-3 w-3" />
+						<div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground text-xs">
+							<span className="whitespace-nowrap">
+								{formatFileSize(document.blob.sizeBytes)}
+							</span>
+							<span className="hidden sm:inline">•</span>
+							<span className="flex items-center gap-1 whitespace-nowrap">
+								<Calendar className="h-3 w-3 shrink-0" />
 								{new Date(document.createdAt).toLocaleDateString()}
 							</span>
-							<span>•</span>
+							<span className="hidden sm:inline">•</span>
 							<span className="flex items-center gap-1">
-								<User className="h-3 w-3" />
-								{document.createdBy.firstName} {document.createdBy.lastName}
+								<User className="h-3 w-3 shrink-0" />
+								<span className="truncate">
+									{document.createdBy.firstName} {document.createdBy.lastName}
+								</span>
 							</span>
 						</div>
 					</div>
@@ -215,31 +219,42 @@ export function DocumentVerificationCard({
 						)}
 
 					{/* Actions */}
-					<div className="flex items-center gap-2">
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<Button onClick={handlePreview} size="sm" variant="outline">
-									<Eye className="mr-1.5 h-3.5 w-3.5" />
-									Preview
-								</Button>
-							</TooltipTrigger>
-							<TooltipContent>Open in new tab</TooltipContent>
-						</Tooltip>
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<Button onClick={handleDownload} size="sm" variant="outline">
-									<Download className="mr-1.5 h-3.5 w-3.5" />
-									Download
-								</Button>
-							</TooltipTrigger>
-							<TooltipContent>Download file</TooltipContent>
-						</Tooltip>
+					<div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+						<div className="flex w-full flex-wrap gap-2 sm:w-auto">
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										className="flex-1 sm:flex-none"
+										onClick={handlePreview}
+										size="sm"
+										variant="outline"
+									>
+										<Eye className="mr-1.5 h-3.5 w-3.5" />
+										Preview
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>Open in new tab</TooltipContent>
+							</Tooltip>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										className="flex-1 sm:flex-none"
+										onClick={handleDownload}
+										size="sm"
+										variant="outline"
+									>
+										<Download className="mr-1.5 h-3.5 w-3.5" />
+										Download
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>Download file</TooltipContent>
+							</Tooltip>
+						</div>
 
 						{isPending && (
-							<>
-								<div className="flex-1" />
+							<div className="flex w-full flex-wrap gap-2 sm:ml-auto sm:w-auto">
 								<Button
-									className="bg-green-600 hover:bg-green-700"
+									className="flex-1 sm:flex-none"
 									onClick={() => setShowVerifyDialog(true)}
 									size="sm"
 								>
@@ -247,6 +262,7 @@ export function DocumentVerificationCard({
 									Verify
 								</Button>
 								<Button
+									className="flex-1 sm:flex-none"
 									onClick={() => setShowRejectDialog(true)}
 									size="sm"
 									variant="destructive"
@@ -254,7 +270,7 @@ export function DocumentVerificationCard({
 									<XCircle className="mr-1.5 h-3.5 w-3.5" />
 									Reject
 								</Button>
-							</>
+							</div>
 						)}
 					</div>
 				</CardContent>
@@ -327,7 +343,6 @@ export function DocumentVerificationCard({
 							Cancel
 						</Button>
 						<Button
-							className="bg-green-600 hover:bg-green-700"
 							disabled={verifyMutation.isPending}
 							onClick={handleVerify}
 						>

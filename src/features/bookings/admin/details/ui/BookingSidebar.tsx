@@ -40,7 +40,6 @@ import { BookingDocumentsList } from "@/features/bookings/shared";
 import { DocumentVerificationPanel } from "@/features/document-verification";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
-import { Checkbox } from "@/shared/ui/shadcn/checkbox";
 import {
 	Collapsible,
 	CollapsibleContent,
@@ -71,7 +70,6 @@ export function TimelineWidget({
 }: {
 	booking: BookingCommandCenterVM;
 }) {
-	const [isUrgent, setIsUrgent] = useState(false);
 
 	const targetDate = booking.preferredEndDate;
 	const daysRemaining = getDaysRemaining(targetDate);
@@ -114,29 +112,6 @@ export function TimelineWidget({
 								: `${Math.abs(daysRemaining)} days overdue`}
 					</p>
 				)}
-			</div>
-
-			<div className="mt-3">
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<label
-							className="flex cursor-not-allowed items-center gap-2 font-medium text-slate-400 text-xs"
-							htmlFor="urgent-checkbox"
-						>
-							<Checkbox
-								checked={isUrgent}
-								className="rounded border-slate-300"
-								disabled
-								id="urgent-checkbox"
-								onCheckedChange={(checked) => setIsUrgent(checked === true)}
-							/>
-							Flag as <span className="font-bold text-red-400">Urgent</span>
-						</label>
-					</TooltipTrigger>
-					<TooltipContent>
-						<p>Urgent flagging coming soon</p>
-					</TooltipContent>
-				</Tooltip>
 			</div>
 		</div>
 	);
@@ -378,8 +353,8 @@ export function DocumentVault({
 
 				{serviceForms.filter((f) => f.serviceFormSignedPdfPath).length ===
 					0 && (
-					<p className="text-slate-400 text-xs italic">No client uploads yet</p>
-				)}
+						<p className="text-slate-400 text-xs italic">No client uploads yet</p>
+					)}
 			</div>
 
 			{/* Admin / System Generated Documents */}
