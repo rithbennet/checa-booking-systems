@@ -10,6 +10,7 @@ import {
 } from "@/entities/booking-document";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
+import { Skeleton } from "@/shared/ui/shadcn/skeleton";
 import {
     Tooltip,
     TooltipContent,
@@ -28,24 +29,64 @@ export function FinancialGate({ booking }: FinancialGateProps) {
     const [verificationDialogOpen, setVerificationDialogOpen] = useState(false);
     const [verificationNotes, setVerificationNotes] = useState("");
 
-    // Fetch booking documents to get pending payment receipts
-    const { data: documents } = useBookingDocuments(booking.id);
-    const pendingPaymentDocs =
-        documents?.filter(
-            (doc) =>
-                doc.type === "payment_receipt" &&
-                doc.verificationStatus === "pending_verification",
-        ) ?? [];
-
+    // All hooks must be called at the top level
+    const {
+        data: documents,
+        isLoading: documentsLoading,
+        error: documentsError,
+    } = useBookingDocuments(booking.id);
     const verifyPayment = useVerifyPayment();
     const rejectPayment = useRejectPayment();
 
+    // Return loading state
+    if (documentsLoading) {
+        return (
+            <div className="relative overflow-hidden rounded-xl border-2 border-orange-100 bg-white shadow-sm">
+                <div className="flex items-center justify-between border-slate-100 border-b p-5">
+                    <Skeleton className="h-6 w-32" />
+                    <Skeleton className="h-7 w-24" />
+                </div>
+                <div className="border-slate-100 border-b p-5">
+                    <Skeleton className="h-8 w-full" />
+                </div>
+                <div className="space-y-4 p-5">
+                    <div className="flex items-end justify-between">
+                        <div className="space-y-2">
+                            <Skeleton className="h-3 w-20" />
+                            <Skeleton className="h-8 w-32" />
+                        </div>
+                        <Skeleton className="h-6 w-16" />
+                    </div>
+                    <Skeleton className="h-10 w-full" />
+                </div>
+            </div>
+        );
+    }
+
+    // Return error state
+    if (documentsError || !documents) {
+        return (
+            <div className="overflow-hidden rounded-xl border-2 border-red-200 bg-white shadow-sm">
+                <div className="p-4">
+                    <p className="text-center text-red-600 text-sm">
+                        Failed to load payment documents
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    const pendingPaymentDocs =
+        documents.filter(
+            (doc) =>
+                doc.type === "payment_receipt" &&
+                doc.verificationStatus === "pending_verification",
+        );
+
+    // Financial data from booking
     const totalAmount = Number.parseFloat(booking.totalAmount);
     const isPaid = booking.isPaid;
-
-    // Check if there are pending payment docs or unverified payments flag
-    const hasUnverifiedPayments =
-        booking.hasUnverifiedPayments || pendingPaymentDocs.length > 0;
+    const hasUnverifiedPayments = booking.hasUnverifiedPayments;
 
     const handleVerify = (documentId: string) => {
         verifyPayment.mutate(

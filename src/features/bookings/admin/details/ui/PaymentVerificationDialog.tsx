@@ -102,9 +102,11 @@ export function PaymentVerificationDialog({
                         className="mb-2 block font-medium text-slate-700 text-sm"
                         htmlFor="verification-notes"
                     >
-                        Verification Notes (Optional for approval, required for rejection)
+                        Verification Notes <span className="text-red-500">*</span> required for rejection
                     </label>
                     <textarea
+                        aria-invalid={verificationNotes.trim() === ""}
+                        aria-required="true"
                         className="w-full rounded border border-slate-300 bg-white p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         disabled={isVerifying || isRejecting}
                         id="verification-notes"
@@ -113,6 +115,11 @@ export function PaymentVerificationDialog({
                         rows={3}
                         value={verificationNotes}
                     />
+                    {verificationNotes.trim() === "" && (
+                        <p className="mt-1 text-slate-500 text-xs">
+                            Notes are required to reject a payment
+                        </p>
+                    )}
                 </div>
 
                 <DialogFooter className="flex gap-2 sm:justify-between">
@@ -126,7 +133,10 @@ export function PaymentVerificationDialog({
                     <div className="flex gap-2">
                         <Button
                             disabled={
-                                isVerifying || isRejecting || pendingPaymentDocs.length === 0
+                                isVerifying ||
+                                isRejecting ||
+                                pendingPaymentDocs.length === 0 ||
+                                verificationNotes.trim() === ""
                             }
                             onClick={() => {
                                 const doc = pendingPaymentDocs[0];

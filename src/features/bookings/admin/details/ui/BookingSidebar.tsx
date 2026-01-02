@@ -10,7 +10,7 @@
 "use client";
 
 import type { BookingCommandCenterVM } from "@/entities/booking/model/command-center-types";
-import { DocumentVerificationPanel } from "@/features/document-verification";
+import { DocumentVerificationPanel } from "@/entities/booking-document";
 import { DocumentVault } from "./DocumentVault";
 import { FinancialGate } from "./FinancialGate";
 import { TimelineWidget } from "./TimelineWidget";

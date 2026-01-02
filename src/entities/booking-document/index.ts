@@ -52,5 +52,6 @@ export {
 export {
 	DocumentVerificationCard,
 	type DocumentVerificationCardProps,
+	DocumentVerificationPanel,
 	VerificationStatusBadge,
 } from "./ui";

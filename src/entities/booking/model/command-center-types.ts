@@ -111,6 +111,8 @@ export interface WorkspaceBookingVM {
 	preferredTimeSlot: string | null;
 	purpose: string | null;
 	notes: string | null;
+	unitPrice: string;
+	totalPrice: string;
 	equipmentUsages: Array<{
 		equipment: { id: string; name: string };
 	}>;

@@ -10,6 +10,7 @@ import {
     RefreshCw,
     ShieldCheck,
 } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import type { BookingCommandCenterVM } from "@/entities/booking/model/command-center-types";
 import {
@@ -32,6 +33,7 @@ interface DocumentVaultProps {
 }
 
 export function DocumentVault({ booking }: DocumentVaultProps) {
+    const [regeneratingId, setRegeneratingId] = useState<string | null>(null);
     const generateForms = useGenerateForms();
     const regenerateForm = useRegenerateForm(booking.id);
     const verifySignature = useVerifySignature();
@@ -83,6 +85,9 @@ export function DocumentVault({ booking }: DocumentVaultProps) {
         }
         try {
             const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
             const blob = await response.blob();
             const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -117,7 +122,21 @@ export function DocumentVault({ booking }: DocumentVaultProps) {
                         <Button
                             className="h-7 gap-1.5 text-xs"
                             disabled={verifySignature.isPending}
-                            onClick={() => verifySignature.mutate(formNeedingVerification.id)}
+                            onClick={() => {
+                                verifySignature.mutate(formNeedingVerification.id, {
+                                    onSuccess: () => {
+                                        toast.success("Signature verified successfully", {
+                                            description: "The signed forms have been verified and the booking can proceed.",
+                                        });
+                                    },
+                                    onError: (error) => {
+                                        toast.error("Failed to verify signature", {
+                                            description:
+                                                error instanceof Error ? error.message : "Unknown error occurred",
+                                        });
+                                    },
+                                });
+                            }}
                             size="sm"
                         >
                             {verifySignature.isPending ? (
@@ -208,10 +227,7 @@ export function DocumentVault({ booking }: DocumentVaultProps) {
                         </div>
                     ))}
 
-                {serviceForms.filter((f) => f.serviceFormSignedPdfPath).length ===
-                    0 && (
-                        <p className="text-slate-400 text-xs italic">No client uploads yet</p>
-                    )}
+
             </div>
 
             {/* Admin / System Generated Documents */}
@@ -350,12 +366,25 @@ export function DocumentVault({ booking }: DocumentVaultProps) {
                             {/* Regenerate Button */}
                             <Button
                                 className="mt-2 h-7 w-full gap-1.5 text-xs"
-                                disabled={regenerateForm.isPending}
-                                onClick={() => regenerateForm.mutate(form.id)}
+                                disabled={regeneratingId === form.id}
+                                onClick={() => {
+                                    setRegeneratingId(form.id);
+                                    regenerateForm.mutate(form.id, {
+                                        onSuccess: () => {
+                                            setRegeneratingId(null);
+                                        },
+                                        onError: () => {
+                                            setRegeneratingId(null);
+                                        },
+                                        onSettled: () => {
+                                            setRegeneratingId(null);
+                                        },
+                                    });
+                                }}
                                 size="sm"
                                 variant="outline"
                             >
-                                {regenerateForm.isPending ? (
+                                {regeneratingId === form.id ? (
                                     <Loader2 className="h-3 w-3 animate-spin" />
                                 ) : (
                                     <RefreshCw className="h-3 w-3" />

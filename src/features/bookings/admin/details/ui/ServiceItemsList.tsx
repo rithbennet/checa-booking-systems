@@ -77,6 +77,11 @@ export function ServiceItemsList({
                                     {formatDate(ws.startDate)} - {formatDate(ws.endDate)}
                                 </p>
                             </div>
+                            {ws.totalPrice !== "0" && (
+                                <p className="font-bold text-slate-900 text-xs">
+                                    {formatCurrency(ws.totalPrice)}
+                                </p>
+                            )}
                         </div>
                     ))}
                     {totalItems === 0 && (

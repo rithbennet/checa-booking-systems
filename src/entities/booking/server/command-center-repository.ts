@@ -236,6 +236,8 @@ export async function getBookingCommandCenterData(
 			preferredTimeSlot: ws.preferredTimeSlot,
 			purpose: ws.purpose,
 			notes: ws.notes,
+			unitPrice: decimalToString(ws.unitPrice),
+			totalPrice: decimalToString(ws.totalPrice),
 			equipmentUsages: ws.equipmentUsages.map((eu) => ({
 				equipment: { id: eu.equipment.id, name: eu.equipment.name },
 			})),
