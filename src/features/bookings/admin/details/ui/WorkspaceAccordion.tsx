@@ -9,20 +9,11 @@
 
 "use client";
 
-import {
-	ArrowRight,
-	Calendar,
-	Check,
-	ChevronDown,
-	FileSignature,
-	Tag,
-	UserCheck,
-} from "lucide-react";
+import { ArrowRight, Calendar, Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import type { WorkspaceBookingVM } from "@/entities/booking/model/command-center-types";
 import { cn } from "@/shared/lib/utils";
 import { Badge } from "@/shared/ui/shadcn/badge";
-import { Button } from "@/shared/ui/shadcn/button";
 
 interface WorkspaceAccordionProps {
 	workspace: WorkspaceBookingVM;
@@ -88,7 +79,6 @@ export function WorkspaceAccordion({ workspace }: WorkspaceAccordionProps) {
 			{isOpen && (
 				<div className="border-slate-100 border-t bg-white">
 					<div className="p-5">
-
 						<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 							{/* Dates */}
 							<div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-3">

@@ -16,3 +16,5 @@ export {
 	useRejectPaymentReceipt,
 	useVerifyPaymentReceipt,
 } from "./usePaymentReceipts";
+export { useRejectPayment } from "./useRejectPayment";
+export { useVerifyPayment } from "./useVerifyPayment";

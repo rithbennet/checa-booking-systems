@@ -163,9 +163,9 @@ export function DocumentVerificationCard({
 					"transition-all",
 					isPending && "border-amber-200 bg-amber-50/50",
 					document.verificationStatus === "verified" &&
-					"border-green-200 bg-green-50/50",
+						"border-green-200 bg-green-50/50",
 					document.verificationStatus === "rejected" &&
-					"border-red-200 bg-red-50/50",
+						"border-red-200 bg-red-50/50",
 				)}
 			>
 				<CardHeader className="pb-3">

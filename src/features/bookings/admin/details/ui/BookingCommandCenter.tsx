@@ -20,11 +20,12 @@ import {
 	TabsTrigger,
 } from "@/shared/ui/shadcn/tabs";
 import { BookingHeader } from "./BookingHeader";
-import { FinancialGate, TimelineWidget } from "./BookingSidebar";
 import { BookingStatusTimeline } from "./BookingStatusTimeline";
+import { FinancialGate } from "./FinancialGate";
 import { SampleDetailDrawer } from "./SampleDetailDrawer";
 import { SampleModificationModal } from "./SampleModificationModal";
 import { ServiceItemAccordion } from "./ServiceItemAccordion";
+import { TimelineWidget } from "./TimelineWidget";
 import { UnifiedDocumentManager } from "./UnifiedDocumentManager";
 import { WorkspaceAccordion } from "./WorkspaceAccordion";
 

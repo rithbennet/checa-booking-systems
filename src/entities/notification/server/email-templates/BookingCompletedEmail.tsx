@@ -18,7 +18,9 @@ export function BookingCompletedEmail({
 	dashboardUrl,
 }: BookingCompletedEmailProps) {
 	return (
-		<BaseLayout preview={`Booking ${bookingReference} completed - All results ready`}>
+		<BaseLayout
+			preview={`Booking ${bookingReference} completed - All results ready`}
+		>
 			<Heading style={heading}>Booking Completed</Heading>
 			<Text style={paragraph}>Dear {customerName},</Text>
 			<Text style={paragraph}>

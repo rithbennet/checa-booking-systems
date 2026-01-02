@@ -342,10 +342,7 @@ export function DocumentVerificationCard({
 						>
 							Cancel
 						</Button>
-						<Button
-							disabled={verifyMutation.isPending}
-							onClick={handleVerify}
-						>
+						<Button disabled={verifyMutation.isPending} onClick={handleVerify}>
 							{verifyMutation.isPending ? (
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 							) : (
