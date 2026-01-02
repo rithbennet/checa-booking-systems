@@ -28,6 +28,7 @@ import {
 	AdminNewUserRegisteredEmail,
 	AdminNotificationEmail,
 	BookingApprovedEmail,
+	BookingCompletedEmail,
 	BookingRejectedEmail,
 	BookingRevisionRequestedEmail,
 	BookingSubmittedEmail,
@@ -331,6 +332,31 @@ export async function sendBookingRevisionRequestedEmail(params: {
 		}),
 		context: {
 			template: "BookingRevisionRequested",
+			entityType: "booking",
+			entityId: params.bookingId,
+			userId: params.userId,
+		},
+	});
+}
+
+export async function sendBookingCompletedEmail(params: {
+	to: string;
+	customerName: string;
+	bookingReference: string;
+	bookingId: string;
+	userId?: string;
+}) {
+	const dashboardUrl = `${getBaseUrl()}/results`;
+	return safeSendEmail({
+		to: params.to,
+		subject: `Booking Completed - ${params.bookingReference} - All Results Ready`,
+		react: BookingCompletedEmail({
+			customerName: params.customerName,
+			bookingReference: params.bookingReference,
+			dashboardUrl,
+		}),
+		context: {
+			template: "BookingCompleted",
 			entityType: "booking",
 			entityId: params.bookingId,
 			userId: params.userId,

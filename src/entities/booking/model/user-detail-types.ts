@@ -198,6 +198,9 @@ export interface UserBookingDetailVM {
 
 	// Payment verification date (from verified payment receipt document)
 	paymentVerifiedAt: string | null;
+
+	// Released date (set when booking transitions to completed)
+	releasedAt: string | null;
 }
 
 // ============================================
@@ -378,7 +381,7 @@ function getStepDate(
 				: undefined;
 		}
 		case "released":
-			return booking.status === "completed" ? booking.updatedAt : undefined;
+			return booking.releasedAt ?? undefined;
 		default:
 			return undefined;
 	}

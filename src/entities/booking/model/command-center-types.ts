@@ -182,6 +182,7 @@ export interface BookingCommandCenterVM {
 	updatedAt: string;
 	reviewedAt: string | null;
 	reviewNotes: string | null;
+	releasedAt: string | null; // Set when booking transitions to completed
 
 	// User info
 	user: BookingUserVM;

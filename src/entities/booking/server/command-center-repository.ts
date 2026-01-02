@@ -135,6 +135,7 @@ export async function getBookingCommandCenterData(
 		updatedAt: booking.updatedAt.toISOString(),
 		reviewedAt: dateToISOString(booking.reviewedAt),
 		reviewNotes: booking.reviewNotes,
+		releasedAt: dateToISOString(booking.releasedAt),
 
 		user: {
 			id: booking.user.id,

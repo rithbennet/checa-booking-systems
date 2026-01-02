@@ -11,6 +11,7 @@ export { AdminNewUserRegisteredEmail } from "./AdminNewUserRegisteredEmail";
 export { AdminNotificationEmail } from "./AdminNotificationEmail";
 export { BaseLayout } from "./BaseLayout";
 export { BookingApprovedEmail } from "./BookingApprovedEmail";
+export { BookingCompletedEmail } from "./BookingCompletedEmail";
 export { BookingRejectedEmail } from "./BookingRejectedEmail";
 export { BookingRevisionRequestedEmail } from "./BookingRevisionRequestedEmail";
 export { BookingSubmittedEmail } from "./BookingSubmittedEmail";

@@ -3,6 +3,7 @@
  * Import from "@/entities/notification/server" in server components/routes only
  */
 
+export * from "./booking.notifications";
 export * from "./email-sender";
 export * from "./factory";
 export * from "./finance.notifications";

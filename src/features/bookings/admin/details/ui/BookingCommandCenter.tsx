@@ -82,8 +82,8 @@ export function BookingCommandCenter({ booking }: BookingCommandCenterProps) {
 	// Payment date is tracked separately (invoice feature deprecated)
 	const paidAt = null;
 
-	// Released date is when booking is completed
-	const releasedAt = booking.status === "completed" ? booking.updatedAt : null;
+	// Released date is set when booking transitions to completed
+	const releasedAt = booking.releasedAt;
 
 	return (
 		<div className="mx-auto max-w-[1600px] p-4 pb-24 md:p-6">
