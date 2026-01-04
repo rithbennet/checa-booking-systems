@@ -70,7 +70,6 @@ interface WorkspaceSlotFormProps {
 	allSlots: Array<Partial<ServiceItem> | Partial<WorkspaceBookingInput>>;
 	excludeIndex: number;
 	onRemove?: (index: number) => void;
-	totalSlots?: number;
 	availableEquipment: LabEquipment[];
 	isEquipmentLoading?: boolean;
 }
@@ -83,7 +82,6 @@ export function WorkspaceSlotForm({
 	allSlots,
 	excludeIndex,
 	onRemove,
-	totalSlots = 1,
 	availableEquipment,
 	isEquipmentLoading = false,
 }: WorkspaceSlotFormProps) {
@@ -218,7 +216,7 @@ export function WorkspaceSlotForm({
 					</AccordionTriggerNoAutoClose>
 
 					{/* Remove button (outside trigger but inline) */}
-					{totalSlots > 1 && onRemove && (
+					{onRemove && (
 						<Button
 							className="ml-2 h-8 w-8 shrink-0 rounded-md text-gray-500 hover:bg-red-50 hover:text-red-600"
 							onClick={() => onRemove(index)}

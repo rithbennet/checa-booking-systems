@@ -25,6 +25,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useUserProfile } from "@/entities/user";
 import { SignOutModal } from "@/features/authentication/ui/SignOutModal";
+import { FeedbackButton } from "@/features/help";
 import { NotificationNavBadge } from "@/features/notifications";
 import { cn } from "@/shared/lib/utils";
 import type { CurrentUser } from "@/shared/server/current-user";
@@ -197,6 +198,10 @@ export default function CollapsibleSidebar({
 			<SidebarFooter>
 				<SidebarMenu>
 					{/* Refresh button - only for non-admin users */}
+					{/* Feedback/Bug Report Button */}
+					<SidebarMenuItem>
+						<FeedbackButton session={session} />
+					</SidebarMenuItem>
 					{!isAdmin && (
 						<SidebarMenuItem>
 							<SidebarMenuButton
@@ -236,6 +241,7 @@ export default function CollapsibleSidebar({
 						href={notificationsHref}
 						isActive={isNotificationsActive}
 					/>
+
 					<SidebarMenuItem>
 						<SidebarMenuButton
 							onClick={() => setIsSignOutModalOpen(true)}

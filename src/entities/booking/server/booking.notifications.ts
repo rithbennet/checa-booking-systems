@@ -7,47 +7,16 @@ import {
 	sendBookingRevisionRequestedEmail,
 	sendBookingSubmittedEmail,
 } from "@/entities/notification/server/email-sender";
+import {
+	enqueueInApp,
+	markEmailSent,
+} from "@/entities/notification/server/notification-repository";
 import { db } from "@/shared/server/db";
-import type { notification_type_enum } from "../../../../generated/prisma";
 
 /**
  * Notification adapter for booking events
  * Implements both in-app notifications (database) and email notifications (Resend)
  */
-
-/**
- * Enqueue an in-app notification
- */
-export async function enqueueInApp(params: {
-	userId: string;
-	type: notification_type_enum;
-	relatedEntityType: string;
-	relatedEntityId: string;
-	title: string;
-	message: string;
-}) {
-	return db.notification.create({
-		data: {
-			userId: params.userId,
-			type: params.type,
-			relatedEntityType: params.relatedEntityType,
-			relatedEntityId: params.relatedEntityId,
-			title: params.title,
-			message: params.message,
-			emailSent: false,
-		},
-	});
-}
-
-/**
- * Mark notification as email sent
- */
-async function markEmailSent(notificationId: string) {
-	return db.notification.update({
-		where: { id: notificationId },
-		data: { emailSent: true, emailSentAt: new Date() },
-	});
-}
 
 /**
  * Get user details for email

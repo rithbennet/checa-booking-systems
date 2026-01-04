@@ -35,6 +35,21 @@ export interface NotificationsResponse {
 }
 
 // ============================================
+// Email Template Shared Types
+// ============================================
+
+/**
+ * Shared props for booking cancellation email templates
+ * Used by both admin-cancelled and user-cancelled emails
+ */
+export interface BookingCancellationEmailProps {
+	userName: string;
+	referenceNumber: string;
+	reason?: string;
+	dashboardUrl: string;
+}
+
+// ============================================
 // Notification Payload Contracts
 // ============================================
 

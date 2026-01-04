@@ -9,20 +9,11 @@
 
 "use client";
 
-import {
-	ArrowRight,
-	Calendar,
-	Check,
-	ChevronDown,
-	FileSignature,
-	Tag,
-	UserCheck,
-} from "lucide-react";
+import { ArrowRight, Calendar, Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import type { WorkspaceBookingVM } from "@/entities/booking/model/command-center-types";
 import { cn } from "@/shared/lib/utils";
 import { Badge } from "@/shared/ui/shadcn/badge";
-import { Button } from "@/shared/ui/shadcn/button";
 
 interface WorkspaceAccordionProps {
 	workspace: WorkspaceBookingVM;
@@ -88,31 +79,6 @@ export function WorkspaceAccordion({ workspace }: WorkspaceAccordionProps) {
 			{isOpen && (
 				<div className="border-slate-100 border-t bg-white">
 					<div className="p-5">
-						{/* Contextual Actions Toolbar */}
-						<div className="mb-6 flex flex-wrap gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
-							<Button
-								className="flex h-auto items-center rounded border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-700 text-xs shadow-sm transition-all hover:border-blue-500 hover:text-blue-600"
-								variant="outline"
-							>
-								<FileSignature className="mr-2 h-3.5 w-3.5" />
-								Generate Rental Agreement
-							</Button>
-							<Button
-								className="flex h-auto items-center rounded border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-700 text-xs shadow-sm transition-all hover:border-blue-500 hover:text-blue-600"
-								variant="outline"
-							>
-								<Tag className="mr-2 h-3.5 w-3.5" />
-								Print Door Sign
-							</Button>
-							<Button
-								className="flex h-auto items-center rounded border border-slate-300 bg-white px-3 py-1.5 font-medium text-slate-700 text-xs shadow-sm transition-all hover:border-blue-500 hover:text-blue-600"
-								variant="outline"
-							>
-								<UserCheck className="mr-2 h-3.5 w-3.5" />
-								Check-in User
-							</Button>
-						</div>
-
 						<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 							{/* Dates */}
 							<div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-3">

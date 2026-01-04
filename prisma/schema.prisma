@@ -383,6 +383,7 @@ model BookingRequest {
   reviewedBy         String?             @db.Uuid
   reviewedByUser     User?               @relation("BookingApprovals", fields: [reviewedBy], references: [id])
   reviewNotes        String?             @db.Text
+  releasedAt         DateTime?           @db.Timestamp(6) // Set when booking status transitions to completed
 
   // For external attribution
   companyId       String?        @db.Uuid

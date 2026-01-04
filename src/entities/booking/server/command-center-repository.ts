@@ -76,6 +76,7 @@ export async function getBookingCommandCenterData(
 					id: true,
 					type: true,
 					verificationStatus: true,
+					verifiedAt: true,
 				},
 			},
 		},
@@ -135,6 +136,7 @@ export async function getBookingCommandCenterData(
 		updatedAt: booking.updatedAt.toISOString(),
 		reviewedAt: dateToISOString(booking.reviewedAt),
 		reviewNotes: booking.reviewNotes,
+		releasedAt: dateToISOString(booking.releasedAt),
 
 		user: {
 			id: booking.user.id,
@@ -234,6 +236,8 @@ export async function getBookingCommandCenterData(
 			preferredTimeSlot: ws.preferredTimeSlot,
 			purpose: ws.purpose,
 			notes: ws.notes,
+			unitPrice: decimalToString(ws.unitPrice),
+			totalPrice: decimalToString(ws.totalPrice),
 			equipmentUsages: ws.equipmentUsages.map((eu) => ({
 				equipment: { id: eu.equipment.id, name: eu.equipment.name },
 			})),
@@ -273,5 +277,7 @@ export async function getBookingCommandCenterData(
 		hasUnverifiedPayments,
 		totalSamples,
 		samplesInAnalysis,
+		// Payment verification timestamp from the payment receipt document
+		paymentVerifiedAt: dateToISOString(paymentReceiptDoc?.verifiedAt),
 	};
 }
