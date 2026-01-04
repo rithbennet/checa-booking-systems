@@ -64,13 +64,23 @@ export function UserBookingSidebar({ booking }: UserBookingSidebarProps) {
 
 					{/* Payment Status */}
 					<div className="rounded-lg border p-3">
-						{booking.isPaid ? (
+						{booking.isPaid && booking.canDownloadResults ? (
 							<div className="flex items-center gap-2 text-green-700">
 								<CheckCircle className="h-5 w-5" />
 								<div>
-									<p className="font-medium">Payment Verified</p>
+									<p className="font-medium">All Verified</p>
 									<p className="text-green-600 text-xs">
 										Results available for download
+									</p>
+								</div>
+							</div>
+						) : booking.isPaid ? (
+							<div className="flex items-center gap-2 text-amber-700">
+								<Clock className="h-5 w-5" />
+								<div>
+									<p className="font-medium">Documents Being Verified</p>
+									<p className="text-amber-600 text-xs">
+										Results locked until verification complete
 									</p>
 								</div>
 							</div>

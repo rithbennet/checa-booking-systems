@@ -129,21 +129,42 @@ export function UserBookingOverview({
 		}
 
 		if (booking.status === "completed") {
+			if (allDocumentsVerified) {
+				return {
+					title: "Booking Completed",
+					description:
+						"All work has been completed. You can download your results from the Documents tab.",
+					icon: CheckCircle2,
+					color: "text-green-600",
+					bgColor: "bg-green-50",
+					borderColor: "border-green-200",
+					action: (
+						<Button
+							className="mt-2"
+							onClick={() => onTabChange("documents")}
+							variant="outline"
+						>
+							View Results <ArrowRight className="ml-2 h-4 w-4" />
+						</Button>
+					),
+				};
+			}
+			// Completed but documents not verified yet
 			return {
-				title: "Booking Completed",
+				title: "Booking Completed - Documents Being Verified",
 				description:
-					"All work has been completed. You can download your results from the Documents tab.",
-				icon: CheckCircle2,
-				color: "text-green-600",
-				bgColor: "bg-green-50",
-				borderColor: "border-green-200",
+					"All work has been completed. Results are locked until your documents are verified. Please check the Documents tab.",
+				icon: FileText,
+				color: "text-amber-600",
+				bgColor: "bg-amber-50",
+				borderColor: "border-amber-200",
 				action: (
 					<Button
 						className="mt-2"
 						onClick={() => onTabChange("documents")}
 						variant="outline"
 					>
-						View Results <ArrowRight className="ml-2 h-4 w-4" />
+						Check Documents <ArrowRight className="ml-2 h-4 w-4" />
 					</Button>
 				),
 			};

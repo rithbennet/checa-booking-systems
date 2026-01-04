@@ -748,7 +748,8 @@ export function useBookingForm({
 	const selectedServiceIds = fields.map((field) => field.serviceId);
 
 	const handleAddWorkspace = () => {
-		const start = new Date();
+		// Normalize to start-of-day to ensure validation consistency
+		const start = normalizeWorkspaceDate(new Date());
 		const defaultWorkspace: WorkspaceBookingInput = {
 			startDate: start,
 			// Default to 1 month (30 days inclusive)

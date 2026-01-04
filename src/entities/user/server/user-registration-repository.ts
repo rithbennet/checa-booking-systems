@@ -130,6 +130,17 @@ export async function getActiveAdminIds(): Promise<string[]> {
 }
 
 /**
+ * Get all active admin user emails for notifications
+ */
+export async function getActiveAdminEmails(): Promise<string[]> {
+	const admins = await db.user.findMany({
+		where: { userType: "lab_administrator", status: "active" },
+		select: { email: true },
+	});
+	return admins.map((a) => a.email);
+}
+
+/**
  * Create a new user with all relations
  */
 export async function createUser(input: CreateUserInput) {

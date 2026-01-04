@@ -111,6 +111,8 @@ export interface WorkspaceBookingVM {
 	preferredTimeSlot: string | null;
 	purpose: string | null;
 	notes: string | null;
+	unitPrice: string;
+	totalPrice: string;
 	equipmentUsages: Array<{
 		equipment: { id: string; name: string };
 	}>;
@@ -182,6 +184,7 @@ export interface BookingCommandCenterVM {
 	updatedAt: string;
 	reviewedAt: string | null;
 	reviewNotes: string | null;
+	releasedAt: string | null; // Set when booking transitions to completed
 
 	// User info
 	user: BookingUserVM;
@@ -207,6 +210,8 @@ export interface BookingCommandCenterVM {
 	hasUnverifiedPayments: boolean;
 	totalSamples: number;
 	samplesInAnalysis: number;
+	// Payment verification timestamp (from payment receipt document)
+	paymentVerifiedAt: string | null;
 }
 
 // ============================================

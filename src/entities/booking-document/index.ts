@@ -14,8 +14,10 @@ export {
 	usePaymentReceiptHistory,
 	usePendingPaymentReceipts,
 	useRejectDocument,
+	useRejectPayment,
 	useRejectPaymentReceipt,
 	useVerifyDocument,
+	useVerifyPayment,
 	useVerifyPaymentReceipt,
 } from "./api";
 
@@ -50,5 +52,6 @@ export {
 export {
 	DocumentVerificationCard,
 	type DocumentVerificationCardProps,
+	DocumentVerificationPanel,
 	VerificationStatusBadge,
 } from "./ui";

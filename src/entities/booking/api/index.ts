@@ -36,6 +36,10 @@ export { useAvailableEquipment } from "./use-equipment";
 export { useAdminBookingDetail } from "./useAdminBookingDetail";
 export { useAdminBookingList } from "./useAdminBookingList";
 export { useBookingCommandCenter } from "./useBookingCommandCenter";
-
+// Mutation hooks
+export {
+	useCancelBooking,
+	useUpdateBookingTimeline,
+} from "./useBookingMutations";
 // User hooks
 export { useUserBookingDetail } from "./useUserBookingDetail";

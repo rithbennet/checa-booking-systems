@@ -347,5 +347,7 @@ export async function getUserBookingDetailData(
 		paymentVerifiedAt: paymentReceiptVerifiedDoc?.verifiedAt
 			? dateToISOString(paymentReceiptVerifiedDoc.verifiedAt)
 			: null,
+		// Released date (set when booking transitions to completed)
+		releasedAt: dateToISOString(booking.releasedAt),
 	};
 }

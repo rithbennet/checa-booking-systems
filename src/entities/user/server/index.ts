@@ -29,6 +29,7 @@ export {
 	type CreateUserInput,
 	createUser,
 	type FacultyLookupResult,
+	getActiveAdminEmails,
 	getActiveAdminIds,
 	lookupDepartmentById,
 	lookupFacultyById,

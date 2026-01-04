@@ -4,6 +4,7 @@
  */
 
 import type { sample_status_enum } from "generated/prisma";
+import { recomputeBookingStatus } from "@/entities/booking/server/booking-status-recompute";
 import { notifySampleStatusChanged } from "@/entities/notification/server/sample.notifications";
 import { mapSampleToOperationsRow } from "../lib/mappers";
 import * as repo from "./repository";
@@ -136,6 +137,24 @@ export async function updateSampleStatus(params: {
 				notifyError,
 			);
 		}
+	}
+
+	// Recompute booking status after sample status change
+	// This may transition the booking to in_progress or completed
+	try {
+		const bookingId = updated.bookingServiceItem.bookingRequest.id;
+		const recomputeResult = await recomputeBookingStatus(bookingId);
+		if (recomputeResult.changed) {
+			console.log(
+				`[SampleTracking] Booking ${bookingId} status changed: ${recomputeResult.previousStatus} → ${recomputeResult.newStatus}`,
+			);
+		}
+	} catch (recomputeError) {
+		// Log but don't fail - booking status recompute is non-critical to sample update
+		console.error(
+			"[SampleTracking] Failed to recompute booking status:",
+			recomputeError,
+		);
 	}
 
 	return mapSampleToOperationsRow(updated);

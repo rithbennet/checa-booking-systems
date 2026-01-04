@@ -20,11 +20,13 @@ import {
 	TabsTrigger,
 } from "@/shared/ui/shadcn/tabs";
 import { BookingHeader } from "./BookingHeader";
-import { FinancialGate, TimelineWidget } from "./BookingSidebar";
 import { BookingStatusTimeline } from "./BookingStatusTimeline";
+import { CancelledBookingBanner } from "./CancelledBookingBanner";
+import { FinancialGate } from "./FinancialGate";
 import { SampleDetailDrawer } from "./SampleDetailDrawer";
 import { SampleModificationModal } from "./SampleModificationModal";
 import { ServiceItemAccordion } from "./ServiceItemAccordion";
+import { TimelineWidget } from "./TimelineWidget";
 import { UnifiedDocumentManager } from "./UnifiedDocumentManager";
 import { WorkspaceAccordion } from "./WorkspaceAccordion";
 
@@ -64,31 +66,46 @@ export function BookingCommandCenter({ booking }: BookingCommandCenterProps) {
 		: 4;
 
 	// Get earliest sample received date across all service items
-	const samplesReceivedAt =
-		booking.serviceItems
-			.flatMap((item) => item.sampleTracking)
-			.map((sample) => sample.receivedAt)
-			.filter((date): date is string => date !== null)
-			.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
+	const receivedDates = booking.serviceItems
+		.flatMap((item) => item.sampleTracking)
+		.map((sample) => sample.receivedAt)
+		.filter((date): date is string => date !== null)
+		.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
 	// Get earliest analysis start date across all samples
-	const processingStartedAt =
-		booking.serviceItems
-			.flatMap((item) => item.sampleTracking)
-			.map((sample) => sample.analysisStartAt)
-			.filter((date): date is string => date !== null)
-			.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] ?? null;
+	const analysisDates = booking.serviceItems
+		.flatMap((item) => item.sampleTracking)
+		.map((sample) => sample.analysisStartAt)
+		.filter((date): date is string => date !== null)
+		.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-	// Payment date is tracked separately (invoice feature deprecated)
-	const paidAt = null;
+	// For "Samples In" step: use receivedAt if available, otherwise fall back to analysisStartAt
+	// This handles cases where admin sets status directly to "in_analysis" without marking as "received"
+	const samplesReceivedAt = receivedDates[0] ?? analysisDates[0] ?? null;
 
-	// Released date is when booking is completed
-	const releasedAt = booking.status === "completed" ? booking.updatedAt : null;
+	// For "Processing" step: use the actual analysis start date
+	const processingStartedAt = analysisDates[0] ?? null;
+
+	// Payment date from payment receipt document verification
+	const paidAt = booking.paymentVerifiedAt;
+
+	// Released date is set when booking transitions to completed
+	const releasedAt = booking.releasedAt;
+
+	const isCancelled = booking.status === "cancelled";
 
 	return (
 		<div className="mx-auto max-w-[1600px] p-4 pb-24 md:p-6">
 			{/* 1. Customer Header & Global Actions */}
 			<BookingHeader booking={booking} />
+
+			{/* Cancelled Booking Banner */}
+			{isCancelled && (
+				<CancelledBookingBanner
+					reviewedAt={booking.reviewedAt}
+					reviewNotes={booking.reviewNotes}
+				/>
+			)}
 
 			{/* 2. Status Timeline */}
 			<BookingStatusTimeline
