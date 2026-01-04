@@ -15,7 +15,7 @@ type ProtectedHandlerFn = (
 
 export function createProtectedHandler(
 	fn: ProtectedHandlerFn,
-	opts?: { requireActive?: boolean },
+	opts?: { requireActive?: boolean; allowedRoles?: string[] },
 ) {
 	// Return a route-compatible handler: (req, ctx?) => Response | Promise<Response>
 	// Use `ctx?: unknown` for the runtime signature so the returned handler is
@@ -32,6 +32,14 @@ export function createProtectedHandler(
 
 			if (opts?.requireActive && session.user.status !== "active") {
 				return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+			}
+
+			// Check role-based access if allowedRoles is specified
+			if (opts?.allowedRoles && opts.allowedRoles.length > 0) {
+				const userRole = session.user.role;
+				if (!userRole || !opts.allowedRoles.includes(userRole)) {
+					return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+				}
 			}
 
 			const user: User = {

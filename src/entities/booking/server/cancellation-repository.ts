@@ -39,6 +39,8 @@ interface UpdateBookingTimelineParams {
 	bookingId: string;
 	preferredStartDate: string | null;
 	preferredEndDate: string | null;
+	userId: string;
+	userRole: string;
 }
 
 interface UpdateBookingTimelineResult {
@@ -284,25 +286,48 @@ export async function cancelBookingByAdmin(
 
 /**
  * Update booking timeline (start/end dates)
+ * - Validates authorization (owner or admin)
  * - Validates booking exists
  * - Prevents editing cancelled bookings
+ * - Safely validates and parses dates
+ * - Enforces date ordering constraints
+ * - Creates audit log entry
  * - Updates preferred dates
  */
 export async function updateBookingTimeline(
 	params: UpdateBookingTimelineParams,
 ): Promise<UpdateBookingTimelineResult> {
-	const { bookingId, preferredStartDate, preferredEndDate } = params;
+	const { bookingId, preferredStartDate, preferredEndDate, userId, userRole } =
+		params;
 
 	// Check if booking exists
 	const booking = await db.bookingRequest.findUnique({
 		where: { id: bookingId },
-		select: { id: true, status: true },
+		select: {
+			id: true,
+			status: true,
+			userId: true,
+			preferredStartDate: true,
+			preferredEndDate: true,
+			referenceNumber: true,
+		},
 	});
 
 	if (!booking) {
 		return {
 			success: false,
 			error: "Booking not found",
+		};
+	}
+
+	// Authorization: must be booking owner or lab_administrator
+	const isOwner = booking.userId === userId;
+	const isAdmin = userRole === "lab_administrator";
+
+	if (!isOwner && !isAdmin) {
+		return {
+			success: false,
+			error: "Unauthorized: You can only edit your own bookings",
 		};
 	}
 
@@ -314,21 +339,71 @@ export async function updateBookingTimeline(
 		};
 	}
 
-	// Update the booking
-	const updated = await db.bookingRequest.update({
-		where: { id: bookingId },
-		data: {
-			preferredStartDate: preferredStartDate
-				? new Date(preferredStartDate)
-				: null,
-			preferredEndDate: preferredEndDate ? new Date(preferredEndDate) : null,
-		},
-		select: {
-			id: true,
-			preferredStartDate: true,
-			preferredEndDate: true,
-		},
-	});
+	// Safe date parsing and validation
+	let startDate: Date | null = null;
+	let endDate: Date | null = null;
+
+	if (preferredStartDate !== null) {
+		const parsed = new Date(preferredStartDate);
+		if (Number.isNaN(parsed.getTime())) {
+			return {
+				success: false,
+				error: "Invalid preferredStartDate format",
+			};
+		}
+		startDate = parsed;
+	}
+
+	if (preferredEndDate !== null) {
+		const parsed = new Date(preferredEndDate);
+		if (Number.isNaN(parsed.getTime())) {
+			return {
+				success: false,
+				error: "Invalid preferredEndDate format",
+			};
+		}
+		endDate = parsed;
+	}
+
+	// Enforce date ordering: startDate <= endDate when both provided
+	if (startDate !== null && endDate !== null && startDate > endDate) {
+		return {
+			success: false,
+			error: "preferredStartDate must be before or equal to preferredEndDate",
+		};
+	}
+
+	// Update the booking and create audit log in a transaction
+	const [updated] = await db.$transaction([
+		db.bookingRequest.update({
+			where: { id: bookingId },
+			data: {
+				preferredStartDate: startDate,
+				preferredEndDate: endDate,
+			},
+			select: {
+				id: true,
+				preferredStartDate: true,
+				preferredEndDate: true,
+			},
+		}),
+		db.auditLog.create({
+			data: {
+				userId,
+				action: "booking_timeline_updated",
+				entity: "booking",
+				entityId: bookingId,
+				metadata: {
+					referenceNumber: booking.referenceNumber,
+					previousStartDate: booking.preferredStartDate?.toISOString() ?? null,
+					previousEndDate: booking.preferredEndDate?.toISOString() ?? null,
+					newStartDate: startDate?.toISOString() ?? null,
+					newEndDate: endDate?.toISOString() ?? null,
+					updatedBy: isAdmin ? "admin" : "owner",
+				},
+			},
+		}),
+	]);
 
 	return {
 		success: true,
