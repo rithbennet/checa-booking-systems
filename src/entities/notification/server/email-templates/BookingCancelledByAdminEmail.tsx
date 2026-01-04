@@ -4,6 +4,7 @@
  */
 
 import { Button, Heading, Text } from "@react-email/components";
+import type { BookingCancellationEmailProps } from "@/entities/notification/model/types";
 import { BaseLayout } from "./BaseLayout";
 import {
 	button,
@@ -13,19 +14,12 @@ import {
 	reasonText,
 } from "./styles/cancellation-email-styles";
 
-interface BookingCancelledByAdminEmailProps {
-	userName: string;
-	referenceNumber: string;
-	reason?: string;
-	dashboardUrl: string;
-}
-
 export function BookingCancelledByAdminEmail({
 	userName,
 	referenceNumber,
 	reason,
 	dashboardUrl,
-}: BookingCancelledByAdminEmailProps) {
+}: BookingCancellationEmailProps) {
 	return (
 		<BaseLayout preview={`Booking ${referenceNumber} has been cancelled`}>
 			<Heading style={heading}>Booking Cancelled</Heading>

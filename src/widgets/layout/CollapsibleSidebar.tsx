@@ -196,12 +196,12 @@ export default function CollapsibleSidebar({
 			</SidebarContent>
 
 			<SidebarFooter>
-				{/* Feedback/Bug Report Button */}
-				<SidebarMenuItem>
-					<FeedbackButton session={session} />
-				</SidebarMenuItem>
 				<SidebarMenu>
 					{/* Refresh button - only for non-admin users */}
+					{/* Feedback/Bug Report Button */}
+					<SidebarMenuItem>
+						<FeedbackButton session={session} />
+					</SidebarMenuItem>
 					{!isAdmin && (
 						<SidebarMenuItem>
 							<SidebarMenuButton

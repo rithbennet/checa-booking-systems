@@ -5,16 +5,12 @@ import { createProtectedHandler } from "@/shared/lib/api-factory";
 const UpdateTimelineSchema = z.object({
 	preferredStartDate: z
 		.string()
-		.nullable()
-		.refine((val) => val === null || !Number.isNaN(Date.parse(val)), {
-			message: "Invalid date format for preferredStartDate",
-		}),
+		.datetime({ message: "Invalid ISO 8601 date format" })
+		.nullable(),
 	preferredEndDate: z
 		.string()
-		.nullable()
-		.refine((val) => val === null || !Number.isNaN(Date.parse(val)), {
-			message: "Invalid date format for preferredEndDate",
-		}),
+		.datetime({ message: "Invalid ISO 8601 date format" })
+		.nullable(),
 });
 
 /**

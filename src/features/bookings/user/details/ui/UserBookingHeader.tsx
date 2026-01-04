@@ -33,6 +33,7 @@ interface UserBookingHeaderProps {
 export function UserBookingHeader({ booking }: UserBookingHeaderProps) {
 	const [showCancelDialog, setShowCancelDialog] = useState(false);
 	const [cancelReason, setCancelReason] = useState("");
+	const [cancelError, setCancelError] = useState<string | null>(null);
 	const cancelBooking = useCancelBooking();
 
 	const canEdit =
@@ -44,6 +45,7 @@ export function UserBookingHeader({ booking }: UserBookingHeaderProps) {
 	const isCancelled = booking.status === "cancelled";
 
 	const handleCancelBooking = async () => {
+		setCancelError(null);
 		try {
 			await cancelBooking.mutateAsync({
 				bookingId: booking.id,
@@ -51,8 +53,12 @@ export function UserBookingHeader({ booking }: UserBookingHeaderProps) {
 			});
 			setShowCancelDialog(false);
 			setCancelReason("");
+			setCancelError(null);
 		} catch (error) {
 			console.error("Failed to cancel booking:", error);
+			setCancelError(
+				error instanceof Error ? error.message : "Cancellation failed",
+			);
 			// Keep dialog open on error so user can retry
 		}
 	};
@@ -156,7 +162,15 @@ export function UserBookingHeader({ booking }: UserBookingHeaderProps) {
 				</div>
 			</div>
 
-			<AlertDialog onOpenChange={setShowCancelDialog} open={showCancelDialog}>
+			<AlertDialog
+				onOpenChange={(open) => {
+					setShowCancelDialog(open);
+					if (!open) {
+						setCancelError(null);
+					}
+				}}
+				open={showCancelDialog}
+			>
 				<AlertDialogContent className="sm:max-w-[500px]">
 					<AlertDialogHeader>
 						<AlertDialogTitle>Cancel Booking</AlertDialogTitle>
@@ -176,6 +190,14 @@ export function UserBookingHeader({ booking }: UserBookingHeaderProps) {
 							rows={3}
 							value={cancelReason}
 						/>
+						{cancelError && (
+							<div
+								className="rounded-lg border border-red-200 bg-red-50 p-3"
+								role="alert"
+							>
+								<p className="text-red-800 text-sm">{cancelError}</p>
+							</div>
+						)}
 					</div>
 					<AlertDialogFooter>
 						<AlertDialogCancel disabled={cancelBooking.isPending}>

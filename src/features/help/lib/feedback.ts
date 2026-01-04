@@ -1,3 +1,5 @@
+import { formatRole } from "@/shared/lib/formatters";
+
 /**
  * Generate Airtable feedback form URL with prefilled user data
  */
@@ -8,6 +10,7 @@ export function generateFeedbackUrl(params: {
 	subject?: string;
 }): string {
 	const baseUrl =
+		process.env.NEXT_PUBLIC_FEEDBACK_FORM_URL ??
 		"https://airtable.com/app1p61whYyD1QKRh/pagrAbtjcVgzDcCpL/form";
 
 	const searchParams = new URLSearchParams();
@@ -16,9 +19,7 @@ export function generateFeedbackUrl(params: {
 	searchParams.append("prefill_User email", params.userEmail);
 
 	// Add user role (formatted)
-	const formattedRole = params.userRole
-		.replace(/_/g, " ")
-		.replace(/\b\w/g, (c: string) => c.toUpperCase());
+	const formattedRole = formatRole(params.userRole);
 	searchParams.append("prefill_User Role", formattedRole);
 
 	// Add subject if provided

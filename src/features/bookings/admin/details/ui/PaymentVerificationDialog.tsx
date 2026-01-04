@@ -43,19 +43,19 @@ export function PaymentVerificationDialog({
 				<DialogHeader>
 					<DialogTitle>Verify Payment Proof</DialogTitle>
 					<DialogDescription>
-						Review and verify the payment proof uploaded by the customer.{" "}
+						Review and verify the payment proof uploaded by the customer.
 						{pendingPaymentDocs.length > 1 && (
 							<span className="mt-1 block text-amber-600">
 								Note: Processing the first pending document (
 								{pendingPaymentDocs.length} total). Others can be verified from
 								the document vault.
 							</span>
-						)}{" "}
+						)}
 					</DialogDescription>
 				</DialogHeader>
 
 				<div className="space-y-4">
-					{pendingPaymentDocs.map((doc) => (
+					{pendingPaymentDocs.slice(0, 1).map((doc) => (
 						<div
 							className="rounded-lg border border-slate-200 bg-slate-50 p-4"
 							key={doc.id}
@@ -113,6 +113,11 @@ export function PaymentVerificationDialog({
 						for rejection
 					</label>
 					<textarea
+						aria-describedby={
+							isRejecting && verificationNotes.trim() === ""
+								? "verification-notes-error"
+								: undefined
+						}
 						aria-invalid={isRejecting && verificationNotes.trim() === ""}
 						className="w-full rounded border border-slate-300 bg-white p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 						disabled={isVerifying || isRejecting}
@@ -123,7 +128,10 @@ export function PaymentVerificationDialog({
 						value={verificationNotes}
 					/>
 					{isRejecting && verificationNotes.trim() === "" && (
-						<p className="mt-1 text-red-500 text-xs">
+						<p
+							className="mt-1 text-red-500 text-xs"
+							id="verification-notes-error"
+						>
 							Notes are required to reject a payment
 						</p>
 					)}
