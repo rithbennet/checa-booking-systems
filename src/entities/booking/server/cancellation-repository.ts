@@ -51,6 +51,7 @@ interface UpdateBookingTimelineResult {
 		preferredEndDate: string | null;
 	};
 	error?: string;
+	errorCode?: string;
 }
 
 /**
@@ -317,6 +318,7 @@ export async function updateBookingTimeline(
 		return {
 			success: false,
 			error: "Booking not found",
+			errorCode: "NOT_FOUND",
 		};
 	}
 
@@ -328,6 +330,7 @@ export async function updateBookingTimeline(
 		return {
 			success: false,
 			error: "Unauthorized: You can only edit your own bookings",
+			errorCode: "UNAUTHORIZED",
 		};
 	}
 
@@ -336,6 +339,7 @@ export async function updateBookingTimeline(
 		return {
 			success: false,
 			error: "Cannot edit a cancelled booking",
+			errorCode: "INVALID_STATE",
 		};
 	}
 
@@ -349,6 +353,7 @@ export async function updateBookingTimeline(
 			return {
 				success: false,
 				error: "Invalid preferredStartDate format",
+				errorCode: "INVALID_INPUT",
 			};
 		}
 		startDate = parsed;
@@ -360,6 +365,7 @@ export async function updateBookingTimeline(
 			return {
 				success: false,
 				error: "Invalid preferredEndDate format",
+				errorCode: "INVALID_INPUT",
 			};
 		}
 		endDate = parsed;
@@ -370,6 +376,7 @@ export async function updateBookingTimeline(
 		return {
 			success: false,
 			error: "preferredStartDate must be before or equal to preferredEndDate",
+			errorCode: "INVALID_INPUT",
 		};
 	}
 
