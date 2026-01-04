@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { LucideIcon } from "lucide-react";
 import {
 	BarChart3,
+	Bug,
 	Calendar,
 	ClipboardList,
 	DollarSign,
@@ -25,6 +26,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useUserProfile } from "@/entities/user";
 import { SignOutModal } from "@/features/authentication/ui/SignOutModal";
+import { FeedbackButton } from "@/features/help";
 import { NotificationNavBadge } from "@/features/notifications";
 import { cn } from "@/shared/lib/utils";
 import type { CurrentUser } from "@/shared/server/current-user";
@@ -195,6 +197,10 @@ export default function CollapsibleSidebar({
 			</SidebarContent>
 
 			<SidebarFooter>
+				{/* Feedback/Bug Report Button */}
+				<SidebarMenuItem>
+					<FeedbackButton session={session} />
+				</SidebarMenuItem>
 				<SidebarMenu>
 					{/* Refresh button - only for non-admin users */}
 					{!isAdmin && (
@@ -236,6 +242,7 @@ export default function CollapsibleSidebar({
 						href={notificationsHref}
 						isActive={isNotificationsActive}
 					/>
+
 					<SidebarMenuItem>
 						<SidebarMenuButton
 							onClick={() => setIsSignOutModalOpen(true)}
