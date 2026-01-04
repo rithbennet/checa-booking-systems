@@ -21,6 +21,7 @@ import {
 } from "@/shared/ui/shadcn/tabs";
 import { BookingHeader } from "./BookingHeader";
 import { BookingStatusTimeline } from "./BookingStatusTimeline";
+import { CancelledBookingBanner } from "./CancelledBookingBanner";
 import { FinancialGate } from "./FinancialGate";
 import { SampleDetailDrawer } from "./SampleDetailDrawer";
 import { SampleModificationModal } from "./SampleModificationModal";
@@ -91,10 +92,20 @@ export function BookingCommandCenter({ booking }: BookingCommandCenterProps) {
 	// Released date is set when booking transitions to completed
 	const releasedAt = booking.releasedAt;
 
+	const isCancelled = booking.status === "cancelled";
+
 	return (
 		<div className="mx-auto max-w-[1600px] p-4 pb-24 md:p-6">
 			{/* 1. Customer Header & Global Actions */}
 			<BookingHeader booking={booking} />
+
+			{/* Cancelled Booking Banner */}
+			{isCancelled && (
+				<CancelledBookingBanner
+					reviewedAt={booking.reviewedAt}
+					reviewNotes={booking.reviewNotes}
+				/>
+			)}
 
 			{/* 2. Status Timeline */}
 			<BookingStatusTimeline

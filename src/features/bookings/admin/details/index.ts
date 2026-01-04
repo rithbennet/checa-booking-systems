@@ -13,6 +13,7 @@ export { BookingCommandCenter } from "./ui/BookingCommandCenter";
 export { BookingHeader } from "./ui/BookingHeader";
 export { BookingSidebar } from "./ui/BookingSidebar";
 export { BookingStatusTimeline } from "./ui/BookingStatusTimeline";
+export { CancelledBookingBanner } from "./ui/CancelledBookingBanner";
 export { DocumentVault } from "./ui/DocumentVault";
 export { FinancialGate } from "./ui/FinancialGate";
 export { PaymentVerificationDialog } from "./ui/PaymentVerificationDialog";

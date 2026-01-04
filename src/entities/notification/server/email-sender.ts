@@ -12,6 +12,7 @@
 
 import type React from "react";
 import { env } from "@/env";
+import { db } from "@/shared/server/db";
 import {
 	getEmailRedirectTo,
 	getFromEmail,
@@ -28,6 +29,9 @@ import {
 	AdminNewUserRegisteredEmail,
 	AdminNotificationEmail,
 	BookingApprovedEmail,
+	BookingCancelledByAdminEmail,
+	BookingCancelledByUserEmail,
+	BookingCancelledNotificationToAdminsEmail,
 	BookingCompletedEmail,
 	BookingRejectedEmail,
 	BookingRevisionRequestedEmail,
@@ -820,6 +824,119 @@ export async function sendOrganizationDeletedEmail(params: {
 			template: "OrganizationDeleted",
 			entityType: "organization",
 			userId: params.userId,
+		},
+	});
+}
+
+// ============================================
+// Booking Cancellation Email Functions
+// ============================================
+
+/**
+ * Send cancellation confirmation email to user who cancelled their booking
+ */
+export async function sendBookingCancelledByUserEmail(params: {
+	to: string;
+	userName: string;
+	referenceNumber: string;
+	reason?: string;
+	bookingId?: string;
+	userId?: string;
+}) {
+	const dashboardUrl = `${getBaseUrl()}/bookings`;
+	return safeSendEmail({
+		to: params.to,
+		subject: `Booking Cancelled - ${params.referenceNumber}`,
+		react: BookingCancelledByUserEmail({
+			userName: params.userName,
+			referenceNumber: params.referenceNumber,
+			reason: params.reason,
+			dashboardUrl,
+		}),
+		context: {
+			template: "BookingCancelledByUser",
+			entityType: "booking",
+			entityId: params.bookingId,
+			userId: params.userId,
+		},
+	});
+}
+
+/**
+ * Send cancellation notification to user when admin cancels their booking
+ */
+export async function sendBookingCancelledByAdminEmail(params: {
+	to: string;
+	userName: string;
+	referenceNumber: string;
+	reason?: string;
+	bookingId?: string;
+	userId?: string;
+}) {
+	const dashboardUrl = `${getBaseUrl()}/bookings`;
+	return safeSendEmail({
+		to: params.to,
+		subject: `Booking Cancelled - ${params.referenceNumber}`,
+		react: BookingCancelledByAdminEmail({
+			userName: params.userName,
+			referenceNumber: params.referenceNumber,
+			reason: params.reason,
+			dashboardUrl,
+		}),
+		context: {
+			template: "BookingCancelledByAdmin",
+			entityType: "booking",
+			entityId: params.bookingId,
+			userId: params.userId,
+		},
+	});
+}
+
+/**
+ * Send notification to admins when user cancels a booking
+ */
+export async function sendBookingCancelledNotificationToAdmins(params: {
+	referenceNumber: string;
+	userName: string;
+	userEmail: string;
+	reason?: string;
+	bookingId?: string;
+}) {
+	// Get all lab administrators
+	const admins = await db.user.findMany({
+		where: {
+			userType: "lab_administrator",
+			status: "active",
+		},
+		select: { email: true },
+	});
+
+	if (admins.length === 0) {
+		logEmailEvent("warn", "no-admins-found", {
+			template: "BookingCancelledNotificationToAdmins",
+			entityType: "booking",
+			entityId: params.bookingId,
+		});
+		return { success: true };
+	}
+
+	const adminEmails = admins.map((a) => a.email);
+	const bookingUrl = `${getBaseUrl()}/admin/bookings/${params.bookingId}`;
+
+	return safeSendEmail({
+		to: adminEmails,
+		subject: `User Cancelled Booking - ${params.referenceNumber}`,
+		react: BookingCancelledNotificationToAdminsEmail({
+			referenceNumber: params.referenceNumber,
+			userName: params.userName,
+			userEmail: params.userEmail,
+			reason: params.reason,
+			bookingUrl,
+		}),
+		context: {
+			template: "BookingCancelledNotificationToAdmins",
+			entityType: "booking",
+			entityId: params.bookingId,
 		},
 	});
 }
