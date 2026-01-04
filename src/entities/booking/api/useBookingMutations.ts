@@ -35,8 +35,14 @@ export function useUpdateBookingTimeline() {
 			});
 
 			if (!res.ok) {
-				const error = await res.json();
-				throw new Error(error.error || "Failed to update timeline");
+				let errorMessage = "Failed to update timeline";
+				try {
+					const error = await res.json();
+					errorMessage = error.error || errorMessage;
+				} catch {
+					// Response wasn't JSON
+				}
+				throw new Error(errorMessage);
 			}
 
 			return res.json();

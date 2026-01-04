@@ -148,7 +148,7 @@ export function WorkspaceGroupForm({
 												onUpdate={(data) => onUpdate(index, data)}
 												service={service}
 												serviceItem={item}
-												totalSlots={workspaceItems.length}
+
 											/>
 										</AccordionContentNoAutoClose>
 									</div>

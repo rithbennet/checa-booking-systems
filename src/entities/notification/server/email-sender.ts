@@ -11,8 +11,8 @@
  */
 
 import type React from "react";
+import { getActiveAdminEmails } from "@/entities/user/server";
 import { env } from "@/env";
-import { db } from "@/shared/server/db";
 import {
 	getEmailRedirectTo,
 	getFromEmail,
@@ -900,18 +900,26 @@ export async function sendBookingCancelledNotificationToAdmins(params: {
 	userName: string;
 	userEmail: string;
 	reason?: string;
-	bookingId?: string;
+	bookingId: string;
 }) {
 	// Get all lab administrators
-	const admins = await db.user.findMany({
-		where: {
-			userType: "lab_administrator",
-			status: "active",
-		},
-		select: { email: true },
-	});
+	let adminEmails: string[];
+	try {
+		adminEmails = await getActiveAdminEmails();
+	} catch (error) {
+		logEmailEvent("error", "admin-query-failed", {
+			template: "BookingCancelledNotificationToAdmins",
+			entityType: "booking",
+			entityId: params.bookingId,
+			error: error instanceof Error ? error.message : "Unknown error",
+		});
+		return {
+			success: false,
+			error: "Failed to query administrators",
+		};
+	}
 
-	if (admins.length === 0) {
+	if (adminEmails.length === 0) {
 		logEmailEvent("warn", "no-admins-found", {
 			template: "BookingCancelledNotificationToAdmins",
 			entityType: "booking",
@@ -919,8 +927,6 @@ export async function sendBookingCancelledNotificationToAdmins(params: {
 		});
 		return { success: true };
 	}
-
-	const adminEmails = admins.map((a) => a.email);
 	const bookingUrl = `${getBaseUrl()}/admin/bookings/${params.bookingId}`;
 
 	return safeSendEmail({
