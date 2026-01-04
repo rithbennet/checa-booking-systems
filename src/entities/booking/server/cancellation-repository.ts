@@ -103,39 +103,39 @@ export async function cancelBookingByUser(
 		return { success: false, error: "Cannot cancel a completed booking" };
 	}
 
-	// Update booking to cancelled
-	const updated = await db.bookingRequest.update({
-		where: { id: bookingId },
-		data: {
-			status: "cancelled",
-			reviewedAt: new Date(),
-			reviewedBy: userId,
-			reviewNotes: reason
-				? `User cancellation: ${reason}`
-				: "Booking cancelled by user",
-		},
-		select: {
-			id: true,
-			status: true,
-			reviewedAt: true,
-			reviewNotes: true,
-		},
-	});
-
-	// Create audit log entry
-	await db.auditLog.create({
-		data: {
-			userId,
-			action: "booking_cancelled_by_user",
-			entity: "booking",
-			entityId: bookingId,
-			metadata: {
-				referenceNumber: booking.referenceNumber,
-				reason: reason || null,
-				previousStatus: booking.status,
+	// Update booking to cancelled and create audit log in a transaction
+	const [updated] = await db.$transaction([
+		db.bookingRequest.update({
+			where: { id: bookingId },
+			data: {
+				status: "cancelled",
+				reviewedAt: new Date(),
+				reviewedBy: userId,
+				reviewNotes: reason
+					? `User cancellation: ${reason}`
+					: "Booking cancelled by user",
 			},
-		},
-	});
+			select: {
+				id: true,
+				status: true,
+				reviewedAt: true,
+				reviewNotes: true,
+			},
+		}),
+		db.auditLog.create({
+			data: {
+				userId,
+				action: "booking_cancelled_by_user",
+				entity: "booking",
+				entityId: bookingId,
+				metadata: {
+					referenceNumber: booking.referenceNumber,
+					reason: reason || null,
+					previousStatus: booking.status,
+				},
+			},
+		}),
+	]);
 
 	// Send email notifications (async, non-blocking)
 	const userName = `${booking.user.firstName} ${booking.user.lastName}`;
@@ -219,40 +219,40 @@ export async function cancelBookingByAdmin(
 		return { success: false, error: "Booking is already cancelled" };
 	}
 
-	// Update booking to cancelled
-	const updated = await db.bookingRequest.update({
-		where: { id: bookingId },
-		data: {
-			status: "cancelled",
-			reviewedAt: new Date(),
-			reviewedBy: adminUserId,
-			reviewNotes: reason
-				? `Cancellation reason: ${reason}`
-				: "Booking cancelled by administrator",
-		},
-		select: {
-			id: true,
-			status: true,
-			reviewedAt: true,
-			reviewNotes: true,
-		},
-	});
-
-	// Create audit log entry
-	await db.auditLog.create({
-		data: {
-			userId: adminUserId,
-			action: "booking_cancelled_by_admin",
-			entity: "booking",
-			entityId: bookingId,
-			metadata: {
-				referenceNumber: booking.referenceNumber,
-				reason: reason || null,
-				previousStatus: booking.status,
-				targetUserId: booking.userId,
+	// Update booking to cancelled and create audit log in a transaction
+	const [updated] = await db.$transaction([
+		db.bookingRequest.update({
+			where: { id: bookingId },
+			data: {
+				status: "cancelled",
+				reviewedAt: new Date(),
+				reviewedBy: adminUserId,
+				reviewNotes: reason
+					? `Cancellation reason: ${reason}`
+					: "Booking cancelled by administrator",
 			},
-		},
-	});
+			select: {
+				id: true,
+				status: true,
+				reviewedAt: true,
+				reviewNotes: true,
+			},
+		}),
+		db.auditLog.create({
+			data: {
+				userId: adminUserId,
+				action: "booking_cancelled_by_admin",
+				entity: "booking",
+				entityId: bookingId,
+				metadata: {
+					referenceNumber: booking.referenceNumber,
+					reason: reason || null,
+					previousStatus: booking.status,
+					targetUserId: booking.userId,
+				},
+			},
+		}),
+	]);
 
 	// Send email notification to user (async, non-blocking)
 	const userName = `${booking.user.firstName} ${booking.user.lastName}`;

@@ -13,7 +13,6 @@ import { useCancelBooking } from "@/entities/booking/api";
 import type { UserBookingDetailVM } from "@/entities/booking/model/user-detail-types";
 import {
 	AlertDialog,
-	AlertDialogAction,
 	AlertDialogCancel,
 	AlertDialogContent,
 	AlertDialogDescription,
@@ -54,6 +53,7 @@ export function UserBookingHeader({ booking }: UserBookingHeaderProps) {
 			setCancelReason("");
 		} catch (error) {
 			console.error("Failed to cancel booking:", error);
+			// Keep dialog open on error so user can retry
 		}
 	};
 
@@ -83,14 +83,6 @@ export function UserBookingHeader({ booking }: UserBookingHeaderProps) {
 								>
 									{getStatusLabel(booking.status)}
 								</Badge>
-								{isCancelled && (
-									<Badge
-										className="border-red-200 bg-red-50 text-red-700"
-										variant="outline"
-									>
-										Cancelled
-									</Badge>
-								)}
 							</div>
 							<p className="mt-1 text-slate-500 text-sm">
 								Created on {formatDate(booking.createdAt)}
@@ -189,7 +181,7 @@ export function UserBookingHeader({ booking }: UserBookingHeaderProps) {
 						<AlertDialogCancel disabled={cancelBooking.isPending}>
 							Keep Booking
 						</AlertDialogCancel>
-						<AlertDialogAction
+						<Button
 							className="bg-red-600 hover:bg-red-700"
 							disabled={cancelBooking.isPending}
 							onClick={handleCancelBooking}
@@ -198,7 +190,7 @@ export function UserBookingHeader({ booking }: UserBookingHeaderProps) {
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 							)}
 							Cancel Booking
-						</AlertDialogAction>
+						</Button>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>

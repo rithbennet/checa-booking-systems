@@ -148,7 +148,6 @@ export function WorkspaceGroupForm({
 												onUpdate={(data) => onUpdate(index, data)}
 												service={service}
 												serviceItem={item}
-
 											/>
 										</AccordionContentNoAutoClose>
 									</div>

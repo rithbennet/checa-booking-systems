@@ -147,24 +147,30 @@ export function DocumentVerificationPanel({
 
 						{/* Gate Status */}
 						<div className="mt-4 flex items-center gap-2 border-slate-200 border-t pt-3">
-							<FileCheck2
-								className={
+							{(() => {
+								const isAllVerified =
 									verificationState.serviceFormSigned === "verified" &&
 									(verificationState.workspaceFormSigned === "verified" ||
 										verificationState.workspaceFormSigned === "not_required") &&
-									verificationState.paymentReceipt === "verified"
-										? "h-5 w-5 text-green-600"
-										: "h-5 w-5 text-amber-500"
-								}
-							/>
-							<span className="font-medium text-sm">
-								{verificationState.serviceFormSigned === "verified" &&
-								(verificationState.workspaceFormSigned === "verified" ||
-									verificationState.workspaceFormSigned === "not_required") &&
-								verificationState.paymentReceipt === "verified"
-									? "✓ Results Unlocked - User can download analysis results"
-									: "⚠ Results Locked - Pending document verification"}
-							</span>
+									verificationState.paymentReceipt === "verified";
+
+								return (
+									<>
+										<FileCheck2
+											className={
+												isAllVerified
+													? "h-5 w-5 text-green-600"
+													: "h-5 w-5 text-amber-500"
+											}
+										/>
+										<span className="font-medium text-sm">
+											{isAllVerified
+												? "✓ Results Unlocked - User can download analysis results"
+												: "⚠ Results Locked - Pending document verification"}
+										</span>
+									</>
+								);
+							})()}
 						</div>
 					</div>
 				)}

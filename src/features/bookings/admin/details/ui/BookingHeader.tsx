@@ -18,6 +18,7 @@ import {
 	User,
 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useCancelBooking } from "@/entities/booking/api";
 import type { BookingCommandCenterVM } from "@/entities/booking/model/command-center-types";
 import {
@@ -79,6 +80,12 @@ export function BookingHeader({ booking }: BookingHeaderProps) {
 			setCancelReason("");
 		} catch (error) {
 			console.error("Failed to cancel booking:", error);
+			toast.error("Failed to cancel booking", {
+				description:
+					error instanceof Error
+						? error.message
+						: "An unexpected error occurred. Please try again.",
+			});
 		}
 	};
 

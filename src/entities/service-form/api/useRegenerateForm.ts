@@ -3,12 +3,12 @@ import { toast } from "sonner";
 import { bookingKeys } from "@/entities/booking/api/query-keys";
 import { bookingDocumentKeys } from "@/entities/booking-document";
 
-export function useRegenerateForm(bookingId: string) {
+export function useRegenerateForm() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (formId: string) => {
-			const res = await fetch(`/api/admin/forms/${formId}/regenerate`, {
+		mutationFn: async (params: { formId: string; bookingId: string }) => {
+			const res = await fetch(`/api/admin/forms/${params.formId}/regenerate`, {
 				method: "POST",
 			});
 			if (!res.ok) {
@@ -17,10 +17,10 @@ export function useRegenerateForm(bookingId: string) {
 			}
 			return res.json();
 		},
-		onSuccess: (data) => {
+		onSuccess: (data, params) => {
 			queryClient.invalidateQueries({ queryKey: bookingKeys.all });
 			queryClient.invalidateQueries({
-				queryKey: bookingDocumentKeys.byBooking(bookingId),
+				queryKey: bookingDocumentKeys.byBooking(params.bookingId),
 			});
 			toast.success("Form regenerated successfully", {
 				description: `New form number: ${data.serviceForm.formNumber}`,

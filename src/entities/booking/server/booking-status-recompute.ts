@@ -127,7 +127,7 @@ export async function recomputeBookingStatus(
 		const now = new Date();
 		const allWorkspacesEnded =
 			booking.workspaceBookings.length > 0 &&
-			booking.workspaceBookings.every((ws) => new Date(ws.endDate) < now);
+			booking.workspaceBookings.every((ws) => new Date(ws.endDate) <= now);
 
 		if (allWorkspacesEnded) {
 			newStatus = "completed";
@@ -218,8 +218,20 @@ export async function recomputeBookingStatus(
  * Use this for rare cases where manual completion is needed.
  * Logs an audit entry for the override.
  *
+ * ⚠️ SECURITY CRITICAL: This function performs a high-privilege state change.
+ * The caller MUST verify that the requesting user has admin permissions
+ * (lab_administrator role) BEFORE calling this function. This should be
+ * enforced in the HTTP route/middleware that calls this function.
+ *
+ * Example authorization check required in API route:
+ * ```typescript
+ * if (user.role !== "lab_administrator") {
+ *   return Response.json({ error: "Forbidden" }, { status: 403 });
+ * }
+ * ```
+ *
  * @param bookingId The booking ID to complete
- * @param adminUserId The admin user performing the override
+ * @param adminUserId The admin user performing the override (must be verified as admin)
  * @param reason The reason for the manual override
  */
 export async function forceCompleteBooking(

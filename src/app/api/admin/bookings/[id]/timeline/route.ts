@@ -3,8 +3,18 @@ import { updateBookingTimeline } from "@/entities/booking/server/cancellation-re
 import { createProtectedHandler } from "@/shared/lib/api-factory";
 
 const UpdateTimelineSchema = z.object({
-	preferredStartDate: z.string().nullable(),
-	preferredEndDate: z.string().nullable(),
+	preferredStartDate: z
+		.string()
+		.nullable()
+		.refine((val) => val === null || !Number.isNaN(Date.parse(val)), {
+			message: "Invalid date format for preferredStartDate",
+		}),
+	preferredEndDate: z
+		.string()
+		.nullable()
+		.refine((val) => val === null || !Number.isNaN(Date.parse(val)), {
+			message: "Invalid date format for preferredEndDate",
+		}),
 });
 
 /**

@@ -3,9 +3,9 @@
  * Handles notifications for booking status transitions including completion
  */
 
-import type { notification_type_enum } from "generated/prisma";
 import { db } from "@/shared/server/db";
 import { sendBookingCompletedEmail } from "./email-sender";
+import { enqueueInApp, markEmailSent } from "./notification-repository";
 
 /**
  * Get user details for email
@@ -18,40 +18,6 @@ async function getUserEmailDetails(userId: string) {
 	return user
 		? { email: user.email, name: `${user.firstName} ${user.lastName}` }
 		: null;
-}
-
-/**
- * Enqueue an in-app notification
- */
-async function enqueueInApp(params: {
-	userId: string;
-	type: notification_type_enum;
-	relatedEntityType: string;
-	relatedEntityId: string;
-	title: string;
-	message: string;
-}) {
-	return db.notification.create({
-		data: {
-			userId: params.userId,
-			type: params.type,
-			relatedEntityType: params.relatedEntityType,
-			relatedEntityId: params.relatedEntityId,
-			title: params.title,
-			message: params.message,
-			emailSent: false,
-		},
-	});
-}
-
-/**
- * Mark notification as email sent
- */
-async function markEmailSent(notificationId: string) {
-	return db.notification.update({
-		where: { id: notificationId },
-		data: { emailSent: true, emailSentAt: new Date() },
-	});
 }
 
 /**
@@ -83,6 +49,7 @@ export async function notifyBookingCompleted(params: {
 				customerName: userDetails.name,
 				bookingReference: params.bookingReference,
 				bookingId: params.bookingId,
+				userId: params.userId,
 			});
 			if (result.success) {
 				await markEmailSent(notification.id);

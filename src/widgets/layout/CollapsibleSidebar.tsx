@@ -4,7 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { LucideIcon } from "lucide-react";
 import {
 	BarChart3,
-	Bug,
 	Calendar,
 	ClipboardList,
 	DollarSign,
