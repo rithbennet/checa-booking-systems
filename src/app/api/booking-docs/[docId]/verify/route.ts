@@ -45,8 +45,6 @@ export const POST = createProtectedHandler(
 							referenceNumber: true,
 							userId: true,
 							totalAmount: true,
-						},
-						include: {
 							serviceForms: {
 								orderBy: { createdAt: "desc" },
 								take: 1,
