@@ -346,6 +346,17 @@ const invoiceStyles = StyleSheet.create({
 		height: 120, // Fixed height for signature area
 		justifyContent: "space-between",
 	},
+	verifSignatureBox: {
+		width: 150,
+		height: 60,
+		marginBottom: 5,
+		justifyContent: "center",
+	},
+	verifSignatureImage: {
+		width: "100%",
+		height: "100%",
+		objectFit: "contain",
+	},
 	borderRight: {
 		borderRightWidth: 1,
 		borderRightColor: "#000",
@@ -923,15 +934,12 @@ export function InvoiceRequestForm({
 							<View style={{ height: 40, marginTop: 10 }}>
 								{staffPicSignatureImageUrl ? (
 									<>
-										<Image
-											src={getImageSource(staffPicSignatureImageUrl)}
-											style={{
-												width: "auto",
-												maxWidth: 150,
-												maxHeight: 60,
-												marginBottom: 5,
-											}}
-										/>
+										<View style={invoiceStyles.verifSignatureBox}>
+											<Image
+												src={getImageSource(staffPicSignatureImageUrl)}
+												style={invoiceStyles.verifSignatureImage}
+											/>
+										</View>
 										<Text style={{ fontSize: 9 }}>Official stamp</Text>
 									</>
 								) : (

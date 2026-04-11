@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
 		width: 200,
 		height: 80,
 		marginBottom: 5,
+		objectFit: "contain",
 	},
 	signerName: {
 		fontSize: 9,
