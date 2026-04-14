@@ -72,6 +72,13 @@ export function SignatureUpload({
 		const file = e.target.files?.[0];
 		if (!file) return;
 
+		// Clear any previously selected/previewed file before processing the new one
+		setPreview((prev) => {
+			if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
+			return null;
+		});
+		setSelectedFile(null);
+
 		let previewUrl: string | null = null;
 		try {
 			const preparedFile = await prepareSignatureImage(file);
@@ -80,10 +87,12 @@ export function SignatureUpload({
 			setSelectedFile(preparedFile);
 			toast.success("Signature trimmed and prepared for upload");
 		} catch (error) {
-			// Clean up blob URL on error to prevent memory leak
+			// Clean up blob URL on error to prevent memory leak and clear stale state
 			if (previewUrl) {
 				URL.revokeObjectURL(previewUrl);
 			}
+			setPreview(null);
+			setSelectedFile(null);
 			if (fileInputRef.current) {
 				fileInputRef.current.value = "";
 			}
