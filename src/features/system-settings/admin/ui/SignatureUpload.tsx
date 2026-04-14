@@ -6,31 +6,9 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { documentConfigKeys } from "@/entities/document-config/api/query-keys";
+import { prepareSignatureImage } from "@/shared/lib/signature-image";
 import { useUploadThing } from "@/shared/lib/uploadthing";
 import { Button } from "@/shared/ui/shadcn/button";
-
-/**
- * Validate image file
- */
-function validateImageFile(file: File): { valid: boolean; error?: string } {
-	const validTypes = ["image/jpeg", "image/png", "image/webp"];
-	if (!validTypes.includes(file.type)) {
-		return {
-			valid: false,
-			error: "Please select a JPEG, PNG, or WebP image",
-		};
-	}
-
-	const maxSize = 2 * 1024 * 1024; // 2MB
-	if (file.size > maxSize) {
-		return {
-			valid: false,
-			error: "Image size must be less than 2MB",
-		};
-	}
-
-	return { valid: true };
-}
 
 interface SignatureUploadProps {
 	currentImageUrl: string | null;
@@ -94,23 +72,33 @@ export function SignatureUpload({
 		const file = e.target.files?.[0];
 		if (!file) return;
 
-		const validation = validateImageFile(file);
-		if (!validation.valid) {
-			toast.error(validation.error || "Invalid image file");
-			return;
-		}
+		// Clear any previously selected/previewed file before processing the new one
+		setPreview((prev) => {
+			if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
+			return null;
+		});
+		setSelectedFile(null);
 
 		let previewUrl: string | null = null;
 		try {
-			previewUrl = URL.createObjectURL(file);
+			const preparedFile = await prepareSignatureImage(file);
+			previewUrl = URL.createObjectURL(preparedFile);
 			setPreview(previewUrl);
-			setSelectedFile(file);
+			setSelectedFile(preparedFile);
+			toast.success("Signature trimmed and prepared for upload");
 		} catch (error) {
-			// Clean up blob URL on error to prevent memory leak
+			// Clean up blob URL on error to prevent memory leak and clear stale state
 			if (previewUrl) {
 				URL.revokeObjectURL(previewUrl);
 			}
-			toast.error("Failed to process image");
+			setPreview(null);
+			setSelectedFile(null);
+			if (fileInputRef.current) {
+				fileInputRef.current.value = "";
+			}
+			toast.error(
+				error instanceof Error ? error.message : "Failed to process image",
+			);
 			console.error(error);
 		}
 	};
