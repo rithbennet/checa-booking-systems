@@ -55,6 +55,7 @@ export default async function EditBookingPage({ params }: PageProps) {
 			supervisorName: userProfile.supervisorName ?? null,
 			department: userProfile.organization.department ?? null,
 			faculty: userProfile.organization.faculty ?? null,
+			organizationAddress: userProfile.organization.branchAddress ?? null,
 			organization: {
 				facultyId: userProfile.organization.facultyId ?? null,
 				departmentId: userProfile.organization.departmentId ?? null,

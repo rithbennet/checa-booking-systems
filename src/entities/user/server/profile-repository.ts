@@ -31,6 +31,7 @@ export interface UserProfileVM {
 		ikohza?: string | null;
 		company?: string | null;
 		branch?: string | null;
+		branchAddress?: string | null;
 		facultyId?: string | null;
 		departmentId?: string | null;
 		ikohzaId?: string | null;
@@ -55,6 +56,31 @@ function isMjiitFaculty(code: string | null | undefined): boolean {
 	return code?.toUpperCase() === "MJIIT";
 }
 
+function formatCompanyBranchAddress(
+	branch:
+		| {
+				address: string | null;
+				city: string | null;
+				state: string | null;
+				postcode: string | null;
+				country: string | null;
+		  }
+		| null
+		| undefined,
+): string | null {
+	if (!branch?.address?.trim()) return null;
+
+	return [
+		branch.address,
+		branch.city,
+		branch.state,
+		branch.postcode,
+		branch.country,
+	]
+		.filter((part): part is string => Boolean(part?.trim()))
+		.join(", ");
+}
+
 // ==============================================================
 // Query Functions
 // ==============================================================
@@ -72,7 +98,17 @@ export async function getUserProfile(
 			department: { select: { id: true, name: true } },
 			ikohza: { select: { id: true, name: true } },
 			company: { select: { id: true, name: true } },
-			companyBranch: { select: { id: true, name: true } },
+			companyBranch: {
+				select: {
+					id: true,
+					name: true,
+					address: true,
+					city: true,
+					state: true,
+					postcode: true,
+					country: true,
+				},
+			},
 		},
 	});
 
@@ -96,6 +132,7 @@ export async function getUserProfile(
 			ikohza: user.ikohza?.name ?? null,
 			company: user.company?.name ?? null,
 			branch: user.companyBranch?.name ?? null,
+			branchAddress: formatCompanyBranchAddress(user.companyBranch),
 			facultyId: user.faculty?.id ?? null,
 			departmentId: user.department?.id ?? null,
 			ikohzaId: user.ikohza?.id ?? null,
@@ -166,7 +203,17 @@ export async function updateUserProfile(
 			department: { select: { id: true, name: true } },
 			ikohza: { select: { id: true, name: true } },
 			company: { select: { id: true, name: true } },
-			companyBranch: { select: { id: true, name: true } },
+			companyBranch: {
+				select: {
+					id: true,
+					name: true,
+					address: true,
+					city: true,
+					state: true,
+					postcode: true,
+					country: true,
+				},
+			},
 		},
 	});
 
@@ -188,6 +235,7 @@ export async function updateUserProfile(
 			ikohza: user.ikohza?.name ?? null,
 			company: user.company?.name ?? null,
 			branch: user.companyBranch?.name ?? null,
+			branchAddress: formatCompanyBranchAddress(user.companyBranch),
 			facultyId: user.faculty?.id ?? null,
 			departmentId: user.department?.id ?? null,
 			ikohzaId: user.ikohza?.id ?? null,
