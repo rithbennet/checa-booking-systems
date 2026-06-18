@@ -64,12 +64,41 @@ export const GET = createProtectedHandler(
 
 		const { result } = data;
 
-		// Construct file path (assuming files are stored in public/uploads or similar)
+		if (isRemoteFilePath(result.filePath)) {
+			const fileResponse = await fetch(result.filePath);
+
+			if (!fileResponse.ok || !fileResponse.body) {
+				console.error(
+					`Remote result file not found: ${result.filePath} (${fileResponse.status})`,
+				);
+				return notFound("Result file not found on server");
+			}
+
+			const headers = new Headers({
+				"Content-Type":
+					fileResponse.headers.get("content-type") ??
+					getContentType(result.fileType),
+				"Content-Disposition": `attachment; filename="${encodeURIComponent(result.fileName)}"`,
+				"Cache-Control": "private, no-cache, no-store, must-revalidate",
+				"X-Content-Type-Options": "nosniff",
+			});
+
+			const contentLength = fileResponse.headers.get("content-length");
+			if (contentLength) {
+				headers.set("Content-Length", contentLength);
+			}
+
+			return new NextResponse(fileResponse.body, {
+				status: 200,
+				headers,
+			});
+		}
+
+		// Construct file path for legacy local files.
 		const filePath = join(process.cwd(), "public", result.filePath);
 
-		// Check if file exists
 		if (!existsSync(filePath)) {
-			console.error(`File not found at path: ${filePath}`);
+			console.error(`Local result file not found at path: ${filePath}`);
 			return notFound("Result file not found on server");
 		}
 
@@ -100,6 +129,15 @@ export const GET = createProtectedHandler(
 	},
 	{ requireActive: true },
 );
+
+function isRemoteFilePath(filePath: string): boolean {
+	try {
+		const url = new URL(filePath);
+		return url.protocol === "http:" || url.protocol === "https:";
+	} catch {
+		return false;
+	}
+}
 
 /**
  * Map file type to MIME content type
