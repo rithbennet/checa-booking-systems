@@ -11,6 +11,7 @@
  * 6. Notifies user that forms are ready
  */
 
+import { randomUUID } from "node:crypto";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { UTFile } from "uploadthing/server";
 import { getEffectiveFacilityConfigForPdf } from "@/entities/document-config";
@@ -32,6 +33,29 @@ import {
 } from "@/shared/lib/pdf";
 import { db } from "@/shared/server/db";
 import { utapi } from "@/shared/server/uploadthing";
+
+async function getNextServiceFormNumber() {
+	const currentYear = new Date().getFullYear();
+	const yearPrefix = `SF-${currentYear}-`;
+	const [lastForm] = await db.$queryRaw<Array<{ formNumber: string }>>`
+		SELECT "formNumber"
+		FROM "service_form"
+		WHERE "formNumber" LIKE ${`${yearPrefix}%`}
+			AND "formNumber" ~ ${`^SF-${currentYear}-[0-9]{5}$`}
+		ORDER BY "formNumber" DESC
+		LIMIT 1
+	`;
+
+	let nextNumber = 1;
+	if (lastForm?.formNumber) {
+		const match = lastForm.formNumber.match(/-(\d{5})$/);
+		if (match?.[1]) {
+			nextNumber = parseInt(match[1], 10) + 1;
+		}
+	}
+
+	return `${yearPrefix}${String(nextNumber).padStart(5, "0")}`;
+}
 
 export const POST = createProtectedHandler(
 	async (_request: Request, user, { params }) => {
@@ -95,38 +119,15 @@ export const POST = createProtectedHandler(
 				);
 			}
 
-			// Booking should be in "approved" status to generate forms
-			if (booking.status !== "approved") {
+			// Booking should be approved or active before generating forms
+			if (booking.status !== "approved" && booking.status !== "in_progress") {
 				return badRequest(
-					`Booking must be approved before generating forms. Current status: ${booking.status}`,
+					`Booking must be approved or in progress before generating forms. Current status: ${booking.status}`,
 				);
 			}
 
-			// Generate form number using last form's number to avoid race conditions
-			// Find the highest existing form number for this year
-			const currentYear = new Date().getFullYear();
-			const yearPrefix = `SF-${currentYear}-`;
-			const lastForm = await db.serviceForm.findFirst({
-				where: {
-					formNumber: {
-						startsWith: yearPrefix,
-					},
-				},
-				orderBy: {
-					formNumber: "desc",
-				},
-				select: { formNumber: true },
-			});
-
-			let nextNumber = 1;
-			if (lastForm?.formNumber) {
-				// Extract the 5-digit sequential number from formats like SF-YYYY-00001
-				const match = lastForm.formNumber.match(/-(\d{5})$/);
-				if (match?.[1]) {
-					nextNumber = parseInt(match[1], 10) + 1;
-				}
-			}
-			const formNumber = `${yearPrefix}${String(nextNumber).padStart(5, "0")}`;
+			const formNumber = await getNextServiceFormNumber();
+			const uploadAttemptId = randomUUID();
 
 			// Calculate totals
 			const subtotal = booking.serviceItems.reduce(
@@ -244,6 +245,7 @@ export const POST = createProtectedHandler(
 
 			// 1. Generate Service Form (TOR) PDF
 			const torRefNo = `TOR-${formNumber}`;
+			const torDisplayFileName = `service-form-${torRefNo}.pdf`;
 
 			const torPdfBuffer = await renderToBuffer(
 				<TORTemplate
@@ -269,9 +271,9 @@ export const POST = createProtectedHandler(
 			);
 
 			// Upload TOR PDF to UploadThing
-			const torFileName = `service-form-${torRefNo}.pdf`;
+			const torFileName = `service-form-${torRefNo}-${bookingId}-${uploadAttemptId}.pdf`;
 			const torFile = new UTFile([new Uint8Array(torPdfBuffer)], torFileName, {
-				customId: `tor-${bookingId}`,
+				customId: `tor-${bookingId}-${uploadAttemptId}`,
 			});
 
 			const torUploadResult = await utapi.uploadFiles([torFile]);
@@ -288,6 +290,7 @@ export const POST = createProtectedHandler(
 			// 2. Generate Working Area Agreement PDF (if applicable)
 			let waUrl: string | null = null;
 			let waKey: string | null = null;
+			let waDisplayFileName: string | null = null;
 			let waPdfBuffer: Buffer | null = null;
 			let workingAreaUploadFailed = false;
 			let workingAreaUploadError: string | null = null;
@@ -305,6 +308,7 @@ export const POST = createProtectedHandler(
 							: `${diffDays} day(s)`;
 
 					const waRefNo = `WA-${formNumber}`;
+					waDisplayFileName = `working-area-${waRefNo}.pdf`;
 
 					waPdfBuffer = await renderToBuffer(
 						<WorkAreaTemplate
@@ -325,9 +329,9 @@ export const POST = createProtectedHandler(
 						/>,
 					);
 
-					const waFileName = `working-area-${waRefNo}.pdf`;
+					const waFileName = `working-area-${waRefNo}-${bookingId}-${uploadAttemptId}.pdf`;
 					const waFile = new UTFile([new Uint8Array(waPdfBuffer)], waFileName, {
-						customId: `wa-${bookingId}`,
+						customId: `wa-${bookingId}-${uploadAttemptId}`,
 					});
 
 					const waUploadResult = await utapi.uploadFiles([waFile]);
@@ -375,7 +379,7 @@ export const POST = createProtectedHandler(
 							key: torKey,
 							url: torUrl,
 							mimeType: "application/pdf",
-							fileName: torFileName,
+							fileName: torDisplayFileName,
 							sizeBytes: torPdfBuffer.byteLength,
 							uploadedById: user.id,
 						},
@@ -391,13 +395,13 @@ export const POST = createProtectedHandler(
 					});
 
 					// Create FileBlob and BookingDocument for Working Area if applicable
-					if (waUrl && waKey && waPdfBuffer) {
+					if (waUrl && waKey && waPdfBuffer && waDisplayFileName) {
 						const waBlob = await tx.fileBlob.create({
 							data: {
 								key: waKey,
 								url: waUrl,
 								mimeType: "application/pdf",
-								fileName: `working-area-WA-${formNumber}.pdf`,
+								fileName: waDisplayFileName,
 								sizeBytes: waPdfBuffer.byteLength,
 								uploadedById: user.id,
 							},

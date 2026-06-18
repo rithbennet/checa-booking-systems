@@ -6,6 +6,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { bookingKeys } from "@/entities/booking/api/query-keys";
+import { bookingDocumentKeys } from "@/entities/booking-document";
 
 interface GenerateFormsResponse {
 	success: boolean;
@@ -44,17 +45,22 @@ export function useGenerateForms() {
 
 	return useMutation({
 		mutationFn: generateForms,
-		onSuccess: (_data, bookingId) => {
+		onSuccess: async (_data, bookingId) => {
 			// Invalidate booking queries to refresh data
-			queryClient.invalidateQueries({
-				queryKey: bookingKeys.detail(bookingId),
-			});
-			queryClient.invalidateQueries({
-				queryKey: bookingKeys.adminDetail(bookingId),
-			});
-			queryClient.invalidateQueries({
-				queryKey: bookingKeys.commandCenter(bookingId),
-			});
+			await Promise.all([
+				queryClient.invalidateQueries({
+					queryKey: bookingKeys.detail(bookingId),
+				}),
+				queryClient.invalidateQueries({
+					queryKey: bookingKeys.adminDetail(bookingId),
+				}),
+				queryClient.invalidateQueries({
+					queryKey: bookingKeys.commandCenter(bookingId),
+				}),
+				queryClient.invalidateQueries({
+					queryKey: bookingDocumentKeys.byBooking(bookingId),
+				}),
+			]);
 		},
 	});
 }

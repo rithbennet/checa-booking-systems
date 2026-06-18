@@ -5,6 +5,7 @@
  * Allows admin to regenerate service forms for a booking.
  */
 
+import { randomUUID } from "node:crypto";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { UTFile } from "uploadthing/server";
 import { getEffectiveFacilityConfigForPdf } from "@/entities/document-config";
@@ -102,6 +103,7 @@ export const POST = createProtectedHandler(
 				return Math.max(max, version);
 			}, 0);
 			const newFormNumber = `${baseNumber}-v${maxVersion + 1}`;
+			const uploadAttemptId = randomUUID();
 
 			// Calculate totals
 			const subtotal = booking.serviceItems.reduce(
@@ -214,6 +216,7 @@ export const POST = createProtectedHandler(
 
 			// Generate Service Form (TOR) PDF
 			const torRefNo = `TOR-${newFormNumber}`;
+			const torDisplayFileName = `service-form-${torRefNo}.pdf`;
 
 			const torPdfBuffer = await renderToBuffer(
 				<TORTemplate
@@ -239,9 +242,9 @@ export const POST = createProtectedHandler(
 			);
 
 			// Upload TOR PDF
-			const torFileName = `service-form-${torRefNo}.pdf`;
+			const torFileName = `service-form-${torRefNo}-${booking.id}-${uploadAttemptId}.pdf`;
 			const torFile = new UTFile([new Uint8Array(torPdfBuffer)], torFileName, {
-				customId: `tor-${booking.id}-${Date.now()}`,
+				customId: `tor-${booking.id}-${uploadAttemptId}`,
 			});
 
 			const torUploadResult = await utapi.uploadFiles([torFile]);
@@ -258,6 +261,7 @@ export const POST = createProtectedHandler(
 			// Generate Working Area Agreement PDF (if applicable)
 			let waUrl: string | null = null;
 			let waKey: string | null = null;
+			let waDisplayFileName: string | null = null;
 			let waPdfBuffer: Buffer | null = null;
 			let workingAreaUploadFailed = false;
 			let workingAreaUploadError: string | null = null;
@@ -275,6 +279,7 @@ export const POST = createProtectedHandler(
 							: `${diffDays} day(s)`;
 
 					const waRefNo = `WA-${newFormNumber}`;
+					waDisplayFileName = `working-area-${waRefNo}.pdf`;
 
 					waPdfBuffer = await renderToBuffer(
 						<WorkAreaTemplate
@@ -295,9 +300,9 @@ export const POST = createProtectedHandler(
 						/>,
 					);
 
-					const waFileName = `working-area-${waRefNo}.pdf`;
+					const waFileName = `working-area-${waRefNo}-${booking.id}-${uploadAttemptId}.pdf`;
 					const waFile = new UTFile([new Uint8Array(waPdfBuffer)], waFileName, {
-						customId: `wa-${booking.id}-${Date.now()}`,
+						customId: `wa-${booking.id}-${uploadAttemptId}`,
 					});
 
 					const waUploadResult = await utapi.uploadFiles([waFile]);
@@ -390,7 +395,7 @@ export const POST = createProtectedHandler(
 						key: torKey,
 						url: torUrl,
 						mimeType: "application/pdf",
-						fileName: torFileName,
+						fileName: torDisplayFileName,
 						sizeBytes: torPdfBuffer.byteLength,
 						uploadedById: user.id,
 					},
@@ -405,13 +410,13 @@ export const POST = createProtectedHandler(
 					},
 				});
 
-				if (waUrl && waKey && waPdfBuffer) {
+				if (waUrl && waKey && waPdfBuffer && waDisplayFileName) {
 					const waBlob = await tx.fileBlob.create({
 						data: {
 							key: waKey,
 							url: waUrl,
 							mimeType: "application/pdf",
-							fileName: `working-area-WA-${newFormNumber}.pdf`,
+							fileName: waDisplayFileName,
 							sizeBytes: waPdfBuffer.byteLength,
 							uploadedById: user.id,
 						},

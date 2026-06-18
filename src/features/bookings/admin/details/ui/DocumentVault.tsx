@@ -42,8 +42,9 @@ export function DocumentVault({ booking }: DocumentVaultProps) {
 	const serviceForms = booking.serviceForms;
 	const hasServiceForm = serviceForms.length > 0;
 
-	// Can generate if booking is approved and no forms exist
-	const canGenerateForms = booking.status === "approved" && !hasServiceForm;
+	const canGenerateForms =
+		(booking.status === "approved" || booking.status === "in_progress") &&
+		!hasServiceForm;
 
 	// Check if signatures need verification
 	const formNeedingVerification = serviceForms.find(
@@ -425,8 +426,9 @@ export function DocumentVault({ booking }: DocumentVaultProps) {
 							{!canGenerateForms && (
 								<TooltipContent>
 									<p>
-										{booking.status !== "approved"
-											? "Booking must be approved first"
+										{booking.status !== "approved" &&
+										booking.status !== "in_progress"
+											? "Booking must be approved or in progress first"
 											: "Forms already generated"}
 									</p>
 								</TooltipContent>

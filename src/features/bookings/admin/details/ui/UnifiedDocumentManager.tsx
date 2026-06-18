@@ -97,11 +97,15 @@ export function UnifiedDocumentManager({
 	// This ensures the button shows when all forms are filtered out due to deleted documents
 	const hasServiceForm = serviceForms.length > 0;
 	const hasBackendForms = booking.serviceForms.length > 0;
-	const canGenerateForms = booking.status === "approved" && !hasServiceForm;
+	const canGenerateForms =
+		(booking.status === "approved" || booking.status === "in_progress") &&
+		!hasServiceForm;
 
 	// If forms exist in backend but are filtered out (documents deleted), allow regenerating
 	const shouldShowRegenerateAll =
-		!hasServiceForm && hasBackendForms && booking.status === "approved";
+		!hasServiceForm &&
+		hasBackendForms &&
+		(booking.status === "approved" || booking.status === "in_progress");
 
 	// Mutations
 	const regenerateForm = useMutation({
