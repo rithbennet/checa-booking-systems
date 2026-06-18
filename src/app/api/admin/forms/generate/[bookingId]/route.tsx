@@ -16,6 +16,10 @@ import { UTFile } from "uploadthing/server";
 import { getEffectiveFacilityConfigForPdf } from "@/entities/document-config";
 import { notifyServiceFormReady } from "@/entities/notification/server/form.notifications";
 import {
+	canGenerateFormsForBookingStatus,
+	FORM_GENERATION_STATUS_REQUIREMENT,
+} from "@/entities/service-form/model/generation";
+import {
 	badRequest,
 	createProtectedHandler,
 	forbidden,
@@ -95,10 +99,10 @@ export const POST = createProtectedHandler(
 				);
 			}
 
-			// Booking should be in "approved" status to generate forms
-			if (booking.status !== "approved") {
+			// Booking should be in the lab workflow to generate forms
+			if (!canGenerateFormsForBookingStatus(booking.status)) {
 				return badRequest(
-					`Booking must be approved before generating forms. Current status: ${booking.status}`,
+					`${FORM_GENERATION_STATUS_REQUIREMENT}. Current status: ${booking.status}`,
 				);
 			}
 

@@ -17,6 +17,7 @@ import {
 
 interface BookingStatusTimelineProps {
 	status: booking_status_enum;
+	isPaid?: boolean;
 	dates?: {
 		verifiedAt?: string | null;
 		samplesReceivedAt?: string | null;
@@ -130,10 +131,15 @@ function TimelineStepItem({
 
 export function BookingStatusTimeline({
 	status,
+	isPaid,
 	dates,
 	estimatedDays,
 }: BookingStatusTimelineProps) {
-	const currentStep = getTimelineStep(status);
+	const paymentComplete = isPaid ?? Boolean(dates?.paidAt);
+	const currentStep =
+		status === "completed" && !paymentComplete
+			? "payment"
+			: getTimelineStep(status);
 	const currentStepIndex = STEPS.findIndex((s) => s.key === currentStep);
 
 	return (
@@ -171,7 +177,9 @@ export function BookingStatusTimeline({
 							dateStr = formatShortDate(dates?.paidAt);
 							break;
 						case "released":
-							dateStr = formatShortDate(dates?.releasedAt);
+							dateStr = paymentComplete
+								? formatShortDate(dates?.releasedAt)
+								: null;
 							break;
 					}
 
