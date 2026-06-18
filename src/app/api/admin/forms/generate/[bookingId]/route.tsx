@@ -11,6 +11,7 @@
  * 6. Notifies user that forms are ready
  */
 
+import { randomUUID } from "node:crypto";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { UTFile } from "uploadthing/server";
 import { getEffectiveFacilityConfigForPdf } from "@/entities/document-config";
@@ -275,7 +276,7 @@ export const POST = createProtectedHandler(
 			// Upload TOR PDF to UploadThing
 			const torFileName = `service-form-${torRefNo}.pdf`;
 			const torFile = new UTFile([new Uint8Array(torPdfBuffer)], torFileName, {
-				customId: `tor-${bookingId}`,
+				customId: `tor-${bookingId}-${randomUUID()}`,
 			});
 
 			const torUploadResult = await utapi.uploadFiles([torFile]);
@@ -331,7 +332,7 @@ export const POST = createProtectedHandler(
 
 					const waFileName = `working-area-${waRefNo}.pdf`;
 					const waFile = new UTFile([new Uint8Array(waPdfBuffer)], waFileName, {
-						customId: `wa-${bookingId}`,
+						customId: `wa-${bookingId}-${randomUUID()}`,
 					});
 
 					const waUploadResult = await utapi.uploadFiles([waFile]);
