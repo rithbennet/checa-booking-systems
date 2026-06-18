@@ -117,6 +117,7 @@ export function BookingCommandCenter({ booking }: BookingCommandCenterProps) {
 					releasedAt,
 				}}
 				estimatedDays={estimatedDays}
+				isPaid={booking.isPaid}
 				status={booking.status}
 			/>
 

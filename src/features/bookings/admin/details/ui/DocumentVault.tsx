@@ -14,6 +14,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import type { BookingCommandCenterVM } from "@/entities/booking/model/command-center-types";
 import {
+	canGenerateFormsForBookingStatus,
+	FORM_GENERATION_STATUS_REQUIREMENT,
 	useGenerateForms,
 	useRegenerateForm,
 	useVerifySignature,
@@ -42,9 +44,9 @@ export function DocumentVault({ booking }: DocumentVaultProps) {
 	const serviceForms = booking.serviceForms;
 	const hasServiceForm = serviceForms.length > 0;
 
+	// Can generate while the booking is in the lab workflow and no forms exist
 	const canGenerateForms =
-		(booking.status === "approved" || booking.status === "in_progress") &&
-		!hasServiceForm;
+		canGenerateFormsForBookingStatus(booking.status) && !hasServiceForm;
 
 	// Check if signatures need verification
 	const formNeedingVerification = serviceForms.find(
@@ -426,9 +428,8 @@ export function DocumentVault({ booking }: DocumentVaultProps) {
 							{!canGenerateForms && (
 								<TooltipContent>
 									<p>
-										{booking.status !== "approved" &&
-										booking.status !== "in_progress"
-											? "Booking must be approved or in progress first"
+										{!canGenerateFormsForBookingStatus(booking.status)
+											? FORM_GENERATION_STATUS_REQUIREMENT
 											: "Forms already generated"}
 									</p>
 								</TooltipContent>

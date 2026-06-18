@@ -17,6 +17,10 @@ import { UTFile } from "uploadthing/server";
 import { getEffectiveFacilityConfigForPdf } from "@/entities/document-config";
 import { notifyServiceFormReady } from "@/entities/notification/server/form.notifications";
 import {
+	canGenerateFormsForBookingStatus,
+	FORM_GENERATION_STATUS_REQUIREMENT,
+} from "@/entities/service-form/model/generation";
+import {
 	badRequest,
 	createProtectedHandler,
 	forbidden,
@@ -119,10 +123,10 @@ export const POST = createProtectedHandler(
 				);
 			}
 
-			// Booking should be approved or active before generating forms
-			if (booking.status !== "approved" && booking.status !== "in_progress") {
+			// Booking should be in the lab workflow to generate forms
+			if (!canGenerateFormsForBookingStatus(booking.status)) {
 				return badRequest(
-					`Booking must be approved or in progress before generating forms. Current status: ${booking.status}`,
+					`${FORM_GENERATION_STATUS_REQUIREMENT}. Current status: ${booking.status}`,
 				);
 			}
 
@@ -273,7 +277,7 @@ export const POST = createProtectedHandler(
 			// Upload TOR PDF to UploadThing
 			const torFileName = `service-form-${torRefNo}-${bookingId}-${uploadAttemptId}.pdf`;
 			const torFile = new UTFile([new Uint8Array(torPdfBuffer)], torFileName, {
-				customId: `tor-${bookingId}-${uploadAttemptId}`,
+				customId: `tor-${bookingId}-${randomUUID()}`,
 			});
 
 			const torUploadResult = await utapi.uploadFiles([torFile]);
@@ -331,7 +335,7 @@ export const POST = createProtectedHandler(
 
 					const waFileName = `working-area-${waRefNo}-${bookingId}-${uploadAttemptId}.pdf`;
 					const waFile = new UTFile([new Uint8Array(waPdfBuffer)], waFileName, {
-						customId: `wa-${bookingId}-${uploadAttemptId}`,
+						customId: `wa-${bookingId}-${randomUUID()}`,
 					});
 
 					const waUploadResult = await utapi.uploadFiles([waFile]);

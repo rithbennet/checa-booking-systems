@@ -21,7 +21,10 @@ import {
 	getVerifiableDocumentTypes,
 	useBookingDocuments,
 } from "@/entities/booking-document";
-import { useGenerateForms } from "@/entities/service-form";
+import {
+	canGenerateFormsForBookingStatus,
+	useGenerateForms,
+} from "@/entities/service-form";
 import { BookingDocumentsList } from "@/features/bookings/shared";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
@@ -97,15 +100,14 @@ export function UnifiedDocumentManager({
 	// This ensures the button shows when all forms are filtered out due to deleted documents
 	const hasServiceForm = serviceForms.length > 0;
 	const hasBackendForms = booking.serviceForms.length > 0;
-	const canGenerateForms =
-		(booking.status === "approved" || booking.status === "in_progress") &&
-		!hasServiceForm;
+	const isFormGenerationStatus = canGenerateFormsForBookingStatus(
+		booking.status,
+	);
+	const canGenerateForms = isFormGenerationStatus && !hasServiceForm;
 
 	// If forms exist in backend but are filtered out (documents deleted), allow regenerating
 	const shouldShowRegenerateAll =
-		!hasServiceForm &&
-		hasBackendForms &&
-		(booking.status === "approved" || booking.status === "in_progress");
+		!hasServiceForm && hasBackendForms && canGenerateForms;
 
 	// Mutations
 	const regenerateForm = useMutation({
