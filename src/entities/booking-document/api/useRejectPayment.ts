@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { bookingKeys } from "@/entities/booking/api/query-keys";
-import { bookingDocumentKeys } from "./query-keys";
+import { invalidateDocumentVerificationWorkflow } from "./invalidation";
 
 interface RejectPaymentParams {
 	documentId: string;
@@ -30,10 +29,7 @@ export function useRejectPayment() {
 		},
 		onSuccess: (_data, variables) => {
 			toast.success("Payment rejected");
-			queryClient.invalidateQueries({ queryKey: bookingKeys.all });
-			queryClient.invalidateQueries({
-				queryKey: bookingDocumentKeys.byBooking(variables.bookingId),
-			});
+			invalidateDocumentVerificationWorkflow(queryClient, variables.bookingId);
 		},
 		onError: (error) => {
 			toast.error("Failed to reject payment", {

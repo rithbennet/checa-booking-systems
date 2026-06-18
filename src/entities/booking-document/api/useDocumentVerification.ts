@@ -9,6 +9,7 @@ import type {
 	DocumentVerificationStateVM,
 	DownloadEligibilityVM,
 } from "../model/types";
+import { invalidateDocumentVerificationWorkflow } from "./invalidation";
 import { bookingDocumentKeys } from "./query-keys";
 
 /**
@@ -61,6 +62,7 @@ export function useVerifyDocument() {
 			amount,
 		}: {
 			documentId: string;
+			bookingId?: string;
 			notes?: string;
 			paymentMethod?: string;
 			amount?: string;
@@ -76,9 +78,8 @@ export function useVerifyDocument() {
 			}
 			return res.json();
 		},
-		onSuccess: () => {
-			// Invalidate all document-related queries
-			queryClient.invalidateQueries({ queryKey: bookingDocumentKeys.all });
+		onSuccess: (_data, variables) => {
+			invalidateDocumentVerificationWorkflow(queryClient, variables.bookingId);
 		},
 	});
 }
@@ -95,6 +96,7 @@ export function useRejectDocument() {
 			reason,
 		}: {
 			documentId: string;
+			bookingId?: string;
 			reason: string;
 		}) => {
 			const res = await fetch(`/api/booking-docs/${documentId}/reject`, {
@@ -108,9 +110,8 @@ export function useRejectDocument() {
 			}
 			return res.json();
 		},
-		onSuccess: () => {
-			// Invalidate all document-related queries
-			queryClient.invalidateQueries({ queryKey: bookingDocumentKeys.all });
+		onSuccess: (_data, variables) => {
+			invalidateDocumentVerificationWorkflow(queryClient, variables.bookingId);
 		},
 	});
 }

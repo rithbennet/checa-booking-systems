@@ -6,6 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { payment_method_enum } from "generated/prisma";
 import type { PaymentReceiptVM } from "../model/types";
+import { invalidateDocumentVerificationWorkflow } from "./invalidation";
 import { bookingDocumentKeys } from "./query-keys";
 
 // ==============================================================
@@ -128,16 +129,7 @@ export function useVerifyPaymentReceipt() {
 			return res.json();
 		},
 		onSuccess: () => {
-			// Invalidate relevant queries
-			queryClient.invalidateQueries({
-				queryKey: bookingDocumentKeys.paymentReceipts("pending"),
-			});
-			queryClient.invalidateQueries({
-				queryKey: bookingDocumentKeys.paymentReceipts("history"),
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["finance-stats"],
-			});
+			invalidateDocumentVerificationWorkflow(queryClient);
 		},
 	});
 }
@@ -161,16 +153,7 @@ export function useRejectPaymentReceipt() {
 			return res.json();
 		},
 		onSuccess: () => {
-			// Invalidate relevant queries
-			queryClient.invalidateQueries({
-				queryKey: bookingDocumentKeys.paymentReceipts("pending"),
-			});
-			queryClient.invalidateQueries({
-				queryKey: bookingDocumentKeys.paymentReceipts("history"),
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["finance-stats"],
-			});
+			invalidateDocumentVerificationWorkflow(queryClient);
 		},
 	});
 }

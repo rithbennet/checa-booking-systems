@@ -60,6 +60,7 @@ export interface DocumentVerificationCardProps {
 
 export function DocumentVerificationCard({
 	document,
+	bookingId,
 	bookingReference,
 	onVerified,
 	onRejected,
@@ -82,6 +83,7 @@ export function DocumentVerificationCard({
 		try {
 			await verifyMutation.mutateAsync({
 				documentId: document.id,
+				bookingId,
 				notes: verifyNotes || undefined,
 				...(isPaymentReceipt && {
 					paymentMethod,
@@ -111,6 +113,7 @@ export function DocumentVerificationCard({
 		try {
 			await rejectMutation.mutateAsync({
 				documentId: document.id,
+				bookingId,
 				reason: rejectReason,
 			});
 			toast.success(`${getDocumentTypeLabel(document.type)} rejected`);

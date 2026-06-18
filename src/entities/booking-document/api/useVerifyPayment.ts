@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { bookingKeys } from "@/entities/booking/api/query-keys";
-import { bookingDocumentKeys } from "./query-keys";
+import { invalidateDocumentVerificationWorkflow } from "./invalidation";
 
 interface VerifyPaymentParams {
 	documentId: string;
@@ -27,10 +26,7 @@ export function useVerifyPayment() {
 		},
 		onSuccess: (_data, variables) => {
 			toast.success("Payment verified successfully");
-			queryClient.invalidateQueries({ queryKey: bookingKeys.all });
-			queryClient.invalidateQueries({
-				queryKey: bookingDocumentKeys.byBooking(variables.bookingId),
-			});
+			invalidateDocumentVerificationWorkflow(queryClient, variables.bookingId);
 		},
 		onError: (error) => {
 			toast.error("Failed to verify payment", {
